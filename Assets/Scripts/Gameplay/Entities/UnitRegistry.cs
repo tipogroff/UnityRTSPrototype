@@ -103,5 +103,12 @@ namespace RTS.Gameplay
             // поэтому чистим перед выдачей выборок.
             _units.RemoveWhere(u => u == null);
         }
+        /// <summary>
+        /// Очищает реестр (вызывается при reset эпизода).
+        /// </summary>
+        public void Clear()
+        {
+            _units.Clear();
+        }
     }
 }

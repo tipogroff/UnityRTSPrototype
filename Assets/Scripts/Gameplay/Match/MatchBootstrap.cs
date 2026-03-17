@@ -24,6 +24,10 @@ namespace RTS.Gameplay
     /// </summary>
     public class MatchBootstrap : MonoBehaviour
     {
+        // ── Singleton ─────────────────────────────────────────────────────────
+
+        public static MatchBootstrap Instance { get; private set; }
+
         // ── Inspector ─────────────────────────────────────────────────────────
 
         [Header("Конфигурация сценария")]
@@ -39,6 +43,9 @@ namespace RTS.Gameplay
 
         [Tooltip("UnitRegistry в сцене. Если не задан — ищется через Instance.")]
         [SerializeField] private UnitRegistry _unitRegistry;
+
+        [Tooltip("ResourceManager в сцене. Если не задан — ищется через Instance.")]
+        [SerializeField] private ResourceManager _resourceManager;
 
         private UnitFactory _unitFactory;
 
@@ -65,7 +72,22 @@ namespace RTS.Gameplay
                       $"Карта {_config.mapWidth}×{_config.mapHeight}.");
         }
 
+        /// <summary>
+        /// Получить текущий GameConfig (для других компонентов).
+        /// </summary>
+        public GameConfig GetConfig() => _config;
+
         // ── Unity lifecycle ───────────────────────────────────────────────────
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+        }
 
         private void Start() => Setup();
 
@@ -95,6 +117,7 @@ namespace RTS.Gameplay
             if (_gridManager == null) _gridManager = GridManager.Instance;
             if (_matchManager == null) _matchManager = MatchManager.Instance;
             if (_unitRegistry == null) _unitRegistry = UnitRegistry.Instance;
+            if (_resourceManager == null) _resourceManager = ResourceManager.Instance;
 
             if (_gridManager == null)
                 Debug.LogError("[MatchBootstrap] GridManager не найден в сцене!");
@@ -102,6 +125,8 @@ namespace RTS.Gameplay
                 Debug.LogError("[MatchBootstrap] MatchManager не найден в сцене!");
             if (_unitRegistry == null)
                 Debug.LogWarning("[MatchBootstrap] UnitRegistry не найден. Спавн продолжится без реестра.");
+            if (_resourceManager == null)
+                Debug.LogWarning("[MatchBootstrap] ResourceManager не найден. Ресурсные узлы не будут отслеживаться.");
         }
 
         // ── Шаг 3: инициализация сетки ───────────────────────────────────────
@@ -147,6 +172,7 @@ namespace RTS.Gameplay
         /// Размещает ресурсные патчи симметрично относительно центра карты.
         /// Количество определено в GameConfig.startResources (число патчей на сторону).
         /// По умолчанию для MVP: 2 пары + 1 у левого нижнего края.
+        /// Создаёт ResourceNode модели и регистрирует их в ResourceManager.
         /// </summary>
         private void SpawnResourcePatches(int W, int H)
         {
@@ -161,8 +187,20 @@ namespace RTS.Gameplay
             foreach (var pos in p1ResourcePositions)
             {
                 var mirrorPos = new GridPosition(W - 1 - pos.X, H - 1 - pos.Y);
+
+                // Спавним UnitRuntime для визуальной представления
                 _unitFactory.Spawn(UnitType.Resource, Owner.Neutral, pos);
                 _unitFactory.Spawn(UnitType.Resource, Owner.Neutral, mirrorPos);
+
+                // Создаём модели ResourceNode и регистрируем в ResourceManager
+                if (_resourceManager != null)
+                {
+                    var resourceNodeP1 = new ResourceNode(pos, GameConstants.MaxResourcesPerPatch);
+                    var resourceNodeP2 = new ResourceNode(mirrorPos, GameConstants.MaxResourcesPerPatch);
+
+                    _resourceManager.RegisterResourceNode(resourceNodeP1);
+                    _resourceManager.RegisterResourceNode(resourceNodeP2);
+                }
             }
         }
     }

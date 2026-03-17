@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1187612433222752121}
   - component: {fileID: 6009689649018323775}
   - component: {fileID: 7917119297618411344}
+  - component: {fileID: 6511909903875169709}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -112,3 +113,16 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6511909903875169709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4217684240844026105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 549fcd5f80b2fe348b28e8d195c169f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.BuildingRuntime
+  _canProduce: 1
