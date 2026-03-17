@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fe2527fd5fb9e54fb5c7faf43a3d79b, type: 3}
+  m_Name: UnitDef_Base
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Core.UnitDefinition
+  unitType: 1
+  displayName: Base
+  maxHitPoints: 20
+  attackDamage: 0
+  attackRange: 0
+  moveSpeed: 1
+  productionCost: 10
+  isBuilding: 1
+  productionTime: 10
+  prefab: {fileID: 4217684240844026105, guid: 0382cf14f5eac744b894d94eb4a9dc67, type: 3}

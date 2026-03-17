@@ -25,10 +25,10 @@ MonoBehaviour:
   startResources: 5
   maxEpisodeSteps: 2000
   unitDefinitions:
+  - {fileID: 11400000, guid: 315d2729949f40da913b77b89f019e7f, type: 2}
+  - {fileID: 11400000, guid: b21eef4dbf6940ee87f84fe1562ecf1a, type: 2}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 40a7926b62c74dedb241eea44b04e02c, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
