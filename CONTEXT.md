@@ -17,6 +17,13 @@
 - во второй главе описаны выбранные технологии, архитектурный подход, сравнение двух стратегий обучения, UML-моделирование, алгоритм работы системы и алгоритм PPO;
 - третья глава должна описывать уже не "почему выбраны такие методы", а "как именно всё реализовано программно и что получилось".
 
+Текущий статус реализации (на 2026-03-17):
+- Неделя 1 (контракт MVP) завершена: зафиксированы GameConstants, UnitType/Owner/Action enums, GameConfig, UnitDefinition, ObservationContract, ActionContract, ExperimentLogger.
+- Неделя 2, Этап 1 (сцена/сетка) реализован: GridPosition, GridManager, MatchBootstrap, MatchManager.
+- Неделя 2, Этап 2 (игровые сущности) реализован: UnitModel, UnitRuntime (адаптер над моделью), UnitFactory (единый путь спавна), UnitRegistry (реестр активных юнитов).
+- MatchBootstrap использует UnitFactory для спавна стартовых юнитов и ресурсных объектов из GameConfig.
+- Базовая архитектура готова к следующим шагам: экономика, бой, victory/defeat, reset эпизода.
+
 Структура третьей главы:
 - 3.1 Структура программного продукта
 - 3.2 Разработка модулей игрового приложения
@@ -224,7 +231,60 @@ Gym-μRTS → перенос / адаптация представлений →
 - связывать программную реализацию с пунктами второй главы;
 - не преувеличивать степень готовности того, что ещё не реализовано полностью.
 
-## 15. Что считать желаемым результатом
+## 15. Структура скриптов (Assets/Scripts/)
+
+Зафиксированная архитектура папок. Пространство имён указано для каждого слоя.
+
+```
+Assets/Scripts/
+├── Core/                          — namespace RTS.Core
+│   ├── GameConstants.cs           — глобальные константы (MapWidth=24, etc.)
+│   ├── UnitType.cs                — UnitType, Owner, UnitActionType, Direction, ProducibleUnit
+│   ├── UnitDefinition.cs          — ScriptableObject, параметры типа юнита
+│   └── GameConfig.cs              — ScriptableObject, эталонный сценарий матча
+│
+├── Gameplay/                      — namespace RTS.Gameplay
+│   ├── Grid/
+│   │   ├── GridPosition.cs        — readonly struct, координата клетки
+│   │   ├── GridManager.cs         — Singleton, occupancy-карта, спавн/перемещение
+│   │   └── CellView.cs            — (опционально) визуальный компонент клетки
+│   │
+│   ├── Entities/
+│   │   ├── UnitRuntime.cs         — MonoBehaviour-адаптер над UnitModel (MoveTo/TakeDamage/SetFacing)
+│   │   ├── UnitModel.cs           — чистая модель данных юнита (без MB)
+│   │   ├── UnitFactory.cs         — единая точка спавна юнитов по UnitDefinition
+│   │   └── UnitRegistry.cs        — реестр активных юнитов матча
+│   │
+│   ├── Economy/
+│   │   ├── ResourceNode.cs        — (планируется) ресурсный патч
+│   │   ├── PlayerState.cs         — (планируется) ресурсы / статус игрока
+│   │   └── ProductionQueue.cs     — (планируется) очередь строительства
+│   │
+│   ├── Combat/
+│   │   └── CombatResolver.cs      — (планируется) разрешение атак
+│   │
+│   ├── Match/
+│   │   ├── MatchBootstrap.cs      — сборка матча из GameConfig, спавн через UnitFactory
+│   │   ├── MatchManager.cs        — состояние матча (ресурсы, шаги, фаза, победитель)
+│   │   ├── EpisodeController.cs   — (планируется) ML-Agents reset/step интеграция
+│   │   └── VictoryResolver.cs     — (планируется) проверка условий победы
+│   │
+│   └── Debug/
+│       ├── HeuristicDriver.cs     — (планируется) скриптовая эвристика без ML
+│       └── ManualStepController.cs — (планируется) ручное управление шагом
+│
+├── ML/                            — namespace RTS.ML
+│   ├── ObservationContract.cs     — 27 каналов, tensor [24,24,27]
+│   └── ActionContract.cs          — 7 ветвей, 35 flat на клетку
+│
+├── Logging/                       — namespace RTS.Logging
+│   └── ExperimentLogger.cs        — CSV-логгер метрик
+│
+└── Editor/                        — namespace RTS.Editor
+    └── GameConfigCreator.cs       — RTS/Create MVP GameConfig
+```
+
+## 16. Что считать желаемым результатом
 
 Итог проекта — исследовательский RTS-прототип в Unity, в котором:
 - реализована базовая игровая среда;
