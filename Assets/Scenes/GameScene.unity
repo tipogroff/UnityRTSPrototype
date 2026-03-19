@@ -319,6 +319,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a979db90a2efc8b49a50792f4ef208a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.EpisodeController
+  _matchManager: {fileID: 0}
+  _matchBootstrap: {fileID: 0}
+  _gridManager: {fileID: 0}
+  _unitRegistry: {fileID: 0}
+  _resourceManager: {fileID: 0}
+  _experimentLogger: {fileID: 0}
+  _heuristicDriver: {fileID: 0}
+  _autoStartOnPlay: 1
+  _autoStepInFixedUpdate: 1
+  _useHeuristicAI: 1
+  _logLifecycleEvents: 0
 --- !u!4 &604615633
 Transform:
   m_ObjectHideFlags: 0
@@ -379,6 +390,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1106628919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1106628921}
+  - component: {fileID: 1106628920}
+  m_Layer: 0
+  m_Name: ManualStepController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1106628920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106628919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a366c465bcda68c4f998b79b0fdf3b6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.ManualStepController
+  _episodeController: {fileID: 0}
+  _matchManager: {fileID: 0}
+  stepOneKey: 32
+  stepTenKey: 116
+  togglePlayKey: 112
+  resetKey: 114
+  showDebugUI: 1
+  useKeyboardOnly: 0
+--- !u!4 &1106628921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106628919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1145832106
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,6 +471,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 415a10d80dedcf5419774e86f89925e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchManager
+  _gridManager: {fileID: 0}
+  _unitRegistry: {fileID: 0}
+  _victoryResolver: {fileID: 0}
+  _matchBootstrap: {fileID: 0}
+  _logStepEvents: 0
 --- !u!4 &1145832108
 Transform:
   m_ObjectHideFlags: 0
@@ -624,6 +692,58 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1871236519
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1871236521}
+  - component: {fileID: 1871236520}
+  m_Layer: 0
+  m_Name: HeuristicDriver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1871236520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871236519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b480953ed74beab4eac79f5dae073293, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.HeuristicDriver
+  _config: {fileID: 0}
+  _gridManager: {fileID: 0}
+  _unitRegistry: {fileID: 0}
+  _resourceManager: {fileID: 0}
+  _matchManager: {fileID: 0}
+  _nearbyResourceDistance: 2
+  _maxWorkerLimit: 5
+  _enableDebugLog: 0
+--- !u!4 &1871236521
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871236519}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -894,3 +1014,5 @@ SceneRoots:
   - {fileID: 1866347255}
   - {fileID: 604615633}
   - {fileID: 1941532273}
+  - {fileID: 1871236521}
+  - {fileID: 1106628921}

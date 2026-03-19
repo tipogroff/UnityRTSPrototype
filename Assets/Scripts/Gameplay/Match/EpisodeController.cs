@@ -19,10 +19,12 @@ namespace RTS.Gameplay
         [SerializeField] private UnitRegistry _unitRegistry;
         [SerializeField] private ResourceManager _resourceManager;
         [SerializeField] private ExperimentLogger _experimentLogger;
+        [SerializeField] private HeuristicDriver _heuristicDriver;
 
         [Header("Runtime")]
         [SerializeField] private bool _autoStartOnPlay = true;
         [SerializeField] private bool _autoStepInFixedUpdate = true;
+        [SerializeField] private bool _useHeuristicAI = true;
         [SerializeField] private bool _logLifecycleEvents;
 
         private bool _episodeRunning;
@@ -84,7 +86,7 @@ namespace RTS.Gameplay
                 return;
             }
 
-            _matchManager.StepMatch();
+            StepMatchWithHeuristics();
         }
 
         public void StartNewEpisode()
@@ -109,6 +111,14 @@ namespace RTS.Gameplay
             {
                 EpisodeIndex++;
                 _experimentLogger?.BeginEpisode();
+                
+                // Инициализируем HeuristicDriver
+                if (_useHeuristicAI && _heuristicDriver != null)
+                {
+                    GameConfig config = _matchBootstrap != null ? _matchBootstrap.GetConfig() : null;
+                    _heuristicDriver.Initialize(config, _gridManager, _unitRegistry, _resourceManager, _matchManager);
+                    _heuristicDriver.ResetHeuristics();
+                }
             }
 
             if (_logLifecycleEvents)
@@ -131,8 +141,22 @@ namespace RTS.Gameplay
                 return false;
             }
 
-            _episodeRunning = true;
-            return _matchManager.StepMatch();
+            return StepMatchWithHeuristics();
+        }
+
+        /// <summary>
+        /// Выполняет один шаг матча с применением эвристик.
+        /// </summary>
+        private bool StepMatchWithHeuristics()
+        {
+            // 1) Применяем эвристические решения для всех юнитов
+            if (_useHeuristicAI && _heuristicDriver != null)
+            {
+                _heuristicDriver.MakeAllDecisions();
+            }
+
+            // 2) Выполняем шаг матча
+            return _matchManager != null && _matchManager.StepMatch();
         }
 
         public bool ApplyCommand(MatchCommand command)
@@ -235,6 +259,11 @@ namespace RTS.Gameplay
             if (_experimentLogger == null)
             {
                 _experimentLogger = FindFirstObjectByType<ExperimentLogger>();
+            }
+
+            if (_heuristicDriver == null)
+            {
+                _heuristicDriver = FindFirstObjectByType<HeuristicDriver>();
             }
         }
 
