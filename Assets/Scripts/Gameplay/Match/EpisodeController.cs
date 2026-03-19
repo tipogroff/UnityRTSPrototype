@@ -22,6 +22,7 @@ namespace RTS.Gameplay
         // ── State ──────────────────────────────────────────────────────────────
 
         private bool _isRunning = false;
+        private CombatResolver _combatResolver;
 
         // ── Unity lifecycle ───────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ namespace RTS.Gameplay
 
             // Главный игровой тик:
             TickProductions();
-            TickCombatSystems(); // TODO: боевая механика
+            TickCombatSystems(); // Боевая фаза тика
             
             // Продвигаем счётчик шагов
             matchMgr.AdvanceStep();
@@ -84,12 +85,30 @@ namespace RTS.Gameplay
         }
 
         /// <summary>
-        /// Боевая система (заглушка на Неделю 2).
-        /// TODO: нанесение урона, смерть юнитов, и т.д.
+        /// Боевая система (Неделя 2):
+        /// мгновенные атаки, 1 удар на юнит за тик.
         /// </summary>
         private void TickCombatSystems()
         {
-            // TODO Неделя 3: Combat mechanics
+            if (!EnsureCombatResolverReady()) return;
+            _combatResolver.ResolveCombatTick();
+        }
+
+        private bool EnsureCombatResolverReady()
+        {
+            if (_combatResolver != null) return true;
+
+            var bootstrap = MatchBootstrap.Instance;
+            var config = bootstrap != null ? bootstrap.GetConfig() : null;
+            var unitRegistry = UnitRegistry.Instance;
+            var gridManager = GridManager.Instance;
+            var matchManager = MatchManager.Instance;
+
+            if (config == null || unitRegistry == null || gridManager == null || matchManager == null)
+                return false;
+
+            _combatResolver = new CombatResolver(config, unitRegistry, gridManager, matchManager);
+            return true;
         }
 
         // ── End conditions ────────────────────────────────────────────────────
@@ -128,6 +147,8 @@ namespace RTS.Gameplay
             var gridMgr = GridManager.Instance;
             var registry = UnitRegistry.Instance;
             var resourceMgr = ResourceManager.Instance;
+
+            _combatResolver = null;
 
             // Очищаем все юниты со сцены
             if (registry != null)
