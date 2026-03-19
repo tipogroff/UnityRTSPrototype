@@ -1,22 +1,44 @@
-// VictoryResolver.cs — проверка условий победы/поражения.
-// Этап 4: Боевая механика. Неделя 2.
+// VictoryResolver.cs — formal match termination rules.
 
+using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
 
 namespace RTS.Gameplay
 {
-    /// <summary>
-    /// Проверяет условия победы/поражения каждый шаг.
-    /// Победа = враг потерял все базы, текущий игрок имеет хотя бы одну базу.
-    /// </summary>
+    public enum MatchEndReason
+    {
+        None = 0,
+        EnemyBaseDestroyed = 1,
+        Elimination = 2,
+        StepLimitReached = 3
+    }
+
+    public readonly struct MatchResolution
+    {
+        public MatchResolution(bool isTerminal, Owner winner, MatchEndReason reason, int stepCount, string details)
+        {
+            IsTerminal = isTerminal;
+            Winner = winner;
+            Reason = reason;
+            StepCount = stepCount;
+            Details = details ?? string.Empty;
+        }
+
+        public bool IsTerminal { get; }
+        public Owner Winner { get; }
+        public MatchEndReason Reason { get; }
+        public int StepCount { get; }
+        public string Details { get; }
+
+        public static MatchResolution Continue(int stepCount)
+            => new MatchResolution(false, Owner.Neutral, MatchEndReason.None, stepCount, string.Empty);
+    }
+
+    [DisallowMultipleComponent]
     public class VictoryResolver : MonoBehaviour
     {
-        // ── Singleton ─────────────────────────────────────────────────────────
-
         public static VictoryResolver Instance { get; private set; }
-
-        // ── Unity lifecycle ───────────────────────────────────────────────────
 
         private void Awake()
         {
@@ -25,65 +47,150 @@ namespace RTS.Gameplay
                 Destroy(gameObject);
                 return;
             }
+
             Instance = this;
         }
 
         private void OnDestroy()
         {
-            if (Instance == this) Instance = null;
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
-        // ── Victory conditions ─────────────────────────────────────────────────
-
-        /// <summary>
-        /// Проверяет, может ли кто-то выиграть.
-        /// Победа = у одного игрока есть базы, у другого нет.
-        /// </summary>
-        public void CheckVictoryConditions()
+        public MatchResolution Evaluate(UnitRegistry registry, int currentStep, int maxSteps)
         {
-            var matchMgr = MatchManager.Instance;
-            var registry = UnitRegistry.Instance;
-
-            if (matchMgr == null || registry == null) return;
-            if (matchMgr.Phase != MatchPhase.Running) return;
-
-            // Подсчитаем базы для каждого игрока
-            var p1Buildings = registry.GetBuildingsByOwner(Owner.Player1);
-            var p2Buildings = registry.GetBuildingsByOwner(Owner.Player2);
-
-            bool p1HasBases = p1Buildings.Count > 0;
-            bool p2HasBases = p2Buildings.Count > 0;
-
-            // Проверка условия победы
-            if (!p1HasBases && p2HasBases)
+            if (registry == null)
             {
-                // Player1 потерял все базы → Player2 выигрывает
-                Debug.Log("[VictoryResolver] Player1 потерял все базы. Player2 победил!");
-                matchMgr.DeclareWinner(Owner.Player2);
+                return MatchResolution.Continue(currentStep);
             }
-            else if (!p2HasBases && p1HasBases)
+
+            PlayerPresence player1 = GetPresence(registry, Owner.Player1);
+            PlayerPresence player2 = GetPresence(registry, Owner.Player2);
+
+            // Condition 1: opponent base has been destroyed.
+            if (player1.BaseCount == 0 && player2.BaseCount > 0)
             {
-                // Player2 потерял все базы → Player1 выигрывает
-                Debug.Log("[VictoryResolver] Player2 потерял все базы. Player1 победил!");
-                matchMgr.DeclareWinner(Owner.Player1);
+                return Terminal(
+                    Owner.Player2,
+                    MatchEndReason.EnemyBaseDestroyed,
+                    currentStep,
+                    "Player1 base destroyed.");
             }
-            else if (!p1HasBases && !p2HasBases)
+
+            if (player2.BaseCount == 0 && player1.BaseCount > 0)
             {
-                // Обе стороны без баз (экстремальный случай) → Ничья
-                Debug.Log("[VictoryResolver] Обе стороны без баз. Ничья!");
-                matchMgr.DeclareWinner(Owner.Neutral);
+                return Terminal(
+                    Owner.Player1,
+                    MatchEndReason.EnemyBaseDestroyed,
+                    currentStep,
+                    "Player2 base destroyed.");
             }
+
+            // Condition 2: one side has no units and no base.
+            bool player1Eliminated = player1.UnitCount == 0 && player1.BaseCount == 0;
+            bool player2Eliminated = player2.UnitCount == 0 && player2.BaseCount == 0;
+
+            if (player1Eliminated && !player2Eliminated)
+            {
+                return Terminal(
+                    Owner.Player2,
+                    MatchEndReason.Elimination,
+                    currentStep,
+                    "Player1 has no units and no base.");
+            }
+
+            if (player2Eliminated && !player1Eliminated)
+            {
+                return Terminal(
+                    Owner.Player1,
+                    MatchEndReason.Elimination,
+                    currentStep,
+                    "Player2 has no units and no base.");
+            }
+
+            if (player1Eliminated && player2Eliminated)
+            {
+                return Terminal(
+                    Owner.Neutral,
+                    MatchEndReason.Elimination,
+                    currentStep,
+                    "Both players eliminated.");
+            }
+
+            // Condition 3: step limit reached.
+            if (maxSteps > 0 && currentStep >= maxSteps)
+            {
+                return Terminal(
+                    Owner.Neutral,
+                    MatchEndReason.StepLimitReached,
+                    currentStep,
+                    $"Step limit reached ({currentStep}/{maxSteps}).");
+            }
+
+            return MatchResolution.Continue(currentStep);
         }
 
-        /// <summary>
-        /// Проверить статус конкретного игрока (для логирования).
-        /// </summary>
         public int GetBuildingCount(Owner owner)
         {
-            var registry = UnitRegistry.Instance;
-            if (registry == null) return 0;
+            UnitRegistry registry = UnitRegistry.Instance;
+            if (registry == null)
+            {
+                return 0;
+            }
 
             return registry.GetBuildingsByOwner(owner).Count;
+        }
+
+        public int GetBaseCount(Owner owner)
+        {
+            UnitRegistry registry = UnitRegistry.Instance;
+            if (registry == null)
+            {
+                return 0;
+            }
+
+            return GetPresence(registry, owner).BaseCount;
+        }
+
+        private static MatchResolution Terminal(Owner winner, MatchEndReason reason, int stepCount, string details)
+            => new MatchResolution(true, winner, reason, stepCount, details);
+
+        private static PlayerPresence GetPresence(UnitRegistry registry, Owner owner)
+        {
+            List<UnitRuntime> units = registry.GetUnitsByOwner(owner);
+            int unitCount = 0;
+            int baseCount = 0;
+
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                unitCount++;
+                if (unit.Type == UnitType.Base)
+                {
+                    baseCount++;
+                }
+            }
+
+            return new PlayerPresence(unitCount, baseCount);
+        }
+
+        private readonly struct PlayerPresence
+        {
+            public PlayerPresence(int unitCount, int baseCount)
+            {
+                UnitCount = unitCount;
+                BaseCount = baseCount;
+            }
+
+            public int UnitCount { get; }
+            public int BaseCount { get; }
         }
     }
 }

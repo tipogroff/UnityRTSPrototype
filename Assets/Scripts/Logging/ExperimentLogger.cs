@@ -87,6 +87,14 @@ namespace RTS.Logging
         }
 
         /// <summary>
+        /// New API alias used by EpisodeController.
+        /// </summary>
+        public void BeginEpisode()
+        {
+            OnEpisodeBegin();
+        }
+
+        /// <summary>
         /// Вызывать каждый шаг агента, передавая инкрементальную награду.
         /// </summary>
         public void OnStep(float rewardDelta, bool wasActionInvalid,
@@ -127,6 +135,14 @@ namespace RTS.Logging
             _writer.Flush();
 
             _episodeIndex++;
+        }
+
+        /// <summary>
+        /// New API alias used by EpisodeController.
+        /// </summary>
+        public void EndEpisode(bool win)
+        {
+            OnEpisodeEnd(win);
         }
 
         // ── Дополнительные утилиты ────────────────────────────────────────────

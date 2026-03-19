@@ -1,30 +1,35 @@
-// EpisodeController.cs — управляет игровым циклом эпизода (тики, reset).
-// Этап 3: Экономика + Этап 4: Боевая механика. Неделя 2.
+// EpisodeController.cs — episode lifecycle and reset orchestration.
 
+using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
+using RTS.Logging;
 
 namespace RTS.Gameplay
 {
-    /// <summary>
-    /// MonoBehaviour, который управляет основным игровым циклом:
-    /// — вызывает TickProduction() для всех зданий;
-    /// — продвигает счётчик шагов в MatchManager;
-    /// — проверяет условия завершения эпизода;
-    /// — управляет ResetEpisode() для ML-Agents.
-    /// </summary>
+    [DisallowMultipleComponent]
     public class EpisodeController : MonoBehaviour
     {
-        // ── Singleton ─────────────────────────────────────────────────────────
-
         public static EpisodeController Instance { get; private set; }
 
-        // ── State ──────────────────────────────────────────────────────────────
+        [Header("Scene references")]
+        [SerializeField] private MatchManager _matchManager;
+        [SerializeField] private MatchBootstrap _matchBootstrap;
+        [SerializeField] private GridManager _gridManager;
+        [SerializeField] private UnitRegistry _unitRegistry;
+        [SerializeField] private ResourceManager _resourceManager;
+        [SerializeField] private ExperimentLogger _experimentLogger;
 
-        private bool _isRunning = false;
-        private CombatResolver _combatResolver;
+        [Header("Runtime")]
+        [SerializeField] private bool _autoStartOnPlay = true;
+        [SerializeField] private bool _autoStepInFixedUpdate = true;
+        [SerializeField] private bool _logLifecycleEvents;
 
-        // ── Unity lifecycle ───────────────────────────────────────────────────
+        private bool _episodeRunning;
+        private bool _episodeFinalized;
+
+        public int EpisodeIndex { get; private set; }
+        public bool IsRunning => _episodeRunning && _matchManager != null && _matchManager.Phase == MatchPhase.Running;
 
         private void Awake()
         {
@@ -33,162 +38,225 @@ namespace RTS.Gameplay
                 Destroy(gameObject);
                 return;
             }
+
             Instance = this;
+            ResolveReferences();
+        }
+
+        private void OnEnable()
+        {
+            ResolveReferences();
+            SubscribeMatchEvents();
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeMatchEvents();
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeMatchEvents();
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         private void Start()
         {
-            // Ждём инициализации MatchManager и MatchBootstrap
-            _isRunning = true;
+            if (_autoStartOnPlay)
+            {
+                StartNewEpisode();
+            }
         }
 
         private void FixedUpdate()
         {
-            if (!_isRunning) return;
+            if (!_autoStepInFixedUpdate || !_episodeRunning)
+            {
+                return;
+            }
 
-            var matchMgr = MatchManager.Instance;
-            if (matchMgr == null || matchMgr.Phase != MatchPhase.Running) return;
+            if (_matchManager == null || _matchManager.Phase != MatchPhase.Running)
+            {
+                return;
+            }
 
-            // Главный игровой тик:
-            TickProductions();
-            TickCombatSystems(); // Боевая фаза тика
-            
-            // Продвигаем счётчик шагов
-            matchMgr.AdvanceStep();
-
-            // Проверяем условия завершения
-            CheckEndConditions();
+            _matchManager.StepMatch();
         }
 
-        // ── Game ticks ────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Продвигает производство всех зданий на один тик.
-        /// </summary>
-        private void TickProductions()
+        public void StartNewEpisode()
         {
-            var unitRegistry = UnitRegistry.Instance;
-            if (unitRegistry == null) return;
+            ResolveReferences();
 
-            // Получаем все здания (базы, казармы и т.д.)
-            var allUnits = unitRegistry.GetAllUnits();
-            foreach (var unit in allUnits)
+            if (_matchManager == null || _matchBootstrap == null)
             {
-                if (!unit.IsBuilding) continue;
+                Debug.LogError("[EpisodeController] MatchManager or MatchBootstrap is missing.");
+                _episodeRunning = false;
+                return;
+            }
 
-                var buildingRuntime = unit.GetComponent<BuildingRuntime>();
-                if (buildingRuntime != null)
-                {
-                    buildingRuntime.TickProduction();
-                }
+            CleanupRuntimeObjects();
+
+            _matchBootstrap.Setup();
+
+            _episodeRunning = _matchManager.Phase == MatchPhase.Running;
+            _episodeFinalized = false;
+
+            if (_episodeRunning)
+            {
+                EpisodeIndex++;
+                _experimentLogger?.BeginEpisode();
+            }
+
+            if (_logLifecycleEvents)
+            {
+                Debug.Log($"[EpisodeController] Episode {EpisodeIndex} started. Running={_episodeRunning}");
             }
         }
 
-        /// <summary>
-        /// Боевая система (Неделя 2):
-        /// мгновенные атаки, 1 удар на юнит за тик.
-        /// </summary>
-        private void TickCombatSystems()
-        {
-            if (!EnsureCombatResolverReady()) return;
-            _combatResolver.ResolveCombatTick();
-        }
-
-        private bool EnsureCombatResolverReady()
-        {
-            if (_combatResolver != null) return true;
-
-            var bootstrap = MatchBootstrap.Instance;
-            var config = bootstrap != null ? bootstrap.GetConfig() : null;
-            var unitRegistry = UnitRegistry.Instance;
-            var gridManager = GridManager.Instance;
-            var matchManager = MatchManager.Instance;
-
-            if (config == null || unitRegistry == null || gridManager == null || matchManager == null)
-                return false;
-
-            _combatResolver = new CombatResolver(config, unitRegistry, gridManager, matchManager);
-            return true;
-        }
-
-        // ── End conditions ────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Проверяет условия завершения эпизода.
-        /// </summary>
-        private void CheckEndConditions()
-        {
-            var matchMgr = MatchManager.Instance;
-            if (matchMgr == null || matchMgr.Phase != MatchPhase.Running) return;
-
-            // Условие 1: Один из противников потеряет все базы → ему проиграл
-            var victoryResolver = VictoryResolver.Instance;
-            if (victoryResolver != null)
-            {
-                victoryResolver.CheckVictoryConditions();
-            }
-
-            // Условие 2: Лимит шагов достигнут
-            if (matchMgr.Step >= matchMgr.MaxSteps)
-            {
-                Debug.Log($"[EpisodeController] Достигнут лимит шагов ({matchMgr.MaxSteps}). Ничья.");
-                matchMgr.DeclareWinner(Owner.Neutral); // Ничья
-            }
-        }
-
-        // ── Episode reset ──────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Сбросить эпизод (вызывается из ML-Agents или UI).
-        /// </summary>
         public void ResetEpisode()
         {
-            var matchMgr = MatchManager.Instance;
-            var gridMgr = GridManager.Instance;
-            var registry = UnitRegistry.Instance;
-            var resourceMgr = ResourceManager.Instance;
-
-            _combatResolver = null;
-
-            // Очищаем все юниты со сцены
-            if (registry != null)
-            {
-                var allUnits = registry.GetAllUnits();
-                foreach (var unit in allUnits)
-                {
-                    Destroy(unit.gameObject);
-                }
-                registry.Clear();
-            }
-
-            // Сбрасываем состояние каждой системы
-            if (gridMgr != null) gridMgr.InitGrid(gridMgr.Width, gridMgr.Height);
-            if (matchMgr != null) matchMgr.ResetMatch();
-            if (resourceMgr != null) resourceMgr.Clear();
-
-            // Перезапускаем сцену через MatchBootstrap
-            var bootstrap = MatchBootstrap.Instance;
-            if (bootstrap != null)
-            {
-                bootstrap.Setup();
-            }
-
-            _isRunning = true;
+            StartNewEpisode();
         }
 
-        // ── Public API ────────────────────────────────────────────────────────
+        public bool StepEpisodeOnce()
+        {
+            ResolveReferences();
 
-        /// <summary>
-        /// Паузировать/возобновить симуляцию.
-        /// </summary>
+            if (_matchManager == null || _matchManager.Phase != MatchPhase.Running)
+            {
+                return false;
+            }
+
+            _episodeRunning = true;
+            return _matchManager.StepMatch();
+        }
+
+        public bool ApplyCommand(MatchCommand command)
+        {
+            ResolveReferences();
+            return _matchManager != null && _matchManager.ApplyCommand(command);
+        }
+
+        public int ApplyCommands(IReadOnlyList<MatchCommand> commands)
+        {
+            ResolveReferences();
+            return _matchManager != null ? _matchManager.ApplyCommands(commands) : 0;
+        }
+
+        public MatchStateSnapshot GetMatchState()
+        {
+            ResolveReferences();
+            return _matchManager != null ? _matchManager.GetMatchState() : default;
+        }
+
         public void SetRunning(bool running)
         {
-            _isRunning = running;
+            _episodeRunning = running;
         }
 
-        /// <summary>
-        /// Проверить, работает ли эпизод.
-        /// </summary>
-        public bool IsRunning => _isRunning && MatchManager.Instance?.Phase == MatchPhase.Running;
+        private void HandleMatchEnded(Owner winner)
+        {
+            _episodeRunning = false;
+
+            if (_episodeFinalized)
+            {
+                return;
+            }
+
+            _episodeFinalized = true;
+            bool player1Win = winner == Owner.Player1;
+            _experimentLogger?.EndEpisode(player1Win);
+
+            if (_logLifecycleEvents)
+            {
+                Debug.Log($"[EpisodeController] Episode {EpisodeIndex} ended. Winner={winner}");
+            }
+        }
+
+        private void CleanupRuntimeObjects()
+        {
+            if (_unitRegistry != null)
+            {
+                List<UnitRuntime> units = _unitRegistry.GetAllUnits();
+                for (int i = 0; i < units.Count; i++)
+                {
+                    UnitRuntime unit = units[i];
+                    if (unit != null)
+                    {
+                        Destroy(unit.gameObject);
+                    }
+                }
+
+                _unitRegistry.Clear();
+            }
+
+            if (_gridManager != null)
+            {
+                int width = _gridManager.Width > 0 ? _gridManager.Width : GameConstants.MapWidth;
+                int height = _gridManager.Height > 0 ? _gridManager.Height : GameConstants.MapHeight;
+                _gridManager.InitGrid(width, height);
+            }
+
+            _resourceManager?.Clear();
+            _matchManager?.ResetMatch();
+        }
+
+        private void ResolveReferences()
+        {
+            if (_matchManager == null)
+            {
+                _matchManager = MatchManager.Instance;
+            }
+
+            if (_matchBootstrap == null)
+            {
+                _matchBootstrap = MatchBootstrap.Instance;
+            }
+
+            if (_gridManager == null)
+            {
+                _gridManager = GridManager.Instance;
+            }
+
+            if (_unitRegistry == null)
+            {
+                _unitRegistry = UnitRegistry.Instance;
+            }
+
+            if (_resourceManager == null)
+            {
+                _resourceManager = ResourceManager.Instance;
+            }
+
+            if (_experimentLogger == null)
+            {
+                _experimentLogger = FindFirstObjectByType<ExperimentLogger>();
+            }
+        }
+
+        private void SubscribeMatchEvents()
+        {
+            if (_matchManager == null)
+            {
+                return;
+            }
+
+            _matchManager.OnMatchEnded -= HandleMatchEnded;
+            _matchManager.OnMatchEnded += HandleMatchEnded;
+        }
+
+        private void UnsubscribeMatchEvents()
+        {
+            if (_matchManager == null)
+            {
+                return;
+            }
+
+            _matchManager.OnMatchEnded -= HandleMatchEnded;
+        }
     }
 }
