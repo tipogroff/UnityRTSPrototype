@@ -27,6 +27,12 @@ namespace RTS.Gameplay
         [SerializeField] private bool _useHeuristicAI = true;
         [SerializeField] private bool _logLifecycleEvents;
 
+        [Header("Auto loop")]
+        [Tooltip("Автоматически запускать следующий эпизод после завершения текущего.")]
+        [SerializeField] private bool _autoRestartEpisodes = false;
+        [Tooltip("Максимальное число эпизодов для авторестарта. 0 = бесконечно.")]
+        [SerializeField] private int _maxEpisodes = 0;
+
         private bool _episodeRunning;
         private bool _episodeFinalized;
 
@@ -129,6 +135,15 @@ namespace RTS.Gameplay
 
         public void ResetEpisode()
         {
+            // Safety net: если ресет был вызван до получения OnMatchEnded,
+            // всё равно закрываем текущий эпизод в логгере.
+            if (_episodeRunning && !_episodeFinalized)
+            {
+                _episodeFinalized = true;
+                _episodeRunning = false;
+                _experimentLogger?.EndEpisode(false);
+            }
+
             StartNewEpisode();
         }
 
@@ -156,7 +171,28 @@ namespace RTS.Gameplay
             }
 
             // 2) Выполняем шаг матча
-            return _matchManager != null && _matchManager.StepMatch();
+            if (_matchManager == null)
+            {
+                return false;
+            }
+
+            bool isRunningAfterStep = _matchManager.StepMatch();
+
+            // 3) Пишем метрики шага в логгер (MVP: reward=0, метрики берём по Player1)
+            if (_experimentLogger != null)
+            {
+                MatchStateSnapshot snapshot = _matchManager.GetMatchState();
+                bool hasInvalidCommand = _matchManager.InvalidCommandsLastStep > 0;
+                _experimentLogger.OnStep(
+                    rewardDelta: 0f,
+                    wasActionInvalid: hasInvalidCommand,
+                    currentResourcesP1: snapshot.Player1Resources,
+                    currentResourcesP2: snapshot.Player2Resources,
+                    currentBuildsP1: snapshot.Player1BaseCount,
+                    currentBuildsP2: snapshot.Player2BaseCount);
+            }
+
+            return isRunningAfterStep;
         }
 
         public bool ApplyCommand(MatchCommand command)
@@ -199,6 +235,17 @@ namespace RTS.Gameplay
             {
                 Debug.Log($"[EpisodeController] Episode {EpisodeIndex} ended. Winner={winner}");
             }
+
+            if (_autoRestartEpisodes && (_maxEpisodes <= 0 || EpisodeIndex < _maxEpisodes))
+            {
+                StartCoroutine(StartNextEpisodeNextFrame());
+            }
+        }
+
+        private System.Collections.IEnumerator StartNextEpisodeNextFrame()
+        {
+            yield return null;
+            StartNewEpisode();
         }
 
         private void CleanupRuntimeObjects()
@@ -259,6 +306,12 @@ namespace RTS.Gameplay
             if (_experimentLogger == null)
             {
                 _experimentLogger = FindFirstObjectByType<ExperimentLogger>();
+                if (_experimentLogger == null)
+                {
+                    var loggerGo = new GameObject("ExperimentLogger");
+                    _experimentLogger = loggerGo.AddComponent<ExperimentLogger>();
+                    Debug.Log("[EpisodeController] ExperimentLogger создан автоматически.");
+                }
             }
 
             if (_heuristicDriver == null)

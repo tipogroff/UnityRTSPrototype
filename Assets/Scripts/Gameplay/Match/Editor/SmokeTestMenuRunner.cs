@@ -51,9 +51,9 @@ namespace RTS.Testing.Editor
             Debug.Log($"[SmokeTest] Stepping 5 times from Step={mm.Step}...");
             for (int i = 0; i < 5; i++)
             {
-                bool terminal = mm.StepMatch();
-                Debug.Log($"[SmokeTest] StepMatch() → Step={mm.Step}, Phase={mm.Phase}, Terminal={terminal}");
-                if (terminal)
+                bool isRunning = mm.StepMatch();
+                Debug.Log($"[SmokeTest] StepMatch() → Step={mm.Step}, Phase={mm.Phase}, Running={isRunning}");
+                if (!isRunning)
                 {
                     break;
                 }
@@ -140,9 +140,9 @@ namespace RTS.Testing.Editor
             bool reachedTerminal = false;
             while (mm.Phase == MatchPhase.Running && stepsToTerminal < safetyLimit)
             {
-                bool terminal = mm.StepMatch();
+                bool isRunning = mm.StepMatch();
                 stepsToTerminal++;
-                if (terminal)
+                if (!isRunning)
                 {
                     reachedTerminal = true;
                     break;

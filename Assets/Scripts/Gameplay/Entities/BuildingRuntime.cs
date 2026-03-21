@@ -92,7 +92,11 @@ namespace RTS.Gameplay
                 return false;
             }
 
-            // Тратим ресурсы и начинаем производство
+                // Не начинаем новое производство, если уже идёт текущее
+                if (_productionQueue.IsProducing)
+                    return false;
+
+                // Тратим ресурсы и начинаем производство
             playerState.SpendResources(definition.productionCost);
             _productionQueue.StartProduction(unitType, definition);
 

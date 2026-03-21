@@ -89,7 +89,13 @@ namespace RTS.Gameplay
             Instance = this;
         }
 
-        private void Start() => Setup();
+        private void Start()
+        {
+            // EpisodeController управляет жизненным циклом и вызывает Setup() через StartNewEpisode().
+            // Автозапуск только если EpisodeController отсутствует в сцене.
+            if (EpisodeController.Instance == null)
+                Setup();
+        }
 
         // ── Шаг 1: валидация ─────────────────────────────────────────────────
 
@@ -148,21 +154,23 @@ namespace RTS.Gameplay
             // Отступ 3 клетки от края — гарантирует место вокруг базы.
             var p1Spawns = new List<(UnitType type, GridPosition pos)>
             {
-                (UnitType.Base,   new GridPosition(3,     H / 2)),
-                (UnitType.Worker, new GridPosition(4,     H / 2)),
-                (UnitType.Worker, new GridPosition(3,     H / 2 - 1)),
+                (UnitType.Base,   new GridPosition(3,  H / 2 - 1)),
+                (UnitType.Worker, new GridPosition(5,  H / 2 - 1)),
+                (UnitType.Light,  new GridPosition(W / 2 - 1, H / 2 - 1)),
+            };
+
+            var p2Spawns = new List<(UnitType type, GridPosition pos)>
+            {
+                (UnitType.Base,   new GridPosition(W - 4, H / 2)),
+                (UnitType.Worker, new GridPosition(W - 6, H / 2)),
+                (UnitType.Light,  new GridPosition(W / 2, H / 2 - 1)),
             };
 
             foreach (var (type, pos) in p1Spawns)
                 _unitFactory.Spawn(type, Owner.Player1, pos);
 
-            // ── Стартовая расстановка Player2 (180° симметрия) ────────────────
-            // mirrorX = W-1-x, mirrorY = H-1-y
-            foreach (var (type, pos) in p1Spawns)
-            {
-                var mirrorPos = new GridPosition(W - 1 - pos.X, H - 1 - pos.Y);
-                _unitFactory.Spawn(type, Owner.Player2, mirrorPos);
-            }
+            foreach (var (type, pos) in p2Spawns)
+                _unitFactory.Spawn(type, Owner.Player2, pos);
 
             // ── Ресурсные патчи (симметричные пары + опц. центральный) ────────
             SpawnResourcePatches(W, H);
@@ -179,9 +187,8 @@ namespace RTS.Gameplay
             // Позиции для Player1-половины (около базы и в центре)
             var p1ResourcePositions = new List<GridPosition>
             {
-                new GridPosition(6,      H / 2),       // у базы P1
-                new GridPosition(3,      H / 2 + 3),   // чуть выше базы P1
-                new GridPosition(W / 2 - 1, H / 2),    // ближе к центру
+                new GridPosition(6, H / 2 - 2),
+                new GridPosition(6, H / 2 + 2),
             };
 
             foreach (var pos in p1ResourcePositions)

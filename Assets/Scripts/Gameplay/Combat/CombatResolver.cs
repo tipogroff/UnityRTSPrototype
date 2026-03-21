@@ -93,6 +93,8 @@ namespace RTS.Gameplay
             var attackerDef = _config.GetDefinition(attacker.Type);
             if (attackerDef == null) return false;
 
+            Debug.Log($"[CombatResolver] {attacker.Owner}.{attacker.Type} атакует {target.Owner}.{target.Type} с уроном {attackerDef.attackDamage} на дистанции {GetDistance(attacker.GridPos, target.GridPos)}");
+
             bool died = target.TakeDamage(attackerDef.attackDamage);
             if (died)
             {
@@ -155,6 +157,8 @@ namespace RTS.Gameplay
         private void HandleDeath(UnitRuntime deadUnit, Owner killerOwner)
         {
             if (deadUnit == null) return;
+
+            Debug.Log($"[CombatResolver] {deadUnit.Owner}.{deadUnit.Type} уничтожен игроком {killerOwner} на клетке {deadUnit.GridPos}");
 
             if (_gridManager != null &&
                 _gridManager.TryGetOccupant(deadUnit.GridPos, out var occupant) &&

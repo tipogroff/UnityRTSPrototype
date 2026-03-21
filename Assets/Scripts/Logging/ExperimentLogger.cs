@@ -10,6 +10,7 @@
 //   - Build count (постройки к шагу T_ref)
 
 using System;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -42,13 +43,25 @@ namespace RTS.Logging
         private float _episodeReward;
         private int   _invalidActions;
         private int   _totalActions;
-        private int   _resourcesAtRef;
-        private int   _buildCountAtRef;
+        private int   _resourcesP1AtRef;
+        private int   _resourcesP2AtRef;
+        private int   _buildsP1AtRef;
+        private int   _buildsP2AtRef;
 
         // ── Жизненный цикл MonoBehaviour ─────────────────────────────────────
 
         void Awake()
         {
+            EnsureWriterInitialized();
+        }
+
+        private void EnsureWriterInitialized()
+        {
+            if (_writer != null)
+            {
+                return;
+            }
+
             string dir = Path.Combine(Application.persistentDataPath, "Logs");
             Directory.CreateDirectory(dir);
 
@@ -59,7 +72,8 @@ namespace RTS.Logging
             _writer = new StreamWriter(_filePath, append: false);
             _writer.WriteLine(
                 "episode,steps,reward,win,invalid_rate," +
-                "resources_at_ref,builds_at_ref,timestamp_utc");
+                "resources_p1_at_ref,resources_p2_at_ref," +
+                "builds_p1_at_ref,builds_p2_at_ref,timestamp_utc");
             _writer.Flush();
 
             Debug.Log($"[ExperimentLogger] Лог открыт: {_filePath}");
@@ -82,8 +96,10 @@ namespace RTS.Logging
             _episodeReward   = 0f;
             _invalidActions  = 0;
             _totalActions    = 0;
-            _resourcesAtRef  = 0;
-            _buildCountAtRef = 0;
+            _resourcesP1AtRef = 0;
+            _resourcesP2AtRef = 0;
+            _buildsP1AtRef    = 0;
+            _buildsP2AtRef    = 0;
         }
 
         /// <summary>
@@ -97,8 +113,13 @@ namespace RTS.Logging
         /// <summary>
         /// Вызывать каждый шаг агента, передавая инкрементальную награду.
         /// </summary>
-        public void OnStep(float rewardDelta, bool wasActionInvalid,
-                           int currentResources, int currentBuilds)
+        public void OnStep(
+            float rewardDelta,
+            bool wasActionInvalid,
+            int currentResourcesP1,
+            int currentResourcesP2,
+            int currentBuildsP1,
+            int currentBuildsP2)
         {
             _stepCount++;
             _episodeReward += rewardDelta;
@@ -107,8 +128,10 @@ namespace RTS.Logging
 
             if (_stepCount == referenceStep)
             {
-                _resourcesAtRef  = currentResources;
-                _buildCountAtRef = currentBuilds;
+                _resourcesP1AtRef = currentResourcesP1;
+                _resourcesP2AtRef = currentResourcesP2;
+                _buildsP1AtRef    = currentBuildsP1;
+                _buildsP2AtRef    = currentBuildsP2;
             }
         }
 
@@ -117,6 +140,8 @@ namespace RTS.Logging
         /// </summary>
         public void OnEpisodeEnd(bool win)
         {
+            EnsureWriterInitialized();
+
             float invalidRate = _totalActions > 0
                 ? (float)_invalidActions / _totalActions
                 : 0f;
@@ -124,11 +149,13 @@ namespace RTS.Logging
             string line = string.Join(",",
                 _episodeIndex,
                 _stepCount,
-                _episodeReward.ToString("F4"),
+                _episodeReward.ToString("F4", CultureInfo.InvariantCulture),
                 win ? 1 : 0,
-                invalidRate.ToString("F4"),
-                _resourcesAtRef,
-                _buildCountAtRef,
+                invalidRate.ToString("F4", CultureInfo.InvariantCulture),
+                _resourcesP1AtRef,
+                _resourcesP2AtRef,
+                _buildsP1AtRef,
+                _buildsP2AtRef,
                 DateTime.UtcNow.ToString("o"));
 
             _writer.WriteLine(line);

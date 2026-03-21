@@ -66,25 +66,19 @@ namespace RTS.Gameplay
 
         private void HandleKeyboardInput()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER
             if (Input.GetKeyDown(stepOneKey))
-            {
                 Step(1);
-            }
 
             if (Input.GetKeyDown(stepTenKey))
-            {
                 Step(10);
-            }
 
             if (Input.GetKeyDown(togglePlayKey))
-            {
                 TogglePlayPause();
-            }
 
             if (Input.GetKeyDown(resetKey))
-            {
                 ResetMatch();
-            }
+#endif
         }
 
         // ── Public API ───────────────────────────────────────────────────────────

@@ -51,7 +51,8 @@ namespace RTS.Testing
 
         private void FixedUpdate()
         {
-            if (!TestIsRunning())
+            // Продолжаем работать пока идёт подсчёт шагов ИЛИ пока ждём терминала после них.
+            if (!TestIsRunning() && !_waitingForTerminal)
             {
                 return;
             }

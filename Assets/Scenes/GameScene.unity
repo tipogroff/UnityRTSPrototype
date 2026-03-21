@@ -731,7 +731,7 @@ MonoBehaviour:
   _resourceManager: {fileID: 0}
   _matchManager: {fileID: 0}
   _nearbyResourceDistance: 2
-  _maxWorkerLimit: 5
+  _maxWorkerLimit: 1
   _enableDebugLog: 0
 --- !u!4 &1871236521
 Transform:
