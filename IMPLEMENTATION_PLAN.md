@@ -82,14 +82,148 @@
 
 ## Неделя 3: Интерфейс агента (наблюдения/действия)
 
+Цель недели:
+- Сделать среду технически готовой для управления агентом через формализованный интерфейс:
+	состояние среды -> observation -> action mask -> выбор действия -> декодирование -> применение -> следующий шаг.
+
+Главный инженерный принцип:
+- Heuristic policy, будущий ML-Agent и debug/test drivers обязаны использовать один и тот же action pipeline.
+- Целевой поток данных: `Policy / Heuristic / Test Driver -> AgentAction -> ActionDecoder / ActionApplier -> MatchManager.ApplyCommand()`.
+- Формат недели проектируется не вокруг удобства эвристики, а вокруг совместимости с Gym-μRTS.
+
 Задачи:
-- Реализовать структуру наблюдений (spatial/grid представление).
-- Реализовать дискретные ветви действий.
-- Реализовать invalid action masking.
-- Добавить heuristic-политику для отладки.
+- Зафиксировать observation contract в режиме compatibility-first:
+	- размер карты и порядок каналов;
+	- нормализацию признаков;
+	- friendly/enemy encoding;
+	- отдельный документ соответствия `Unity observation <-> Gym-μRTS observation`.
+- Реализовать `ObservationBuilder` с разделением на:
+	- spatial observation (`W x H x C`);
+	- global scalars;
+	- API вида `BuildObservation(playerId)`.
+- Реализовать две версии action space:
+	- `v1_debug_action_space` — упрощённый, удобный для smoke/debug;
+	- `v1_microrts_compatible_action_space` — максимально близкий к Gym-μRTS контракту.
+- Ввести единый `AgentAction` как внутреннюю промежуточную форму между policy и матчевой логикой.
+- Реализовать отдельные модули:
+	- `ActionDecoder` (`policy output -> AgentAction`);
+	- `ActionApplier` (`AgentAction -> MatchCommand / MatchManager`).
+- Реализовать invalid action masking как отдельный совместимый модуль:
+	- `ActionMaskBuilder`;
+	- actor mask;
+	- action-type mask;
+	- parameter/direction mask;
+	- post-validation не удаляется даже при наличии маски.
+- Формально зафиксировать, какие действия считаются invalid:
+	- несуществующий actor;
+	- actor противника или уничтоженный actor;
+	- невозможное перемещение;
+	- harvest без ресурса;
+	- return без carry;
+	- attack без цели в диапазоне;
+	- production без ресурсов или при занятой очереди;
+	- действие, не поддерживаемое данным типом сущности.
+- Перевести heuristic policy на новый интерфейс:
+	- heuristic может читать runtime state,
+	- но наружу обязана выдавать тот же `AgentAction`, что и будущая ML policy.
+- Подготовить несколько debug-режимов heuristic policy:
+	- economy-first;
+	- combat-first;
+	- mixed.
+- Добавить smoke/debug инструменты для проверки observation/action/mask pipeline:
+	- Move scenario;
+	- Harvest/Return scenario;
+	- Attack scenario;
+	- Production scenario;
+	- Invalid-action fallback scenario.
+- Добавить verbose/debug diagnostics:
+	- краткий дамп observation;
+	- выбранный actor;
+	- допустимые action types;
+	- выбранное действие;
+	- результат применения;
+	- причина отклонения invalid action.
 
 Результат недели:
-- Среда технически готова принимать решения от агента.
+- Среда технически готова принимать решения от агента через единый формализованный интерфейс.
+- Observation/action/mask contracts зафиксированы и не расходятся с будущим transfer pipeline.
+- Debug heuristic и smoke-инструменты проверяют тот же downstream pipeline, который будет использовать ML-Agent.
+
+Рекомендуемая последовательность по дням:
+
+День 1. Проектирование контракта
+- Зафиксировать в markdown/spec-документе:
+	- формат observation;
+	- порядок spatial-каналов;
+	- состав global features;
+	- состав action branches;
+	- правила invalid action;
+	- mapping `Unity <-> Gym-μRTS` для observation/action semantics.
+
+Итог дня:
+- Есть короткий spec-документ.
+- Код не пишется без заранее утвержденной модели данных.
+
+День 2. Реализация ObservationBuilder
+- Реализовать builder spatial observation.
+- Реализовать builder global features.
+- Добавить тестовый dump/debug output observation.
+- Добавить базовые проверки размерности, friendly/enemy encoding и стабильности формата.
+
+Итог дня:
+- На любом шаге можно получить observation для заданного `playerId`.
+
+День 3. Реализация Action contract
+- Реализовать `AgentAction`.
+- Зафиксировать `ActionType`/ветви действий.
+- Реализовать actor selection.
+- Реализовать decode discrete branches.
+- Реализовать применение действия через `ActionApplier -> MatchManager.ApplyCommand()`.
+
+Итог дня:
+- Можно вручную сформировать action и корректно применить его в матче.
+
+День 4. Invalid Action Masking
+- Реализовать `ActionMaskBuilder`.
+- Добавить actor mask.
+- Добавить action type mask.
+- Добавить direction / parameter masks.
+- Оставить fallback validation при применении действия как обязательный серверный слой.
+
+Итог дня:
+- Среда умеет вычислять допустимое множество действий.
+
+День 5. Heuristic policy через новый интерфейс
+- Реализовать heuristic agent / adapter.
+- Перевести heuristic на выбор `AgentAction` через observation/mask.
+- Прогнать базовые эпизоды на `v1_debug_action_space`.
+- Проверить, что downstream pipeline совпадает с pipeline будущего ML-Agent.
+
+Итог дня:
+- Без ML уже можно гонять матчи через агентный интерфейс.
+
+День 6. Smoke-тесты и фиксы
+- Добавить сценарии проверки:
+	- move;
+	- harvest/return;
+	- attack;
+	- production;
+	- invalid action fallback.
+- Добавить логирование invalid attempts.
+- Исправить расхождения между observation, mask и runtime.
+
+Итог дня:
+- Observation/action/mask pipeline стабилен на ключевых сценариях.
+
+День 7. Полировка и подготовка к следующей неделе
+- Очистить API.
+- Убрать дублирование между debug и compatible слоями.
+- Документировать public methods.
+- Зафиксировать ограничения первой версии.
+- Подготовить основу под интеграцию ML-Agent на Week 4.
+
+Итог дня:
+- Система готова к подключению реальной policy.
 
 ## Неделя 4: Награда и стабилизация RL-контура
 
@@ -107,19 +241,24 @@
 - Подготовить воспроизводимый Python-контур.
 - Получить teacher policy и экспортировать траектории для BC.
 - Проверить совместимость форматов observation/action с Unity-контуром.
+- Зафиксировать документ соответствия `Unity <-> Gym-μRTS` для observation/action/mask semantics.
 
 Результат недели:
-- Готов датасет траекторий и проверка совместимости входов/выходов.
+- Готов датасет траекторий и подтверждена совместимость входов/выходов на уровне контракта.
 
 ## Неделя 6: Интеграция BC в Unity
 
 Задачи:
 - Подключить BC/distillation путь управления противником.
+- Делать ставку на partial transfer, а не на full direct transfer:
+	- перенос encoder/backbone;
+	- частичная инициализация policy head;
+	- teacher-student / fine-tuning на Unity-траекториях.
 - Прогнать тестовые матчи и проверить адекватность поведения.
 - Исправить рассинхронизацию таймингов и масок.
 
 Результат недели:
-- Противник управляется через transfer-подход в Unity.
+- Противник управляется через реалистичный transfer-подход в Unity без требования полного побитового совпадения с Gym-μRTS.
 
 ## Неделя 7: Сравнительные эксперименты
 
