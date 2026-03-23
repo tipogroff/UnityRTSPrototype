@@ -89,21 +89,23 @@
 Главный инженерный принцип:
 - Heuristic policy, будущий ML-Agent и debug/test drivers обязаны использовать один и тот же action pipeline.
 - Целевой поток данных: `Policy / Heuristic / Test Driver -> AgentAction -> ActionDecoder / ActionApplier -> MatchManager.ApplyCommand()`.
-- Формат недели проектируется не вокруг удобства эвристики, а вокруг совместимости с Gym-μRTS.
+- Формат недели проектируется не вокруг удобства эвристики, а вокруг transfer-совместимости с Gym-μRTS: reference-compatible слой + Unity MVP слой.
 
 Задачи:
-- Зафиксировать observation contract в режиме compatibility-first:
+- Зафиксировать двухслойный observation contract:
+	- `LegacyGymCompatibleSpec` (референсный слой совместимости);
+	- `UnityMvpTransferSpec` (рабочий слой для MVP/fine-tuning);
 	- размер карты и порядок каналов;
 	- нормализацию признаков;
 	- friendly/enemy encoding;
-	- отдельный документ соответствия `Unity observation <-> Gym-μRTS observation`.
+	- отдельный документ соответствия `Unity observation <-> Gym-μRTS observation` + фиксированный список расхождений.
 - Реализовать `ObservationBuilder` с разделением на:
 	- spatial observation (`W x H x C`);
 	- global scalars;
 	- API вида `BuildObservation(playerId)`.
 - Реализовать две версии action space:
 	- `v1_debug_action_space` — упрощённый, удобный для smoke/debug;
-	- `v1_microrts_compatible_action_space` — максимально близкий к Gym-μRTS контракту.
+	- `v1_transfer_compatible_action_space` — Gym-μRTS-inspired MVP-контракт для переноса с адаптацией.
 - Ввести единый `AgentAction` как внутреннюю промежуточную форму между policy и матчевой логикой.
 - Реализовать отдельные модули:
 	- `ActionDecoder` (`policy output -> AgentAction`);
@@ -113,6 +115,8 @@
 	- actor mask;
 	- action-type mask;
 	- parameter/direction mask;
+	- правила маски строятся от Unity-authoritative validation;
+	- отдельно маркируются Gym-semantics-compatible и Unity-only runtime rules;
 	- post-validation не удаляется даже при наличии маски.
 - Формально зафиксировать, какие действия считаются invalid:
 	- несуществующий actor;
@@ -125,7 +129,8 @@
 	- действие, не поддерживаемое данным типом сущности.
 - Перевести heuristic policy на новый интерфейс:
 	- heuristic может читать runtime state,
-	- но наружу обязана выдавать тот же `AgentAction`, что и будущая ML policy.
+	- но наружу обязана выдавать тот же `AgentAction`, что и будущая ML policy;
+	- heuristic policy не является источником истины для контракта и используется только как инструмент проверки pipeline.
 - Подготовить несколько debug-режимов heuristic policy:
 	- economy-first;
 	- combat-first;
@@ -153,20 +158,27 @@
 
 День 1. Проектирование контракта
 - Зафиксировать в markdown/spec-документе:
+	- два уровня спецификации: `LegacyGymCompatibleSpec` и `UnityMvpTransferSpec`;
 	- формат observation;
 	- порядок spatial-каналов;
 	- состав global features;
 	- состав action branches;
 	- правила invalid action;
-	- mapping `Unity <-> Gym-μRTS` для observation/action semantics.
+	- mapping `Unity <-> Gym-μRTS` для observation/action semantics;
+	- явный список различий между reference-compatible и Unity MVP слоями.
+
+Документ Day 1:
+- `WEEK3_CONTRACT_SPEC.md`
 
 Итог дня:
-- Есть короткий spec-документ.
+- Зафиксированы референсный Gym-слой и рабочий Unity-слой, а также их различия.
 - Код не пишется без заранее утвержденной модели данных.
 
 День 2. Реализация ObservationBuilder
-- Реализовать builder spatial observation.
-- Реализовать builder global features.
+- Реализовать builder spatial observation с поддержкой двух режимов:
+	- compat-mode observation (reference-compatible слой);
+	- extended/debug-mode observation (Unity MVP слой).
+- Реализовать builder global features для Unity MVP слоя.
 - Добавить тестовый dump/debug output observation.
 - Добавить базовые проверки размерности, friendly/enemy encoding и стабильности формата.
 
@@ -175,10 +187,15 @@
 
 День 3. Реализация Action contract
 - Реализовать `AgentAction`.
-- Зафиксировать `ActionType`/ветви действий.
+- Зафиксировать два входных action-формата:
+	- reference-compatible (для transfer mapping);
+	- debug (для smoke/диагностики).
 - Реализовать actor selection.
-- Реализовать decode discrete branches.
+- Реализовать decode discrete branches для обоих входных форматов.
 - Реализовать применение действия через `ActionApplier -> MatchManager.ApplyCommand()`.
+
+Итоговое правило дня:
+- Оба action-формата сводятся в единый `AgentAction` и проходят один downstream pipeline.
 
 Итог дня:
 - Можно вручную сформировать action и корректно применить его в матче.
@@ -188,6 +205,8 @@
 - Добавить actor mask.
 - Добавить action type mask.
 - Добавить direction / parameter masks.
+- Строить masking на базе Unity-authoritative validation rules.
+- Отдельно фиксировать: какие mask-правила Gym-semantics-compatible, а какие Unity-only runtime.
 - Оставить fallback validation при применении действия как обязательный серверный слой.
 
 Итог дня:
@@ -197,6 +216,7 @@
 - Реализовать heuristic agent / adapter.
 - Перевести heuristic на выбор `AgentAction` через observation/mask.
 - Прогнать базовые эпизоды на `v1_debug_action_space`.
+- Явно зафиксировать heuristic policy как инструмент проверки observation/action/mask pipeline, а не как эталон контракта.
 - Проверить, что downstream pipeline совпадает с pipeline будущего ML-Agent.
 
 Итог дня:
@@ -217,13 +237,17 @@
 
 День 7. Полировка и подготовка к следующей неделе
 - Очистить API.
-- Убрать дублирование между debug и compatible слоями.
+- Убрать дублирование между debug и transfer-compatible слоями.
 - Документировать public methods.
 - Зафиксировать ограничения первой версии.
+- Финализировать `WEEK3_COMPATIBILITY_GAP_LIST.md`: что совпадает с Gym-μRTS, а что сознательно адаптировано под Unity MVP.
+  - Все новые gaps, обнаруженные в дни 2–6, должны быть добавлены в список.
+  - Для каждого gap'а зафиксировать mitigation strategy.
 - Подготовить основу под интеграцию ML-Agent на Week 4.
 
 Итог дня:
 - Система готова к подключению реальной policy.
+- Финализирован артефакт `WEEK3_COMPATIBILITY_GAP_LIST.md` для раздела 3.3 диссертации.
 
 ## Неделя 4: Награда и стабилизация RL-контура
 
