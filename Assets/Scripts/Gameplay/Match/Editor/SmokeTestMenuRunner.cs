@@ -1,14 +1,36 @@
 // SmokeTestMenuRunner.cs — EditorScript для запуска smoke-test через меню Unity.
 // Автоматически удаляется после тестирования.
 #if UNITY_EDITOR
+using System.Reflection;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using RTS.Gameplay;
+using RTS.ML;
 
 namespace RTS.Testing.Editor
 {
     public static class SmokeTestMenuRunner
     {
+        [MenuItem("SmokeTest/0 - Ensure ActionApplierSmokeTest Object")]
+        public static void EnsureMlSmokeTestObject()
+        {
+            ActionApplierSmokeTest existing = Object.FindFirstObjectByType<ActionApplierSmokeTest>();
+            if (existing != null)
+            {
+                Debug.Log("[SmokeTest] ActionApplierSmokeTest already exists in scene.");
+                return;
+            }
+
+            GameObject host = new GameObject("ActionApplierSmokeTest");
+            host.AddComponent<ActionApplierSmokeTest>();
+
+            EditorSceneManager.MarkSceneDirty(host.scene);
+            EditorSceneManager.SaveOpenScenes();
+
+            Debug.Log("[SmokeTest] Created persistent ActionApplierSmokeTest object and saved scene.");
+        }
+
         [MenuItem("SmokeTest/1 - Print Match State")]
         public static void PrintMatchState()
         {
@@ -182,6 +204,36 @@ namespace RTS.Testing.Editor
             {
                 Debug.LogWarning("⚠️  SOME CHECKS FAILED — see above.");
             }
+        }
+
+        [MenuItem("SmokeTest/5 - ML Action Pipeline Smoke Test")]
+        public static void RunMlActionPipelineSmokeTest()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            ActionApplierSmokeTest smoke = Object.FindFirstObjectByType<ActionApplierSmokeTest>();
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("ActionApplierSmokeTest_AutoRunner");
+                smoke = host.AddComponent<ActionApplierSmokeTest>();
+                Debug.Log("[SmokeTest] ActionApplierSmokeTest was auto-created for this run.");
+            }
+
+            MethodInfo runTests = typeof(ActionApplierSmokeTest)
+                .GetMethod("RunTests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (runTests == null)
+            {
+                Debug.LogError("[SmokeTest] RunTests() method not found on ActionApplierSmokeTest.");
+                return;
+            }
+
+            runTests.Invoke(smoke, null);
+            Debug.Log("[SmokeTest] ML Action pipeline smoke test invoked.");
         }
     }
 }
