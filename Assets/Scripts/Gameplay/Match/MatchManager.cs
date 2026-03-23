@@ -120,6 +120,7 @@ namespace RTS.Gameplay
         private readonly List<ResolvedCommand> _harvestDepositCommands = new List<ResolvedCommand>(128);
         private readonly List<ResolvedCommand> _productionCommands = new List<ResolvedCommand>(64);
         private readonly List<ResolvedCommand> _combatCommands = new List<ResolvedCommand>(64);
+        private readonly Dictionary<UnitRuntime, MatchCommand> _lastAppliedCommandByUnit = new Dictionary<UnitRuntime, MatchCommand>(128);
 
         private int _acceptedCommandsThisStep;
         private int _invalidCommandsThisStep;
@@ -178,6 +179,7 @@ namespace RTS.Gameplay
             _combatResolver = null;
             _pendingCommands.Clear();
             ClearPhaseCommandBuffers();
+            _lastAppliedCommandByUnit.Clear();
 
             SeedPlayerCountersFromRegistry();
 
@@ -203,6 +205,7 @@ namespace RTS.Gameplay
             _combatResolver = null;
             _pendingCommands.Clear();
             ClearPhaseCommandBuffers();
+            _lastAppliedCommandByUnit.Clear();
 
             Step = 0;
             MaxSteps = 0;
@@ -223,6 +226,7 @@ namespace RTS.Gameplay
 
             _acceptedCommandsThisStep = 0;
             _invalidCommandsThisStep = 0;
+            _lastAppliedCommandByUnit.Clear();
 
             // 1) Command processing and bucketing by phase.
             ProcessCommandPhase();
@@ -476,7 +480,23 @@ namespace RTS.Gameplay
 
                 _acceptedCommandsThisStep++;
                 TotalAcceptedCommands++;
+                _lastAppliedCommandByUnit[unit] = command;
             }
+        }
+
+        /// <summary>
+        /// Возвращает последнюю принятую команду для юнита в текущем шаге.
+        /// Используется ObservationBuilder для заполнения action channels.
+        /// </summary>
+        public bool TryGetLastAppliedCommand(UnitRuntime unit, out MatchCommand command)
+        {
+            if (unit != null && _lastAppliedCommandByUnit.TryGetValue(unit, out command))
+            {
+                return true;
+            }
+
+            command = default;
+            return false;
         }
 
         private void ExecuteMovementPhase()
