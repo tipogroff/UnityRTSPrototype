@@ -13,7 +13,7 @@ namespace RTS.ML
         Heuristic = 1
     }
 
-    public readonly struct DebugActionSelection
+    internal readonly struct DebugActionSelection
     {
         public DebugActionSelection(int actorIndexFlat, int actionType, int direction, int produceUnitType, int attackTargetLocal)
         {
@@ -43,7 +43,7 @@ namespace RTS.ML
         }
     }
 
-    public readonly struct HeuristicDecisionTrace
+    internal readonly struct HeuristicDecisionTrace
     {
         public HeuristicDecisionTrace(
             Owner playerId,
@@ -86,10 +86,10 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Day 5 heuristic adapter that intentionally runs through the same
-    /// observation/mask/debug-action/decoder/applier pipeline as ML-Agent will use.
+    /// Heuristic controller that intentionally routes decisions through the Week 3 policy pipeline.
     ///
-    /// This policy is a debug/baseline integration tool, not a reference semantics oracle.
+    /// This component is a debug and integration tool. It is not the canonical contract surface
+    /// for transfer compatibility and should not be treated as a semantic oracle.
     /// </summary>
     [DisallowMultipleComponent]
     public class HeuristicPolicyAdapter : MonoBehaviour
@@ -109,14 +109,14 @@ namespace RTS.ML
         [SerializeField] private bool _enableDecisionLogs = false;
         [SerializeField] private bool _logMaskSummary = false;
 
-        private ObservationBuilder _observationBuilder;
-        private ActionMaskBuilder _actionMaskBuilder;
-        private ActionDecoder _actionDecoder;
-        private ActionApplier _actionApplier;
+        private MlPolicyPipelineFacade _policyPipeline;
 
         private readonly List<UnitRuntime> _unitsScratch = new List<UnitRuntime>(64);
         private readonly StringBuilder _logBuilder = new StringBuilder(256);
 
+        /// <summary>
+        /// Injects runtime references and rebuilds the Week 3 heuristic pipeline wrapper.
+        /// </summary>
         public void Initialize(
             GridManager gridManager,
             UnitRegistry unitRegistry,
@@ -132,11 +132,23 @@ namespace RTS.ML
             EnsurePipeline();
         }
 
+        /// <summary>
+        /// Resets internal heuristic state.
+        ///
+        /// The current heuristic is stateless, but the explicit entry point is kept so Week 4 can
+        /// add deterministic state without changing the calling code.
+        /// </summary>
         public void ResetHeuristicState()
         {
             // Reserved for future deterministic stateful heuristics.
         }
 
+        /// <summary>
+        /// Executes one heuristic decision step for the currently enabled players.
+        ///
+        /// Downstream execution still converges into the same ActionApplier and MatchManager path
+        /// that a future ML policy will use.
+        /// </summary>
         public void ExecuteDecisionStep()
         {
             EnsurePipeline();
@@ -156,17 +168,17 @@ namespace RTS.ML
             }
         }
 
-        public HeuristicDecisionTrace DecideAndApply(Owner playerId)
+        internal HeuristicDecisionTrace DecideAndApply(Owner playerId)
         {
             return DecideAndApplyInternal(playerId, preferredActorType: null);
         }
 
-        public HeuristicDecisionTrace DecideAndApplyForPreferredActorType(Owner playerId, UnitType preferredActorType)
+        internal HeuristicDecisionTrace DecideAndApplyForPreferredActorType(Owner playerId, UnitType preferredActorType)
         {
             return DecideAndApplyInternal(playerId, preferredActorType, preferredActorIndexFlat: null);
         }
 
-        public HeuristicDecisionTrace DecideAndApplyForActor(Owner playerId, GridPosition actorPosition)
+        internal HeuristicDecisionTrace DecideAndApplyForActor(Owner playerId, GridPosition actorPosition)
         {
             return DecideAndApplyInternal(playerId, preferredActorType: null, preferredActorIndexFlat: actorPosition.ToFlatIndex());
         }
@@ -189,8 +201,8 @@ namespace RTS.ML
                     applierRejection: string.Empty);
             }
 
-            float[] observation = _observationBuilder.BuildObservation(playerId, ObservationMode.UnityMvpTransfer);
-            DebugActionMaskSet debugMask = _actionMaskBuilder.BuildDebugMask(playerId);
+            ObservationPackage package = _policyPipeline.BuildObservationPackage(playerId, ObservationMode.UnityMvpTransfer);
+            DebugActionMaskSet debugMask = _policyPipeline.BuildDebugMask(playerId);
 
             if (_logMaskSummary)
             {
@@ -198,23 +210,17 @@ namespace RTS.ML
             }
 
             DebugActionSelection selection = SelectDebugAction(playerId, debugMask, preferredActorType, preferredActorIndexFlat, out string reason);
-            AgentAction decoded = _actionDecoder.DecodeDebug(
-                selection.ActorIndexFlat,
-                selection.ActionType,
-                selection.Direction,
-                selection.ProduceUnitType,
-                selection.AttackTargetLocal);
-
-            _actionApplier.ResetDiagnostics();
-            bool accepted = _actionApplier.ApplyAction(decoded, playerId, debugMask.TransferMask, "heuristic");
-            string applierRejection = _actionApplier.RejectionReasonsLastStep.Count > 0
-                ? _actionApplier.RejectionReasonsLastStep[0]
-                : string.Empty;
+            PolicyExecutionReport execution = _policyPipeline.ExecuteDebugSelection(selection, playerId, debugMask.TransferMask, "heuristic");
+            AgentAction decoded = execution.DecodedActions.Count > 0
+                ? execution.DecodedActions[0]
+                : AgentAction.CreateNoOp(ActionSourceType.Debug);
+            bool accepted = execution.AcceptedCount > 0;
+            string applierRejection = execution.PrimaryRejectionReason;
 
             var trace = new HeuristicDecisionTrace(
                 playerId,
                 usedPipeline: true,
-                observation: (float[])observation.Clone(),
+                observation: package.SpatialObservation,
                 transferMask: debugMask.TransferMask,
                 selectedDebugAction: selection,
                 decodedAction: decoded,
@@ -230,13 +236,16 @@ namespace RTS.ML
             return trace;
         }
 
+        /// <summary>
+        /// Selects which players should be driven by the heuristic adapter.
+        /// </summary>
         public void SetPlayerControlModes(HeuristicControlMode player1, HeuristicControlMode player2)
         {
             _player1Control = player1;
             _player2Control = player2;
         }
 
-        public bool TryGetPipelineDiagnostics(out string diagnostics)
+        internal bool TryGetPipelineDiagnostics(out string diagnostics)
         {
             EnsurePipeline();
             diagnostics = string.Empty;
@@ -828,7 +837,9 @@ namespace RTS.ML
                     firstAvailable = localIndex;
                 }
 
-                GridPosition targetPos = AttackLocalToAbsolute(actorPos, localIndex);
+                GridPosition targetPos = ActionContractMappings.TryGetAttackTargetPosition(actorPos, localIndex, out GridPosition absoluteTarget)
+                    ? absoluteTarget
+                    : actorPos;
                 UnitRuntime targetUnit = _gridManager.GetOccupant(targetPos);
                 if (targetUnit == null || !targetUnit.IsAlive)
                 {
@@ -863,39 +874,21 @@ namespace RTS.ML
             return false;
         }
 
-        private static GridPosition AttackLocalToAbsolute(GridPosition actorPos, int localIndex)
-        {
-            if (localIndex < 0 || localIndex >= ActionContract.AttackOffsets.Length)
-            {
-                return actorPos;
-            }
-
-            var (dx, dy) = ActionContract.AttackOffsets[localIndex];
-            return new GridPosition(actorPos.X + dx, actorPos.Y + dy);
-        }
-
         private void EnsurePipeline()
         {
             ResolveReferences();
 
-            if (_observationBuilder == null && _gridManager != null && _unitRegistry != null && _resourceManager != null)
+            if (_policyPipeline == null
+                && _gridManager != null
+                && _unitRegistry != null
+                && _matchManager != null)
             {
-                _observationBuilder = new ObservationBuilder(_gridManager, _unitRegistry, _resourceManager);
-            }
-
-            if (_actionMaskBuilder == null && _matchManager != null && _gridManager != null && _unitRegistry != null)
-            {
-                _actionMaskBuilder = new ActionMaskBuilder(_matchManager, _gridManager, _resourceManager, _unitRegistry, _matchBootstrap);
-            }
-
-            if (_actionDecoder == null && _gridManager != null && _unitRegistry != null)
-            {
-                _actionDecoder = new ActionDecoder(_gridManager, _unitRegistry);
-            }
-
-            if (_actionApplier == null && _gridManager != null && _unitRegistry != null && _matchManager != null)
-            {
-                _actionApplier = new ActionApplier(_gridManager, _unitRegistry, _matchManager, _resourceManager);
+                _policyPipeline = new MlPolicyPipelineFacade(
+                    _gridManager,
+                    _unitRegistry,
+                    _resourceManager,
+                    _matchManager,
+                    _matchBootstrap);
             }
         }
 
@@ -914,10 +907,7 @@ namespace RTS.ML
                    && _unitRegistry != null
                    && _resourceManager != null
                    && _matchManager != null
-                   && _observationBuilder != null
-                   && _actionMaskBuilder != null
-                   && _actionDecoder != null
-                   && _actionApplier != null;
+                   && _policyPipeline != null;
         }
     }
 }

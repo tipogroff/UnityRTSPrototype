@@ -18,6 +18,11 @@ namespace RTS.ML
     /// <summary>
     /// Контракт пространства действий.
     ///
+    /// Важно для Week 3 v1:
+    /// - это transfer-compatible MVP surface, а не claim о полной Gym parity;
+    /// - attack targeting намеренно ограничен локальной 3×3 окрестностью;
+    /// - более широкие action semantics и richer production spaces остаются за пределами текущего контракта.
+    ///
     /// Ветвь                       Размер  Значения
     /// ──────────────────────────────────────────────────────────────────────
     /// BRANCH_ACTION_TYPE          6       0=NoOp, 1=Move, 2=Harvest,

@@ -18,16 +18,11 @@ using RTS.Gameplay;
 namespace RTS.ML
 {
     /// <summary>
-    /// Decodes policy output into unified AgentAction representation.
-    /// 
-    /// Supports two input formats:
-    /// 1. TransferCompatible: policy output is per-cell multi-discrete [576, 7]
-    ///    - DecodeTransferCompatibleBatch() returns all non-NoOp actions (multi-command per step)
-    ///    - DecodeTransferCompatible() is a single-action wrapper for backward compatibility
-    /// 2. Debug: policy output is single-actor simplified [5 branches]
-    ///    - DecodeDebug() returns one AgentAction, flows through same downstream pipeline
-    /// 
-    /// Conflict resolution (multiple commands per actor in one step) is handled by ActionApplier.
+    /// Decodes policy output into unified AgentAction values.
+    ///
+    /// Transfer-compatible decoding is the production-facing Week 3 contract. Debug decoding is
+    /// intentionally assembly-local and exists for smoke tests, heuristics, and diagnostics.
+    /// Conflict resolution for duplicate actors is handled later by ActionApplier.
     /// </summary>
     public class ActionDecoder
     {
@@ -102,24 +97,12 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Decode action from v1_debug_action_space (single-actor simplified).
-        /// 
-        /// Input: 5 discrete values
-        ///   [b0] actor_index_flat: 0..(H*W-1) or H*W (NoActor)
-        ///   [b1] action_type: 0..5
-        ///   [b2] direction: 0..3
-        ///   [b3] produce_unit_type: 0..3
-        ///   [b4] attack_target_local: 0..8
-        /// 
-        /// Processing:
-        ///   - If actor_index == H*W, return NoOp
-        ///   - Otherwise, resolve cell from flat index
-        ///   - Validate actor ownership
-        ///   - Construct AgentAction with specified parameters
-        /// 
-        /// Output: Single AgentAction.
+        /// Decodes the assembly-local debug action format used by smoke and heuristic tooling.
+        ///
+        /// This path intentionally stays separate from the transfer-compatible contract and should
+        /// not be treated as a claim of semantic parity with the reference action surface.
         /// </summary>
-        public AgentAction DecodeDebug(int actorIndexFlat, int actionType, int direction, int produceUnitType, int attackTargetLocal)
+        internal AgentAction DecodeDebug(int actorIndexFlat, int actionType, int direction, int produceUnitType, int attackTargetLocal)
         {
             // Check for NoActor marker
             if (actorIndexFlat >= ActionContract.TotalCells)
@@ -168,7 +151,7 @@ namespace RTS.ML
             GridPosition attackTarget = default;
             if (unitActionType == UnitActionType.Attack)
             {
-                if (!TryDecodeAttackTarget(actorPos, attackTargetLocal, out attackTarget))
+                if (!ActionContractMappings.TryGetAttackTargetPosition(actorPos, attackTargetLocal, out attackTarget))
                 {
                     return AgentAction.CreateInvalid(
                         actorPos,
@@ -280,7 +263,7 @@ namespace RTS.ML
             GridPosition attackTargetPos = GridPosition.Zero;
             if (unitActionType == UnitActionType.Attack)
             {
-                TryDecodeAttackTarget(cellPos, attackTargetValue, out attackTargetPos);
+                ActionContractMappings.TryGetAttackTargetPosition(cellPos, attackTargetValue, out attackTargetPos);
             }
 
             action = new AgentAction(
@@ -326,7 +309,9 @@ namespace RTS.ML
                 _ => 0
             };
 
-            return IndexToDirection(dirValue);
+            return ActionContractMappings.TryDirectionFromIndex(dirValue, out var direction)
+                ? direction
+                : Direction.North;
         }
 
         /// <summary>
@@ -359,8 +344,7 @@ namespace RTS.ML
                 return false;
             }
 
-            direction = (Direction)value;
-            return true;
+            return ActionContractMappings.TryDirectionFromIndex(value, out direction);
         }
 
         /// <summary>
@@ -380,42 +364,5 @@ namespace RTS.ML
             return true;
         }
 
-        /// <summary>
-        /// Convert direction index to Direction enum.
-        /// </summary>
-        private Direction IndexToDirection(int index)
-        {
-            return index switch
-            {
-                0 => Direction.North,
-                1 => Direction.East,
-                2 => Direction.South,
-                3 => Direction.West,
-                _ => Direction.North
-            };
-        }
-
-        /// <summary>
-        /// Convert attack target local 3x3 index to absolute grid position.
-        /// 3x3 layout:
-        ///   0 1 2
-        ///   3 4 5
-        ///   6 7 8
-        /// Center (4) is the actor position.
-        /// </summary>
-        private bool TryDecodeAttackTarget(GridPosition actor, int localIndex, out GridPosition targetPos)
-        {
-            targetPos = GridPosition.Zero;
-
-            if (localIndex < 0 || localIndex >= ActionContract.AttackOffsets.Length)
-                return false;
-
-            var (dX, dY) = ActionContract.AttackOffsets[localIndex];
-            int targetX = actor.X + dX;
-            int targetY = actor.Y + dY;
-
-            targetPos = new GridPosition(targetX, targetY);
-            return targetPos.IsInsideMap();
-        }
     }
 }

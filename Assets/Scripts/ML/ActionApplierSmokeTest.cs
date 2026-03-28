@@ -10,6 +10,7 @@
 // 9. [NEW] Batch conflict resolution — two commands for same actor (first-wins)
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using RTS.Core;
 using RTS.Gameplay;
@@ -367,7 +368,7 @@ namespace RTS.ML
             int accepted = _applier.ApplyActions(dualBatch, Owner.Player1);
 
             // Expected: action1 either accepted or rejected by MatchManager, action2 always rejected by conflict policy
-            bool conflictCaught = _applier.RejectionReasonsLastStep.Exists(
+            bool conflictCaught = _applier.RejectionReasonsLastStep.Any(
                 r => r.Contains("Duplicate command") || r.Contains("first-wins"));
 
             Debug.Log($"[ActionApplierSmokeTest] Accepted: {accepted}, Rejected: {_applier.RejectedActionsLastStep}");
@@ -395,7 +396,7 @@ namespace RTS.ML
                     sourceType:   ActionSourceType.Debug);
 
                 bool applied = _applier.ApplyAction(action, Owner.Player1);
-                bool phaseRejected = _applier.RejectionReasonsLastStep.Exists(
+                bool phaseRejected = _applier.RejectionReasonsLastStep.Any(
                     r => r.Contains("not in Running phase"));
 
                 Debug.Log($"[ActionApplierSmokeTest] {(!applied && phaseRejected ? "✓" : "✗")} Action rejected for non-Running phase ({currentPhase})");
@@ -442,7 +443,7 @@ namespace RTS.ML
 
             if (isBusy)
             {
-                bool busyRejected = _applier.RejectionReasonsLastStep.Exists(
+                bool busyRejected = _applier.RejectionReasonsLastStep.Any(
                     r => r.Contains("queue is busy"));
                 Debug.Log($"[ActionApplierSmokeTest] {(!applied && busyRejected ? "✓" : "✗")} Queue busy rejection works");
             }

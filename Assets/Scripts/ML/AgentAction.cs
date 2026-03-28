@@ -16,16 +16,14 @@ using RTS.Gameplay;
 namespace RTS.ML
 {
     /// <summary>
-    /// Unified intermediate representation of an agent action.
-    /// 
-    /// This struct captures a complete action for a specific actor:
-    /// - Who acts (GridPosition of the actor)
-    /// - What action (UnitActionType: NoOp, Move, Harvest, Return, Produce, Attack)
-    /// - Direction(s) and parameters for the action
-    /// - Whether the action is valid according to current game state
-    /// 
-    /// Both v1_transfer_compatible and v1_debug action formats decode into this structure.
-    /// The ActionApplier then converts AgentAction into MatchCommand for the game engine.
+    /// Unified intermediate representation of one decoded action intent.
+    ///
+    /// AgentAction bridges semantic layers without erasing their differences:
+    /// - transfer-compatible decoding uses it as the production-facing Week 3 policy contract;
+    /// - debug decoding uses the same shape for smoke and diagnostics only.
+    ///
+    /// Runtime authority still does not live here. Even a structurally valid AgentAction may be
+    /// rejected later by ActionApplier or MatchManager.
     /// </summary>
     public readonly struct AgentAction
     {

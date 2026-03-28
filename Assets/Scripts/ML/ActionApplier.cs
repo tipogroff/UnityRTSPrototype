@@ -28,6 +28,11 @@ using RTS.Gameplay;
 
 namespace RTS.ML
 {
+    /// <summary>
+    /// Classification of why an action was rejected or surfaced as invalid.
+    ///
+    /// These categories are diagnostic only. They do not alter authoritative runtime behavior.
+    /// </summary>
     public enum InvalidAttemptCategory
     {
         ObservationMismatch,
@@ -37,6 +42,13 @@ namespace RTS.ML
         ExpectedFallback
     }
 
+    /// <summary>
+    /// Structured record emitted when ActionApplier rejects or classifies an invalid attempt.
+    ///
+    /// The log captures decoder-side metadata, mask state at selection time, and the final
+    /// authoritative rejection reason. It should not be interpreted as proof that masks replace
+    /// runtime validation.
+    /// </summary>
     public readonly struct InvalidActionAttemptLog
     {
         public InvalidActionAttemptLog(
@@ -108,11 +120,12 @@ namespace RTS.ML
         private readonly UnitRegistry _unitRegistry;
         private readonly MatchManager _matchManager;
         private readonly ResourceManager _resourceManager;
+        private readonly List<string> _rejectionReasonsLastStep;
 
         // Diagnostics tracking
         public int AcceptedActionsLastStep { get; private set; }
         public int RejectedActionsLastStep { get; private set; }
-        public List<string> RejectionReasonsLastStep { get; private set; }
+        public IReadOnlyList<string> RejectionReasonsLastStep => _rejectionReasonsLastStep;
         public InvalidActionAttemptLog? LastInvalidAttempt { get; private set; }
 
         public event System.Action<InvalidActionAttemptLog> OnInvalidActionAttempt;
@@ -124,16 +137,15 @@ namespace RTS.ML
             _matchManager = matchManager ?? throw new System.ArgumentNullException(nameof(matchManager));
             _resourceManager = resourceManager ?? ResourceManager.Instance;
 
-            RejectionReasonsLastStep = new List<string>();
+            _rejectionReasonsLastStep = new List<string>();
             ResetDiagnostics();
         }
 
         /// <summary>
-        /// Apply a single AgentAction.
-        /// 
-        /// Returns:
-        ///   true  - action was accepted and applied
-        ///   false - action was rejected (check RejectionReasonsLastStep for reason)
+        /// Applies one decoded action through the authoritative runtime validation path.
+        ///
+        /// Masks are not consulted here. This is the production contract surface that always
+        /// defers final truth to ActionApplier and MatchManager.
         /// </summary>
         public bool ApplyAction(AgentAction action, Owner playerPerspective)
         {
@@ -141,9 +153,12 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Apply a single AgentAction with optional mask/source diagnostics.
+        /// Applies one decoded action with optional diagnostic context.
+        ///
+        /// This overload is assembly-local so smoke tests, heuristics, and the policy facade can
+        /// preserve selection-time mask/source context without expanding the public production API.
         /// </summary>
-        public bool ApplyAction(AgentAction action, Owner playerPerspective, ActionMaskSet maskAtSelection, string sourceActionFormat)
+        internal bool ApplyAction(AgentAction action, Owner playerPerspective, ActionMaskSet maskAtSelection, string sourceActionFormat)
         {
             string sourceFormat = ResolveSourceFormat(action, sourceActionFormat);
             string maskState = BuildMaskStateForAction(maskAtSelection, action);
@@ -292,21 +307,20 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Apply a batch of AgentActions from DecodeTransferCompatibleBatch() in one step.
+        /// Applies a transfer-compatible batch in flat-index order.
         ///
-        /// Conflict resolution (first-wins per actor):
-        /// - Each actor (GridPosition) may receive at most ONE command per step.
-        /// - If multiple commands reference the same actor position, only the first
-        ///   (by list order, which equals flat-index scan order 0..TotalCells-1) is applied.
-        /// - Subsequent commands for the same actor are rejected with reason:
-        ///   "Duplicate command for actor at {pos}: already processed (first-wins policy)"
-        ///
-        /// Actions are applied sequentially by calling ApplyAction() for each validated command.
-        /// MatchManager.ApplyCommand() is the authoritative last gate.
-        ///
-        /// Returns: count of accepted actions this step.
+        /// Duplicate actor commands follow the current first-wins policy. Even when the batch came
+        /// from a mask-aware policy, authoritative validation still happens for every action here.
         /// </summary>
         public int ApplyActions(IReadOnlyList<AgentAction> actions, Owner playerPerspective)
+        {
+            return ApplyActions(actions, playerPerspective, null, null);
+        }
+
+        /// <summary>
+        /// Applies a batch with optional diagnostic context for assembly-local tooling.
+        /// </summary>
+        internal int ApplyActions(IReadOnlyList<AgentAction> actions, Owner playerPerspective, ActionMaskSet maskAtSelection, string sourceActionFormat)
         {
             ResetDiagnostics();
 
@@ -329,20 +343,20 @@ namespace RTS.ML
                     continue;
                 }
 
-                ApplyAction(action, playerPerspective);
+                ApplyAction(action, playerPerspective, maskAtSelection, sourceActionFormat);
             }
 
             return AcceptedActionsLastStep;
         }
 
         /// <summary>
-        /// Reset per-step diagnostics.
+        /// Resets per-step diagnostics for assembly-local smoke and integration tooling.
         /// </summary>
-        public void ResetDiagnostics()
+        internal void ResetDiagnostics()
         {
             AcceptedActionsLastStep = 0;
             RejectedActionsLastStep = 0;
-            RejectionReasonsLastStep.Clear();
+            _rejectionReasonsLastStep.Clear();
             LastInvalidAttempt = null;
         }
 
@@ -541,6 +555,11 @@ namespace RTS.ML
         {
             reason = "";
 
+            // Week 3 limitation note:
+            // ActionApplier validates explicit local attack intent here, but final combat execution
+            // still remains subject to the current CombatResolver runtime behavior downstream.
+            // That residual gap is documented, not hidden.
+
             // Can all non-resource units attack?
             if (unit.Type == UnitType.Resource)
             {
@@ -590,7 +609,7 @@ namespace RTS.ML
         private void RecordRejection(string reason)
         {
             RejectedActionsLastStep++;
-            RejectionReasonsLastStep.Add(reason);
+            _rejectionReasonsLastStep.Add(reason);
         }
 
         private void RecordRejectionDetailed(

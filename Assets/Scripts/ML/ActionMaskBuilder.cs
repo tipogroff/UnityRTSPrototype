@@ -8,25 +8,22 @@ using UnityEngine;
 namespace RTS.ML
 {
     /// <summary>
-    /// Action masking output for transfer-compatible per-cell action space.
+    /// Transfer-compatible mask snapshot for one player perspective.
     ///
-    /// Hierarchy:
-    /// actor/cell -> action type -> action parameters.
-    ///
-    /// IMPORTANT:
-    /// This is a pre-sampling filter only. It does not replace authoritative
-    /// runtime validation in ActionApplier.
+    /// This object exposes pre-sampling availability only. It does not guarantee that an action
+    /// will be accepted, because authoritative validation remains downstream in ActionApplier.
     /// </summary>
     public sealed class ActionMaskSet
     {
         private readonly ActorActionMask[] _actorMasksByCell;
+        private readonly List<string> _validationMismatches;
 
         public ActionMaskSet(Owner playerId)
         {
             PlayerId = playerId;
             ActorCellMask = new bool[ActionContract.TotalCells];
             _actorMasksByCell = new ActorActionMask[ActionContract.TotalCells];
-            ValidationMismatches = new List<string>();
+            _validationMismatches = new List<string>();
         }
 
         public Owner PlayerId { get; }
@@ -35,7 +32,7 @@ namespace RTS.ML
         public bool[] ActorCellMask { get; }
         public int AvailableActorCount { get; internal set; }
         public int EmptyActionTypeMaskCount { get; internal set; }
-        public List<string> ValidationMismatches { get; }
+        public IReadOnlyList<string> ValidationMismatches => _validationMismatches;
 
         public ActorActionMask GetActorMask(GridPosition position)
         {
@@ -53,11 +50,11 @@ namespace RTS.ML
             return _actorMasksByCell[flatIndex];
         }
 
-        public void RecordValidationMismatch(string mismatch)
+        internal void RecordValidationMismatch(string mismatch)
         {
             if (!string.IsNullOrWhiteSpace(mismatch))
             {
-                ValidationMismatches.Add(mismatch);
+                _validationMismatches.Add(mismatch);
             }
         }
 
@@ -73,7 +70,7 @@ namespace RTS.ML
             }
         }
 
-        public string BuildSummaryDump(int maxActorsToPrint = 12)
+        internal string BuildSummaryDump(int maxActorsToPrint = 12)
         {
             var sb = new StringBuilder(512);
             sb.AppendLine("[ActionMaskSet] Summary");
@@ -120,7 +117,9 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Parameterized masks for a single actor.
+    /// Parameterized mask snapshot for one transfer-compatible actor slot.
+    ///
+    /// The contained branch masks describe what may be sampled, not what the runtime must accept.
     /// </summary>
     public sealed class ActorActionMask
     {
@@ -169,60 +168,37 @@ namespace RTS.ML
             return index >= 0 && index < ActionTypeMask.Length && ActionTypeMask[index];
         }
 
-        public string ActionTypeMaskToString()
+        internal string ActionTypeMaskToString()
         {
-            var parts = new List<string>(ActionTypeMask.Length);
-            for (int i = 0; i < ActionTypeMask.Length; i++)
-            {
-                if (ActionTypeMask[i])
-                {
-                    parts.Add(((UnitActionType)i).ToString());
-                }
-            }
-
-            return parts.Count == 0 ? "<none>" : string.Join(",", parts);
+            string value = ActionContractMappings.FormatEnabledValues(
+                ActionTypeMask,
+                i => ((UnitActionType)i).ToString(),
+                "<none>");
+            return value.Replace("|", ",");
         }
 
-        public string DirectionMaskToString(bool[] directionMask)
+        internal string DirectionMaskToString(bool[] directionMask)
         {
-            var parts = new List<string>(directionMask.Length);
-            for (int i = 0; i < directionMask.Length; i++)
-            {
-                if (directionMask[i])
-                {
-                    parts.Add(((Direction)i).ToString());
-                }
-            }
-
-            return parts.Count == 0 ? "-" : string.Join("|", parts);
+            return ActionContractMappings.FormatEnabledValues(
+                directionMask,
+                i => ((Direction)i).ToString(),
+                "-");
         }
 
-        public string ProduceTypeMaskToString()
+        internal string ProduceTypeMaskToString()
         {
-            var parts = new List<string>(ProduceUnitTypeMask.Length);
-            for (int i = 0; i < ProduceUnitTypeMask.Length; i++)
-            {
-                if (ProduceUnitTypeMask[i])
-                {
-                    parts.Add(((ProducibleUnit)i).ToString());
-                }
-            }
-
-            return parts.Count == 0 ? "-" : string.Join("|", parts);
+            return ActionContractMappings.FormatEnabledValues(
+                ProduceUnitTypeMask,
+                i => ((ProducibleUnit)i).ToString(),
+                "-");
         }
 
-        public string AttackTargetMaskToString()
+        internal string AttackTargetMaskToString()
         {
-            var parts = new List<string>(AttackTargetLocalMask.Length);
-            for (int i = 0; i < AttackTargetLocalMask.Length; i++)
-            {
-                if (AttackTargetLocalMask[i])
-                {
-                    parts.Add(i.ToString());
-                }
-            }
-
-            return parts.Count == 0 ? "-" : string.Join("|", parts);
+            return ActionContractMappings.FormatEnabledValues(
+                AttackTargetLocalMask,
+                i => i.ToString(),
+                "-");
         }
     }
 
@@ -231,7 +207,7 @@ namespace RTS.ML
     ///
     /// Debug format has actor_index_flat in [0..TotalCells] where TotalCells means NoActor.
     /// </summary>
-    public sealed class DebugActionMaskSet
+    internal sealed class DebugActionMaskSet
     {
         private readonly ActorActionMask[] _actorMasksByIndex;
 
@@ -257,7 +233,7 @@ namespace RTS.ML
         public ActionMaskSet TransferMask { get; }
         public bool[] ActorIndexMask { get; }
 
-        public ActorActionMask GetActorMask(int actorIndexFlat)
+        internal ActorActionMask GetActorMask(int actorIndexFlat)
         {
             if (actorIndexFlat < 0 || actorIndexFlat >= _actorMasksByIndex.Length)
                 return null;
@@ -267,12 +243,10 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Builds invalid action masks from authoritative Unity world state.
+    /// Builds action masks from current Unity state.
     ///
-    /// IMPORTANT:
-    /// - This class is a pre-sampling decision-space filter.
-    /// - Authoritative runtime truth remains in ActionApplier.
-    /// - Any accepted-by-mask action may still be rejected by ActionApplier.
+    /// This class is a pre-sampling decision-space filter only. Authoritative runtime truth
+    /// remains in ActionApplier, so any mask-allowed action may still be rejected later.
     /// </summary>
     public sealed class ActionMaskBuilder
     {
@@ -299,6 +273,12 @@ namespace RTS.ML
             _matchBootstrap = matchBootstrap ?? MatchBootstrap.Instance;
         }
 
+        /// <summary>
+        /// Builds the transfer-compatible action mask for one player perspective.
+        ///
+        /// The mask intentionally stops at pre-sampling semantics. Runtime-only constraints such
+        /// as phase timing, queue state races, and apply-time contention still belong downstream.
+        /// </summary>
         public ActionMaskSet BuildTransferCompatibleMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
         {
             var maskSet = new ActionMaskSet(playerId)
@@ -333,7 +313,7 @@ namespace RTS.ML
             return maskSet;
         }
 
-        public DebugActionMaskSet BuildDebugMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
+        internal DebugActionMaskSet BuildDebugMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
         {
             ActionMaskSet transferMask = BuildTransferCompatibleMask(playerId, noOpOnlyWhenNotRunning);
             return new DebugActionMaskSet(transferMask);
@@ -490,7 +470,7 @@ namespace RTS.ML
             {
                 ProducibleUnit produceType = (ProducibleUnit)i;
 
-                if (!TryMapProducibleUnitType(produceType, out UnitType producedUnitType))
+                if (!ActionContractMappings.TryMapProducibleUnitType(produceType, out UnitType producedUnitType))
                     continue;
 
                 // Runtime-aligned gate: BuildingRuntime.StartProducingUnit() fails when definition is missing.
@@ -615,23 +595,6 @@ namespace RTS.ML
             return definition.attackDamage > 0 && definition.attackRange > 0;
         }
 
-        private bool TryMapProducibleUnitType(ProducibleUnit produceType, out UnitType unitType)
-        {
-            unitType = produceType switch
-            {
-                ProducibleUnit.Worker => UnitType.Worker,
-                ProducibleUnit.Light => UnitType.Light,
-                ProducibleUnit.Heavy => UnitType.Heavy,
-                ProducibleUnit.Ranged => UnitType.Ranged,
-                _ => UnitType.Worker
-            };
-
-            return produceType == ProducibleUnit.Worker ||
-                   produceType == ProducibleUnit.Light ||
-                   produceType == ProducibleUnit.Heavy ||
-                   produceType == ProducibleUnit.Ranged;
-        }
-
         private bool CanBuildingProduceUnitType(UnitType buildingType, ProducibleUnit produceType)
         {
             // No building-specific produce-type split exists in current runtime:
@@ -651,13 +614,8 @@ namespace RTS.ML
         {
             target = GridPosition.Zero;
 
-            if (localIndex < 0 || localIndex >= ActionContract.AttackOffsets.Length)
-                return false;
-
-            var (dX, dY) = ActionContract.AttackOffsets[localIndex];
-            target = new GridPosition(actorPosition.X + dX, actorPosition.Y + dY);
-
-            return _gridManager.IsInside(target);
+            return ActionContractMappings.TryGetAttackTargetPosition(actorPosition, localIndex, out target)
+                   && _gridManager.IsInside(target);
         }
     }
 }

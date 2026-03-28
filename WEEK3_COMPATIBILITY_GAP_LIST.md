@@ -1,155 +1,154 @@
-# Week 3 - Compatibility Gap List
+# Week 3 Compatibility Gap List
 
-Date: 2026-03-23
-Purpose: Explicit documentation of differences between LegacyGymCompatibleSpec and UnityMvpTransferSpec.
+Date: 2026-03-29
+Purpose: Finalized Day 7 artifact for tracking real compatibility bottlenecks between the two-layer Week 3 contract and the current Unity runtime.
 
-## Overview
+## Scope and Reading Rules
 
-This document is the authoritative source for tracking compatibility gaps between the reference Gym baseline and the practical Unity MVP implementation. It must be updated throughout Week 3 and finalized as an artifact by end of Day 7.
+This document is the authoritative Week 3 artifact for Chapter 3.3 style analysis.
 
-Use this list in:
-- Week 3 implementation decisions (which adaptations are intentional, which are technical debt).
-- Week 5 when building the teacher pipeline (what transformations are needed for dataset compatibility).
-- Chapter 3.3 of the dissertation (formal description of transfer compatibility limitations).
+It distinguishes three semantic layers that must not be collapsed:
+- `LegacyGymCompatibleSpec`: reference-oriented spatial observation and transfer-compatible action framing.
+- `UnityMvpTransferSpec`: Unity transfer adapter surface used to connect the current MVP runtime to later ML work.
+- Unity runtime truth: authoritative execution in `ActionApplier` and `MatchManager`, with downstream runtime behavior such as `CombatResolver`.
 
-## Primary Gaps (LegacyGymCompatibleSpec → UnityMvpTransferSpec)
+Important interpretation rules:
+- action masking is a pre-sampling layer only and never replaces authoritative validation;
+- heuristic/debug tooling is not evidence of full Gym parity;
+- resolved Day 6 drifts are listed separately from remaining active gaps, to avoid stale claims.
 
-### Observation Space
+## Active Compatibility Gaps
 
-#### Gap: Separate Global Vector
-- **Category**: Feature addition
-- **Reference-compatible status**: No (not in Gym reference)
-- **Motivation**: Runtime telemetry and transfer diagnostics
-- **Details**:
-  - LegacyGymCompatibleSpec: spatial tensor only, shape [24, 24, 27]
-  - UnityMvpTransferSpec: spatial tensor [24, 24, 27] + separate global vector [10]
-  - Global vector includes timestamps, resource shares, unit counts, invalid action rates, pending commands.
-- **Handling for transfer**: Global vector should be excluded from strict head-to-head Gym-μRTS comparison; it is supplementary.
-- **Mitigation**: During BC training and transfer, policy encoder must be trained on spatial tensor only; global vector can be used for auxiliary loss or diagnostics but not forced into Gym-compatible inference.
+### Gap 1: Unity-only Global Feature Vector
+- Category: Observation surface extension
+- Reference-compatible status: No
+- Why exists: `UnityMvpTransferSpec` keeps a separate global feature vector for runtime state, resources, and step progress, while `LegacyGymCompatibleSpec` remains spatial-only.
+- Concrete gap: the transfer layer exposes a second tensor that does not exist in the legacy-compatible layer or the reference Gym baseline.
+- Impact on transfer: direct encoder parity is broken if a policy expects the extra vector at inference time.
+- Mitigation strategy: `ObservationBuilder.BuildGlobalFeatures()` now returns a zero-filled buffer in `LegacyGymCompatible` mode; training/inference parity must be enforced per mode.
+- Residual risk: experiments can accidentally compare policies with different input surfaces if mode handling is sloppy.
+- Transfer consequence: requires adapter discipline; negligible for fine-tuning if the global vector is excluded or handled as auxiliary input.
 
-#### Gap: Normalization Strategy
-- **Category**: Implementation detail
-- **Reference-compatible status**: Partial (same channels, slightly different normalization bounds)
-- **Motivation**: Numerical stability and bounded input for RL policies
-- **Details**:
-  - All values are normalized to [0, 1] in UnityMvpTransferSpec.
-  - Gym-μRTS reference may use different normalization (e.g., resource counts may be unnormalized or use different scales).
-- **Mitigation**: Document exact normalization formula and apply inverse transforms during dataset conversion if needed.
+### Gap 2: Observation-side Semantic Split for `attack_target`
+- Category: Observation semantics mismatch
+- Reference-compatible status: Partial
+- Why exists: the legacy-compatible layer keeps placeholder-compatible semantics for `attack_target`, while `UnityMvpTransferSpec` uses a tactical enemy-presence signal in the same channel slot.
+- Concrete gap: equal tensor shape does not imply equal meaning for channel 26 across the two modes.
+- Impact on transfer: weights trained to interpret one meaning can misread the other without retraining or explicit mode control.
+- Mitigation strategy: keep mode-specific observation building explicit; document that channel equality by index is not sufficient evidence of semantic equality.
+- Residual risk: false compatibility claims if only tensor size/order are checked.
+- Transfer consequence: affects direct reuse and diagnostics; requires explicit mode-aware dataset or evaluation logic.
 
-### Action Space
+### Gap 3: Attack Target Parameterization Reduced to Local 3x3
+- Category: Action-space reduction
+- Reference-compatible status: No
+- Why exists: Week 3 MVP deliberately constrains attack targeting to the local 3x3 neighborhood to avoid premature expansion of the action surface before the core pipeline is stable.
+- Concrete gap: `BRANCH_ATTACK_TARGET` is `0..8` only, centered on the acting unit.
+- Impact on transfer: broader attack semantics cannot be transferred directly into the current output head.
+- Mitigation strategy: teacher/dataset adapters must remap or drop unsupported targets before training or inference.
+- Residual risk: policies trained on wider targeting semantics lose information during projection into the MVP surface.
+- Transfer consequence: blocks direct weight transfer; requires dataset adapter or output-head adaptation.
 
-#### Gap: Attack Target Parameterization
-- **Category**: Space reduction
-- **Reference-compatible status**: No
-- **Motivation**: MVP simplification (3x3 local neighborhood vs. full-map or larger parameterization in reference semantics)
-- **Details**:
-  - Reference layer preserves Gym-style attack parameter semantics as far as possible; Gym may support global attack targeting, ranged unit targeting, or continuous coordinates.
-  - UnityMvpTransferSpec reduces this to local 3x3 targeting: attack_target_local 0..8 (3x3 neighborhood, center=4).
-  - This represents a deliberate constraint for MVP scope.
-- **Handling for transfer**: Gym datasets or policies with different attack parameterization must be transformed to local 3x3 representation; out-of-range targets are dropped or remapped.
-- **Mitigation**: Explicit adapter layer in Week 5 teacher pipeline.
+### Gap 4: Explicit Attack Command vs Runtime Combat Resolution
+- Category: Runtime semantic mismatch
+- Reference-compatible status: Partial
+- Why exists: `ActionApplier` validates explicit local attack intent, but final combat execution still remains subject to the current downstream Unity combat flow.
+- Concrete gap: accepted attack commands do not yet guarantee strict target-preserving semantics all the way through runtime combat resolution.
+- Impact on transfer: a policy may learn to emit valid local targets, while observed combat effect is partially mediated by runtime combat behavior.
+- Mitigation strategy: keep this gap explicit in documentation; use smoke tests only to claim pipeline submission plus runtime combat effect, not full target-preserving parity.
+- Residual risk: policy debugging may attribute combat outcome differences to policy quality when the remaining mismatch is actually runtime-side.
+- Transfer consequence: does not block integration, but weakens strict semantic equivalence claims and matters for dissertation analysis.
 
-#### Gap: Reduced Produce Unit Types
-- **Category**: Action branch size reduction
-- **Reference-compatible status**: Partial (same semantics, subset of possible units)
-- **Motivation**: MVP focused on 4 unit types; reference action ecosystem may expose broader unit production semantics
-- **Details**:
-  - UnityMvpTransferSpec: ProducibleUnit 0..3 (Worker, Light, Heavy, Ranged)
-  - Reference action ecosystem may expose broader unit production semantics than the MVP subset.
-- **Mitigation**: Dataset conversion must map extended unit types to nearest MVP equivalent or filter out unsupported production actions.
+### Gap 5: Reduced Produce Semantics and Missing Broader Action Types
+- Category: Action-space reduction
+- Reference-compatible status: No
+- Why exists: Week 3 scope keeps only `NoOp`, `Move`, `Harvest`, `Return`, `Produce`, `Attack` and only the MVP producible unit subset.
+- Concrete gap: the current surface omits broader Gym-style action semantics and richer production ecosystems.
+- Impact on transfer: datasets or policies with unsupported action heads cannot be consumed directly.
+- Mitigation strategy: filter unsupported actions, remap supported produce types, and treat missing action families as out-of-scope for v1.
+- Residual risk: training data loss or semantic compression when projecting a richer teacher into the MVP student surface.
+- Transfer consequence: blocks direct weight transfer for broader heads; requires dataset adapter.
 
-#### Gap: Missing Action Types
-- **Category**: Action set reduction
-- **Reference-compatible status**: No
-- **Motivation**: MVP scoping
-- **Details**:
-  - UnityMvpTransferSpec action types: 0=NoOp, 1=Move, 2=Harvest, 3=Return, 4=Produce, 5=Attack (6 total)
-  - Gym-μRTS may include: Gather variants, Repair, Research, Train, Build structures, etc.
-- **Mitigation**: Dataset filtering and action mapping in Week 5.
+### Gap 6: Runtime-only Constraints Beyond Mask Semantics
+- Category: Runtime validation gap
+- Reference-compatible status: No
+- Why exists: authoritative runtime validation includes match phase, queue occupancy, command timing, live unit ownership/aliveness, and other engine-specific constraints that are not fully representable as static pre-sampling masks.
+- Concrete gap: an action can be allowed by mask yet still be rejected at apply time.
+- Impact on transfer: offline policy evaluation can overestimate feasible actions if it assumes masks are authoritative.
+- Mitigation strategy: keep `ActionApplier` as the explicit final gate; expose invalid-attempt logs and rejection reasons for diagnostics.
+- Residual risk: multi-actor contention and timing-sensitive race conditions remain only partially visible before apply time.
+- Transfer consequence: affects diagnostics and runtime reliability more than model topology; important for evaluation protocol.
 
-### Invalid Action Rules (Masking)
+### Gap 7: Temporal Resolution and Multi-actor Contention
+- Category: Runtime coordination limitation
+- Reference-compatible status: Partial
+- Why exists: Week 3 now supports batch decoding, but authoritative application still resolves duplicate actor commands by `first-wins`, and overall progression remains bound to the Unity step loop.
+- Concrete gap: simultaneous intent does not imply simultaneous acceptance when multiple commands contend for the same actor or runtime state transitions occur between sampling and application.
+- Impact on transfer: policy behavior under contention can differ from cleaner abstract formulations.
+- Mitigation strategy: keep first-wins policy explicit, preserve rejection diagnostics, and avoid claiming that the mask fully represents contention outcomes.
+- Residual risk: broader regression coverage is still needed for dense multi-actor scenarios.
+- Transfer consequence: mainly affects diagnostics and evaluation stability; usually negligible for fine-tuning, but not for strict semantics discussions.
 
-#### Gap: Unity Runtime Constraints
-- **Category**: Game engine constraints
-- **Reference-compatible status**: No
-- **Motivation**: Physics and state management in Unity
-- **Details**:
-  - LegacyGymCompatibleSpec defines high-level invalid semantics (actor must exist, action must be feasible).
-  - UnityMvpTransferSpec enforces additional engine-specific rules:
-    - production queue occupancy (one unit at a time in MVP, may be different in Gym)
-    - exact carry capacity limits for workers
-    - building attachment rules (spawn point adjacency)
-    - temporal phase coordination (action submission timing)
-- **Mitigation**: During mask construction, separate "reference-compatible mask rules" from "Unity-only runtime validation"; both layers remain mandatory (no bypassing server validation).
+### Gap 8: Invalid-input Visibility Is a Unity-side Diagnostic Feature
+- Category: Diagnostics-only behavior gap
+- Reference-compatible status: No
+- Why exists: Week 3 now explicitly rejects structurally invalid decoded input and emits `InvalidActionAttemptLog` records instead of silently collapsing those cases into harmless no-ops.
+- Concrete gap: invalid decode visibility is richer than a minimal reference-compatible action interface.
+- Impact on transfer: none for valid policy outputs; important for debugging adapters, datasets, and heuristic tooling.
+- Mitigation strategy: keep invalid-input handling explicit but separate from compatibility claims.
+- Residual risk: tooling can overfit to Unity-specific diagnostics if experiments rely on them as if they were part of the reference contract.
+- Transfer consequence: affects diagnostics only.
 
-#### Gap: Actor Lifetime and State Transitions
-- **Category**: State machine differences
-- **Reference-compatible status**: Partial
-- **Motivation**: Unity GameObject lifecycle vs. abstract Gym state
-- **Details**:
-  - Gym-μRTS: units transition between discrete states (idle, moving, harvesting, etc.) with deterministic timing.
-  - Unity MVP: units have MonoBehaviour lifecycle, health points, animation states, physics colliders; destruction and spawning have frame-based delays.
-- **Mitigation**: Synchronize state observation and action evaluation frame-by-frame; log any desynchronization warnings.
+## Resolved During Days 2-6 and Not Counted as Current Gaps
 
-## Secondary Gaps (Minor/Resolvable)
+### Resolved Finding A: Move Capability Drift
+- Previous issue: building movement permissiveness was misaligned across layers.
+- Day 6 resolution: `ActionApplier` coarse capability gating now rejects `Move` for `Base`, `Barracks`, and `Resource`.
+- Why it is not listed as active gap: this is now a fixed consistency issue, not a remaining compatibility bottleneck.
 
-### Coordinate System
-- **Status**: Aligned (row-major, NESW directions, 0-indexed)
-- **Risk**: Low
+### Resolved Finding B: Attack Capability Drift
+- Previous issue: attack eligibility in masks and apply-time validation drifted when runtime definitions were stricter than static type checks.
+- Day 6 resolution: runtime-authoritative attack capability checks now look at live unit definitions when available.
+- Why it is not listed as active gap: current code aligns these layers better; the remaining active issue is the deeper runtime combat semantics gap, not eligibility drift.
 
-### Owner Encoding
-- **Status**: Aligned (neutral, player1, player2)
-- **Risk**: Low
+### Resolved Finding C: Silent Invalid Decode Fallback
+- Previous issue: some invalid decoded actions could degrade into silent no-op behavior.
+- Day 6 resolution: invalid decoded actions are now rejected explicitly and logged under `InvalidInput`.
+- Why it is not listed as active gap: visibility is now intentional and explicit.
 
-### Temporal Resolution
-- **Status**: Gym-μRTS default is 1 step/cycle; Unity MVP is 1 step/FixedUpdate. May differ under load.
-- **Risk**: Medium (measurable in multi-episode experiments)
-- **Mitigation**: Log step timing and reward accumulation; validate episode length consistency.
+## Impact Classification Summary
 
-## Gap Status: Experiment Impact
+### Blocks direct weight transfer
+- Gap 3: Attack target parameterization reduced to local 3x3.
+- Gap 5: Reduced produce semantics and missing broader action types.
 
-This section categorizes each primary gap by its effect on transfer learning and fine-tuning experiments.
+### Requires dataset adapter or explicit projection logic
+- Gap 1: Unity-only global feature vector.
+- Gap 2: Observation-side semantic split for `attack_target`.
+- Gap 5: Reduced produce semantics and missing broader action types.
 
-### Blocks Direct Weight Transfer
-- Attack Target Parameterization: requires action remapping before inference; cannot use weights directly without adapter.
-- Reduced Produce Unit Types: requires output head adaptation or filtering; cannot use production branch directly if reference has more classes.
+### Affects runtime diagnostics or evaluation protocol more than model topology
+- Gap 6: Runtime-only constraints beyond mask semantics.
+- Gap 7: Temporal resolution and multi-actor contention.
+- Gap 8: Invalid-input visibility is a Unity-side diagnostic feature.
 
-### Requires Dataset Adapter
-- Separate Global Vector: must exclude from legacy-compatible encoder training; can be used post-hoc for diagnostics.
-- Normalization Strategy: inverse transform needed for dataset conversion; document exact formula for reproducibility.
-- Missing Action Types: dataset filtering and action mapping in preprocessing.
+### Important for dissertation honesty even when integration remains feasible
+- Gap 4: Explicit attack command vs runtime combat resolution.
 
-### Affects Only Diagnostics
-- Temporal Resolution: does not block transfer but may shift episode termination timing; log and validate for consistency.
+## Use in Week 4 and Chapter 3.3
 
-### Negligible for Fine-Tuning
-- Coordinate System: fully aligned (row-major, NESW, 0-indexed).
-- Owner Encoding: fully aligned (neutral, player1, player2).
-- Unity Runtime Constraints: can be handled via action masking without modifying policy weights.
-- Actor Lifetime and State Transitions: Unity synchronization is frame-based; transfer is robust if mask is accurate.
+### Week 4 integration guidance
+- future ML consumers should connect through the Week 3 pipeline facade and keep the same downstream authoritative path;
+- transfer-compatible policy outputs still require adapter logic for unsupported action semantics;
+- evaluation must distinguish mask-level availability from apply-time acceptance.
 
-## Operationalization
-
-### Week 3 Decisions
-- [ ] Day 1: Accept all gaps as listed above; mark as approved.
-- [ ] Day 2–4: For each new implementation detail, check against gap list; if unlisted gap appears, add it.
-- [ ] Day 7: Finalize gap list; any new gap discovered after Day 7 becomes technical debt for Chapter 3.
-
-### Week 5 Teacher Pipeline
-- Import gap list into Python-side preprocessing.
-- Create dataset adapters for each major gap (attack target remapping, unit type filter, action type mapping).
-- Document adapter behavior and any data loss in conversion.
-
-### Chapter 3.3 Dissertation
-1. Reproduce gap list inline as "compatibility bottlenecks".
-2. For each gap, describe mitigation strategy and residual risk.
-3. Discuss whether gaps materially impact transfer learning experiments or are acceptable trade-offs.
-
-## Version History
-
-- 2026-03-23: Initial draft created during Week 3 Day 1.
+### Chapter 3.3 guidance
+- use the active gap list as the bottleneck inventory;
+- use the resolved findings section to show that some Week 3 issues were implementation drift, not enduring compatibility limits;
+- keep the residual attack semantics discussion separate from the narrower attack-eligibility fix.
 
 ## Related Artifacts
-
-- WEEK3_CONTRACT_SPEC.md (sections 2, 3.2, 4.1, 5.2, 7)
-- IMPLEMENTATION_PLAN.md (Week 3 Day 7 exit criteria)
+- WEEK3_CONTRACT_SPEC.md
+- IMPLEMENTATION_PLAN.md
+- Assets/Scripts/ML/WEEK3_DAY6_SUMMARY.md
+- Assets/Scripts/ML/WEEK3_DAY7_SUMMARY.md

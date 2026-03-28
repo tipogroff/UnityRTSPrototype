@@ -37,7 +37,9 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Результат валидации наблюдения (диагностика).
+    /// Result of observation validation.
+    ///
+    /// This is a diagnostic contract-checking artifact. It does not change runtime behavior.
     /// </summary>
     public struct ObservationValidationResult
     {
@@ -75,8 +77,10 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Упакованный результат сборки observation для одного playerId.
-    /// Содержит spatial и global признаки в одном объекте.
+    /// Bundles the observation payload prepared for one player perspective.
+    ///
+    /// SpatialObservation is the stable Week 3 tensor. GlobalFeatures is Unity-only transfer
+    /// metadata and therefore intentionally zero-filled in LegacyGymCompatible mode.
     /// </summary>
     public readonly struct ObservationPackage
     {
@@ -99,13 +103,11 @@ namespace RTS.ML
     }
 
     /// <summary>
-    /// Сборщик тензора наблюдений (24x24 x 27 float32).
-    /// 
-    /// Использование:
-    ///   var builder = new ObservationBuilder(gridManager, unitRegistry, resourceManager);
-    ///   float[] obs = builder.BuildObservation(Owner.Player1, ObservationMode.LegacyGymCompatible);
-    ///   var validation = builder.ValidateObservation(obs);
-    ///   string diagnostics = builder.DumpObservation(obs, verbose: true);
+    /// Builds the Week 3 observation surface for one player perspective.
+    ///
+    /// This class owns observation semantics only. It does not validate or execute actions.
+    /// Any runtime-authoritative action feasibility remains downstream in ActionApplier and
+    /// MatchManager.
     /// </summary>
     public class ObservationBuilder
     {
@@ -152,19 +154,20 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Построить глобальные признаки (Unity MVP слой).
-        /// Формат:
-        /// [0] is_running
-        /// [1] is_terminal
-        /// [2] is_win
-        /// [3] is_loss
-        /// [4] self_resources_normalized
-        /// [5] enemy_resources_normalized
-        /// [6] step_normalized
+        /// Builds the Unity-only global feature vector.
+        ///
+        /// This method is part of the transfer adapter surface, not the legacy-compatible
+        /// contract. In LegacyGymCompatible mode it returns the fixed-size zero buffer to avoid
+        /// false parity claims with the reference spatial-only observation.
         /// </summary>
         public float[] BuildGlobalFeatures(Owner playerId, ObservationMode mode = ObservationMode.UnityMvpTransfer)
         {
             Array.Clear(_globalFeaturesBuffer, 0, _globalFeaturesBuffer.Length);
+
+            if (mode != ObservationMode.UnityMvpTransfer)
+            {
+                return _globalFeaturesBuffer;
+            }
 
             if (playerId == Owner.Neutral)
             {
@@ -201,9 +204,10 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Собрать полный пакет observation за один вызов.
-        /// Spatial observation всегда строится, global features — только для UnityMvpTransfer.
-        /// Для LegacyGymCompatible возвращается zero-buffer глобальных признаков фиксированного размера.
+        /// Builds the full observation payload for a future policy consumer.
+        ///
+        /// Spatial observation is always populated. Global features remain meaningful only for
+        /// UnityMvpTransfer and are intentionally zero-filled for LegacyGymCompatible.
         /// </summary>
         public ObservationPackage BuildObservationPackage(Owner playerId, ObservationMode mode = ObservationMode.UnityMvpTransfer)
         {
@@ -218,7 +222,10 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Главный метод: собрать наблюдение для заданного игрока.
+        /// Builds the spatial observation tensor for the requested semantic layer.
+        ///
+        /// This method does not perform runtime action validation. It only serializes current
+        /// state into the agreed observation contract.
         /// </summary>
         public float[] BuildObservation(Owner playerId, ObservationMode mode = ObservationMode.LegacyGymCompatible)
         {
@@ -325,7 +332,7 @@ namespace RTS.ML
                         ownerHotIndex);
 
                     // [5-11] Unit type
-                    int unitTypeHotIndex = unit != null ? UnitTypeToOneHotIndex(unit.Type) : -1;
+                    int unitTypeHotIndex = unit != null ? ActionContractMappings.UnitTypeToObservationIndex(unit.Type) : -1;
                     ObservationContract.SetOneHot(
                         obs,
                         baseIndex + ObservationContract.CH_UNIT_TYPE_BASE,
@@ -339,7 +346,7 @@ namespace RTS.ML
                     if (unit != null)
                     {
                         actionHotIndex = hasTrackedCommand
-                            ? UnitActionTypeToOneHotIndex(trackedCommand.ActionType)
+                            ? ActionContractMappings.UnitActionTypeToObservationIndex(trackedCommand.ActionType)
                             : 0; // NoOp fallback
                     }
                     ObservationContract.SetOneHot(
@@ -353,8 +360,8 @@ namespace RTS.ML
                     if (unit != null)
                     {
                         directionHotIndex = hasTrackedCommand
-                            ? DirectionToOneHotIndex(trackedCommand.Direction)
-                            : DirectionToOneHotIndex(unit.Facing);
+                            ? ActionContractMappings.DirectionToObservationIndex(trackedCommand.Direction)
+                            : ActionContractMappings.DirectionToObservationIndex(unit.Facing);
                     }
                     ObservationContract.SetOneHot(
                         obs,
@@ -368,7 +375,7 @@ namespace RTS.ML
                     {
                         if (hasTrackedCommand && trackedCommand.ActionType == UnitActionType.Produce)
                         {
-                            produceHotIndex = ProducibleUnitToOneHotIndex(trackedCommand.ProduceUnitType);
+                            produceHotIndex = ActionContractMappings.ProducibleUnitToObservationIndex(trackedCommand.ProduceUnitType);
                         }
                         else if (unit.gameObject != null)
                         {
@@ -376,7 +383,7 @@ namespace RTS.ML
                             var queue = buildingRuntime != null ? buildingRuntime.GetProductionQueue() : null;
                             if (queue != null && queue.IsProducing && queue.CurrentProducingType.HasValue)
                             {
-                                produceHotIndex = UnitTypeToProducibleUnitOneHotIndex(queue.CurrentProducingType.Value);
+                                produceHotIndex = ActionContractMappings.UnitTypeToProducibleUnitObservationIndex(queue.CurrentProducingType.Value);
                             }
                         }
                     }
@@ -452,7 +459,7 @@ namespace RTS.ML
                     int unitTypeHotIndex = -1;
                     if (unit != null)
                     {
-                        unitTypeHotIndex = UnitTypeToOneHotIndex(unit.Type);
+                        unitTypeHotIndex = ActionContractMappings.UnitTypeToObservationIndex(unit.Type);
                     }
                     ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_UNIT_TYPE_BASE,
                         ObservationContract.CH_UNIT_TYPE_COUNT, unitTypeHotIndex);
@@ -464,7 +471,7 @@ namespace RTS.ML
                     bool hasTrackedCommand = TryGetTrackedCommand(unit, out trackedCommand);
                     if (unit != null && unit.Model != null && hasTrackedCommand)
                     {
-                        actionHotIndex = UnitActionTypeToOneHotIndex(trackedCommand.ActionType);
+                        actionHotIndex = ActionContractMappings.UnitActionTypeToObservationIndex(trackedCommand.ActionType);
                     }
                     ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_ACTION_BASE,
                         ObservationContract.CH_ACTION_COUNT, actionHotIndex);
@@ -476,8 +483,8 @@ namespace RTS.ML
                     {
                         // Приоритет у направления из текущей команды.
                         directionHotIndex = hasTrackedCommand
-                            ? DirectionToOneHotIndex(trackedCommand.Direction)
-                            : DirectionToOneHotIndex(unit.Facing);
+                            ? ActionContractMappings.DirectionToObservationIndex(trackedCommand.Direction)
+                            : ActionContractMappings.DirectionToObservationIndex(unit.Facing);
                     }
                     ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_DIR_BASE,
                         ObservationContract.CH_DIR_COUNT, directionHotIndex);
@@ -490,7 +497,7 @@ namespace RTS.ML
                     {
                         if (hasTrackedCommand && trackedCommand.ActionType == UnitActionType.Produce)
                         {
-                            produceHotIndex = ProducibleUnitToOneHotIndex(trackedCommand.ProduceUnitType);
+                            produceHotIndex = ActionContractMappings.ProducibleUnitToObservationIndex(trackedCommand.ProduceUnitType);
                         }
                         else
                         {
@@ -501,7 +508,7 @@ namespace RTS.ML
                                 if (productionQueue != null && productionQueue.IsProducing && productionQueue.CurrentProducingType.HasValue)
                                 {
                                     var currentProducing = productionQueue.CurrentProducingType.Value;
-                                    produceHotIndex = UnitTypeToProducibleUnitOneHotIndex(currentProducing);
+                                    produceHotIndex = ActionContractMappings.UnitTypeToProducibleUnitObservationIndex(currentProducing);
                                 }
                             }
                         }
@@ -584,75 +591,6 @@ namespace RTS.ML
             return owner != Owner.Neutral && owner != perspective;
         }
 
-        /// <summary>
-        /// Вернуть one-hot индекс для UnitType.
-        /// Resource=0, Base=1, Barracks=2, Worker=3, Light=4, Heavy=5, Ranged=6.
-        /// </summary>
-        private static int UnitTypeToOneHotIndex(UnitType type)
-        {
-            switch (type)
-            {
-                case UnitType.Resource: return 0;
-                case UnitType.Base: return 1;
-                case UnitType.Barracks: return 2;
-                case UnitType.Worker: return 3;
-                case UnitType.Light: return 4;
-                case UnitType.Heavy: return 5;
-                case UnitType.Ranged: return 6;
-                default: return -1;
-            }
-        }
-
-        /// <summary>
-        /// Вернуть one-hot индекс для Direction.
-        /// North=0, East=1, South=2, West=3.
-        /// </summary>
-        private static int DirectionToOneHotIndex(Direction dir)
-        {
-            switch (dir)
-            {
-                case Direction.North: return 0;
-                case Direction.East: return 1;
-                case Direction.South: return 2;
-                case Direction.West: return 3;
-                default: return -1;
-            }
-        }
-
-        /// <summary>
-        /// Вернуть one-hot индекс для ProducibleUnit.
-        /// Worker=0, Light=1, Heavy=2, Ranged=3.
-        /// </summary>
-        private static int ProducibleUnitToOneHotIndex(ProducibleUnit unit)
-        {
-            switch (unit)
-            {
-                case ProducibleUnit.Worker: return 0;
-                case ProducibleUnit.Light: return 1;
-                case ProducibleUnit.Heavy: return 2;
-                case ProducibleUnit.Ranged: return 3;
-                default: return -1;
-            }
-        }
-
-        /// <summary>
-        /// Вернуть one-hot индекс для UnitActionType.
-        /// NoOp=0, Move=1, Harvest=2, Return=3, Produce=4, Attack=5.
-        /// </summary>
-        private static int UnitActionTypeToOneHotIndex(UnitActionType actionType)
-        {
-            switch (actionType)
-            {
-                case UnitActionType.NoOp: return 0;
-                case UnitActionType.Move: return 1;
-                case UnitActionType.Harvest: return 2;
-                case UnitActionType.Return: return 3;
-                case UnitActionType.Produce: return 4;
-                case UnitActionType.Attack: return 5;
-                default: return 0;
-            }
-        }
-
         private bool TryGetTrackedCommand(UnitRuntime unit, out MatchCommand command)
         {
             command = default;
@@ -662,21 +600,6 @@ namespace RTS.ML
             }
 
             return _matchManager.TryGetLastAppliedCommand(unit, out command);
-        }
-
-        /// <summary>
-        /// Вернуть one-hot индекс produce_unit_type по UnitType из ProductionQueue.
-        /// </summary>
-        private static int UnitTypeToProducibleUnitOneHotIndex(UnitType unitType)
-        {
-            switch (unitType)
-            {
-                case UnitType.Worker: return 0;
-                case UnitType.Light: return 1;
-                case UnitType.Heavy: return 2;
-                case UnitType.Ranged: return 3;
-                default: return -1;
-            }
         }
 
         private static Owner GetEnemyOwner(Owner playerId)
@@ -801,9 +724,11 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Вернуть текстовый дамп наблюдения для debugging.
+        /// Returns a human-readable observation dump for debugging and smoke tests.
+        ///
+        /// This is intentionally not part of the production policy contract surface.
         /// </summary>
-        public string DumpObservation(float[] obs, bool verbose = false)
+        internal string DumpObservation(float[] obs, bool verbose = false)
         {
             if (obs == null) return "<null observation>";
 
