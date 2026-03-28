@@ -235,6 +235,36 @@ namespace RTS.Testing.Editor
             runTests.Invoke(smoke, null);
             Debug.Log("[SmokeTest] ML Action pipeline smoke test invoked.");
         }
+
+        [MenuItem("SmokeTest/6 - ML Action Masking Smoke Test")]
+        public static void RunMlActionMaskingSmokeTest()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            ActionMaskBuilderSmokeTest smoke = Object.FindFirstObjectByType<ActionMaskBuilderSmokeTest>();
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("ActionMaskBuilderSmokeTest_AutoRunner");
+                smoke = host.AddComponent<ActionMaskBuilderSmokeTest>();
+                Debug.Log("[SmokeTest] ActionMaskBuilderSmokeTest was auto-created for this run.");
+            }
+
+            MethodInfo runTests = typeof(ActionMaskBuilderSmokeTest)
+                .GetMethod("RunTests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (runTests == null)
+            {
+                Debug.LogError("[SmokeTest] RunTests() method not found on ActionMaskBuilderSmokeTest.");
+                return;
+            }
+
+            runTests.Invoke(smoke, null);
+            Debug.Log("[SmokeTest] ML Action masking smoke test invoked.");
+        }
     }
 }
 #endif
