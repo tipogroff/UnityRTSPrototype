@@ -265,6 +265,86 @@ namespace RTS.Testing.Editor
             runTests.Invoke(smoke, null);
             Debug.Log("[SmokeTest] ML Action masking smoke test invoked.");
         }
+
+        [MenuItem("SmokeTest/7 - Day5 Heuristic Pipeline Smoke Test")]
+        public static void RunDay5HeuristicPipelineSmokeTest()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            HeuristicPolicyAdapterSmokeTest smoke = Object.FindFirstObjectByType<HeuristicPolicyAdapterSmokeTest>();
+            bool wasAutoCreated = false;
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("HeuristicPolicyAdapterSmokeTest_AutoRunner");
+                smoke = host.AddComponent<HeuristicPolicyAdapterSmokeTest>();
+                wasAutoCreated = true;
+                Debug.Log("[SmokeTest] HeuristicPolicyAdapterSmokeTest was auto-created for this run.");
+            }
+
+            // When auto-created, Awake() typically runs smoke immediately.
+            // Skip explicit invocation in the same menu call to avoid duplicate execution.
+            if (wasAutoCreated)
+            {
+                Debug.Log("[SmokeTest] Day 5 heuristic pipeline smoke test invoked via Awake() on auto-created component.");
+                return;
+            }
+
+            MethodInfo runTests = typeof(HeuristicPolicyAdapterSmokeTest)
+                .GetMethod("RunTests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (runTests == null)
+            {
+                Debug.LogError("[SmokeTest] RunTests() method not found on HeuristicPolicyAdapterSmokeTest.");
+                return;
+            }
+
+            runTests.Invoke(smoke, null);
+            Debug.Log("[SmokeTest] Day 5 heuristic pipeline smoke test invoked.");
+        }
+
+        [MenuItem("SmokeTest/8 - Day5 Mode Heuristic vs Heuristic")]
+        public static void SetDay5HeuristicVsHeuristic()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            HeuristicPolicyAdapter adapter = Object.FindFirstObjectByType<HeuristicPolicyAdapter>();
+            if (adapter == null)
+            {
+                GameObject host = new GameObject("HeuristicPolicyAdapter");
+                adapter = host.AddComponent<HeuristicPolicyAdapter>();
+            }
+
+            adapter.SetPlayerControlModes(HeuristicControlMode.Heuristic, HeuristicControlMode.Heuristic);
+            Debug.Log("[SmokeTest] Day5 control mode set: Player1=Heuristic, Player2=Heuristic.");
+        }
+
+        [MenuItem("SmokeTest/9 - Day5 Mode Heuristic vs Idle")]
+        public static void SetDay5HeuristicVsIdle()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            HeuristicPolicyAdapter adapter = Object.FindFirstObjectByType<HeuristicPolicyAdapter>();
+            if (adapter == null)
+            {
+                GameObject host = new GameObject("HeuristicPolicyAdapter");
+                adapter = host.AddComponent<HeuristicPolicyAdapter>();
+            }
+
+            adapter.SetPlayerControlModes(HeuristicControlMode.Heuristic, HeuristicControlMode.Idle);
+            Debug.Log("[SmokeTest] Day5 control mode set: Player1=Heuristic, Player2=Idle.");
+        }
     }
 }
 #endif

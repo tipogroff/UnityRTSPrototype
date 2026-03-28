@@ -4,9 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
 using RTS.Logging;
+using RTS.ML;
 
 namespace RTS.Gameplay
 {
+    public enum HeuristicExecutionPath
+    {
+        LegacyDirectDriver = 0,
+        Day5PolicyPipeline = 1
+    }
+
     [DisallowMultipleComponent]
     public class EpisodeController : MonoBehaviour
     {
@@ -20,11 +27,13 @@ namespace RTS.Gameplay
         [SerializeField] private ResourceManager _resourceManager;
         [SerializeField] private ExperimentLogger _experimentLogger;
         [SerializeField] private HeuristicDriver _heuristicDriver;
+        [SerializeField] private HeuristicPolicyAdapter _heuristicPolicyAdapter;
 
         [Header("Runtime")]
         [SerializeField] private bool _autoStartOnPlay = true;
         [SerializeField] private bool _autoStepInFixedUpdate = true;
         [SerializeField] private bool _useHeuristicAI = true;
+        [SerializeField] private HeuristicExecutionPath _heuristicExecutionPath = HeuristicExecutionPath.Day5PolicyPipeline;
         [SerializeField] private bool _logLifecycleEvents;
 
         [Header("Auto loop")]
@@ -125,6 +134,17 @@ namespace RTS.Gameplay
                     _heuristicDriver.Initialize(config, _gridManager, _unitRegistry, _resourceManager, _matchManager);
                     _heuristicDriver.ResetHeuristics();
                 }
+
+                if (_useHeuristicAI && _heuristicPolicyAdapter != null)
+                {
+                    _heuristicPolicyAdapter.Initialize(
+                        _gridManager,
+                        _unitRegistry,
+                        _resourceManager,
+                        _matchManager,
+                        _matchBootstrap);
+                    _heuristicPolicyAdapter.ResetHeuristicState();
+                }
             }
 
             if (_logLifecycleEvents)
@@ -165,9 +185,29 @@ namespace RTS.Gameplay
         private bool StepMatchWithHeuristics()
         {
             // 1) Применяем эвристические решения для всех юнитов
-            if (_useHeuristicAI && _heuristicDriver != null)
+            if (_useHeuristicAI)
             {
-                _heuristicDriver.MakeAllDecisions();
+                switch (_heuristicExecutionPath)
+                {
+                    case HeuristicExecutionPath.Day5PolicyPipeline:
+                        if (_heuristicPolicyAdapter != null)
+                        {
+                            _heuristicPolicyAdapter.ExecuteDecisionStep();
+                        }
+                        else if (_heuristicDriver != null)
+                        {
+                            // Fallback keeps Play Mode usable if adapter is not wired in scene yet.
+                            _heuristicDriver.MakeAllDecisions();
+                        }
+                        break;
+
+                    default:
+                        if (_heuristicDriver != null)
+                        {
+                            _heuristicDriver.MakeAllDecisions();
+                        }
+                        break;
+                }
             }
 
             // 2) Выполняем шаг матча
@@ -317,6 +357,11 @@ namespace RTS.Gameplay
             if (_heuristicDriver == null)
             {
                 _heuristicDriver = FindFirstObjectByType<HeuristicDriver>();
+            }
+
+            if (_heuristicPolicyAdapter == null)
+            {
+                _heuristicPolicyAdapter = FindFirstObjectByType<HeuristicPolicyAdapter>();
             }
         }
 
