@@ -319,17 +319,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a979db90a2efc8b49a50792f4ef208a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.EpisodeController
-  _matchManager: {fileID: 0}
-  _matchBootstrap: {fileID: 0}
-  _gridManager: {fileID: 0}
-  _unitRegistry: {fileID: 0}
-  _resourceManager: {fileID: 0}
+  _matchManager: {fileID: 1145832107}
+  _matchBootstrap: {fileID: 1160590936}
+  _gridManager: {fileID: 928434337}
+  _unitRegistry: {fileID: 340447639}
+  _resourceManager: {fileID: 1610306282}
   _experimentLogger: {fileID: 0}
-  _heuristicDriver: {fileID: 0}
+  _heuristicDriver: {fileID: 1871236520}
+  _heuristicPolicyAdapter: {fileID: 0}
   _autoStartOnPlay: 1
   _autoStepInFixedUpdate: 1
   _useHeuristicAI: 1
+  _heuristicExecutionPath: 1
   _logLifecycleEvents: 0
+  _autoRestartEpisodes: 0
+  _maxEpisodes: 0
 --- !u!4 &604615633
 Transform:
   m_ObjectHideFlags: 0
@@ -419,8 +423,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a366c465bcda68c4f998b79b0fdf3b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.ManualStepController
-  _episodeController: {fileID: 0}
-  _matchManager: {fileID: 0}
+  _episodeController: {fileID: 604615632}
+  _matchManager: {fileID: 1145832107}
   stepOneKey: 32
   stepTenKey: 116
   togglePlayKey: 112
@@ -471,10 +475,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 415a10d80dedcf5419774e86f89925e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchManager
-  _gridManager: {fileID: 0}
-  _unitRegistry: {fileID: 0}
-  _victoryResolver: {fileID: 0}
-  _matchBootstrap: {fileID: 0}
+  _gridManager: {fileID: 928434337}
+  _unitRegistry: {fileID: 340447639}
+  _victoryResolver: {fileID: 1941532272}
+  _matchBootstrap: {fileID: 1160590936}
   _logStepEvents: 0
 --- !u!4 &1145832108
 Transform:
@@ -521,9 +525,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchBootstrap
   _config: {fileID: 11400000, guid: 71d74d96c6637b948b1d66710812bbd8, type: 2}
-  _gridManager: {fileID: 0}
-  _matchManager: {fileID: 0}
-  _unitRegistry: {fileID: 0}
+  _gridManager: {fileID: 928434337}
+  _matchManager: {fileID: 1145832107}
+  _unitRegistry: {fileID: 340447639}
   _resourceManager: {fileID: 1610306282}
 --- !u!4 &1160590937
 Transform:
@@ -725,12 +729,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b480953ed74beab4eac79f5dae073293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.HeuristicDriver
-  _config: {fileID: 0}
-  _gridManager: {fileID: 0}
-  _unitRegistry: {fileID: 0}
-  _resourceManager: {fileID: 0}
-  _matchManager: {fileID: 0}
-  _nearbyResourceDistance: 2
+  _config: {fileID: 11400000, guid: 71d74d96c6637b948b1d66710812bbd8, type: 2}
+  _gridManager: {fileID: 928434337}
+  _unitRegistry: {fileID: 340447639}
+  _resourceManager: {fileID: 1610306282}
+  _matchManager: {fileID: 1145832107}
   _maxWorkerLimit: 1
   _enableDebugLog: 0
 --- !u!4 &1871236521

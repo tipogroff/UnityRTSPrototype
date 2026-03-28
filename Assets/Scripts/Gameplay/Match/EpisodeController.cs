@@ -318,6 +318,8 @@ namespace RTS.Gameplay
 
         private void ResolveReferences()
         {
+            EnsureCoreRuntimeObjects();
+
             if (_matchManager == null)
             {
                 _matchManager = MatchManager.Instance;
@@ -357,12 +359,57 @@ namespace RTS.Gameplay
             if (_heuristicDriver == null)
             {
                 _heuristicDriver = FindFirstObjectByType<HeuristicDriver>();
+                if (_heuristicDriver == null && _useHeuristicAI)
+                {
+                    _heuristicDriver = EnsureSceneComponent<HeuristicDriver>("HeuristicDriver");
+                    Debug.Log("[EpisodeController] HeuristicDriver created automatically.");
+                }
             }
 
             if (_heuristicPolicyAdapter == null)
             {
                 _heuristicPolicyAdapter = FindFirstObjectByType<HeuristicPolicyAdapter>();
+                if (_heuristicPolicyAdapter == null && _useHeuristicAI && _heuristicExecutionPath == HeuristicExecutionPath.Day5PolicyPipeline)
+                {
+                    _heuristicPolicyAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("HeuristicPolicyAdapter");
+                    Debug.Log("[EpisodeController] HeuristicPolicyAdapter created automatically.");
+                }
             }
+        }
+
+        private void EnsureCoreRuntimeObjects()
+        {
+            _gridManager ??= EnsureSceneComponent<GridManager>("GridManager");
+            _unitRegistry ??= EnsureSceneComponent<UnitRegistry>("UnitRegistry");
+            _resourceManager ??= EnsureSceneComponent<ResourceManager>("ResourceManager");
+            _matchBootstrap ??= EnsureSceneComponent<MatchBootstrap>("MatchBootstrap");
+            _matchManager ??= EnsureSceneComponent<MatchManager>("MatchManager");
+
+            // VictoryResolver is consumed transitively by MatchManager.ResolveReferences().
+            EnsureSceneComponent<VictoryResolver>("VictoryResolver");
+        }
+
+        private static T EnsureSceneComponent<T>(string gameObjectName) where T : Component
+        {
+            T existing = FindFirstObjectByType<T>();
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            GameObject host = GameObject.Find(gameObjectName);
+            if (host == null)
+            {
+                host = new GameObject(gameObjectName);
+            }
+
+            T component = host.GetComponent<T>();
+            if (component == null)
+            {
+                component = host.AddComponent<T>();
+            }
+
+            return component;
         }
 
         private void SubscribeMatchEvents()

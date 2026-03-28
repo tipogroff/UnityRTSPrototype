@@ -279,7 +279,9 @@ namespace RTS.ML
             {
                 for (int col = 0; col < ObservationContract.GridW; col++)
                 {
-                    var pos = new GridPosition(row, col);
+                    // Spatial tensor uses row=Y and col=X. Keep this aligned with
+                    // GridPosition.ToFlatIndex() and ActionMaskBuilder actor indexing.
+                    var pos = new GridPosition(col, row);
                     int baseIndex = ObservationContract.FlatIndex(row, col, 0);
 
                     unitsByPos.TryGetValue(pos, out var unit);
@@ -405,7 +407,9 @@ namespace RTS.ML
             {
                 for (int col = 0; col < ObservationContract.GridW; col++)
                 {
-                    var pos = new GridPosition(row, col);
+                    // Spatial tensor uses row=Y and col=X. Keep this aligned with
+                    // GridPosition.ToFlatIndex() and ActionMaskBuilder actor indexing.
+                    var pos = new GridPosition(col, row);
                     int baseIndex = ObservationContract.FlatIndex(row, col, 0);
 
                     // Прочитать сущности в этой клетке

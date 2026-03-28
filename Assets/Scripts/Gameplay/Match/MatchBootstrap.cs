@@ -58,9 +58,9 @@ namespace RTS.Gameplay
         /// </summary>
         public void Setup()
         {
+            ResolveReferences();
             if (!ValidateConfig()) return;
 
-            ResolveReferences();
             if (_gridManager == null || _matchManager == null) return;
 
             InitGrid();
@@ -103,6 +103,15 @@ namespace RTS.Gameplay
         {
             if (_config == null)
             {
+                MatchBootstrap bootstrap = Instance;
+                if (bootstrap != null && bootstrap != this)
+                {
+                    _config = bootstrap.GetConfig();
+                }
+            }
+
+            if (_config == null)
+            {
                 Debug.LogError("[MatchBootstrap] GameConfig не назначен! " +
                                "Перетащите ассет GameConfig в поле _config.");
                 return false;
@@ -120,10 +129,12 @@ namespace RTS.Gameplay
 
         private void ResolveReferences()
         {
-            if (_gridManager == null) _gridManager = GridManager.Instance;
-            if (_matchManager == null) _matchManager = MatchManager.Instance;
-            if (_unitRegistry == null) _unitRegistry = UnitRegistry.Instance;
-            if (_resourceManager == null) _resourceManager = ResourceManager.Instance;
+            if (_gridManager == null) _gridManager = GridManager.Instance ?? EnsureSceneComponent<GridManager>("GridManager");
+            if (_matchManager == null) _matchManager = MatchManager.Instance ?? EnsureSceneComponent<MatchManager>("MatchManager");
+            if (_unitRegistry == null) _unitRegistry = UnitRegistry.Instance ?? EnsureSceneComponent<UnitRegistry>("UnitRegistry");
+            if (_resourceManager == null) _resourceManager = ResourceManager.Instance ?? EnsureSceneComponent<ResourceManager>("ResourceManager");
+
+            EnsureSceneComponent<VictoryResolver>("VictoryResolver");
 
             if (_gridManager == null)
                 Debug.LogError("[MatchBootstrap] GridManager не найден в сцене!");
@@ -133,6 +144,29 @@ namespace RTS.Gameplay
                 Debug.LogWarning("[MatchBootstrap] UnitRegistry не найден. Спавн продолжится без реестра.");
             if (_resourceManager == null)
                 Debug.LogWarning("[MatchBootstrap] ResourceManager не найден. Ресурсные узлы не будут отслеживаться.");
+        }
+
+        private static T EnsureSceneComponent<T>(string gameObjectName) where T : Component
+        {
+            T existing = Object.FindFirstObjectByType<T>();
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            GameObject host = GameObject.Find(gameObjectName);
+            if (host == null)
+            {
+                host = new GameObject(gameObjectName);
+            }
+
+            T component = host.GetComponent<T>();
+            if (component == null)
+            {
+                component = host.AddComponent<T>();
+            }
+
+            return component;
         }
 
         // ── Шаг 3: инициализация сетки ───────────────────────────────────────

@@ -106,7 +106,7 @@ namespace RTS.ML
         [SerializeField] private HeuristicControlMode _player2Control = HeuristicControlMode.Heuristic;
 
         [Header("Diagnostics")]
-        [SerializeField] private bool _enableDecisionLogs = true;
+        [SerializeField] private bool _enableDecisionLogs = false;
         [SerializeField] private bool _logMaskSummary = false;
 
         private ObservationBuilder _observationBuilder;
@@ -206,7 +206,7 @@ namespace RTS.ML
                 selection.AttackTargetLocal);
 
             _actionApplier.ResetDiagnostics();
-            bool accepted = _actionApplier.ApplyAction(decoded, playerId);
+            bool accepted = _actionApplier.ApplyAction(decoded, playerId, debugMask.TransferMask, "heuristic");
             string applierRejection = _actionApplier.RejectionReasonsLastStep.Count > 0
                 ? _actionApplier.RejectionReasonsLastStep[0]
                 : string.Empty;

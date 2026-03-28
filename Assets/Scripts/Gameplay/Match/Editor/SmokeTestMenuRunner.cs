@@ -5,13 +5,140 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using RTS.Gameplay;
 using RTS.ML;
+using RTS.Core;
 
 namespace RTS.Testing.Editor
 {
+    [InitializeOnLoad]
     public static class SmokeTestMenuRunner
     {
+        private const string RunDay6AfterPlayModeKey = "RTS.Testing.Editor.RunDay6AfterPlayMode";
+        private const string RunDay6ReadyPollsKey = "RTS.Testing.Editor.RunDay6ReadyPolls";
+
+        static SmokeTestMenuRunner()
+        {
+            EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
+            EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
+            EditorApplication.update -= PollPendingColdStartSmoke;
+            EditorApplication.update += PollPendingColdStartSmoke;
+        }
+
+        [MenuItem("RTS/PlayMode/Enter")]
+        public static void EnterPlayMode()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.Log("[RTS PlayMode] Already in Play Mode.");
+                return;
+            }
+
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("RTS/PlayMode/Exit")]
+        public static void ExitPlayMode()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.Log("[RTS PlayMode] Already in Edit Mode.");
+                return;
+            }
+
+            EditorApplication.isPlaying = false;
+        }
+
+        [MenuItem("RTS/Smoke/Day6 From Cold Start")]
+        public static void RunDay6FromColdStart()
+        {
+            if (Application.isPlaying)
+            {
+                RunDay6PipelineSmokeTest();
+                return;
+            }
+
+            SessionState.SetBool(RunDay6AfterPlayModeKey, true);
+            SessionState.SetInt(RunDay6ReadyPollsKey, 0);
+            Debug.Log("[SmokeTest] Day 6 cold-start requested. Entering Play Mode...");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("RTS/Scene/Fix Current RTS Scene")]
+        public static void FixCurrentRtsScene()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogError("[RTS Scene Fix] Exit Play Mode before repairing the scene.");
+                return;
+            }
+
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (!activeScene.IsValid())
+            {
+                Debug.LogError("[RTS Scene Fix] No valid active scene is open.");
+                return;
+            }
+
+            GameConfig config = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/ML/GameConfig_MVP.asset");
+            if (config == null)
+            {
+                Debug.LogError("[RTS Scene Fix] Could not load Assets/ML/GameConfig_MVP.asset.");
+                return;
+            }
+
+            GridManager gridManager = EnsureComponent<GridManager>("GridManager");
+            MatchManager matchManager = EnsureComponent<MatchManager>("MatchManager");
+            MatchBootstrap matchBootstrap = EnsureComponent<MatchBootstrap>("MatchBootstrap");
+            UnitRegistry unitRegistry = EnsureComponent<UnitRegistry>("UnitRegistry");
+            ResourceManager resourceManager = EnsureComponent<ResourceManager>("ResourceManager");
+            EpisodeController episodeController = EnsureComponent<EpisodeController>("EpisodeController");
+            VictoryResolver victoryResolver = EnsureComponent<VictoryResolver>("VictoryResolver");
+            HeuristicDriver heuristicDriver = EnsureComponent<HeuristicDriver>("HeuristicDriver");
+
+            EnsureMainCamera();
+            EnsureDirectionalLight();
+
+            SetSerializedReference(gridManager, "config", config);
+
+            SetSerializedReference(matchBootstrap, "_config", config);
+            SetSerializedReference(matchBootstrap, "_gridManager", gridManager);
+            SetSerializedReference(matchBootstrap, "_matchManager", matchManager);
+            SetSerializedReference(matchBootstrap, "_unitRegistry", unitRegistry);
+            SetSerializedReference(matchBootstrap, "_resourceManager", resourceManager);
+
+            SetSerializedReference(matchManager, "_gridManager", gridManager);
+            SetSerializedReference(matchManager, "_unitRegistry", unitRegistry);
+            SetSerializedReference(matchManager, "_victoryResolver", victoryResolver);
+            SetSerializedReference(matchManager, "_matchBootstrap", matchBootstrap);
+
+            SetSerializedReference(episodeController, "_matchManager", matchManager);
+            SetSerializedReference(episodeController, "_matchBootstrap", matchBootstrap);
+            SetSerializedReference(episodeController, "_gridManager", gridManager);
+            SetSerializedReference(episodeController, "_unitRegistry", unitRegistry);
+            SetSerializedReference(episodeController, "_resourceManager", resourceManager);
+            SetSerializedReference(episodeController, "_heuristicDriver", heuristicDriver);
+
+            SetSerializedReference(heuristicDriver, "_config", config);
+            SetSerializedReference(heuristicDriver, "_gridManager", gridManager);
+            SetSerializedReference(heuristicDriver, "_unitRegistry", unitRegistry);
+            SetSerializedReference(heuristicDriver, "_resourceManager", resourceManager);
+            SetSerializedReference(heuristicDriver, "_matchManager", matchManager);
+
+            ManualStepController manualStepController = Object.FindFirstObjectByType<ManualStepController>();
+            if (manualStepController != null)
+            {
+                SetSerializedReference(manualStepController, "_episodeController", episodeController);
+                SetSerializedReference(manualStepController, "_matchManager", matchManager);
+            }
+
+            EditorSceneManager.MarkSceneDirty(activeScene);
+            EditorSceneManager.SaveOpenScenes();
+
+            Debug.Log($"[RTS Scene Fix] Scene '{activeScene.name}' repaired and saved.");
+        }
+
         [MenuItem("SmokeTest/0 - Ensure ActionApplierSmokeTest Object")]
         public static void EnsureMlSmokeTestObject()
         {
@@ -344,6 +471,199 @@ namespace RTS.Testing.Editor
 
             adapter.SetPlayerControlModes(HeuristicControlMode.Heuristic, HeuristicControlMode.Idle);
             Debug.Log("[SmokeTest] Day5 control mode set: Player1=Heuristic, Player2=Idle.");
+        }
+
+        [MenuItem("SmokeTest/10 - Day6 Pipeline Smoke Test")]
+        public static void RunDay6PipelineSmokeTest()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            Day6PipelineSmokeTest smoke = Object.FindFirstObjectByType<Day6PipelineSmokeTest>();
+            bool wasAutoCreated = false;
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("Day6PipelineSmokeTest_AutoRunner");
+                smoke = host.AddComponent<Day6PipelineSmokeTest>();
+                wasAutoCreated = true;
+                Debug.Log("[SmokeTest] Day6PipelineSmokeTest was auto-created for this run.");
+            }
+
+            if (wasAutoCreated)
+            {
+                Debug.Log("[SmokeTest] Day 6 pipeline smoke test invoked via Awake() on auto-created component.");
+                return;
+            }
+
+            MethodInfo runTests = typeof(Day6PipelineSmokeTest)
+                .GetMethod("RunTests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (runTests == null)
+            {
+                Debug.LogError("[SmokeTest] RunTests() method not found on Day6PipelineSmokeTest.");
+                return;
+            }
+
+            runTests.Invoke(smoke, null);
+            Debug.Log("[SmokeTest] Day 6 pipeline smoke test invoked.");
+        }
+
+        // Short aliases for environments where long menu paths are clipped.
+        [MenuItem("RTS/Smoke/Day6")]
+        public static void RunDay6PipelineSmokeTestShortAlias()
+        {
+            RunDay6PipelineSmokeTest();
+        }
+
+        [MenuItem("Tools/RTS/Smoke/Day6")]
+        public static void RunDay6PipelineSmokeTestToolsAlias()
+        {
+            RunDay6PipelineSmokeTest();
+        }
+
+        private static void HandlePlayModeStateChanged(PlayModeStateChange change)
+        {
+            if (!SessionState.GetBool(RunDay6AfterPlayModeKey, false))
+            {
+                return;
+            }
+
+            if (change == PlayModeStateChange.EnteredPlayMode)
+            {
+                SessionState.SetInt(RunDay6ReadyPollsKey, 0);
+                Debug.Log("[SmokeTest] Day 6 cold-start entered Play Mode. Waiting for runtime readiness...");
+                return;
+            }
+
+            if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode)
+            {
+                SessionState.EraseBool(RunDay6AfterPlayModeKey);
+                SessionState.EraseInt(RunDay6ReadyPollsKey);
+            }
+        }
+
+        private static void PollPendingColdStartSmoke()
+        {
+            if (!SessionState.GetBool(RunDay6AfterPlayModeKey, false) || !Application.isPlaying)
+            {
+                return;
+            }
+
+            int readyPolls = SessionState.GetInt(RunDay6ReadyPollsKey, 0) + 1;
+            SessionState.SetInt(RunDay6ReadyPollsKey, readyPolls);
+
+            EpisodeController episodeController = EpisodeController.Instance;
+            MatchManager matchManager = MatchManager.Instance;
+            if (episodeController == null || matchManager == null || matchManager.Phase != MatchPhase.Running)
+            {
+                if (readyPolls == 300)
+                {
+                    Debug.LogWarning("[SmokeTest] Day 6 cold-start timed out waiting for runtime readiness.");
+                    SessionState.EraseBool(RunDay6AfterPlayModeKey);
+                    SessionState.EraseInt(RunDay6ReadyPollsKey);
+                }
+
+                return;
+            }
+
+            SessionState.EraseBool(RunDay6AfterPlayModeKey);
+            SessionState.EraseInt(RunDay6ReadyPollsKey);
+            Debug.Log("[SmokeTest] Day 6 cold-start runtime is ready. Launching suite...");
+            RunDay6PipelineSmokeTest();
+        }
+
+        private static T EnsureComponent<T>(string gameObjectName) where T : Component
+        {
+            T existing = Object.FindFirstObjectByType<T>();
+            if (existing != null)
+            {
+                if (existing.gameObject.name != gameObjectName)
+                {
+                    existing.gameObject.name = gameObjectName;
+                }
+
+                return existing;
+            }
+
+            GameObject host = GameObject.Find(gameObjectName);
+            if (host == null)
+            {
+                host = new GameObject(gameObjectName);
+            }
+
+            T component = host.GetComponent<T>();
+            if (component == null)
+            {
+                component = host.AddComponent<T>();
+            }
+
+            return component;
+        }
+
+        private static void SetSerializedReference(Object target, string propertyName, Object value)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            SerializedObject serializedObject = new SerializedObject(target);
+            SerializedProperty property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogWarning($"[RTS Scene Fix] Property '{propertyName}' was not found on {target.name}.");
+                return;
+            }
+
+            property.objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        private static void EnsureMainCamera()
+        {
+            Camera camera = Camera.main;
+            if (camera != null)
+            {
+                return;
+            }
+
+            GameObject cameraGo = GameObject.Find("Main Camera") ?? new GameObject("Main Camera");
+            if (cameraGo.GetComponent<Camera>() == null)
+            {
+                cameraGo.AddComponent<Camera>();
+            }
+
+            if (cameraGo.GetComponent<AudioListener>() == null)
+            {
+                cameraGo.AddComponent<AudioListener>();
+            }
+
+            cameraGo.tag = "MainCamera";
+        }
+
+        private static void EnsureDirectionalLight()
+        {
+            Light[] lights = Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
+            for (int i = 0; i < lights.Length; i++)
+            {
+                if (lights[i] != null && lights[i].type == LightType.Directional)
+                {
+                    return;
+                }
+            }
+
+            GameObject lightGo = GameObject.Find("Directional Light") ?? new GameObject("Directional Light");
+            Light light = lightGo.GetComponent<Light>();
+            if (light == null)
+            {
+                light = lightGo.AddComponent<Light>();
+            }
+
+            light.type = LightType.Directional;
         }
     }
 }

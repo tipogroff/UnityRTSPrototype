@@ -96,7 +96,10 @@ namespace RTS.Gameplay
 
         /// <summary>True, если клетка занята каким-либо юнитом.</summary>
         public bool IsCellOccupied(GridPosition pos)
-            => _occupancy.ContainsKey(pos);
+        {
+            EnsureGridStorageInitialized();
+            return _occupancy.ContainsKey(pos);
+        }
 
         /// <summary>
         /// True, если клетка находится внутри карты И свободна.
@@ -110,6 +113,7 @@ namespace RTS.Gameplay
         /// </summary>
         public UnitRuntime GetOccupant(GridPosition pos)
         {
+            EnsureGridStorageInitialized();
             _occupancy.TryGetValue(pos, out var unit);
             return unit;
         }
@@ -118,7 +122,10 @@ namespace RTS.Gameplay
         /// Пытается получить юнита, занимающего клетку.
         /// </summary>
         public bool TryGetOccupant(GridPosition pos, out UnitRuntime unit)
-            => _occupancy.TryGetValue(pos, out unit);
+        {
+            EnsureGridStorageInitialized();
+            return _occupancy.TryGetValue(pos, out unit);
+        }
 
         // ── Размещение и перемещение ──────────────────────────────────────────
 
@@ -129,6 +136,8 @@ namespace RTS.Gameplay
         /// </summary>
         public bool TryPlaceUnit(UnitRuntime unit, GridPosition pos)
         {
+            EnsureGridStorageInitialized();
+
             if (unit == null)
             {
                 Debug.LogError("[GridManager] TryPlaceUnit: unit == null");
@@ -156,6 +165,8 @@ namespace RTS.Gameplay
         /// </summary>
         public void RemoveUnit(GridPosition pos)
         {
+            EnsureGridStorageInitialized();
+
             if (!_occupancy.Remove(pos))
                 Debug.LogWarning($"[GridManager] RemoveUnit: клетка {pos} не была занята.");
         }
@@ -171,6 +182,8 @@ namespace RTS.Gameplay
         /// </summary>
         public void MoveUnit(UnitRuntime unit, GridPosition from, GridPosition to)
         {
+            EnsureGridStorageInitialized();
+
             if (unit == null)
             {
                 Debug.LogError("[GridManager] MoveUnit: unit == null");
@@ -197,6 +210,18 @@ namespace RTS.Gameplay
             _occupancy.Remove(from);
             _occupancy[to] = unit;
             unit.GridPos = to;
+        }
+
+        private void EnsureGridStorageInitialized()
+        {
+            if (_occupancy != null)
+            {
+                return;
+            }
+
+            _width = _width > 0 ? _width : (config != null ? config.mapWidth : GameConstants.MapWidth);
+            _height = _height > 0 ? _height : (config != null ? config.mapHeight : GameConstants.MapHeight);
+            _occupancy = new Dictionary<GridPosition, UnitRuntime>(_width * _height);
         }
 
         // ── Перевод координат ─────────────────────────────────────────────────

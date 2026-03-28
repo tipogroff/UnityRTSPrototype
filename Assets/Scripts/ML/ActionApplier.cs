@@ -28,6 +28,74 @@ using RTS.Gameplay;
 
 namespace RTS.ML
 {
+    public enum InvalidAttemptCategory
+    {
+        ObservationMismatch,
+        MaskMismatch,
+        RuntimeOnlyConstraint,
+        InvalidInput,
+        ExpectedFallback
+    }
+
+    public readonly struct InvalidActionAttemptLog
+    {
+        public InvalidActionAttemptLog(
+            Owner player,
+            GridPosition actorPosition,
+            int actorFlatIndex,
+            string sourceActionFormat,
+            UnitActionType requestedActionType,
+            Direction direction,
+            ProducibleUnit produceType,
+            GridPosition attackTarget,
+            bool decoderIsValid,
+            string decoderReason,
+            string maskState,
+            bool accepted,
+            string rejectionReason,
+            InvalidAttemptCategory category)
+        {
+            Player = player;
+            ActorPosition = actorPosition;
+            ActorFlatIndex = actorFlatIndex;
+            SourceActionFormat = sourceActionFormat;
+            RequestedActionType = requestedActionType;
+            Direction = direction;
+            ProduceType = produceType;
+            AttackTarget = attackTarget;
+            DecoderIsValid = decoderIsValid;
+            DecoderReason = decoderReason;
+            MaskState = maskState;
+            Accepted = accepted;
+            RejectionReason = rejectionReason;
+            Category = category;
+        }
+
+        public Owner Player { get; }
+        public GridPosition ActorPosition { get; }
+        public int ActorFlatIndex { get; }
+        public string SourceActionFormat { get; }
+        public UnitActionType RequestedActionType { get; }
+        public Direction Direction { get; }
+        public ProducibleUnit ProduceType { get; }
+        public GridPosition AttackTarget { get; }
+        public bool DecoderIsValid { get; }
+        public string DecoderReason { get; }
+        public string MaskState { get; }
+        public bool Accepted { get; }
+        public string RejectionReason { get; }
+        public InvalidAttemptCategory Category { get; }
+
+        public string ToCompactString()
+        {
+            return
+                $"player={Player}, actor={ActorPosition}#{ActorFlatIndex}, source={SourceActionFormat}, " +
+                $"type={RequestedActionType}, dir={Direction}, produce={ProduceType}, target={AttackTarget}, " +
+                $"decoderValid={DecoderIsValid}, accepted={Accepted}, category={Category}, " +
+                $"reason={RejectionReason}, decoderReason={DecoderReason}, mask={MaskState}";
+        }
+    }
+
     /// <summary>
     /// Applies AgentAction to the game engine.
     /// 
@@ -45,6 +113,9 @@ namespace RTS.ML
         public int AcceptedActionsLastStep { get; private set; }
         public int RejectedActionsLastStep { get; private set; }
         public List<string> RejectionReasonsLastStep { get; private set; }
+        public InvalidActionAttemptLog? LastInvalidAttempt { get; private set; }
+
+        public event System.Action<InvalidActionAttemptLog> OnInvalidActionAttempt;
 
         public ActionApplier(GridManager gridManager, UnitRegistry unitRegistry, MatchManager matchManager, ResourceManager resourceManager = null)
         {
@@ -66,6 +137,26 @@ namespace RTS.ML
         /// </summary>
         public bool ApplyAction(AgentAction action, Owner playerPerspective)
         {
+            return ApplyAction(action, playerPerspective, null, null);
+        }
+
+        /// <summary>
+        /// Apply a single AgentAction with optional mask/source diagnostics.
+        /// </summary>
+        public bool ApplyAction(AgentAction action, Owner playerPerspective, ActionMaskSet maskAtSelection, string sourceActionFormat)
+        {
+            string sourceFormat = ResolveSourceFormat(action, sourceActionFormat);
+            string maskState = BuildMaskStateForAction(maskAtSelection, action);
+
+            if (!action.IsValid)
+            {
+                string reason = string.IsNullOrWhiteSpace(action.InvalidationReason)
+                    ? "Decoder marked action invalid"
+                    : $"Decoder marked action invalid: {action.InvalidationReason}";
+                RecordRejectionDetailed(action, playerPerspective, reason, maskState, sourceFormat, InvalidAttemptCategory.InvalidInput);
+                return false;
+            }
+
             // Early exit for NoOp
             if (action.ActionType == UnitActionType.NoOp)
             {
@@ -76,7 +167,13 @@ namespace RTS.ML
             // This check runs for every action regardless of source (single or batch).
             if (_matchManager.Phase != MatchPhase.Running)
             {
-                RecordRejection($"Match is not in Running phase (current: {_matchManager.Phase})");
+                RecordRejectionDetailed(
+                    action,
+                    playerPerspective,
+                    $"Match is not in Running phase (current: {_matchManager.Phase})",
+                    maskState,
+                    sourceFormat,
+                    InvalidAttemptCategory.RuntimeOnlyConstraint);
                 return false;
             }
 
@@ -85,7 +182,7 @@ namespace RTS.ML
             if (unit == null)
             {
                 var reason = $"Actor does not exist at {action.ActorPosition}";
-                RecordRejection(reason);
+                RecordRejectionDetailed(action, playerPerspective, reason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.InvalidInput));
                 return false;
             }
 
@@ -93,7 +190,7 @@ namespace RTS.ML
             if (unit.Owner != playerPerspective)
             {
                 var reason = $"Actor at {action.ActorPosition} belongs to {unit.Owner}, not {playerPerspective}";
-                RecordRejection(reason);
+                RecordRejectionDetailed(action, playerPerspective, reason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.InvalidInput));
                 return false;
             }
 
@@ -101,15 +198,23 @@ namespace RTS.ML
             if (!unit.IsAlive)
             {
                 var reason = $"Actor at {action.ActorPosition} is dead";
-                RecordRejection(reason);
+                RecordRejectionDetailed(action, playerPerspective, reason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.InvalidInput));
                 return false;
             }
 
-            // Validate action type is supported by actor type
-            if (!IsActionSupportedByUnitType(unit.Type, action.ActionType))
+            // Coarse gate: cheap unit-type constraints before deeper runtime checks.
+            if (!IsActionTypeCoarseSupportedByUnitType(unit.Type, action.ActionType))
             {
                 var reason = $"Unit type {unit.Type} does not support action {action.ActionType}";
-                RecordRejection(reason);
+                RecordRejectionDetailed(action, playerPerspective, reason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
+                return false;
+            }
+
+            // Runtime-authoritative capability gate for action semantics that depend
+            // on current Unity runtime definitions (for example attack capability).
+            if (!ValidateRuntimeCapabilityGate(unit, action.ActionType, out var runtimeGateReason))
+            {
+                RecordRejectionDetailed(action, playerPerspective, runtimeGateReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                 return false;
             }
 
@@ -119,7 +224,7 @@ namespace RTS.ML
                 case UnitActionType.Move:
                     if (!ValidateMoveAction(unit, action, out var moveReason))
                     {
-                        RecordRejection(moveReason);
+                        RecordRejectionDetailed(action, playerPerspective, moveReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
                     }
                     break;
@@ -127,7 +232,7 @@ namespace RTS.ML
                 case UnitActionType.Harvest:
                     if (!ValidateHarvestAction(unit, action, out var harvestReason))
                     {
-                        RecordRejection(harvestReason);
+                        RecordRejectionDetailed(action, playerPerspective, harvestReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
                     }
                     break;
@@ -135,7 +240,7 @@ namespace RTS.ML
                 case UnitActionType.Return:
                     if (!ValidateReturnAction(unit, action, out var returnReason))
                     {
-                        RecordRejection(returnReason);
+                        RecordRejectionDetailed(action, playerPerspective, returnReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
                     }
                     break;
@@ -143,7 +248,7 @@ namespace RTS.ML
                 case UnitActionType.Produce:
                     if (!ValidateProduceAction(unit, action, out var produceReason))
                     {
-                        RecordRejection(produceReason);
+                        RecordRejectionDetailed(action, playerPerspective, produceReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
                     }
                     break;
@@ -151,7 +256,7 @@ namespace RTS.ML
                 case UnitActionType.Attack:
                     if (!ValidateAttackAction(unit, action, out var attackReason))
                     {
-                        RecordRejection(attackReason);
+                        RecordRejectionDetailed(action, playerPerspective, attackReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
                     }
                     break;
@@ -174,7 +279,13 @@ namespace RTS.ML
             }
             else
             {
-                RecordRejection("MatchManager rejected command");
+                RecordRejectionDetailed(
+                    action,
+                    playerPerspective,
+                    "MatchManager rejected command",
+                    maskState,
+                    sourceFormat,
+                    InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
             }
 
             return applied;
@@ -232,18 +343,20 @@ namespace RTS.ML
             AcceptedActionsLastStep = 0;
             RejectedActionsLastStep = 0;
             RejectionReasonsLastStep.Clear();
+            LastInvalidAttempt = null;
         }
 
         // ── Private Helpers ────────────────────────────────────────────────
 
-        private bool IsActionSupportedByUnitType(UnitType unitType, UnitActionType actionType)
+        private bool IsActionTypeCoarseSupportedByUnitType(UnitType unitType, UnitActionType actionType)
         {
-            // Check what actions each unit type supports
+            // Coarse static gate by unit type. Keep this broad and cheap.
+            // Runtime-specific capability checks are handled in ValidateRuntimeCapabilityGate().
             return actionType switch
             {
                 UnitActionType.NoOp => true,  // All units
 
-                UnitActionType.Move => true,  // All combat units and workers
+                UnitActionType.Move => unitType != UnitType.Resource && unitType != UnitType.Base && unitType != UnitType.Barracks,
                 
                 UnitActionType.Harvest => unitType == UnitType.Worker,  // Only workers
                 
@@ -251,10 +364,36 @@ namespace RTS.ML
                 
                 UnitActionType.Produce => unitType == UnitType.Base || unitType == UnitType.Barracks,  // Only buildings
                 
-                UnitActionType.Attack => unitType != UnitType.Resource,  // All units except resources
+                UnitActionType.Attack => unitType != UnitType.Resource,
                 
                 _ => false
             };
+        }
+
+        private bool ValidateRuntimeCapabilityGate(UnitRuntime unit, UnitActionType actionType, out string reason)
+        {
+            reason = string.Empty;
+
+            switch (actionType)
+            {
+                case UnitActionType.Move:
+                    if (unit.IsBuilding)
+                    {
+                        reason = $"Unit type {unit.Type} cannot move in runtime (building)";
+                        return false;
+                    }
+                    break;
+
+                case UnitActionType.Attack:
+                    if (!CanAttackByRuntimeDefinition(unit))
+                    {
+                        reason = $"Unit type {unit.Type} has no runtime attack capability";
+                        return false;
+                    }
+                    break;
+            }
+
+            return true;
         }
 
         private bool ValidateMoveAction(UnitRuntime unit, AgentAction action, out string reason)
@@ -452,6 +591,114 @@ namespace RTS.ML
         {
             RejectedActionsLastStep++;
             RejectionReasonsLastStep.Add(reason);
+        }
+
+        private void RecordRejectionDetailed(
+            AgentAction action,
+            Owner playerPerspective,
+            string reason,
+            string maskState,
+            string sourceActionFormat,
+            InvalidAttemptCategory category)
+        {
+            RecordRejection(reason);
+
+            var logEntry = new InvalidActionAttemptLog(
+                player: playerPerspective,
+                actorPosition: action.ActorPosition,
+                actorFlatIndex: action.ActorPosition.IsInsideMap() ? action.ActorPosition.ToFlatIndex() : -1,
+                sourceActionFormat: sourceActionFormat,
+                requestedActionType: action.ActionType,
+                direction: action.Direction,
+                produceType: action.ProduceUnitType,
+                attackTarget: action.AttackTargetPosition,
+                decoderIsValid: action.IsValid,
+                decoderReason: action.InvalidationReason,
+                maskState: maskState,
+                accepted: false,
+                rejectionReason: reason,
+                category: category);
+
+            LastInvalidAttempt = logEntry;
+            OnInvalidActionAttempt?.Invoke(logEntry);
+            Debug.LogWarning($"[ActionApplier][InvalidAttempt] {logEntry.ToCompactString()}");
+        }
+
+        private string ResolveSourceFormat(AgentAction action, string sourceActionFormat)
+        {
+            if (!string.IsNullOrWhiteSpace(sourceActionFormat))
+                return sourceActionFormat;
+
+            return action.SourceType switch
+            {
+                ActionSourceType.TransferCompatible => "transfer",
+                ActionSourceType.Debug => "debug",
+                _ => "unknown"
+            };
+        }
+
+        private InvalidAttemptCategory InferCategoryFromMask(ActionMaskSet maskAtSelection, AgentAction action, InvalidAttemptCategory fallback)
+        {
+            if (action.ActionType == UnitActionType.NoOp && !action.IsValid)
+                return InvalidAttemptCategory.ExpectedFallback;
+
+            if (maskAtSelection == null)
+                return fallback;
+
+            if (!action.ActorPosition.IsInsideMap())
+                return InvalidAttemptCategory.InvalidInput;
+
+            int actorIndex = action.ActorPosition.ToFlatIndex();
+            if (actorIndex < 0 || actorIndex >= ActionContract.TotalCells)
+                return InvalidAttemptCategory.InvalidInput;
+
+            if (!maskAtSelection.ActorCellMask[actorIndex])
+                return InvalidAttemptCategory.MaskMismatch;
+
+            ActorActionMask actorMask = maskAtSelection.GetActorMaskByFlatIndex(actorIndex);
+            if (actorMask != null && !actorMask.IsActionTypeEnabled(action.ActionType))
+                return InvalidAttemptCategory.MaskMismatch;
+
+            return fallback;
+        }
+
+        private string BuildMaskStateForAction(ActionMaskSet maskAtSelection, AgentAction action)
+        {
+            if (maskAtSelection == null)
+                return "mask:none";
+
+            if (!action.ActorPosition.IsInsideMap())
+                return $"mask:actor-out-of-bounds pos={action.ActorPosition}";
+
+            int actorIndex = action.ActorPosition.ToFlatIndex();
+            if (actorIndex < 0 || actorIndex >= ActionContract.TotalCells)
+                return $"mask:actor-index-invalid index={actorIndex}";
+
+            bool actorEnabled = maskAtSelection.ActorCellMask[actorIndex];
+            ActorActionMask actorMask = maskAtSelection.GetActorMaskByFlatIndex(actorIndex);
+            string actionEnabled = actorMask != null
+                ? actorMask.IsActionTypeEnabled(action.ActionType).ToString()
+                : "false";
+            string availableActions = actorMask != null ? actorMask.ActionTypeMaskToString() : "<none>";
+
+            return
+                $"mask:actorEnabled={actorEnabled}, actionEnabled={actionEnabled}, " +
+                $"availableActions={availableActions}, matchRunning={maskAtSelection.IsMatchRunning}";
+        }
+
+        private bool CanAttackByRuntimeDefinition(UnitRuntime unit)
+        {
+            MatchBootstrap bootstrap = MatchBootstrap.Instance;
+            GameConfig config = bootstrap != null ? bootstrap.GetConfig() : null;
+            UnitDefinition definition = config != null ? config.GetDefinition(unit.Type) : null;
+
+            if (definition == null)
+            {
+                // Fallback: preserve previous broad behavior if definitions are unavailable.
+                return unit.Type != UnitType.Resource;
+            }
+
+            return definition.attackDamage > 0 && definition.attackRange > 0;
         }
     }
 }

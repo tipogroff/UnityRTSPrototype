@@ -125,7 +125,7 @@ float[] obs = builder.BuildObservation(Owner.Player1);
 2. **Attack Target [26]**: Placeholder (0)
    - TODO: Неделя 4 — вычислить нормализованный индекс целей в зоне атаки
 
-3. **Global Features**: Не реализованы
+3. **Global Features**: 
    - Реализовано: добавлен `BuildGlobalFeatures(...)` для UnityMvpTransfer (выигрыш/проигрыш, ресурсы игроков, счётчик шагов)
 
 ### Совместимость
