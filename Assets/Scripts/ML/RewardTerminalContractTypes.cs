@@ -81,6 +81,7 @@ namespace RTS.ML
         public float TerminalLoss;
         public float TerminalDraw;
         public float TerminalTimeout;
+        public float TerminalInvalidRuntimeState;
 
         public float ShapingInvalidCommand;
         public float ShapingIdleStep;
@@ -103,6 +104,7 @@ namespace RTS.ML
                 TerminalLoss = -1.00f,
                 TerminalDraw = 0.00f,
                 TerminalTimeout = 0.00f,
+                TerminalInvalidRuntimeState = -1.00f,
 
                 ShapingInvalidCommand = -0.005f,
                 ShapingIdleStep = -0.001f,

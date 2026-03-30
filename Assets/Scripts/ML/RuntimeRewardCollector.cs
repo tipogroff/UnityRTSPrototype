@@ -11,7 +11,6 @@ namespace RTS.ML
     {
         public bool EnableSelfLossPenalty;
         public bool EnableInvalidCommandPenalty;
-        public bool EnableTimeoutPenalty;
         public float InvalidPenaltyPerStepCap;
 
         public static RewardCollectorOptions CreateDefaults()
@@ -20,7 +19,6 @@ namespace RTS.ML
             {
                 EnableSelfLossPenalty = false,
                 EnableInvalidCommandPenalty = false,
-                EnableTimeoutPenalty = false,
                 InvalidPenaltyPerStepCap = 0.05f
             };
         }
@@ -360,9 +358,12 @@ namespace RTS.ML
             }
 
             bool becameTerminal = pre.MatchState.Phase == MatchPhase.Running && post.MatchState.Phase == MatchPhase.Ended;
+            // Evaluate once and reuse; avoids duplicate evaluation when setting breakdown.TerminalReason below.
+            TerminalEvaluationResult terminalEvaluation = default;
             if (becameTerminal)
             {
-                AddTerminalEvents(events, ref breakdown, post.MatchState, perspective);
+                terminalEvaluation = EpisodeTerminalEvaluator.Evaluate(post.MatchState, perspective);
+                AddTerminalEvents(events, ref breakdown, terminalEvaluation, perspective);
             }
 
             if (_options.EnableInvalidCommandPenalty && post.InvalidCommandsLastStep > 0)
@@ -384,9 +385,7 @@ namespace RTS.ML
 
             breakdown.EventCount = events.Count;
             breakdown.IsTerminalStep = becameTerminal;
-            breakdown.TerminalReason = becameTerminal
-                ? MapTerminalReason(post.MatchState, perspective)
-                : TerminalReason.None;
+            breakdown.TerminalReason = becameTerminal ? terminalEvaluation.TerminalReason : TerminalReason.None;
             breakdown.Total = breakdown.Economy + breakdown.Combat + breakdown.Terminal + breakdown.Shaping;
 
             AccumulateEpisode(breakdown);
@@ -402,30 +401,48 @@ namespace RTS.ML
         private void AddTerminalEvents(
             List<RewardEvent> events,
             ref RewardBreakdown breakdown,
-            MatchStateSnapshot post,
+            TerminalEvaluationResult terminalEvaluation,
             Owner perspective)
         {
             RewardEventType eventType;
             float magnitude;
             string source;
 
-            if (post.Winner == perspective)
+            switch (terminalEvaluation.TerminalReason)
             {
-                eventType = RewardEventType.TerminalWin;
-                magnitude = _config.TerminalWin;
-                source = "Runtime terminal outcome: win";
-            }
-            else if (post.Winner == Owner.Neutral)
-            {
-                eventType = RewardEventType.TerminalDraw;
-                magnitude = _config.TerminalDraw;
-                source = "Runtime terminal outcome: draw";
-            }
-            else
-            {
-                eventType = RewardEventType.TerminalLoss;
-                magnitude = _config.TerminalLoss;
-                source = "Runtime terminal outcome: loss";
+                case TerminalReason.Win:
+                    eventType = RewardEventType.TerminalWin;
+                    magnitude = _config.TerminalWin;
+                    source = "Runtime terminal outcome: win";
+                    break;
+                case TerminalReason.Loss:
+                    eventType = RewardEventType.TerminalLoss;
+                    magnitude = _config.TerminalLoss;
+                    source = "Runtime terminal outcome: loss";
+                    break;
+                case TerminalReason.Draw:
+                    eventType = RewardEventType.TerminalDraw;
+                    magnitude = _config.TerminalDraw;
+                    source = "Runtime terminal outcome: draw";
+                    break;
+                case TerminalReason.Timeout:
+                    // Timeout is a distinct terminal reason: step limit reached with no winner.
+                    // It is NOT semantically equivalent to a game-logic Draw.
+                    // The base terminal reward is RewardConfig.TerminalTimeout (default 0.0 = neutral).
+                    // To discourage passive play, set TerminalTimeout to a small negative value in RewardConfig.
+                    // There is no separate second-event penalty here; the entire optional/tunable character
+                    // of timeout reward lives in the config value itself.
+                    eventType = RewardEventType.TerminalTimeout;
+                    magnitude = _config.TerminalTimeout;
+                    source = "Runtime terminal outcome: timeout (step limit reached, no winner)";
+                    break;
+                case TerminalReason.InvalidRuntimeState:
+                    eventType = RewardEventType.TerminalInvalidRuntimeState;
+                    magnitude = _config.TerminalInvalidRuntimeState;
+                    source = "Runtime terminal outcome: invalid runtime state";
+                    break;
+                default:
+                    return;
             }
 
             AddEvent(
@@ -437,19 +454,6 @@ namespace RTS.ML
                 magnitude,
                 perspective,
                 source);
-
-            if (_options.EnableTimeoutPenalty && post.EndReason == MatchEndReason.StepLimitReached)
-            {
-                AddEvent(
-                    events,
-                    ref breakdown,
-                    RewardEventType.TerminalTimeout,
-                    RewardCategory.Terminal,
-                    RewardAttributionBasis.RuntimeEffect,
-                    _config.TerminalTimeout,
-                    perspective,
-                    "Runtime terminal reason: timeout");
-            }
         }
 
         private void AddEvent(
@@ -656,28 +660,6 @@ namespace RTS.ML
             }
 
             counts[unitType] = amount;
-        }
-
-        private static TerminalReason MapTerminalReason(MatchStateSnapshot state, Owner perspective)
-        {
-            if (state.Phase != MatchPhase.Ended)
-            {
-                return TerminalReason.None;
-            }
-
-            if (state.Winner == perspective)
-            {
-                return TerminalReason.Win;
-            }
-
-            if (state.Winner == Owner.Neutral)
-            {
-                return state.EndReason == MatchEndReason.StepLimitReached
-                    ? TerminalReason.Timeout
-                    : TerminalReason.Draw;
-            }
-
-            return TerminalReason.Loss;
         }
 
         private static int GetResources(MatchStateSnapshot state, Owner owner)

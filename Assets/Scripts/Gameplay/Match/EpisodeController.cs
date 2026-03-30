@@ -35,7 +35,6 @@ namespace RTS.Gameplay
         [SerializeField] private bool _logRewardBreakdown;
         [SerializeField] private bool _enableSelfLossPenalty;
         [SerializeField] private bool _enableInvalidCommandPenalty;
-        [SerializeField] private bool _enableTimeoutPenalty;
         [SerializeField] private float _invalidPenaltyPerStepCap = 0.05f;
 
         [Header("Runtime")]
@@ -44,6 +43,7 @@ namespace RTS.Gameplay
         [SerializeField] private bool _useHeuristicAI = true;
         [SerializeField] private HeuristicExecutionPath _heuristicExecutionPath = HeuristicExecutionPath.Day5PolicyPipeline;
         [SerializeField] private bool _logLifecycleEvents;
+        [SerializeField] private bool _logTerminalDiagnostics = true;
 
         [Header("Auto loop")]
         [Tooltip("Автоматически запускать следующий эпизод после завершения текущего.")]
@@ -57,6 +57,7 @@ namespace RTS.Gameplay
 
         public RewardStepTrace LastRewardStepTrace { get; private set; }
         public RewardBreakdown LastRewardBreakdown { get; private set; }
+        public EpisodeEndReport LastTerminalReport { get; private set; }
 
         public int EpisodeIndex { get; private set; }
         public bool IsRunning => _episodeRunning && _matchManager != null && _matchManager.Phase == MatchPhase.Running;
@@ -144,6 +145,7 @@ namespace RTS.Gameplay
                 _runtimeRewardCollector?.ResetEpisode();
                 LastRewardStepTrace = default;
                 LastRewardBreakdown = default;
+                LastTerminalReport = default;
                 
                 // Инициализируем HeuristicDriver
                 if (_useHeuristicAI && _heuristicDriver != null)
@@ -173,13 +175,19 @@ namespace RTS.Gameplay
 
         public void ResetEpisode()
         {
-            // Safety net: если ресет был вызван до получения OnMatchEnded,
-            // всё равно закрываем текущий эпизод в логгере.
             if (_episodeRunning && !_episodeFinalized)
             {
-                _episodeFinalized = true;
-                _episodeRunning = false;
-                _experimentLogger?.EndEpisode(false);
+                MatchStateSnapshot snapshot = _matchManager != null ? _matchManager.GetMatchState() : default;
+                TerminalEvaluationResult terminalEvaluation = snapshot.Phase == MatchPhase.Ended
+                    ? EpisodeTerminalEvaluator.Evaluate(snapshot, _rewardPerspective)
+                    : EpisodeTerminalEvaluator.CreateGuardedStop("Episode reset was requested while runtime match was still running.");
+
+                FinalizeEpisodeWithTerminalReport(terminalEvaluation, snapshot.Step);
+
+                if (snapshot.Phase != MatchPhase.Ended)
+                {
+                    Debug.LogWarning("[EpisodeController][Terminal] Guarded stop: episode reset before runtime terminal transition.");
+                }
             }
 
             StartNewEpisode();
@@ -308,25 +316,83 @@ namespace RTS.Gameplay
 
         private void HandleMatchEnded(Owner winner)
         {
-            _episodeRunning = false;
-
             if (_episodeFinalized)
             {
                 return;
             }
 
-            _episodeFinalized = true;
-            bool player1Win = winner == Owner.Player1;
-            _experimentLogger?.EndEpisode(player1Win);
-
-            if (_logLifecycleEvents)
-            {
-                Debug.Log($"[EpisodeController] Episode {EpisodeIndex} ended. Winner={winner}");
-            }
+            MatchStateSnapshot snapshot = _matchManager != null ? _matchManager.GetMatchState() : default;
+            TerminalEvaluationResult terminalEvaluation = EpisodeTerminalEvaluator.Evaluate(snapshot, _rewardPerspective);
+            FinalizeEpisodeWithTerminalReport(terminalEvaluation, snapshot.Step);
 
             if (_autoRestartEpisodes && (_maxEpisodes <= 0 || EpisodeIndex < _maxEpisodes))
             {
                 StartCoroutine(StartNextEpisodeNextFrame());
+            }
+        }
+
+        private void FinalizeEpisodeWithTerminalReport(TerminalEvaluationResult terminalEvaluation, int episodeStep)
+        {
+            if (_episodeFinalized)
+            {
+                return;
+            }
+
+            _episodeRunning = false;
+            _episodeFinalized = true;
+
+            RewardEpisodeSummary summary = _runtimeRewardCollector != null
+                ? _runtimeRewardCollector.CurrentEpisodeSummary
+                : default;
+
+            // TerminalEventProcessed: evaluator recognised and ran the terminal path.
+            // True even when terminal reward magnitude is zero (e.g. neutral Draw/Timeout defaults).
+            bool terminalEventProcessed = terminalEvaluation.IsTerminal && terminalEvaluation.TerminalReason != TerminalReason.None;
+            // TerminalRewardNonZero: something was actually accumulated in the terminal reward bucket.
+            bool terminalRewardNonZero = !Mathf.Approximately(summary.Breakdown.Terminal, 0f);
+
+            LastTerminalReport = new EpisodeEndReport(
+                terminalEvaluation.IsTerminal,
+                terminalEvaluation.TerminalReason,
+                terminalEvaluation.Winner,
+                terminalEvaluation.RuntimeEndReason,
+                terminalEvaluation.RuntimeWasTerminal,
+                terminalEventProcessed,
+                terminalRewardNonZero,
+                episodeStep,
+                summary.Breakdown,
+                terminalEvaluation.DiagnosticDescription);
+
+            if (summary.TerminalReached
+                && summary.TerminalReason != TerminalReason.None
+                && summary.TerminalReason != terminalEvaluation.TerminalReason)
+            {
+                // Mismatch between the reward layer and the controller evaluator.
+                // Both read from the same EpisodeTerminalEvaluator, so this should not occur under normal
+                // operation. It may indicate a guarded reset, a mid-episode evaluation order issue, or a
+                // future divergence introduced by a refactor. This is a diagnostic warning, not a hard stop.
+                Debug.LogWarning(
+                    $"[EpisodeController][Terminal][Mismatch] TerminalReason divergence detected. " +
+                    $"RewardLayer={summary.TerminalReason}, Controller={terminalEvaluation.TerminalReason}, " +
+                    $"RuntimeEndReason={terminalEvaluation.RuntimeEndReason}, Winner={terminalEvaluation.Winner}, " +
+                    $"Step={episodeStep}, TerminalRewardBucket={summary.Breakdown.Terminal:F4}, " +
+                    $"RuntimeWasTerminal={terminalEvaluation.RuntimeWasTerminal}, " +
+                    $"Diagnostic={terminalEvaluation.DiagnosticDescription}");
+            }
+
+            _experimentLogger?.EndEpisode(terminalEvaluation.Winner == Owner.Player1);
+
+            if (_logLifecycleEvents || _logTerminalDiagnostics)
+            {
+                Debug.Log(
+                    $"[EpisodeController][Terminal] Episode={EpisodeIndex}, Step={LastTerminalReport.EpisodeStep}, " +
+                    $"Reason={LastTerminalReport.TerminalReason}, RuntimeReason={LastTerminalReport.RuntimeEndReason}, " +
+                    $"Winner={LastTerminalReport.Winner}, RuntimeTerminal={LastTerminalReport.RuntimeWasTerminal}, " +
+                    $"TerminalEventProcessed={LastTerminalReport.TerminalEventProcessed}, TerminalRewardNonZero={LastTerminalReport.TerminalRewardNonZero}, " +
+                    $"RewardSummary(Total={LastTerminalReport.RewardBreakdown.Total:F4}, Economy={LastTerminalReport.RewardBreakdown.Economy:F4}, " +
+                    $"Combat={LastTerminalReport.RewardBreakdown.Combat:F4}, Terminal={LastTerminalReport.RewardBreakdown.Terminal:F4}, " +
+                    $"Shaping={LastTerminalReport.RewardBreakdown.Shaping:F4}, Events={LastTerminalReport.RewardBreakdown.EventCount}), " +
+                    $"Details={LastTerminalReport.DiagnosticDescription}");
             }
         }
 
@@ -430,7 +496,6 @@ namespace RTS.Gameplay
                 var options = RewardCollectorOptions.CreateDefaults();
                 options.EnableSelfLossPenalty = _enableSelfLossPenalty;
                 options.EnableInvalidCommandPenalty = _enableInvalidCommandPenalty;
-                options.EnableTimeoutPenalty = _enableTimeoutPenalty;
                 options.InvalidPenaltyPerStepCap = Mathf.Max(0f, _invalidPenaltyPerStepCap);
                 _runtimeRewardCollector = new RuntimeRewardCollector(config, options);
             }

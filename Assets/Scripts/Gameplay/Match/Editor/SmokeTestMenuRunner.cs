@@ -18,12 +18,17 @@ namespace RTS.Testing.Editor
         private const string RunDay6AfterPlayModeKey = "RTS.Testing.Editor.RunDay6AfterPlayMode";
         private const string RunDay6ReadyPollsKey = "RTS.Testing.Editor.RunDay6ReadyPolls";
 
+        private const string RunDay3AfterPlayModeKey = "RTS.Testing.Editor.RunDay3AfterPlayMode";
+        private const string RunDay3ReadyPollsKey = "RTS.Testing.Editor.RunDay3ReadyPolls";
+
         static SmokeTestMenuRunner()
         {
             EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
             EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
             EditorApplication.update -= PollPendingColdStartSmoke;
             EditorApplication.update += PollPendingColdStartSmoke;
+            EditorApplication.update -= PollPendingColdStartSmokeDay3;
+            EditorApplication.update += PollPendingColdStartSmokeDay3;
         }
 
         [MenuItem("RTS/PlayMode/Enter")]
@@ -511,6 +516,60 @@ namespace RTS.Testing.Editor
             Debug.Log("[SmokeTest] Day 6 pipeline smoke test invoked.");
         }
 
+        [MenuItem("SmokeTest/11 - Day3 Terminal Pipeline Smoke Test")]
+        public static void RunDay3TerminalSmokeTest()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            Day3TerminalSmokeTest smoke = Object.FindFirstObjectByType<Day3TerminalSmokeTest>();
+            bool wasAutoCreated = false;
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("Day3TerminalSmokeTest_AutoRunner");
+                smoke = host.AddComponent<Day3TerminalSmokeTest>();
+                wasAutoCreated = true;
+                Debug.Log("[SmokeTest] Day3TerminalSmokeTest was auto-created for this run.");
+            }
+
+            if (wasAutoCreated)
+            {
+                Debug.Log("[SmokeTest] Day 3 terminal pipeline smoke test invoked via Awake() on auto-created component.");
+                return;
+            }
+
+            MethodInfo runTests = typeof(Day3TerminalSmokeTest)
+                .GetMethod("RunTests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (runTests == null)
+            {
+                Debug.LogError("[SmokeTest] RunTests() method not found on Day3TerminalSmokeTest.");
+                return;
+            }
+
+            runTests.Invoke(smoke, null);
+            Debug.Log("[SmokeTest] Day 3 terminal pipeline smoke test invoked.");
+        }
+
+        [MenuItem("RTS/Smoke/Day3 From Cold Start")]
+        public static void RunDay3TerminalSmokeTestColdStart()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.Log("[SmokeTest] Already in Play Mode. Running Day 3 terminal smoke test directly.");
+                RunDay3TerminalSmokeTest();
+                return;
+            }
+
+            SessionState.SetBool(RunDay3AfterPlayModeKey, true);
+            SessionState.SetInt(RunDay3ReadyPollsKey, 0);
+            Debug.Log("[SmokeTest] Day 3 cold-start: entering Play Mode. Test will auto-run when runtime is ready.");
+            EditorApplication.isPlaying = true;
+        }
+
         // Short aliases for environments where long menu paths are clipped.
         [MenuItem("RTS/Smoke/Day6")]
         public static void RunDay6PipelineSmokeTestShortAlias()
@@ -524,25 +583,79 @@ namespace RTS.Testing.Editor
             RunDay6PipelineSmokeTest();
         }
 
+        [MenuItem("RTS/Smoke/Day3")]
+        public static void RunDay3TerminalSmokeTestShortAlias()
+        {
+            RunDay3TerminalSmokeTest();
+        }
+
+        [MenuItem("Tools/RTS/Smoke/Day3")]
+        public static void RunDay3TerminalSmokeTestToolsAlias()
+        {
+            RunDay3TerminalSmokeTest();
+        }
+
         private static void HandlePlayModeStateChanged(PlayModeStateChange change)
         {
-            if (!SessionState.GetBool(RunDay6AfterPlayModeKey, false))
+            // Day 6
+            if (SessionState.GetBool(RunDay6AfterPlayModeKey, false))
+            {
+                if (change == PlayModeStateChange.EnteredPlayMode)
+                {
+                    SessionState.SetInt(RunDay6ReadyPollsKey, 0);
+                    Debug.Log("[SmokeTest] Day 6 cold-start entered Play Mode. Waiting for runtime readiness...");
+                }
+                else if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode)
+                {
+                    SessionState.EraseBool(RunDay6AfterPlayModeKey);
+                    SessionState.EraseInt(RunDay6ReadyPollsKey);
+                }
+            }
+
+            // Day 3
+            if (SessionState.GetBool(RunDay3AfterPlayModeKey, false))
+            {
+                if (change == PlayModeStateChange.EnteredPlayMode)
+                {
+                    SessionState.SetInt(RunDay3ReadyPollsKey, 0);
+                    Debug.Log("[SmokeTest] Day 3 cold-start entered Play Mode. Waiting for runtime readiness...");
+                }
+                else if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode)
+                {
+                    SessionState.EraseBool(RunDay3AfterPlayModeKey);
+                    SessionState.EraseInt(RunDay3ReadyPollsKey);
+                }
+            }
+        }
+
+        private static void PollPendingColdStartSmokeDay3()
+        {
+            if (!SessionState.GetBool(RunDay3AfterPlayModeKey, false) || !Application.isPlaying)
             {
                 return;
             }
 
-            if (change == PlayModeStateChange.EnteredPlayMode)
+            int readyPolls = SessionState.GetInt(RunDay3ReadyPollsKey, 0) + 1;
+            SessionState.SetInt(RunDay3ReadyPollsKey, readyPolls);
+
+            EpisodeController episodeController = EpisodeController.Instance;
+            MatchManager matchManager = MatchManager.Instance;
+            if (episodeController == null || matchManager == null || matchManager.Phase != MatchPhase.Running)
             {
-                SessionState.SetInt(RunDay6ReadyPollsKey, 0);
-                Debug.Log("[SmokeTest] Day 6 cold-start entered Play Mode. Waiting for runtime readiness...");
+                if (readyPolls == 300)
+                {
+                    Debug.LogWarning("[SmokeTest] Day 3 cold-start timed out waiting for runtime readiness.");
+                    SessionState.EraseBool(RunDay3AfterPlayModeKey);
+                    SessionState.EraseInt(RunDay3ReadyPollsKey);
+                }
+
                 return;
             }
 
-            if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode)
-            {
-                SessionState.EraseBool(RunDay6AfterPlayModeKey);
-                SessionState.EraseInt(RunDay6ReadyPollsKey);
-            }
+            SessionState.EraseBool(RunDay3AfterPlayModeKey);
+            SessionState.EraseInt(RunDay3ReadyPollsKey);
+            Debug.Log("[SmokeTest] Day 3 cold-start runtime is ready. Launching terminal pipeline suite...");
+            RunDay3TerminalSmokeTest();
         }
 
         private static void PollPendingColdStartSmoke()

@@ -1,8 +1,13 @@
 # Week 4 Day 1 - Reward and Terminal Contract (v1)
 
 Date: 2026-03-30
-Status: Draft for implementation (Day 2+)
+Status: Day 1 contract; implemented incrementally in Day 2 and Day 3 runtime layers
 Scope: Contract-first specification only. No full reward collector or terminal loop implementation in this artifact.
+
+Day 3 note:
+- Terminal semantics are now implemented via runtime-authoritative terminal evaluation (EpisodeTerminalEvaluator),
+  shared by RuntimeRewardCollector and EpisodeController.
+- See WEEK4_DAY3_TERMINAL_PIPELINE_SUMMARY.md for implementation details and diagnostics surface.
 
 ## 1) Day 1 Goal and Non-Goals
 
