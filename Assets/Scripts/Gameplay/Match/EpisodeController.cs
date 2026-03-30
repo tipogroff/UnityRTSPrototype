@@ -29,6 +29,15 @@ namespace RTS.Gameplay
         [SerializeField] private HeuristicDriver _heuristicDriver;
         [SerializeField] private HeuristicPolicyAdapter _heuristicPolicyAdapter;
 
+        [Header("Week 4 Day 2 Reward")]
+        [SerializeField] private bool _enableRuntimeRewardCollector = true;
+        [SerializeField] private Owner _rewardPerspective = Owner.Player1;
+        [SerializeField] private bool _logRewardBreakdown;
+        [SerializeField] private bool _enableSelfLossPenalty;
+        [SerializeField] private bool _enableInvalidCommandPenalty;
+        [SerializeField] private bool _enableTimeoutPenalty;
+        [SerializeField] private float _invalidPenaltyPerStepCap = 0.05f;
+
         [Header("Runtime")]
         [SerializeField] private bool _autoStartOnPlay = true;
         [SerializeField] private bool _autoStepInFixedUpdate = true;
@@ -44,9 +53,15 @@ namespace RTS.Gameplay
 
         private bool _episodeRunning;
         private bool _episodeFinalized;
+        private RuntimeRewardCollector _runtimeRewardCollector;
+
+        public RewardStepTrace LastRewardStepTrace { get; private set; }
+        public RewardBreakdown LastRewardBreakdown { get; private set; }
 
         public int EpisodeIndex { get; private set; }
         public bool IsRunning => _episodeRunning && _matchManager != null && _matchManager.Phase == MatchPhase.Running;
+        public RewardEpisodeSummary CurrentRewardEpisodeSummary =>
+            _runtimeRewardCollector != null ? _runtimeRewardCollector.CurrentEpisodeSummary : default;
 
         private void Awake()
         {
@@ -126,6 +141,9 @@ namespace RTS.Gameplay
             {
                 EpisodeIndex++;
                 _experimentLogger?.BeginEpisode();
+                _runtimeRewardCollector?.ResetEpisode();
+                LastRewardStepTrace = default;
+                LastRewardBreakdown = default;
                 
                 // Инициализируем HeuristicDriver
                 if (_useHeuristicAI && _heuristicDriver != null)
@@ -184,6 +202,12 @@ namespace RTS.Gameplay
         /// </summary>
         private bool StepMatchWithHeuristics()
         {
+            RewardRuntimeSnapshot preSnapshot = null;
+            if (_enableRuntimeRewardCollector && _runtimeRewardCollector != null)
+            {
+                preSnapshot = _runtimeRewardCollector.CaptureSnapshot(_matchManager, _unitRegistry);
+            }
+
             // 1) Применяем эвристические решения для всех юнитов
             if (_useHeuristicAI)
             {
@@ -218,13 +242,37 @@ namespace RTS.Gameplay
 
             bool isRunningAfterStep = _matchManager.StepMatch();
 
-            // 3) Пишем метрики шага в логгер (MVP: reward=0, метрики берём по Player1)
+            float rewardDelta = 0f;
+            if (_enableRuntimeRewardCollector && _runtimeRewardCollector != null && preSnapshot != null)
+            {
+                RewardRuntimeSnapshot postSnapshot = _runtimeRewardCollector.CaptureSnapshot(_matchManager, _unitRegistry);
+                LastRewardStepTrace = _runtimeRewardCollector.EvaluateStep(preSnapshot, postSnapshot, _rewardPerspective);
+                LastRewardBreakdown = LastRewardStepTrace.Breakdown;
+                rewardDelta = LastRewardBreakdown.Total;
+
+                if (_logRewardBreakdown)
+                {
+                    Debug.Log(
+                        $"[EpisodeController][Reward] Step={LastRewardStepTrace.Step}, Total={LastRewardBreakdown.Total:F4}, " +
+                        $"Economy={LastRewardBreakdown.Economy:F4}, Combat={LastRewardBreakdown.Combat:F4}, " +
+                        $"Terminal={LastRewardBreakdown.Terminal:F4}, Shaping={LastRewardBreakdown.Shaping:F4}, " +
+                        $"Events={LastRewardBreakdown.EventCount}, TerminalStep={LastRewardBreakdown.IsTerminalStep}, " +
+                        $"TerminalReason={LastRewardBreakdown.TerminalReason}");
+                }
+            }
+            else
+            {
+                LastRewardStepTrace = default;
+                LastRewardBreakdown = default;
+            }
+
+            // 3) Пишем метрики шага в логгер.
             if (_experimentLogger != null)
             {
                 MatchStateSnapshot snapshot = _matchManager.GetMatchState();
                 bool hasInvalidCommand = _matchManager.InvalidCommandsLastStep > 0;
                 _experimentLogger.OnStep(
-                    rewardDelta: 0f,
+                    rewardDelta: rewardDelta,
                     wasActionInvalid: hasInvalidCommand,
                     currentResourcesP1: snapshot.Player1Resources,
                     currentResourcesP2: snapshot.Player2Resources,
@@ -374,6 +422,17 @@ namespace RTS.Gameplay
                     _heuristicPolicyAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("HeuristicPolicyAdapter");
                     Debug.Log("[EpisodeController] HeuristicPolicyAdapter created automatically.");
                 }
+            }
+
+            if (_runtimeRewardCollector == null)
+            {
+                var config = RewardConfig.CreateV1Defaults();
+                var options = RewardCollectorOptions.CreateDefaults();
+                options.EnableSelfLossPenalty = _enableSelfLossPenalty;
+                options.EnableInvalidCommandPenalty = _enableInvalidCommandPenalty;
+                options.EnableTimeoutPenalty = _enableTimeoutPenalty;
+                options.InvalidPenaltyPerStepCap = Mathf.Max(0f, _invalidPenaltyPerStepCap);
+                _runtimeRewardCollector = new RuntimeRewardCollector(config, options);
             }
         }
 

@@ -251,14 +251,182 @@
 
 ## Неделя 4: Награда и стабилизация RL-контура
 
-Задачи:
-- Реализовать reward design (экономика, бой, терминальные события).
-- Провести отладку распределения наград и терминалов.
-- Стабилизировать цикл CollectObservations / OnActionReceived / Heuristic.
-- Реализовать вычисление канала `attack_target [26]` в observation: нормализованный индекс целей в зоне атаки.
+Общая цель недели:
+- Сделать среду не просто "готовой к подключению policy", а реально пригодной для RL-цикла внутри Unity.
+- Агент получает observation в стабильном формате.
+- Invalid action masking уже работает.
+- Действие проходит через decoder/applier/runtime.
+- Reward и terminal logic формализованы и диагностируемы.
+- Цикл CollectObservations / OnActionReceived / Heuristic/Baseline стабилен.
+- Baseline policy можно гонять не только как debug-инструмент, но и как опорную политику для первых RL-запусков.
 
-Результат недели:
+Главный инженерный принцип недели:
+- Week 4 не должен ломать Week 3 контракт.
+- Reward не должен вносить hidden shortcut в матчевую логику.
+- Terminal logic не должна расходиться с MatchManager/VictoryResolver.
+- `attack_target[26]` дорабатывается аккуратно, без ложного claims о полной Gym parity.
+- RL loop использует уже существующий pipeline, а не параллельный "агентский путь специально для обучения".
+
+День 1. Проектирование reward contract и terminal contract
+
+Задачи дня:
+- Зафиксировать reward design на уровне документа/summary до серьезных кодовых изменений.
+- Разделить награды на экономические, боевые, терминальные.
+- При необходимости выделить отдельно shaping rewards и sparse rewards.
+- Зафиксировать, какие события считаются rewardable, punishable, terminal, informative-only.
+- Определить, какие rewards выдаются instant, accumulated-per-step, episode-end only.
+- Явно отделить reward semantics для RL, игровые события runtime, диагностические метрики.
+
+Что особенно важно:
+- Не делать reward design слишком "умным" и густым с первого дня.
+- Не смешивать reward и heuristic goals.
+- Не дублировать victory logic вне MatchManager/VictoryResolver.
+
+Минимальный целевой результат дня:
+- Есть документ или markdown-артефакт с reward/terminal contract.
+- Для каждого reward-сигнала зафиксированы: source event, magnitude/sign, stacking rule, one-time vs repeatable, risk of reward hacking.
+
+Итог дня:
+- Зафиксирован reward/terminal contract для Week 4.
+- Понятно, какие сигналы будут реализовываться в коде и зачем.
+
+День 2. Реализация базового reward collector
+
+Задачи дня:
+- Реализовать модуль/слой сбора reward-событий.
+- Ввести базовые reward categories.
+- Экономика: harvest success, return success, produce success.
+- Бой: attack success / damage dealt / enemy destroyed.
+- Опционально: self-loss penalty.
+- Терминальные: win / loss / draw.
+- Определить, где именно reward должен считаться.
+- Не в heuristic.
+- Не в mask.
+- Не в decoder.
+- На стороне runtime event/result collection, совместимой с RL loop.
+- Добавить явную структуру диагностик reward по шагу: total reward, contribution breakdown, terminal contribution, economy/combat contribution.
+
+Что хорошо бы получить:
+- Условный RewardBreakdown / RewardEvent / RewardCollector, который можно читать в агенте, логировать в smoke/debug и использовать как для baseline, так и затем для ML-Agent.
+
+Риски:
+- Reward начнет считаться "по факту выбора действия", а не по факту результата в runtime.
+- Смешаются reward за команду и reward за достигнутый эффект.
+
+Итог дня:
+- В коде есть базовый reward collector с разложением по категориям.
+- Можно получить reward breakdown за шаг/эпизод.
+
+День 3. Терминалы и эпизодный цикл
+
+Задачи дня:
+- Формализовать terminal logic в RL-контуре.
+- Явно зафиксировать, когда эпизод заканчивается.
+- Определить обработку: победа, поражение, ничья, max step timeout, невалидное/ошибочное состояние среды (если предусмотрено).
+- Согласовать RL-terminal semantics с MatchManager, VictoryResolver и существующим reset/episode lifecycle.
+- Добавить диагностический вывод: почему эпизод завершился, какой terminal code был выдан, какой terminal reward применен.
+
+Важно:
+- Не допустить расхождения: runtime считает матч активным, а RL loop уже считает его done.
+- Не превращать maxSteps в скрытый источник reward hacking.
+
+Что желательно проверить:
+- Win/loss корректно отрабатывает и в baseline-запусках.
+- Timeout не маскирует реальные ошибки среды.
+- Reset эпизода не оставляет старые reward/terminal state.
+
+Итог дня:
+- Episode termination semantics согласованы между матчевой логикой и RL loop.
+- Есть диагностируемая terminal pipeline.
+
+День 4. Стабилизация цикла CollectObservations / OnActionReceived / baseline path
+
+Задачи дня:
+- Свести в стабильный агентный цикл: CollectObservations, WriteDiscreteActionMask (или аналогичный mask path), OnActionReceived, baseline/heuristic execution path для сравнения.
+- Убедиться, что observation собирается ровно в нужный момент.
+- Проверить, что mask строится на консистентном state.
+- Проверить, что action применяется через production path.
+- Проверить, что reward и terminal читаются после runtime step в правильной фазе.
+- Подтвердить, что baseline/heuristic path можно использовать как опорный контрольный режим для отладки RL-контура.
+- Добавить минимальные step-level diagnostics: observation built, mask built, action decoded/applied, reward emitted, terminal state.
+
+Это ключевой день недели:
+- Именно здесь неделя превращается из "есть reward design" в "есть рабочий RL-контур".
+
+Риски:
+- Двойное применение шага.
+- Reward считается до применения действия.
+- Terminal считывается не после шага.
+- Heuristic path и будущий RL path расходятся по фазе вызовов.
+
+Итог дня:
+- Есть стабильный и диагностируемый RL loop поверх уже существующего Week 3 pipeline.
+
+День 5. Реализация `attack_target[26]` в observation
+
+Задачи дня:
+- Реализовать вычисление канала `attack_target[26]` в observation.
+- Зафиксировать точную семантику: что именно означает "нормализованный индекс целей в зоне атаки", как он вычисляется, для каких клеток meaningful, что пишется при отсутствии target.
+- Согласовать реализацию с ограничениями Week 3: local 3x3 attack target parameterization и residual gap между explicit attack command и runtime combat semantics.
+- Обновить документацию/spec, чтобы не возникло ложного впечатления, что канал стал полностью reference-identical во всех режимах.
+- Добавить focused observation tests/smoke checks именно на этот канал.
+
+Важно:
+- Это потенциально опасное место.
+- Можно случайно сделать "красивый" канал, который не соответствует action semantics.
+- Можно создать ложное впечатление, что observation `attack_target` и runtime combat semantics теперь полностью совпадают.
+- Нужно сделать канал полезным для policy, но честно сохранить distinction между observation-side encoding, command-side target intent и runtime-side combat resolution.
+
+Итог дня:
+- Канал `attack_target[26]` реально вычисляется и документирован.
+- Добавлены проверки его консистентности в observation pipeline.
+
+День 6. Отладка reward distribution и baseline rollout
+
+Задачи дня:
+- Прогнать серию baseline/heuristic rollouts с включенными reward и terminal logic.
+- Проверить распределение наград.
+- Нет ли reward explosion.
+- Нет ли reward starvation.
+- Не доминируют ли shaping rewards над terminal reward.
+- Не возникает ли очевидного reward hacking.
+- Проверить, что baseline-поведение дает интерпретируемый reward trace.
+- Добавить summary/debug output по эпизоду: total reward, economy contribution, combat contribution, terminal contribution, invalid action rate, episode end reason.
+
+Это день не новой логики, а sanity-check недели:
+- Нужно подтвердить, что reward действительно обучаемый.
+- Baseline не ломает эпизоды.
+- Terminal logic не ведет себя странно.
+- RL loop устойчив не только на одном искусственном кейсе.
+
+Итог дня:
+- Reward distribution и terminal behavior прошли первичную sanity-проверку.
+- Baseline rollouts дают устойчивые и интерпретируемые traces.
+
+День 7. Полировка Week 4 baseline и подготовка к Week 5
+
+Задачи дня:
+- Убрать явные шероховатости Week 4 implementation.
+- Документировать reward design, terminal design, RL loop assumptions, semantics канала `attack_target[26]`, известные ограничения baseline policy.
+- Зафиксировать, что уже готово для реального RL-запуска, какие ограничения остаются, что потребуется на следующей неделе.
+- Подготовить итоговый Week 4 artifact, например `WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md`.
+
+Что особенно важно:
+- Не начинать заранее задачи Week 5.
+- Не раздувать baseline в полноценную исследовательскую систему.
+- Оставить понятную, документированную и воспроизводимую основу.
+
+Итог дня:
 - В Unity есть рабочий RL-интерфейс и стабильная baseline-политика.
+- Week 4 оформлена как завершенный, документированный этап.
+
+Сводка недели по результатам:
+- К концу Week 4 reward design реализован и диагностируем.
+- Terminal logic согласована с runtime.
+- RL loop стабилен.
+- Baseline policy можно гонять как контрольный режим.
+- `attack_target[26]` вычисляется и документирован.
+- Есть summary-артефакт недели, пригодный и для разработки, и для главы 3.
 
 ## Неделя 5: Gym-μRTS teacher pipeline
 
