@@ -123,13 +123,15 @@ namespace RTS.ML
             int invalidCommandsLastStep,
             int carriedResourcesPlayer1,
             int carriedResourcesPlayer2,
-            Dictionary<int, UnitSnapshot> unitsById)
+            Dictionary<int, UnitSnapshot> unitsById,
+            Dictionary<int, BuildingProductionSnapshot> productionByBuildingId)
         {
             MatchState = matchState;
             InvalidCommandsLastStep = invalidCommandsLastStep;
             CarriedResourcesPlayer1 = carriedResourcesPlayer1;
             CarriedResourcesPlayer2 = carriedResourcesPlayer2;
             UnitsById = unitsById ?? new Dictionary<int, UnitSnapshot>();
+            ProductionByBuildingId = productionByBuildingId ?? new Dictionary<int, BuildingProductionSnapshot>();
         }
 
         public MatchStateSnapshot MatchState { get; }
@@ -137,6 +139,23 @@ namespace RTS.ML
         public int CarriedResourcesPlayer1 { get; }
         public int CarriedResourcesPlayer2 { get; }
         public Dictionary<int, UnitSnapshot> UnitsById { get; }
+        public Dictionary<int, BuildingProductionSnapshot> ProductionByBuildingId { get; }
+    }
+
+    public readonly struct BuildingProductionSnapshot
+    {
+        public BuildingProductionSnapshot(Owner owner, bool isProducing, UnitType? currentProducingType, int productionTimeRemaining)
+        {
+            Owner = owner;
+            IsProducing = isProducing;
+            CurrentProducingType = currentProducingType;
+            ProductionTimeRemaining = Mathf.Max(0, productionTimeRemaining);
+        }
+
+        public Owner Owner { get; }
+        public bool IsProducing { get; }
+        public UnitType? CurrentProducingType { get; }
+        public int ProductionTimeRemaining { get; }
     }
 
     public readonly struct UnitSnapshot
@@ -203,6 +222,7 @@ namespace RTS.ML
             int carriedP1 = 0;
             int carriedP2 = 0;
             var unitsById = new Dictionary<int, UnitSnapshot>(256);
+            var productionByBuildingId = new Dictionary<int, BuildingProductionSnapshot>(64);
 
             if (unitRegistry != null)
             {
@@ -217,6 +237,14 @@ namespace RTS.ML
 
                     int id = unit.GetInstanceID();
                     unitsById[id] = new UnitSnapshot(unit.Owner, unit.Type, unit.HP, unit.IsAlive);
+
+                    BuildingRuntime buildingRuntime = unit.GetComponent<BuildingRuntime>();
+                    ProductionQueue queue = buildingRuntime != null ? buildingRuntime.GetProductionQueue() : null;
+                    productionByBuildingId[id] = new BuildingProductionSnapshot(
+                        unit.Owner,
+                        queue != null && queue.IsProducing,
+                        queue != null ? queue.CurrentProducingType : null,
+                        queue != null ? queue.ProductionTimeRemaining : 0);
 
                     if (!unit.IsAlive)
                     {
@@ -234,7 +262,7 @@ namespace RTS.ML
                 }
             }
 
-            return new RewardRuntimeSnapshot(matchState, invalidCommandsLastStep, carriedP1, carriedP2, unitsById);
+            return new RewardRuntimeSnapshot(matchState, invalidCommandsLastStep, carriedP1, carriedP2, unitsById, productionByBuildingId);
         }
 
         public RewardStepTrace EvaluateStep(RewardRuntimeSnapshot pre, RewardRuntimeSnapshot post, Owner perspective)
@@ -272,8 +300,8 @@ namespace RTS.ML
                     $"Own carried-resource delta +{ownCarriedDelta}");
             }
 
-            int ownUnitDelta = GetUnitCount(post.MatchState, perspective) - GetUnitCount(pre.MatchState, perspective);
-            if (ownUnitDelta > 0)
+                int producedUnits = ComputeProducedUnitsFromRuntimeEvidence(pre, post, perspective);
+                if (producedUnits > 0)
             {
                 AddEvent(
                     events,
@@ -281,9 +309,9 @@ namespace RTS.ML
                     RewardEventType.EconomyProduceSuccess,
                     RewardCategory.Economy,
                     RewardAttributionBasis.RuntimeEffect,
-                    _config.EconomyProduceSuccess * ownUnitDelta,
+                    _config.EconomyProduceSuccess * producedUnits,
                     perspective,
-                    $"Own unit-count delta +{ownUnitDelta}");
+                    $"Production completion evidence matched to spawned units {producedUnits}");
             }
 
             int enemyHpLoss = ComputeEnemyHpLoss(pre, post, perspective);
@@ -348,10 +376,10 @@ namespace RTS.ML
                     ref breakdown,
                     RewardEventType.ShapingInvalidCommand,
                     RewardCategory.Shaping,
-                    RewardAttributionBasis.AcceptedCommand,
+                        RewardAttributionBasis.AuthoritativeRejection,
                     invalidPenalty,
                     perspective,
-                    $"Invalid commands {post.InvalidCommandsLastStep}");
+                        $"Authoritative runtime invalid/rejected commands {post.InvalidCommandsLastStep}");
             }
 
             breakdown.EventCount = events.Count;
@@ -531,6 +559,105 @@ namespace RTS.ML
             return destroyed;
         }
 
+        private static int ComputeProducedUnitsFromRuntimeEvidence(RewardRuntimeSnapshot pre, RewardRuntimeSnapshot post, Owner perspective)
+        {
+            Dictionary<UnitType, int> completedQueuesByType = CountCompletedProductions(pre, post, perspective);
+            if (completedQueuesByType.Count == 0)
+            {
+                return 0;
+            }
+
+            Dictionary<UnitType, int> spawnedOwnedUnitsByType = CountNewOwnedProducedUnits(pre, post, perspective);
+            int matchedProducedUnits = 0;
+
+            foreach (KeyValuePair<UnitType, int> kv in completedQueuesByType)
+            {
+                int spawnedCount = spawnedOwnedUnitsByType.TryGetValue(kv.Key, out int count) ? count : 0;
+                matchedProducedUnits += Mathf.Min(kv.Value, spawnedCount);
+            }
+
+            return matchedProducedUnits;
+        }
+
+        private static Dictionary<UnitType, int> CountCompletedProductions(RewardRuntimeSnapshot pre, RewardRuntimeSnapshot post, Owner perspective)
+        {
+            var result = new Dictionary<UnitType, int>();
+
+            foreach (KeyValuePair<int, BuildingProductionSnapshot> kv in pre.ProductionByBuildingId)
+            {
+                BuildingProductionSnapshot before = kv.Value;
+                if (before.Owner != perspective || !before.IsProducing || !before.CurrentProducingType.HasValue)
+                {
+                    continue;
+                }
+
+                // Day 2 exact production-completion evidence:
+                // the building had a live queue with 1 tick remaining before the step,
+                // and after the step the queue is no longer producing that unit.
+                if (before.ProductionTimeRemaining != 1)
+                {
+                    continue;
+                }
+
+                bool completed = true;
+                if (post.ProductionByBuildingId.TryGetValue(kv.Key, out BuildingProductionSnapshot after))
+                {
+                    completed = !after.IsProducing || after.CurrentProducingType != before.CurrentProducingType;
+                }
+
+                if (!completed)
+                {
+                    continue;
+                }
+
+                IncrementCount(result, before.CurrentProducingType.Value, 1);
+            }
+
+            return result;
+        }
+
+        private static Dictionary<UnitType, int> CountNewOwnedProducedUnits(RewardRuntimeSnapshot pre, RewardRuntimeSnapshot post, Owner perspective)
+        {
+            var result = new Dictionary<UnitType, int>();
+
+            foreach (KeyValuePair<int, UnitSnapshot> kv in post.UnitsById)
+            {
+                UnitSnapshot after = kv.Value;
+                if (after.Owner != perspective || !after.IsAlive || !IsProducedUnitType(after.UnitType))
+                {
+                    continue;
+                }
+
+                if (pre.UnitsById.ContainsKey(kv.Key))
+                {
+                    continue;
+                }
+
+                IncrementCount(result, after.UnitType, 1);
+            }
+
+            return result;
+        }
+
+        private static bool IsProducedUnitType(UnitType unitType)
+        {
+            return unitType == UnitType.Worker ||
+                   unitType == UnitType.Light ||
+                   unitType == UnitType.Heavy ||
+                   unitType == UnitType.Ranged;
+        }
+
+        private static void IncrementCount(Dictionary<UnitType, int> counts, UnitType unitType, int amount)
+        {
+            if (counts.TryGetValue(unitType, out int existing))
+            {
+                counts[unitType] = existing + amount;
+                return;
+            }
+
+            counts[unitType] = amount;
+        }
+
         private static TerminalReason MapTerminalReason(MatchStateSnapshot state, Owner perspective)
         {
             if (state.Phase != MatchPhase.Ended)
@@ -556,11 +683,6 @@ namespace RTS.ML
         private static int GetResources(MatchStateSnapshot state, Owner owner)
         {
             return owner == Owner.Player1 ? state.Player1Resources : state.Player2Resources;
-        }
-
-        private static int GetUnitCount(MatchStateSnapshot state, Owner owner)
-        {
-            return owner == Owner.Player1 ? state.Player1UnitCount : state.Player2UnitCount;
         }
 
         private static int GetCarried(RewardRuntimeSnapshot snapshot, Owner owner)

@@ -42,7 +42,7 @@ Reward считается только после выполнения runtime �
 
 - Harvest success (proxy по росту carried resources у перспективного игрока)
 - Return success (рост `own resources`)
-- Produce success (рост `own unit count`)
+- Produce success (через runtime evidence завершения production queue, сопоставленное с реально появившимися новыми producible units)
 
 ### Бой
 
@@ -58,7 +58,9 @@ Reward считается только после выполнения runtime �
 ### Shaping
 
 - Invalid command penalty (optional, по умолчанию выключен)
+- Attribution basis для invalid penalty: не `AcceptedCommand`, а `AuthoritativeRejection`
 - Включается через флаг в `EpisodeController`, с per-step cap.
+- Это диагностический optional shaping signal по authoritative runtime rejection, а не reward за world-state effect.
 
 ## 4) Breakdown и прозрачность расчета
 
@@ -78,6 +80,11 @@ Reward считается только после выполнения runtime �
 - `EventCount`
 - `IsTerminalStep`
 - `TerminalReason`
+
+Важно:
+
+- `Economy` / `Combat` / `Terminal` отражают reward за runtime world-state changes и runtime-authoritative terminal outcome.
+- `Shaping` не смешивается с world-effect semantics: на Day 2 это отдельный optional слой для runtime rejection diagnostics.
 
 ## 5) Совместимость с baseline path и будущим ML path
 
@@ -105,10 +112,21 @@ Reward считается только после выполнения runtime �
 ## 7) Ограничения текущей реализации
 
 - Harvest success в Day 2 считается через snapshot-proxy (рост carried resources), а не через специализированный harvest-event object.
-- Produce success определяется по изменению unit count (предполагается, что в шаге это отражает runtime spawn effect).
+- Produce success больше не считается по общему `unit count delta`.
+- Вместо этого используется более узкий сигнал: pre-step queue completion evidence (`ProductionTimeRemaining == 1` у `BuildingRuntime/ProductionQueue`) + post-step подтверждение появления нового producible unit соответствующего типа.
+- Это делает signal семантически чище для building-production path, но не является claim о полной forensic production trace system.
+- Если в будущем появятся другие spawn paths вне production queue, текущий Day 2 collector намеренно не будет считать их `EconomyProduceSuccess` без отдельного contract update.
 - Damage и destroy считаются по unit snapshot diff; для глубокой forensic-диагностики может понадобиться отдельный combat event feed (не в Day 2 scope).
 
-## 8) Переход к Day 3/4
+## 8) Что именно улучшено в завершающем pass Day 2
+
+- `EconomyProduceSuccess` теперь опирается на runtime production completion evidence, а не на грубый рост общего числа юнитов.
+- `ShapingInvalidCommand` больше не маркируется как `AcceptedCommand` attribution.
+- Зафиксировано явное различие между:
+	- reward за runtime world-state change;
+	- optional shaping penalty за authoritative runtime rejection / invalid diagnostics.
+
+## 9) Переход к Day 3/4
 
 Day 3 (terminal semantics и episode loop) и Day 4 (стабилизация RL цикла) должны использовать этот reward layer как общий источник step reward, не создавая параллельный путь расчета.
 

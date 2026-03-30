@@ -21,7 +21,8 @@ namespace RTS.ML
     {
         RuntimeEffect = 0,
         AcceptedCommand = 1,
-        Intent = 2
+        Intent = 2,
+        AuthoritativeRejection = 3
     }
 
     public enum RewardEventType
