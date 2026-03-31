@@ -322,11 +322,10 @@ namespace RTS.ML
     /// max 2 accepted for self-play). Counts are surfaced via HeuristicDecisionTrace.ActionAccepted.
     /// Authoritative totals are also in MatchManager.InvalidCommandsLastStep.
     ///
-    /// Dual-build (residual technical debt): the adapter internally rebuilds obs/mask through its
-    /// own pipeline. Both facades read the same pre-step state → equivalent results, no correctness
-    /// issue. The double-build has been localised here but is NOT eliminated in Day 4.
-    /// Canonical obs/mask are available in stepInput.CanonicalObs/CanonicalMask if needed;
-    /// full elimination requires HeuristicPolicyAdapter to accept pre-built artifacts (Day 5+).
+    /// Dual-build status (Day 5): the adapter now consumes canonical obs/mask from stepInput for
+    /// stepInput.Perspective, which removes one rebuild path in baseline mode.
+    /// For the second player in self-play baseline, adapter still rebuilds via its own facade.
+    /// Full elimination across both players requires wider HeuristicPolicyAdapter refactor.
     /// </summary>
     public sealed class BaselineDecisionSource : IDecisionSource
     {
@@ -351,10 +350,10 @@ namespace RTS.ML
 
             // Production path: both Player1 and Player2 decisions routed through
             // observation → mask → debug-action-selection → ActionDecoder → ActionApplier → MatchManager.ApplyCommand.
-            // The adapter builds equivalent obs/mask internally (same pre-step state → same result).
-            // Canonical obs/mask from the coordinator are available in stepInput for reference.
-            // ExecuteDecisionStepWithCounts returns real per-player accept/reject counts.
-            var (accepted, rejected) = _adapter.ExecuteDecisionStepWithCounts();
+            // Day 5 integration: pass canonical pre-step artifacts from the coordinator.
+            // The adapter consumes them for stepInput.Perspective to avoid rebuilding this part.
+            // Self-play still has residual rebuild for the non-perspective player.
+            var (accepted, rejected) = _adapter.ExecuteDecisionStepWithCounts(stepInput);
             return new PolicyExecutionReport(null, accepted, rejected, null, null);
         }
     }

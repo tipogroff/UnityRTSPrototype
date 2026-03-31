@@ -114,6 +114,11 @@ namespace RTS.ML
         private readonly List<UnitRuntime> _unitsScratch = new List<UnitRuntime>(64);
         private readonly StringBuilder _logBuilder = new StringBuilder(256);
 
+        // Diagnostic counter: incremented each time a player falls through to the residual
+        // obs/mask rebuild path because useCanonicalStepInput was true but stepInput.Perspective
+        // did not match that player (= self-play second-player rebuild debt, Day 4/5).
+        private int _residualOpponentRebuildCount;
+
         /// <summary>
         /// Injects runtime references and rebuilds the Week 3 heuristic pipeline wrapper.
         /// </summary>
@@ -180,6 +185,16 @@ namespace RTS.ML
         /// </summary>
         internal (int acceptedTotal, int rejectedTotal) ExecuteDecisionStepWithCounts()
         {
+            return ExecuteDecisionStepWithCountsInternal(useCanonicalStepInput: false, default);
+        }
+
+        internal (int acceptedTotal, int rejectedTotal) ExecuteDecisionStepWithCounts(in RlLoopStepInput stepInput)
+        {
+            return ExecuteDecisionStepWithCountsInternal(useCanonicalStepInput: true, stepInput);
+        }
+
+        private (int acceptedTotal, int rejectedTotal) ExecuteDecisionStepWithCountsInternal(bool useCanonicalStepInput, in RlLoopStepInput stepInput)
+        {
             EnsurePipeline();
             if (!CanRun())
             {
@@ -190,13 +205,31 @@ namespace RTS.ML
 
             if (_player1Control == HeuristicControlMode.Heuristic)
             {
-                HeuristicDecisionTrace trace = DecideAndApply(Owner.Player1);
+                bool p1CanUseCanonical = useCanonicalStepInput && stepInput.Perspective == Owner.Player1;
+                if (!p1CanUseCanonical && useCanonicalStepInput)
+                {
+                    // Player1 is not the canonical perspective: residual rebuild for opponent.
+                    _residualOpponentRebuildCount++;
+                }
+
+                HeuristicDecisionTrace trace = p1CanUseCanonical
+                    ? DecideAndApply(Owner.Player1, stepInput)
+                    : DecideAndApply(Owner.Player1);
                 if (trace.ActionAccepted) accepted++; else rejected++;
             }
 
             if (_player2Control == HeuristicControlMode.Heuristic)
             {
-                HeuristicDecisionTrace trace = DecideAndApply(Owner.Player2);
+                bool p2CanUseCanonical = useCanonicalStepInput && stepInput.Perspective == Owner.Player2;
+                if (!p2CanUseCanonical && useCanonicalStepInput)
+                {
+                    // Player2 is not the canonical perspective: residual rebuild for opponent.
+                    _residualOpponentRebuildCount++;
+                }
+
+                HeuristicDecisionTrace trace = p2CanUseCanonical
+                    ? DecideAndApply(Owner.Player2, stepInput)
+                    : DecideAndApply(Owner.Player2);
                 if (trace.ActionAccepted) accepted++; else rejected++;
             }
 
@@ -205,20 +238,30 @@ namespace RTS.ML
 
         internal HeuristicDecisionTrace DecideAndApply(Owner playerId)
         {
-            return DecideAndApplyInternal(playerId, preferredActorType: null);
+            return DecideAndApplyInternal(playerId, preferredActorType: null, preferredActorIndexFlat: null, useCanonicalStepInput: false, default);
+        }
+
+        internal HeuristicDecisionTrace DecideAndApply(Owner playerId, in RlLoopStepInput stepInput)
+        {
+            return DecideAndApplyInternal(playerId, preferredActorType: null, preferredActorIndexFlat: null, useCanonicalStepInput: true, stepInput);
         }
 
         internal HeuristicDecisionTrace DecideAndApplyForPreferredActorType(Owner playerId, UnitType preferredActorType)
         {
-            return DecideAndApplyInternal(playerId, preferredActorType, preferredActorIndexFlat: null);
+            return DecideAndApplyInternal(playerId, preferredActorType, preferredActorIndexFlat: null, useCanonicalStepInput: false, default);
         }
 
         internal HeuristicDecisionTrace DecideAndApplyForActor(Owner playerId, GridPosition actorPosition)
         {
-            return DecideAndApplyInternal(playerId, preferredActorType: null, preferredActorIndexFlat: actorPosition.ToFlatIndex());
+            return DecideAndApplyInternal(playerId, preferredActorType: null, preferredActorIndexFlat: actorPosition.ToFlatIndex(), useCanonicalStepInput: false, default);
         }
 
-        private HeuristicDecisionTrace DecideAndApplyInternal(Owner playerId, UnitType? preferredActorType, int? preferredActorIndexFlat = null)
+        private HeuristicDecisionTrace DecideAndApplyInternal(
+            Owner playerId,
+            UnitType? preferredActorType,
+            int? preferredActorIndexFlat,
+            bool useCanonicalStepInput,
+            in RlLoopStepInput stepInput)
         {
             EnsurePipeline();
 
@@ -236,8 +279,17 @@ namespace RTS.ML
                     applierRejection: string.Empty);
             }
 
-            ObservationPackage package = _policyPipeline.BuildObservationPackage(playerId, ObservationMode.UnityMvpTransfer);
-            DebugActionMaskSet debugMask = _policyPipeline.BuildDebugMask(playerId);
+            bool canUseCanonical = useCanonicalStepInput
+                && stepInput.Perspective == playerId
+                && stepInput.CanonicalObservation.SpatialObservation != null
+                && stepInput.CanonicalMask != null;
+
+            ObservationPackage package = canUseCanonical
+                ? stepInput.CanonicalObservation
+                : _policyPipeline.BuildObservationPackage(playerId, ObservationMode.UnityMvpTransfer);
+            DebugActionMaskSet debugMask = canUseCanonical
+                ? new DebugActionMaskSet(stepInput.CanonicalMask)
+                : _policyPipeline.BuildDebugMask(playerId);
 
             if (_logMaskSummary)
             {
@@ -294,6 +346,7 @@ namespace RTS.ML
             _logBuilder.Clear();
             _logBuilder.Append("pipeline-ready");
             _logBuilder.Append(" | control(P1,P2)=").Append(_player1Control).Append(',').Append(_player2Control);
+            _logBuilder.Append(" | residualOpponentRebuilds=").Append(_residualOpponentRebuildCount);
             diagnostics = _logBuilder.ToString();
             return true;
         }

@@ -111,6 +111,8 @@ namespace RTS.ML
     /// </summary>
     public class ObservationBuilder
     {
+        private const float AttackTargetNoTargetValue = 0f;
+
         public const int GlobalFeaturesCount = 7;
         public const int GF_IS_RUNNING = 0;
         public const int GF_IS_TERMINAL = 1;
@@ -274,7 +276,7 @@ namespace RTS.ML
         /// - owner кодируется как [neutral, friendly, enemy] относительно playerPerspective;
         /// - ресурсный канал дополнительно отражает переносимый ресурс friendly-worker;
         /// - current_action для производящих зданий отражает Produce;
-        /// - attack_target используется как tactical enemy-presence сигнал (0/1).
+        /// - attack_target использует Week 4 Day 5 semantics: normalized local 3x3 target index.
         /// </summary>
         private void FillObservationMvpTransfer(
             Owner playerPerspective,
@@ -393,9 +395,9 @@ namespace RTS.ML
                         ObservationContract.CH_PRODUCE_COUNT,
                         produceHotIndex);
 
-                    // [26] Tactical signal: presence of enemy unit in cell (relative to perspective).
-                    bool isEnemyCell = unit != null && IsEnemyOwner(unit.Owner, playerPerspective);
-                    obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] = isEnemyCell ? 1f : 0f;
+                    // [26] attack_target: observation-side local 3x3 representative target signal.
+                    obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] =
+                        ComputeAttackTargetChannelValue(unit, playerPerspective, unitsByPos);
                 }
             }
         }
@@ -516,11 +518,124 @@ namespace RTS.ML
                     ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_PRODUCE_BASE,
                         ObservationContract.CH_PRODUCE_COUNT, produceHotIndex);
 
-                    // === Канал [26]: attack_target (нормализованный индекс цели) ===
-                    // Placeholder: 0 для текущей версии.
-                    obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] = 0f;
+                    // === Канал [26]: attack_target (normalized local 3x3 target index) ===
+                    obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] =
+                        ComputeAttackTargetChannelValue(unit, playerPerspective, unitsByPos);
                 }
             }
+        }
+
+        // OBSERVATION-SIDE ONLY — this method encodes an observation representative convention.
+        // It does NOT select, commit, or influence any runtime combat target.
+        // The result drives observation channel 26; it is not consumed by ActionApplier or MatchManager.
+        private float ComputeAttackTargetChannelValue(
+            UnitRuntime actor,
+            Owner playerPerspective,
+            Dictionary<GridPosition, UnitRuntime> unitsByPos)
+        {
+            if (actor == null || !actor.IsAlive)
+            {
+                return AttackTargetNoTargetValue;
+            }
+
+            if (!CanEncodeAttackTarget(actor))
+            {
+                return AttackTargetNoTargetValue;
+            }
+
+            if (!TrySelectRepresentativeAttackTargetLocal(actor, playerPerspective, unitsByPos, out int localIndex))
+            {
+                return AttackTargetNoTargetValue;
+            }
+
+            return NormalizeAttackTargetLocal(localIndex);
+        }
+
+        private static float NormalizeAttackTargetLocal(int localIndex)
+        {
+            // Encode as (localIndex + 1) / SIZE so the range is [1/9 ≈ 0.111, 1.0].
+            // AttackTargetNoTargetValue (0f) cannot be produced by any valid index under this
+            // formula, making the no-target sentinel unambiguous — no disambiguation context needed.
+            if (ActionContract.SIZE_ATTACK_TARGET <= 0)
+            {
+                return AttackTargetNoTargetValue;
+            }
+
+            return Mathf.Clamp01((localIndex + 1) / (float)ActionContract.SIZE_ATTACK_TARGET);
+        }
+
+        // OBSERVATION ENCODING RULE — selects a representative attack target for channel 26.
+        // This is NOT the runtime combat selector. It does not affect ActionApplier or MatchManager.
+        // Convention: deterministic first-scan across local 3x3 indices [0..8], same geometry as
+        // ActionContractMappings.TryGetAttackTargetPosition. The result is an observation signal
+        // for the policy to learn from; actual combat resolution is governed by MatchManager.
+        private bool TrySelectRepresentativeAttackTargetLocal(
+            UnitRuntime actor,
+            Owner playerPerspective,
+            Dictionary<GridPosition, UnitRuntime> unitsByPos,
+            out int localIndex)
+        {
+            localIndex = -1;
+
+            // Observation-side representative: first valid enemy in scan order [0..8].
+            // "First" is arbitrary determinism — not "nearest", not "most dangerous".
+            for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
+            {
+                if (!ActionContractMappings.TryGetAttackTargetPosition(actor.GridPos, i, out GridPosition targetPos))
+                {
+                    continue;
+                }
+
+                if (targetPos == actor.GridPos)
+                {
+                    continue;
+                }
+
+                if (!unitsByPos.TryGetValue(targetPos, out UnitRuntime targetUnit))
+                {
+                    continue;
+                }
+
+                if (targetUnit == null || !targetUnit.IsAlive)
+                {
+                    continue;
+                }
+
+                if (!IsEnemyOwner(targetUnit.Owner, playerPerspective))
+                {
+                    continue;
+                }
+
+                localIndex = i;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool CanEncodeAttackTarget(UnitRuntime actor)
+        {
+            if (actor == null || actor.Type == UnitType.Resource)
+            {
+                return false;
+            }
+
+            GameConfig config = MatchBootstrap.Instance != null
+                ? MatchBootstrap.Instance.GetConfig()
+                : null;
+            UnitDefinition definition = config != null ? config.GetDefinition(actor.Type) : null;
+
+            // Conservative fallback: if config/definition is unavailable we cannot verify
+            // attackDamage > 0 && attackRange > 0, so treat unit as non-attack-capable.
+            // This is stricter than the old permissive fallback (actor.Type != Resource) and
+            // prevents encoding an attack_target channel for units the runtime would not consider
+            // attack-capable. Aligned with ActionMaskBuilder.CanAttackByRuntimeDefinition() intent.
+            if (definition == null)
+            {
+                return false;
+            }
+
+            return definition.attackDamage > 0 && definition.attackRange > 0;
         }
 
         /// <summary>

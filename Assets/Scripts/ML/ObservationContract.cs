@@ -28,7 +28,7 @@ namespace RTS.ML
     /// [12–17]                current_action        One-hot по UnitActionType (NoOp=12..Attack=17)
     /// [18–21]                action_direction      One-hot по Direction (North=18..West=21)
     /// [22–25]                produce_unit_type     One-hot по ProducibleUnit (Worker=22..Ranged=25)
-    /// [26]                   attack_target         Нормализованный индекс цели в зоне атаки [0..1]
+    /// [26]                   attack_target         Observation-side индекс цели local 3x3 (index/8) либо no-target=0
     /// ─────────────────────────────────────────────────────────────────────────
     /// ИТОГО: 2 + 3 + 7 + 6 + 4 + 4 + 1 = 27 каналов на клетку.
     /// </summary>
@@ -84,7 +84,14 @@ namespace RTS.ML
         public const int CH_PRODUCE_COUNT = 4;
 
         // ── AttackTarget scalar (1 канал: 26) ────────────────────────────────
-        public const int CH_ATTACK_TARGET = 26;  // нормализованный индекс цели [0..1]
+        // attack_target semantics (Week 4 Day 5, finishing pass):
+        // - local target space is ActionContract local 3x3 indexing [0..8], center=4.
+        // - encoding: (localIndex + 1) / 9f  →  range [1/9 ≈ 0.111 .. 1.0] for valid targets.
+        // - no-target sentinel: 0.0f  (UNAMBIGUOUS — no valid localIndex produces 0 under this formula).
+        // - this is an OBSERVATION-SIDE encoding rule only, NOT a runtime target-preserving truth.
+        //   The representative target is selected by a deterministic first-scan convention;
+        //   actual combat resolution remains in MatchManager and is NOT reflected here.
+        public const int CH_ATTACK_TARGET = 26;
 
         // ── Вспомогательные методы ────────────────────────────────────────────
 
