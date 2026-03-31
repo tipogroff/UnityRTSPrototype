@@ -1,4 +1,10 @@
 // EpisodeController.cs — episode lifecycle and reset orchestration.
+//
+// Week 4 Day 4: StepMatchWithHeuristics now delegates to RlLoopCoordinator,
+// which enforces a canonical 9-phase RL loop order:
+//   Phase 1: PreStepCapture → Phase 2: Observation → Phase 3: Mask
+//   Phase 4: ActionSubmit   → Phase 5: RuntimeStep  → Phase 6: PostStepCapture
+//   Phase 7: RewardEval     → Phase 8: TerminalEval → Phase 9: StepReport
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +43,10 @@ namespace RTS.Gameplay
         [SerializeField] private bool _enableInvalidCommandPenalty;
         [SerializeField] private float _invalidPenaltyPerStepCap = 0.05f;
 
+        [Header("Week 4 Day 4 RL Loop")]
+        [Tooltip("Log the per-step RlLoopStepReport diagnostic line to the console.")]
+        [SerializeField] private bool _logRlLoopDiagnostics = false;
+
         [Header("Runtime")]
         [SerializeField] private bool _autoStartOnPlay = true;
         [SerializeField] private bool _autoStepInFixedUpdate = true;
@@ -54,10 +64,15 @@ namespace RTS.Gameplay
         private bool _episodeRunning;
         private bool _episodeFinalized;
         private RuntimeRewardCollector _runtimeRewardCollector;
+        private MlPolicyPipelineFacade _policyPipelineFacade;
+        private RlLoopCoordinator _rlLoopCoordinator;
 
         public RewardStepTrace LastRewardStepTrace { get; private set; }
         public RewardBreakdown LastRewardBreakdown { get; private set; }
         public EpisodeEndReport LastTerminalReport { get; private set; }
+
+        /// <summary>Per-step RL loop report from the last RlLoopCoordinator.ExecuteFullStep call.</summary>
+        public RlLoopStepReport LastRlLoopStepReport { get; private set; }
 
         public int EpisodeIndex { get; private set; }
         public bool IsRunning => _episodeRunning && _matchManager != null && _matchManager.Phase == MatchPhase.Running;
@@ -146,7 +161,11 @@ namespace RTS.Gameplay
                 LastRewardStepTrace = default;
                 LastRewardBreakdown = default;
                 LastTerminalReport = default;
-                
+
+                // Reset RL loop coordinator for the new episode.
+                _rlLoopCoordinator?.ResetLoop();
+                LastRlLoopStepReport = default;
+
                 // Инициализируем HeuristicDriver
                 if (_useHeuristicAI && _heuristicDriver != null)
                 {
@@ -206,75 +225,59 @@ namespace RTS.Gameplay
         }
 
         /// <summary>
-        /// Выполняет один шаг матча с применением эвристик.
+        /// Executes one match step via the canonical RL loop (Week 4 Day 4).
+        ///
+        /// Delegates to RlLoopCoordinator.ExecuteFullStep(), which enforces:
+        ///   Phase 1: PreStepCapture  → Phase 2: Observation  → Phase 3: Mask
+        ///   Phase 4: ActionSubmit    → Phase 5: RuntimeStep   → Phase 6: PostStepCapture
+        ///   Phase 7: RewardEval      → Phase 8: TerminalEval  → Phase 9: StepReport
+        ///
+        /// Guarantees:
+        ///   - obs and mask built before StepMatch on the same pre-step state;
+        ///   - reward and terminal read only after StepMatch;
+        ///   - double-step guard blocks any second StepMatch in one cycle;
+        ///   - baseline path and future RL path share identical phase logic.
         /// </summary>
         private bool StepMatchWithHeuristics()
         {
-            RewardRuntimeSnapshot preSnapshot = null;
-            if (_enableRuntimeRewardCollector && _runtimeRewardCollector != null)
-            {
-                preSnapshot = _runtimeRewardCollector.CaptureSnapshot(_matchManager, _unitRegistry);
-            }
-
-            // 1) Применяем эвристические решения для всех юнитов
-            if (_useHeuristicAI)
-            {
-                switch (_heuristicExecutionPath)
-                {
-                    case HeuristicExecutionPath.Day5PolicyPipeline:
-                        if (_heuristicPolicyAdapter != null)
-                        {
-                            _heuristicPolicyAdapter.ExecuteDecisionStep();
-                        }
-                        else if (_heuristicDriver != null)
-                        {
-                            // Fallback keeps Play Mode usable if adapter is not wired in scene yet.
-                            _heuristicDriver.MakeAllDecisions();
-                        }
-                        break;
-
-                    default:
-                        if (_heuristicDriver != null)
-                        {
-                            _heuristicDriver.MakeAllDecisions();
-                        }
-                        break;
-                }
-            }
-
-            // 2) Выполняем шаг матча
             if (_matchManager == null)
             {
                 return false;
             }
 
-            bool isRunningAfterStep = _matchManager.StepMatch();
+            // Select action source based on current heuristic settings.
+            // All sources satisfy IDecisionSource contract (no StepMatch calls).
+            IDecisionSource decisionSource = BuildDecisionSource();
 
-            float rewardDelta = 0f;
-            if (_enableRuntimeRewardCollector && _runtimeRewardCollector != null && preSnapshot != null)
+            // Delegate to the canonical RL loop coordinator.
+            RlLoopStepReport report = _rlLoopCoordinator.ExecuteFullStep(_rewardPerspective, decisionSource);
+
+            // ── Propagate results to EpisodeController public surface ─────────────
+            LastRlLoopStepReport = report;
+
+            // Reward traces forwarded unconditionally: coordinator always computes them.
+            // _enableRuntimeRewardCollector controls only the breakdown log, not computation.
+            LastRewardStepTrace = report.RewardTrace;
+            LastRewardBreakdown = report.RewardTrace.Breakdown;
+            float rewardDelta = report.RewardTotal;
+
+            if (_enableRuntimeRewardCollector && _logRewardBreakdown)
             {
-                RewardRuntimeSnapshot postSnapshot = _runtimeRewardCollector.CaptureSnapshot(_matchManager, _unitRegistry);
-                LastRewardStepTrace = _runtimeRewardCollector.EvaluateStep(preSnapshot, postSnapshot, _rewardPerspective);
-                LastRewardBreakdown = LastRewardStepTrace.Breakdown;
-                rewardDelta = LastRewardBreakdown.Total;
-
-                if (_logRewardBreakdown)
-                {
-                    Debug.Log(
-                        $"[EpisodeController][Reward] Step={LastRewardStepTrace.Step}, Total={LastRewardBreakdown.Total:F4}, " +
-                        $"Economy={LastRewardBreakdown.Economy:F4}, Combat={LastRewardBreakdown.Combat:F4}, " +
-                        $"Terminal={LastRewardBreakdown.Terminal:F4}, Shaping={LastRewardBreakdown.Shaping:F4}, " +
-                        $"Events={LastRewardBreakdown.EventCount}, TerminalStep={LastRewardBreakdown.IsTerminalStep}, " +
-                        $"TerminalReason={LastRewardBreakdown.TerminalReason}");
-                }
+                RewardBreakdown bd = report.RewardTrace.Breakdown;
+                Debug.Log(
+                    $"[EpisodeController][Reward] Step={report.RewardTrace.Step}, Total={bd.Total:F4}, " +
+                    $"Economy={bd.Economy:F4}, Combat={bd.Combat:F4}, " +
+                    $"Terminal={bd.Terminal:F4}, Shaping={bd.Shaping:F4}, " +
+                    $"Events={bd.EventCount}, TerminalStep={bd.IsTerminalStep}, " +
+                    $"TerminalReason={bd.TerminalReason}");
             }
-            else
+
+            if (_logRlLoopDiagnostics)
             {
-                LastRewardStepTrace = default;
-                LastRewardBreakdown = default;
+                Debug.Log(report.BuildDiagnosticLine());
             }
 
-            // 3) Пишем метрики шага в логгер.
+            // ── Experiment logger (step metrics) ──────────────────────────────────
             if (_experimentLogger != null)
             {
                 MatchStateSnapshot snapshot = _matchManager.GetMatchState();
@@ -288,7 +291,40 @@ namespace RTS.Gameplay
                     currentBuildsP2: snapshot.Player2BaseCount);
             }
 
-            return isRunningAfterStep;
+            // Match is still running when the coordinator found no terminal state post-step.
+            return !report.IsTerminal;
+        }
+
+        /// <summary>
+        /// Builds the IDecisionSource for the current step.
+        ///
+        /// All returned sources satisfy the IDecisionSource phase contract:
+        /// they submit actions through the production path and never call StepMatch.
+        /// </summary>
+        private IDecisionSource BuildDecisionSource()
+        {
+            if (!_useHeuristicAI)
+            {
+                return IdleDecisionSource.Instance;
+            }
+
+            switch (_heuristicExecutionPath)
+            {
+                case HeuristicExecutionPath.Day5PolicyPipeline:
+                    if (_heuristicPolicyAdapter != null)
+                    {
+                        return new BaselineDecisionSource(_heuristicPolicyAdapter);
+                    }
+                    // Fallback: adapter not wired, use legacy driver to keep Play Mode usable.
+                    return _heuristicDriver != null
+                        ? (IDecisionSource)new LegacyDecisionSource(_heuristicDriver)
+                        : IdleDecisionSource.Instance;
+
+                default:
+                    return _heuristicDriver != null
+                        ? (IDecisionSource)new LegacyDecisionSource(_heuristicDriver)
+                        : IdleDecisionSource.Instance;
+            }
         }
 
         public bool ApplyCommand(MatchCommand command)
@@ -368,9 +404,6 @@ namespace RTS.Gameplay
                 && summary.TerminalReason != terminalEvaluation.TerminalReason)
             {
                 // Mismatch between the reward layer and the controller evaluator.
-                // Both read from the same EpisodeTerminalEvaluator, so this should not occur under normal
-                // operation. It may indicate a guarded reset, a mid-episode evaluation order issue, or a
-                // future divergence introduced by a refactor. This is a diagnostic warning, not a hard stop.
                 Debug.LogWarning(
                     $"[EpisodeController][Terminal][Mismatch] TerminalReason divergence detected. " +
                     $"RewardLayer={summary.TerminalReason}, Controller={terminalEvaluation.TerminalReason}, " +
@@ -498,6 +531,30 @@ namespace RTS.Gameplay
                 options.EnableInvalidCommandPenalty = _enableInvalidCommandPenalty;
                 options.InvalidPenaltyPerStepCap = Mathf.Max(0f, _invalidPenaltyPerStepCap);
                 _runtimeRewardCollector = new RuntimeRewardCollector(config, options);
+            }
+
+            // Build MlPolicyPipelineFacade for RlLoopCoordinator (obs/mask phases).
+            // This facade is separate from the one inside HeuristicPolicyAdapter:
+            // both are stateless wrappers over the same scene objects and produce
+            // equivalent obs/mask from the same pre-step state.
+            if (_policyPipelineFacade == null && _gridManager != null && _unitRegistry != null && _matchManager != null)
+            {
+                _policyPipelineFacade = new MlPolicyPipelineFacade(
+                    _gridManager,
+                    _unitRegistry,
+                    _resourceManager,
+                    _matchManager,
+                    _matchBootstrap);
+            }
+
+            // Build RlLoopCoordinator once all dependencies are available.
+            if (_rlLoopCoordinator == null && _policyPipelineFacade != null && _runtimeRewardCollector != null && _matchManager != null)
+            {
+                _rlLoopCoordinator = new RlLoopCoordinator(
+                    _policyPipelineFacade,
+                    _runtimeRewardCollector,
+                    _matchManager,
+                    _unitRegistry);
             }
         }
 

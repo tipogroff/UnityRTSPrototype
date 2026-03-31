@@ -60,6 +60,13 @@ namespace RTS.ML
         /// </summary>
         public string PrimaryRejectionReason => _rejectionReasons.Length > 0 ? _rejectionReasons[0] : string.Empty;
 
+        /// <summary>
+        /// Empty report with zero accepted/rejected actions and no rejection reasons.
+        /// Used by decision sources that do not surface per-action counts at the IDecisionSource boundary.
+        /// </summary>
+        public static PolicyExecutionReport Empty => new PolicyExecutionReport(
+            null, 0, 0, null, null);
+
         private static AgentAction[] Copy(IReadOnlyList<AgentAction> source)
         {
             if (source == null || source.Count == 0)
