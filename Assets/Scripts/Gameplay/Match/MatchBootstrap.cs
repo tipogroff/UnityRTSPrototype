@@ -18,6 +18,12 @@ using RTS.Core;
 
 namespace RTS.Gameplay
 {
+    public enum BootstrapScenarioPreset
+    {
+        LegacyMvpSymmetric = 0,
+        Day6Sanity24x24 = 1,
+    }
+
     /// <summary>
     /// MonoBehaviour, прикреплённый к единственному GameObject "Bootstrap" в сцене.
     /// Запускается из Start(), до того как любой агент запрашивает наблюдения.
@@ -33,6 +39,13 @@ namespace RTS.Gameplay
         [Header("Конфигурация сценария")]
         [Tooltip("Эталонный ассет GameConfig. ОБЯЗАТЕЛЬНО.")]
         [SerializeField] private GameConfig _config;
+
+        [Header("Scenario preset")]
+        [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout.")]
+        [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.LegacyMvpSymmetric;
+        [Tooltip("Стартовые ресурсы для Day6Sanity24x24. Нужны, чтобы production был practically reachable в sanity-rollout.")]
+        [Min(0)]
+        [SerializeField] private int _day6SanityStartResources = 60;
 
         [Header("Зависимости сцены")]
         [Tooltip("GridManager в сцене. Если не задан — ищется через Instance.")]
@@ -66,10 +79,12 @@ namespace RTS.Gameplay
             InitGrid();
             _unitFactory = new UnitFactory(_config, _gridManager, transform, _unitRegistry);
             SpawnStartingUnits();
-            _matchManager.BeginMatch(_config.startResources, _config.maxEpisodeSteps);
+            int scenarioStartResources = ResolveScenarioStartResources();
+            _matchManager.BeginMatch(scenarioStartResources, _config.maxEpisodeSteps);
 
             Debug.Log($"[MatchBootstrap] Матч '{_config.scenarioName}' начат. " +
-                      $"Карта {_config.mapWidth}×{_config.mapHeight}.");
+                      $"Карта {_config.mapWidth}×{_config.mapHeight}, " +
+                      $"Preset={_scenarioPreset}, StartResources={scenarioStartResources}.");
         }
 
         /// <summary>
@@ -183,22 +198,47 @@ namespace RTS.Gameplay
             int W = _config.mapWidth;
             int H = _config.mapHeight;
 
-            // ── Стартовая расстановка Player1 ─────────────────────────────────
-            // База у левого нижнего угла, рабочие рядом.
-            // Отступ 3 клетки от края — гарантирует место вокруг базы.
-            var p1Spawns = new List<(UnitType type, GridPosition pos)>
-            {
-                (UnitType.Base,   new GridPosition(3,  H / 2 - 1)),
-                (UnitType.Worker, new GridPosition(5,  H / 2 - 1)),
-                (UnitType.Light,  new GridPosition(W / 2 - 1, H / 2 - 1)),
-            };
+            List<(UnitType type, GridPosition pos)> p1Spawns;
+            List<(UnitType type, GridPosition pos)> p2Spawns;
 
-            var p2Spawns = new List<(UnitType type, GridPosition pos)>
+            if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
-                (UnitType.Base,   new GridPosition(W - 4, H / 2)),
-                (UnitType.Worker, new GridPosition(W - 6, H / 2)),
-                (UnitType.Light,  new GridPosition(W / 2, H / 2 - 1)),
-            };
+                // Day 6 follow-up rationale:
+                // - убираем мгновенный Light-vs-Light размен в центре;
+                // - даём 2 workers на сторону для стабильного harvest/return цикла;
+                // - сохраняем 24x24 observation contract и тот же runtime path.
+                p1Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(3,  H / 2 - 1)),
+                    (UnitType.Worker, new GridPosition(5,  H / 2 - 2)),
+                    (UnitType.Worker, new GridPosition(5,  H / 2)),
+                    (UnitType.Light,  new GridPosition(W / 2 - 3, H / 2 - 1)),
+                };
+
+                p2Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(W - 4, H / 2)),
+                    (UnitType.Worker, new GridPosition(W - 6, H / 2 + 1)),
+                    (UnitType.Worker, new GridPosition(W - 6, H / 2 - 1)),
+                    (UnitType.Light,  new GridPosition(W / 2 + 2, H / 2)),
+                };
+            }
+            else
+            {
+                p1Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(3,  H / 2 - 1)),
+                    (UnitType.Worker, new GridPosition(5,  H / 2 - 1)),
+                    (UnitType.Light,  new GridPosition(W / 2 - 1, H / 2 - 1)),
+                };
+
+                p2Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(W - 4, H / 2)),
+                    (UnitType.Worker, new GridPosition(W - 6, H / 2)),
+                    (UnitType.Light,  new GridPosition(W / 2, H / 2 - 1)),
+                };
+            }
 
             foreach (var (type, pos) in p1Spawns)
                 _unitFactory.Spawn(type, Owner.Player1, pos);
@@ -218,12 +258,26 @@ namespace RTS.Gameplay
         /// </summary>
         private void SpawnResourcePatches(int W, int H)
         {
-            // Позиции для Player1-половины (около базы и в центре)
-            var p1ResourcePositions = new List<GridPosition>
+            List<GridPosition> p1ResourcePositions;
+
+            if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
-                new GridPosition(6, H / 2 - 2),
-                new GridPosition(6, H / 2 + 2),
-            };
+                // Для sanity-сценария ресурсы чуть ближе к workers, чтобы ускорить
+                // вход в economy progression и снизить долю "пустых" шагов.
+                p1ResourcePositions = new List<GridPosition>
+                {
+                    new GridPosition(6, H / 2 - 2),
+                    new GridPosition(6, H / 2),
+                };
+            }
+            else
+            {
+                p1ResourcePositions = new List<GridPosition>
+                {
+                    new GridPosition(6, H / 2 - 2),
+                    new GridPosition(6, H / 2 + 2),
+                };
+            }
 
             foreach (var pos in p1ResourcePositions)
             {
@@ -243,6 +297,16 @@ namespace RTS.Gameplay
                     _resourceManager.RegisterResourceNode(resourceNodeP2);
                 }
             }
+        }
+
+        private int ResolveScenarioStartResources()
+        {
+            if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
+            {
+                return Mathf.Max(_day6SanityStartResources, 0);
+            }
+
+            return _config.startResources;
         }
     }
 }

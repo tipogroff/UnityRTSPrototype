@@ -110,9 +110,10 @@ namespace RTS.ML
         [SerializeField] private bool _logMaskSummary = false;
 
         [Header("Heuristic parameters")]
-        [SerializeField] private int _maxWorkerLimit = 5;
+        [SerializeField] private int _maxWorkerLimit = 2;
 
         private MlPolicyPipelineFacade _policyPipeline;
+        private readonly Dictionary<Owner, int> _decisionCycleByPlayer = new Dictionary<Owner, int>(2);
 
         private readonly List<UnitRuntime> _unitsScratch = new List<UnitRuntime>(64);
         private readonly StringBuilder _logBuilder = new StringBuilder(256);
@@ -149,6 +150,7 @@ namespace RTS.ML
         public void ResetHeuristicState()
         {
             // Reserved for future deterministic stateful heuristics.
+            _decisionCycleByPlayer.Clear();
         }
 
         /// <summary>
@@ -159,21 +161,7 @@ namespace RTS.ML
         /// </summary>
         public void ExecuteDecisionStep()
         {
-            EnsurePipeline();
-            if (!CanRun())
-            {
-                return;
-            }
-
-            if (_player1Control == HeuristicControlMode.Heuristic)
-            {
-                DecideAndApply(Owner.Player1);
-            }
-
-            if (_player2Control == HeuristicControlMode.Heuristic)
-            {
-                DecideAndApply(Owner.Player2);
-            }
+            ExecuteDecisionStepWithCountsInternal(useCanonicalStepInput: false, default);
         }
 
         /// <summary>
@@ -215,10 +203,9 @@ namespace RTS.ML
                     _residualOpponentRebuildCount++;
                 }
 
-                HeuristicDecisionTrace trace = p1CanUseCanonical
-                    ? DecideAndApply(Owner.Player1, stepInput)
-                    : DecideAndApply(Owner.Player1);
-                if (trace.ActionAccepted) accepted++; else rejected++;
+                var p1Result = ExecutePlayerDecisionBatch(Owner.Player1, p1CanUseCanonical, stepInput);
+                accepted += p1Result.accepted;
+                rejected += p1Result.rejected;
             }
 
             if (_player2Control == HeuristicControlMode.Heuristic)
@@ -230,10 +217,63 @@ namespace RTS.ML
                     _residualOpponentRebuildCount++;
                 }
 
-                HeuristicDecisionTrace trace = p2CanUseCanonical
-                    ? DecideAndApply(Owner.Player2, stepInput)
-                    : DecideAndApply(Owner.Player2);
-                if (trace.ActionAccepted) accepted++; else rejected++;
+                var p2Result = ExecutePlayerDecisionBatch(Owner.Player2, p2CanUseCanonical, stepInput);
+                accepted += p2Result.accepted;
+                rejected += p2Result.rejected;
+            }
+
+            return (accepted, rejected);
+        }
+
+        private (int accepted, int rejected) ExecutePlayerDecisionBatch(Owner playerId, bool canUseCanonical, in RlLoopStepInput stepInput)
+        {
+            DebugActionMaskSet debugMask = canUseCanonical
+                ? new DebugActionMaskSet(stepInput.CanonicalMask)
+                : _policyPipeline.BuildDebugMask(playerId);
+
+            int accepted = 0;
+            int rejected = 0;
+
+            for (int actorIndex = 0; actorIndex < ActionContract.TotalCells; actorIndex++)
+            {
+                if (!debugMask.ActorIndexMask[actorIndex])
+                {
+                    continue;
+                }
+
+                if (!TrySelectSingleActor(playerId, debugMask, actorIndex, out DebugActionSelection selection, out string reason))
+                {
+                    continue;
+                }
+
+                if (selection.ActionType == ActionContract.ACTION_NOOP)
+                {
+                    continue;
+                }
+
+                PolicyExecutionReport execution = _policyPipeline.ExecuteDebugSelection(selection, playerId, debugMask.TransferMask, "heuristic");
+                AgentAction decoded = execution.DecodedActions.Count > 0
+                    ? execution.DecodedActions[0]
+                    : AgentAction.CreateNoOp(ActionSourceType.Debug);
+
+                bool actionAccepted = execution.AcceptedCount > 0;
+                if (actionAccepted)
+                {
+                    accepted++;
+                }
+                else
+                {
+                    rejected++;
+                }
+
+                if (_enableDecisionLogs)
+                {
+                    string rejection = string.IsNullOrWhiteSpace(execution.PrimaryRejectionReason)
+                        ? string.Empty
+                        : $", rejection={execution.PrimaryRejectionReason}";
+                    string result = actionAccepted ? "accepted" : "rejected";
+                    Debug.Log($"[HeuristicPolicyAdapter] player={playerId}, actor={actorIndex}, selected={selection}, decoded={decoded.ActionType}, reason={reason}, result={result}{rejection}");
+                }
             }
 
             return (accepted, rejected);
@@ -379,13 +419,14 @@ namespace RTS.ML
 
             if (preferredActorType.HasValue)
             {
-                if (TrySelectFromScan(playerId, debugMask, preferredActorType, out DebugActionSelection preferredSelection, out reason))
+                if (TrySelectFromScan(playerId, debugMask, preferredActorType, selectionPhase: 0, out DebugActionSelection preferredSelection, out reason))
                 {
                     return preferredSelection;
                 }
             }
 
-            if (TrySelectFromScan(playerId, debugMask, preferredActorType: null, out DebugActionSelection anySelection, out reason))
+            int selectionPhase = GetAndAdvanceSelectionPhase(playerId);
+            if (TrySelectFromScan(playerId, debugMask, preferredActorType: null, selectionPhase, out DebugActionSelection anySelection, out reason))
             {
                 return anySelection;
             }
@@ -397,23 +438,19 @@ namespace RTS.ML
             Owner playerId,
             DebugActionMaskSet debugMask,
             UnitType? preferredActorType,
+            int selectionPhase,
             out DebugActionSelection selection,
             out string reason)
         {
             selection = DebugActionSelection.NoActorNoOp;
             reason = "fallback:no-actor";
 
-            // Deterministic actor scan order by flat index. This keeps runs reproducible.
-            // Priority for default baseline behavior:
-            //   1) Worker actions (economy loop)
-            //   2) Combat actions
-            //   3) Building actions (production)
-            //   4) NoOp fallback
-
             bool filterByType = preferredActorType.HasValue;
+            int[] passOrder = BuildPassOrder(filterByType, selectionPhase);
 
-            for (int pass = 0; pass < 4; pass++)
+            for (int passIndex = 0; passIndex < passOrder.Length; passIndex++)
             {
+                int pass = passOrder[passIndex];
                 for (int actorIndex = 0; actorIndex < ActionContract.TotalCells; actorIndex++)
                 {
                     if (!debugMask.ActorIndexMask[actorIndex])
@@ -472,6 +509,36 @@ namespace RTS.ML
             }
 
             return false;
+        }
+
+        private int[] BuildPassOrder(bool filterByType, int selectionPhase)
+        {
+            if (filterByType)
+            {
+                return new[] { 0, 1, 2, 3 };
+            }
+
+            switch (selectionPhase % 3)
+            {
+                case 0:
+                    return new[] { 0, 1, 2, 3 }; // Worker -> Combat -> Building -> NoOp
+                case 1:
+                    return new[] { 1, 0, 2, 3 }; // Combat -> Worker -> Building -> NoOp
+                default:
+                    return new[] { 2, 0, 1, 3 }; // Building -> Worker -> Combat -> NoOp
+            }
+        }
+
+        private int GetAndAdvanceSelectionPhase(Owner playerId)
+        {
+            int current = 0;
+            if (_decisionCycleByPlayer.TryGetValue(playerId, out int existing))
+            {
+                current = existing;
+            }
+
+            _decisionCycleByPlayer[playerId] = current + 1;
+            return current;
         }
 
         private bool TrySelectSingleActor(
@@ -756,6 +823,19 @@ namespace RTS.ML
                 return true;
             }
 
+            if (actorMask.IsActionTypeEnabled(UnitActionType.Move) &&
+                TryChooseMoveDirectionToEnemyBase(playerId, combatUnit.GridPos, actorMask.MoveDirectionMask, out Direction scoutDirection))
+            {
+                selection = new DebugActionSelection(
+                    actorIndex,
+                    ActionContract.ACTION_MOVE,
+                    (int)scoutDirection,
+                    (int)ProducibleUnit.Worker,
+                    4);
+                reason = "combat:scout-enemy-base";
+                return true;
+            }
+
             return false;
         }
 
@@ -908,11 +988,55 @@ namespace RTS.ML
             return TryChooseDirectionTowards(from, nearestEnemyPos.Value, moveMask, out direction);
         }
 
+        private bool TryChooseMoveDirectionToEnemyBase(Owner owner, GridPosition from, bool[] moveMask, out Direction direction)
+        {
+            direction = Direction.North;
+
+            Owner enemyOwner = owner == Owner.Player1
+                ? Owner.Player2
+                : owner == Owner.Player2
+                    ? Owner.Player1
+                    : Owner.Neutral;
+            if (enemyOwner == Owner.Neutral)
+            {
+                return TryChooseDirection(moveMask, out direction);
+            }
+
+            _unitsScratch.Clear();
+            _unitsScratch.AddRange(_unitRegistry.GetBuildingsByOwner(enemyOwner));
+
+            GridPosition? nearestEnemyBase = null;
+            int bestDistance = int.MaxValue;
+            for (int i = 0; i < _unitsScratch.Count; i++)
+            {
+                UnitRuntime building = _unitsScratch[i];
+                if (building == null || !building.IsAlive || building.Type != UnitType.Base)
+                {
+                    continue;
+                }
+
+                int dist = from.ManhattanDistance(building.GridPos);
+                if (dist < bestDistance)
+                {
+                    bestDistance = dist;
+                    nearestEnemyBase = building.GridPos;
+                }
+            }
+
+            if (!nearestEnemyBase.HasValue)
+            {
+                return TryChooseDirection(moveMask, out direction);
+            }
+
+            return TryChooseDirectionTowards(from, nearestEnemyBase.Value, moveMask, out direction);
+        }
+
         private bool TryChooseDirectionTowards(GridPosition from, GridPosition target, bool[] directionMask, out Direction direction)
         {
             direction = Direction.North;
             int bestDistance = int.MaxValue;
             bool found = false;
+            int currentDistance = from.ManhattanDistance(target);
 
             for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
             {
@@ -925,7 +1049,7 @@ namespace RTS.ML
                 GridPosition candidateTarget = from.Neighbour(candidateDirection);
                 int candidateDistance = candidateTarget.ManhattanDistance(target);
 
-                if (!found || candidateDistance < bestDistance)
+                if (candidateDistance < currentDistance && (!found || candidateDistance < bestDistance))
                 {
                     bestDistance = candidateDistance;
                     direction = candidateDirection;
@@ -1032,12 +1156,6 @@ namespace RTS.ML
 
             if (foundEnemy)
             {
-                return true;
-            }
-
-            if (firstAvailable >= 0)
-            {
-                attackTargetLocal = firstAvailable;
                 return true;
             }
 

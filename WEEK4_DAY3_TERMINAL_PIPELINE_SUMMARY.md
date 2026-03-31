@@ -168,9 +168,10 @@ Not part of this change:
 The following remain acknowledged residual risks at the end of Day 3:
 
 AddEvent zero-magnitude suppression
-  With default config (TerminalDraw=0, TerminalTimeout=0), no terminal event appears in the step trace
-  for draw or timeout outcomes. TerminalEventProcessed=true correctly captures that the path executed,
-  but the events list and EventCount will not reflect it. Acceptable for Day 3; visible via TerminalEventProcessed.
+  **DEPRECATED NOTE:** Previously, with old default config (TerminalDraw=0, TerminalTimeout=0), no terminal event appeared.
+  **CURRENT (V1):** RewardConfig.CreateV1Defaults() now sets TerminalTimeout=-0.25f (non-zero), so timeout events DO appear.
+  With non-zero config values, terminal events correctly accumulate to breakdown (economy/combat/terminal/shaping).
+  TerminalEventProcessed=true captures that terminal path executed, regardless of accumulation.
 
 EnableTimeoutPenalty is a no-op
   The field is preserved for forward-compatibility but has no runtime effect.

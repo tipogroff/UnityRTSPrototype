@@ -25,6 +25,8 @@ namespace RTS.ML
         [SerializeField] private int _episodeCount = 10;
         [SerializeField] private bool _verboseLogging = true;
         [SerializeField] private bool _generateMarkdownReport = true;
+        /// <summary>Force control modes to Heuristic vs Idle for diagnostic simplification.
+        /// This is NOT the standard baseline mode—it's a diagnostic-only scenario for clearer sanity validation.</summary>
         [SerializeField] private bool _forceHeuristicVsIdle = true;
 
         [Header("Sanity Config")]
@@ -69,7 +71,7 @@ namespace RTS.ML
                 if (adapter != null)
                 {
                     adapter.SetPlayerControlModes(HeuristicControlMode.Heuristic, HeuristicControlMode.Idle);
-                    Debug.Log("[Day6RewardSanitySmokeTest] Control mode set to heuristic-vs-idle for sanity run.");
+                    Debug.Log("[Day6RewardSanitySmokeTest] Control mode set to heuristic-vs-idle (DIAGNOSTIC MODE for sanity validation only).");
                 }
             }
 

@@ -703,12 +703,62 @@ namespace RTS.Gameplay
                 return;
             }
 
-            if (_combatCommands.Count > 0 && _logStepEvents)
+            HashSet<UnitRuntime> commandedAttackers = null;
+            if (_combatCommands.Count > 0)
             {
-                Debug.Log("[MatchManager] Attack commands are queued; CombatResolver currently applies automatic target selection.");
+                commandedAttackers = new HashSet<UnitRuntime>(_combatCommands.Count);
+                for (int i = 0; i < _combatCommands.Count; i++)
+                {
+                    ResolvedCommand command = _combatCommands[i];
+                    if (TryExecuteAttack(command))
+                    {
+                        commandedAttackers.Add(command.Unit);
+                    }
+                    else
+                    {
+                        RejectCommand(command.Command, "Attack command cannot be executed.");
+                    }
+                }
             }
 
-            _combatResolver.ResolveCombatTick();
+            _combatResolver.ResolveCombatTick(commandedAttackers);
+        }
+
+        private bool TryExecuteAttack(ResolvedCommand command)
+        {
+            if (_gridManager == null)
+            {
+                return false;
+            }
+
+            UnitRuntime attacker = command.Unit;
+            if (attacker == null || !attacker.IsAlive)
+            {
+                return false;
+            }
+
+            if (!command.Command.HasAttackTarget)
+            {
+                return false;
+            }
+
+            GridPosition targetPos = command.Command.AttackTarget;
+            if (!_gridManager.IsInside(targetPos))
+            {
+                return false;
+            }
+
+            if (!_gridManager.TryGetOccupant(targetPos, out UnitRuntime target) || target == null || !target.IsAlive)
+            {
+                return false;
+            }
+
+            if (target.Owner == attacker.Owner || target.Owner == Owner.Neutral)
+            {
+                return false;
+            }
+
+            return _combatResolver.TryAttack(attacker, target);
         }
 
         private MatchResolution ResolveCompletion()

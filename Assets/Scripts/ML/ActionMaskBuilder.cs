@@ -250,7 +250,7 @@ namespace RTS.ML
     /// </summary>
     public sealed class ActionMaskBuilder
     {
-        private const int WorkerCarryCapacity = 100;
+        private const int WorkerCarryCapacity = GameConstants.MaxCarryCapacity;
         private const int ProduceCostFallback = 50;
 
         private readonly MatchManager _matchManager;
@@ -518,7 +518,10 @@ namespace RTS.ML
                     continue;
 
                 UnitRuntime targetUnit = _gridManager.GetOccupant(target);
-                if (targetUnit == null || !targetUnit.IsAlive || targetUnit.Owner == unit.Owner)
+                if (targetUnit == null
+                    || !targetUnit.IsAlive
+                    || targetUnit.Owner == unit.Owner
+                    || targetUnit.Owner == Owner.Neutral)
                     continue;
 
                 actorMask.AttackTargetLocalMask[i] = true;

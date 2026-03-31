@@ -49,8 +49,9 @@ namespace RTS.ML
         /// <summary>Number of steps where ActionCountsAvailable=false.</summary>
         public int InvalidActionUnavailableStepCount;
         /// <summary>
-        /// InvalidActionCount / InvalidActionMeasuredStepCount when measured,
-        /// otherwise 0.0 (must be interpreted with InvalidActionRateMeasured).
+        /// Invalid action rejection ratio: InvalidActionCount / (InvalidActionCount + ValidActionCount)
+        /// when measured action steps are available, otherwise 0.0 (must be interpreted with InvalidActionRateMeasured).
+        /// This is a normalized rejection rate over all measured action attempts, not per-step density.
         /// </summary>
         public float InvalidActionRate;
 

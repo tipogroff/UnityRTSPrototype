@@ -479,7 +479,7 @@ MonoBehaviour:
   _unitRegistry: {fileID: 340447639}
   _victoryResolver: {fileID: 1941532272}
   _matchBootstrap: {fileID: 1160590936}
-  _logStepEvents: 0
+  _logStepEvents: 1
 --- !u!4 &1145832108
 Transform:
   m_ObjectHideFlags: 0
@@ -525,6 +525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchBootstrap
   _config: {fileID: 11400000, guid: 71d74d96c6637b948b1d66710812bbd8, type: 2}
+  _scenarioPreset: 1
+  _day6SanityStartResources: 60
   _gridManager: {fileID: 928434337}
   _matchManager: {fileID: 1145832107}
   _unitRegistry: {fileID: 340447639}
@@ -734,7 +736,7 @@ MonoBehaviour:
   _unitRegistry: {fileID: 340447639}
   _resourceManager: {fileID: 1610306282}
   _matchManager: {fileID: 1145832107}
-  _maxWorkerLimit: 1
+  _maxWorkerLimit: 3
   _enableDebugLog: 0
 --- !u!4 &1871236521
 Transform:

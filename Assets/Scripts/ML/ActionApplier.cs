@@ -592,7 +592,7 @@ namespace RTS.ML
 
             // Validate there's an enemy unit at target
             var targetUnit = _gridManager.GetOccupant(action.AttackTargetPosition);
-            if (targetUnit == null || targetUnit.Owner == unit.Owner)
+            if (targetUnit == null || targetUnit.Owner == unit.Owner || targetUnit.Owner == Owner.Neutral)
             {
                 reason = $"No enemy unit at attack target {action.AttackTargetPosition}";
                 return false;

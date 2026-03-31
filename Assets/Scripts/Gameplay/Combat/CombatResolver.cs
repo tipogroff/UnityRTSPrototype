@@ -41,7 +41,7 @@ namespace RTS.Gameplay
         /// Выполняет боевую фазу одного тика.
         /// Каждый атакующий юнит может нанести один удар.
         /// </summary>
-        public int ResolveCombatTick()
+        public int ResolveCombatTick(ISet<UnitRuntime> skipAttackers = null)
         {
             if (_config == null || _unitRegistry == null) return 0;
 
@@ -51,6 +51,7 @@ namespace RTS.Gameplay
             foreach (var attacker in unitsSnapshot)
             {
                 if (!CanActAsAttacker(attacker)) continue;
+            if (skipAttackers != null && skipAttackers.Contains(attacker)) continue;
 
                 var target = FindTargetInRange(attacker, unitsSnapshot);
                 if (target == null) continue;
@@ -78,10 +79,13 @@ namespace RTS.Gameplay
         }
 
         /// <summary>
-        /// Манхэттенское расстояние между клетками.
+        /// Chebyshev-дистанция между клетками.
+        ///
+        /// Важно: должна совпадать с attack_target локальной 3x3 семантикой
+        /// в ActionContract/ActionDecoder/ActionApplier (диагонали тоже валидны).
         /// </summary>
         public int GetDistance(GridPosition from, GridPosition to)
-            => from.ManhattanDistance(to);
+            => from.ChebyshevDistance(to);
 
         /// <summary>
         /// Применяет атаку: урон и обработку смерти цели.
