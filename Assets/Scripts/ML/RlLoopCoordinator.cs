@@ -25,12 +25,15 @@
 //   - Baseline path (BaselineDecisionSource) and future RL path (PolicyDecisionSource)
 //     share identical phasing: both are callers of Phase 4, receive the same pre-step mask.
 //
-// Note on dual facade usage (baseline path):
+// Note on dual-build baseline path (residual technical debt, Day 4):
 //   The coordinator creates its own MlPolicyPipelineFacade to build obs/mask in Phases 2-3.
-//   BaselineDecisionSource routes through HeuristicPolicyAdapter, which has its own façade.
-//   Both facades read from the same game state (same MatchManager, GridManager, etc.),
-//   so obs and mask are equivalent. The coordinator's obs/mask are the canonical pre-step
-//   snapshot. Future ML-Agent consumers will use these directly instead of rebuilding them.
+//   BaselineDecisionSource routes through HeuristicPolicyAdapter, which has its own façade and
+//   rebuilds equivalent obs/mask internally via DecideAndApplyInternal. This means two full
+//   obs/mask builds happen per cycle in baseline mode.
+//   Both facades read the same pre-step game state, so results are equivalent — correctness is
+//   not affected. The double-build has been localised and documented but not eliminated.
+//   Eliminating it requires refactoring HeuristicPolicyAdapter to accept pre-built obs/mask
+//   from the coordinator — deferred to Day 5+ (see PolicyDecisionSource contract).
 
 using System;
 using RTS.Core;
@@ -67,8 +70,10 @@ namespace RTS.ML
             bool actionApplied,
             int actionsAccepted,
             int actionsRejected,
+            bool actionCountsAvailable,
             bool runtimeStepAdvanced,
             bool doubleStepPrevented,
+            int matchStepDelta,
             bool rewardEmitted,
             float rewardTotal,
             bool terminalEvaluated,
@@ -84,8 +89,10 @@ namespace RTS.ML
             ActionApplied = actionApplied;
             ActionsAccepted = actionsAccepted;
             ActionsRejected = actionsRejected;
+            ActionCountsAvailable = actionCountsAvailable;
             RuntimeStepAdvanced = runtimeStepAdvanced;
             DoubleStepPrevented = doubleStepPrevented;
+            MatchStepDelta = matchStepDelta;
             RewardEmitted = rewardEmitted;
             RewardTotal = rewardTotal;
             TerminalEvaluated = terminalEvaluated;
@@ -132,11 +139,21 @@ namespace RTS.ML
 
         /// <summary>
         /// Actions rejected this cycle as reported by the decision source.
-        /// For baseline sources may be 0 (see MatchManager.InvalidCommandsLastStep for authoritative count).
+        /// When ActionCountsAvailable=false, this is 0 by convention — not "truly zero rejected".
+        /// Use MatchManager.InvalidCommandsLastStep for authoritative rejected counts.
         /// </summary>
         public int ActionsRejected { get; }
 
-        // ── Runtime step phase diagnostics (Phase 5) ────────────────────────────
+        /// <summary>
+        /// True when ActionsAccepted and ActionsRejected carry real pipeline counts.
+        /// False when counts are unavailable at this boundary (LegacyDecisionSource,
+        /// IdleDecisionSource) — those sources return PolicyExecutionReport.Empty.
+        /// BaselineDecisionSource always surfaces real counts (one per enabled player).
+        /// When false, see MatchManager.InvalidCommandsLastStep for partial authoritative counts.
+        /// </summary>
+        public bool ActionCountsAvailable { get; }
+
+        // ── Runtime step phase diagnostics (Phase 5) ──────────────────────────────────────────
 
         /// <summary>True when MatchManager.StepMatch() was called this cycle (Phase 5).</summary>
         public bool RuntimeStepAdvanced { get; }
@@ -144,9 +161,21 @@ namespace RTS.ML
         /// <summary>
         /// True when the anti-double-step guard blocked a second StepMatch attempt.
         /// If this is true, RuntimeStepAdvanced is false and an error was logged.
-        /// Investigate any code path calling MatchManager.StepMatch() outside the coordinator.
+        //
+        /// GUARANTEE: the guard prevents a second MatchManager.StepMatch() within the same
+        /// ExecuteFullStep invocation. It does NOT detect external mutations (e.g. a direct
+        /// StepMatch call outside the coordinator from another MonoBehaviour).
         /// </summary>
         public bool DoubleStepPrevented { get; }
+
+        /// <summary>
+        /// Change in MatchManager's internal step counter from before Phase 5 to after Phase 5.
+        /// Expected value: 1 when the runtime step advanced normally.
+        /// 0 when RuntimeStepAdvanced=false (double-step prevented or match not running).
+        /// Any value other than 0 or 1 indicates an anomalous MatchManager state transition
+        /// (silent no-op or multi-step advance) and triggers a LogWarning in the coordinator.
+        /// </summary>
+        public int MatchStepDelta { get; }
 
         // ── Post-step phase diagnostics (Phases 6–8) ────────────────────────────
 
@@ -178,12 +207,74 @@ namespace RTS.ML
         /// <summary>Compact single-line diagnostic string for console logging.</summary>
         public string BuildDiagnosticLine()
         {
+            string countStr = ActionCountsAvailable
+                ? $"accepted:{ActionsAccepted}/rejected:{ActionsRejected}"
+                : "unavailable";
             return $"[RlLoop] step={StepIndex} src={SourceMode}" +
                    $" obs={ObservationBuilt} mask={MaskBuilt}" +
-                   $" action=accepted:{ActionsAccepted}/rejected:{ActionsRejected}" +
-                   $" runtimeStep={RuntimeStepAdvanced} doubleGuard={DoubleStepPrevented}" +
+                   $" action={countStr}" +
+                   $" runtimeStep={RuntimeStepAdvanced}(delta={MatchStepDelta}) doubleGuard={DoubleStepPrevented}" +
                    $" reward={RewardTotal:F4} terminal={IsTerminal}({TerminalReason})";
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Pre-step context bundle
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Thin pre-step context bundle passed from <see cref="RlLoopCoordinator"/> to
+    /// <see cref="IDecisionSource.Execute"/> at the Phase 4 boundary.
+    ///
+    /// Created once per <see cref="RlLoopCoordinator.ExecuteFullStep"/> cycle after Phases 1–3.
+    /// Carries the coordinator's canonical pre-step obs/mask artifacts so that decision sources
+    /// have access to them without rebuilding.
+    ///
+    /// Dual-build status (residual technical debt):
+    /// - <see cref="BaselineDecisionSource"/> still routes through HeuristicPolicyAdapter, which
+    ///   rebuilds compatible obs/mask internally via DecideAndApplyInternal. The double-build
+    ///   has been localised and documented but NOT eliminated. Both facades read the same
+    ///   pre-step state, so results are equivalent — runtime correctness is unaffected.
+    /// - This bundle creates a named, explicit transfer point and narrows where the debt lives.
+    /// - Future <c>PolicyDecisionSource</c> MUST use <see cref="CanonicalMask"/> directly —
+    ///   no mask rebuild allowed. Eliminating the baseline double-build requires refactoring
+    ///   HeuristicPolicyAdapter to consume pre-built artifacts (deferred to Day 5+).
+    /// </summary>
+    public readonly struct RlLoopStepInput
+    {
+        public RlLoopStepInput(
+            int stepIndex,
+            Owner perspective,
+            ObservationPackage canonicalObservation,
+            ActionMaskSet canonicalMask,
+            MlPolicyPipelineFacade facade)
+        {
+            StepIndex = stepIndex;
+            Perspective = perspective;
+            CanonicalObservation = canonicalObservation;
+            CanonicalMask = canonicalMask;
+            Facade = facade;
+        }
+
+        public int StepIndex { get; }
+        public Owner Perspective { get; }
+
+        /// <summary>
+        /// Coordinator-built observation package from Phase 2 (pre-step boundary).
+        /// Baseline sources may reference this for alignment; future PolicyDecisionSource
+        /// will consume it directly as the policy input tensor.
+        /// </summary>
+        public ObservationPackage CanonicalObservation { get; }
+
+        /// <summary>
+        /// Coordinator-built action mask from Phase 3 (same pre-step state as CanonicalObservation).
+        /// Future PolicyDecisionSource MUST use this directly — no mask rebuild.
+        /// Baseline sources build equivalent masks internally (same pre-step state → same result).
+        /// </summary>
+        public ActionMaskSet CanonicalMask { get; }
+
+        /// <summary>Production pipeline facade. Available for sources that need additional operations.</summary>
+        public MlPolicyPipelineFacade Facade { get; }
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -197,13 +288,12 @@ namespace RTS.ML
     /// - Implementations submit actions through the production path:
     ///   obs/mask → decode → ActionApplier → MatchManager.ApplyCommand().
     /// - Implementations MUST NOT call MatchManager.StepMatch().
-    /// - Baseline path (BaselineDecisionSource, LegacyDecisionSource) and
-    ///   future ML-Agent path (PolicyDecisionSource) share identical phase
-    ///   ordering — only the action selection logic differs.
+    /// - All sources (baseline, legacy, idle, future ML-Agent) share identical phase ordering.
     ///
-    /// The coordinator always provides a pre-built mask at the same state boundary
-    /// as its obs snapshot. Sources may use it or build equivalent masks internally
-    /// (both read the same pre-step state and produce identical results).
+    /// The coordinator passes a <see cref="RlLoopStepInput"/> bundle at the Phase 4 boundary
+    /// carrying the canonical pre-step obs/mask. Baseline sources may reference CanonicalMask
+    /// or build equivalent masks internally (same pre-step state → same result). Future
+    /// <c>PolicyDecisionSource</c> MUST consume <see cref="RlLoopStepInput.CanonicalMask"/> directly.
     /// </summary>
     public interface IDecisionSource
     {
@@ -214,27 +304,29 @@ namespace RTS.ML
         /// Execute one decision cycle through the production pipeline.
         /// Must not call MatchManager.StepMatch().
         /// </summary>
-        /// <param name="facade">Production pipeline facade (obs/mask/decode/apply).</param>
-        /// <param name="perspective">Owner perspective for the primary agent.</param>
-        /// <param name="maskAtBoundary">
-        /// Pre-step mask built by the coordinator at the same state boundary
-        /// as the coordinator's observation snapshot.
+        /// <param name="stepInput">
+        /// Pre-step context bundle from the coordinator. Contains canonical obs/mask from
+        /// Phases 2–3. Baseline sources may reference CanonicalMask; future PolicyDecisionSource
+        /// must use it directly without rebuilding.
         /// </param>
-        PolicyExecutionReport Execute(
-            MlPolicyPipelineFacade facade,
-            Owner perspective,
-            ActionMaskSet maskAtBoundary);
+        PolicyExecutionReport Execute(RlLoopStepInput stepInput);
     }
 
     /// <summary>
     /// Baseline decision source: routes through HeuristicPolicyAdapter (Week 3 Day 5 pipeline).
     ///
-    /// Handles both Player1 and Player2 in a single call via ExecuteDecisionStep(),
+    /// Handles both Player1 and Player2 in a single call via ExecuteDecisionStepWithCounts(),
     /// ensuring the same production path used by future ML-Agent consumers.
     ///
-    /// Note on action counts: HeuristicPolicyAdapter does not surface per-call accept/reject
-    /// counts at this boundary. ActionsAccepted/Rejected in the step report will be 0 for
-    /// this source. Authoritative rejected-action counts are in MatchManager.InvalidCommandsLastStep.
+    /// Action counts: each enabled player submits at most one decision per call (0 or 1 per player,
+    /// max 2 accepted for self-play). Counts are surfaced via HeuristicDecisionTrace.ActionAccepted.
+    /// Authoritative totals are also in MatchManager.InvalidCommandsLastStep.
+    ///
+    /// Dual-build (residual technical debt): the adapter internally rebuilds obs/mask through its
+    /// own pipeline. Both facades read the same pre-step state → equivalent results, no correctness
+    /// issue. The double-build has been localised here but is NOT eliminated in Day 4.
+    /// Canonical obs/mask are available in stepInput.CanonicalObs/CanonicalMask if needed;
+    /// full elimination requires HeuristicPolicyAdapter to accept pre-built artifacts (Day 5+).
     /// </summary>
     public sealed class BaselineDecisionSource : IDecisionSource
     {
@@ -250,10 +342,7 @@ namespace RTS.ML
 
         public string SourceMode => "baseline-heuristic";
 
-        public PolicyExecutionReport Execute(
-            MlPolicyPipelineFacade facade,
-            Owner perspective,
-            ActionMaskSet maskAtBoundary)
+        public PolicyExecutionReport Execute(RlLoopStepInput stepInput)
         {
             if (_adapter == null)
             {
@@ -262,12 +351,11 @@ namespace RTS.ML
 
             // Production path: both Player1 and Player2 decisions routed through
             // observation → mask → debug-action-selection → ActionDecoder → ActionApplier → MatchManager.ApplyCommand.
-            // This is the same downstream pipeline a future ML-Agent will use.
-            // maskAtBoundary is available for diagnostics; the adapter builds equivalent masks internally.
-            _adapter.ExecuteDecisionStep();
-
-            // Counts are not surfaced at this boundary. See MatchManager.InvalidCommandsLastStep.
-            return PolicyExecutionReport.Empty;
+            // The adapter builds equivalent obs/mask internally (same pre-step state → same result).
+            // Canonical obs/mask from the coordinator are available in stepInput for reference.
+            // ExecuteDecisionStepWithCounts returns real per-player accept/reject counts.
+            var (accepted, rejected) = _adapter.ExecuteDecisionStepWithCounts();
+            return new PolicyExecutionReport(null, accepted, rejected, null, null);
         }
     }
 
@@ -288,16 +376,16 @@ namespace RTS.ML
 
         public string SourceMode => "baseline-legacy";
 
-        public PolicyExecutionReport Execute(
-            MlPolicyPipelineFacade facade,
-            Owner perspective,
-            ActionMaskSet maskAtBoundary)
+        public PolicyExecutionReport Execute(RlLoopStepInput stepInput)
         {
             if (_driver == null)
             {
                 return PolicyExecutionReport.Empty;
             }
 
+            // Legacy direct driver path. HeuristicDriver.MakeAllDecisions() does not surface
+            // per-action counts at this boundary. PolicyExecutionReport.Empty is returned
+            // (CountsAvailable=false), which BuildDiagnosticLine reports as "unavailable".
             _driver.MakeAllDecisions();
             return PolicyExecutionReport.Empty;
         }
@@ -319,12 +407,46 @@ namespace RTS.ML
 
         public string SourceMode => "idle";
 
-        public PolicyExecutionReport Execute(
-            MlPolicyPipelineFacade facade,
-            Owner perspective,
-            ActionMaskSet maskAtBoundary)
+        public PolicyExecutionReport Execute(RlLoopStepInput stepInput)
         {
             return PolicyExecutionReport.Empty;
+        }
+    }
+
+    /// <summary>
+    /// [FUTURE INTEGRATION POINT — NOT IMPLEMENTED]
+    ///
+    /// Placeholder for the ML-Agent policy decision source (Week 4 Day 5+).
+    ///
+    /// When implemented, this class will:
+    /// - Accept ActionBuffers from the ML-Agent OnActionReceived callback.
+    /// - Decode actions through ActionDecoder using the canonical production path.
+    /// - Apply decoded actions through ActionApplier → MatchManager.ApplyCommand.
+    /// - Consume <see cref="RlLoopStepInput.CanonicalMask"/> directly (no mask rebuild).
+    /// - NOT call MatchManager.StepMatch() (IDecisionSource contract).
+    ///
+    /// This class exists only to clearly mark the future integration surface.
+    /// Instantiating it throws <see cref="NotImplementedException"/>.
+    /// Until implemented, all RL loop cycles use BaselineDecisionSource or IdleDecisionSource.
+    ///
+    /// Tracking: Week 4 Day 5 — ML-Agent sensor/actuator wiring.
+    /// </summary>
+    public sealed class PolicyDecisionSource : IDecisionSource
+    {
+        public PolicyDecisionSource()
+        {
+            throw new NotImplementedException(
+                "PolicyDecisionSource is a future integration point (Week 4 Day 5+). " +
+                "ML-Agent policy wiring is not yet implemented. " +
+                "Use BaselineDecisionSource for control mode or IdleDecisionSource for passive observation.");
+        }
+
+        public string SourceMode => "ml-policy";
+
+        public PolicyExecutionReport Execute(RlLoopStepInput stepInput)
+        {
+            throw new NotImplementedException(
+                "PolicyDecisionSource.Execute: future ML-Agent integration. Not yet implemented.");
         }
     }
 
@@ -439,13 +561,25 @@ namespace RTS.ML
             bool maskBuilt = preMask != null;
 
             // ── Phase 4: Submit action (through production path) ─────────────────
-            // Decision source must route through ActionDecoder → ActionApplier → MatchManager.ApplyCommand.
-            // It receives the coordinator's pre-step mask for alignment.
+            // Build the pre-step context bundle. This carries canonical obs/mask to the
+            // decision source without requiring a rebuild. Baseline sources still build
+            // equivalent artifacts internally (same pre-step state → same result).
+            // Future PolicyDecisionSource MUST use stepInput.CanonicalMask directly.
+            var stepInput = new RlLoopStepInput(
+                stepIndex: _episodeStepIndex + 1,
+                perspective: perspective,
+                canonicalObservation: preObs,
+                canonicalMask: preMask,
+                facade: _facade);
+
+            // Decision source routes through ActionDecoder → ActionApplier → MatchManager.ApplyCommand.
             // MUST NOT call MatchManager.StepMatch().
-            PolicyExecutionReport actionReport = decisionSource.Execute(_facade, perspective, preMask);
+            PolicyExecutionReport actionReport = decisionSource.Execute(stepInput);
             bool actionApplied = actionReport.AcceptedCount > 0;
 
             // ── Phase 5: Advance runtime step (EXACTLY ONCE — guarded) ──────────
+            // Capture match step index for post-step delta invariant check ([StepInvariant]).
+            int matchStepBefore = _matchManager.GetMatchState().Step;
             bool doubleStepPrevented = false;
             bool runtimeStepAdvanced = false;
 
@@ -469,6 +603,20 @@ namespace RTS.ML
                 // The single authoritative runtime step for this cycle.
                 // MatchManager.OnMatchEnded fires synchronously here if the match just ended.
                 _matchManager.StepMatch();
+            }
+
+            // [StepInvariant] Verify exactly one step was consumed by StepMatch.
+            // GUARANTEE: the guard above prevents a second StepMatch within ExecuteFullStep.
+            // LIMITATION: this does NOT detect external StepMatch calls from other components.
+            // delta=1 is the normal case. delta=0 is a silent no-op. Any other value is anomalous.
+            int matchStepDelta = runtimeStepAdvanced ? (_matchManager.GetMatchState().Step - matchStepBefore) : 0;
+            if (runtimeStepAdvanced && matchStepDelta != 1)
+            {
+                Debug.LogWarning(
+                    $"[RlLoopCoordinator][StepInvariant] Expected match step delta=1 after StepMatch, " +
+                    $"got delta={matchStepDelta} (matchBefore={matchStepBefore}). " +
+                    $"episode_step={_episodeStepIndex + 1}, source={decisionSource.SourceMode}. " +
+                    $"Investigate MatchManager.StepMatch (possible silent no-op or multi-step advance).");
             }
 
             // ── Phase 6: Post-step capture ──────────────────────────────────────
@@ -502,8 +650,10 @@ namespace RTS.ML
                 actionApplied: actionApplied,
                 actionsAccepted: actionReport.AcceptedCount,
                 actionsRejected: actionReport.RejectedCount,
+                actionCountsAvailable: actionReport.CountsAvailable,
                 runtimeStepAdvanced: runtimeStepAdvanced,
                 doubleStepPrevented: doubleStepPrevented,
+                matchStepDelta: matchStepDelta,
                 rewardEmitted: rewardEmitted,
                 rewardTotal: rewardTotal,
                 terminalEvaluated: true,

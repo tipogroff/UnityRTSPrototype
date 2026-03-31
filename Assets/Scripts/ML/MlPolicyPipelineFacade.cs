@@ -21,13 +21,15 @@ namespace RTS.ML
             int acceptedCount,
             int rejectedCount,
             IReadOnlyList<string> rejectionReasons,
-            InvalidActionAttemptLog? lastInvalidAttempt)
+            InvalidActionAttemptLog? lastInvalidAttempt,
+            bool countsAvailable = true)
         {
             _decodedActions = Copy(decodedActions);
             _rejectionReasons = Copy(rejectionReasons);
             AcceptedCount = acceptedCount;
             RejectedCount = rejectedCount;
             LastInvalidAttempt = lastInvalidAttempt;
+            CountsAvailable = countsAvailable;
         }
 
         /// <summary>
@@ -44,6 +46,13 @@ namespace RTS.ML
         /// Number of commands rejected by ActionApplier during this submission.
         /// </summary>
         public int RejectedCount { get; }
+
+        /// <summary>
+        /// True when AcceptedCount and RejectedCount reflect real pipeline counts.
+        /// False when counts are unavailable at this boundary (Empty report from legacy/idle sources).
+        /// When false, AcceptedCount and RejectedCount are 0 by convention — not "truly zero submitted".
+        /// </summary>
+        public bool CountsAvailable { get; }
 
         /// <summary>
         /// Apply-time rejection reasons collected for the current submission.
@@ -65,7 +74,7 @@ namespace RTS.ML
         /// Used by decision sources that do not surface per-action counts at the IDecisionSource boundary.
         /// </summary>
         public static PolicyExecutionReport Empty => new PolicyExecutionReport(
-            null, 0, 0, null, null);
+            null, 0, 0, null, null, countsAvailable: false);
 
         private static AgentAction[] Copy(IReadOnlyList<AgentAction> source)
         {

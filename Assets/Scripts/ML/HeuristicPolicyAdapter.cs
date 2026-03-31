@@ -168,6 +168,41 @@ namespace RTS.ML
             }
         }
 
+        /// <summary>
+        /// Executes one heuristic decision step and returns aggregated accept/reject counts.
+        ///
+        /// Unlike <see cref="ExecuteDecisionStep"/> (which returns void), this method surfaces
+        /// real per-player decision outcomes from ActionApplier. Each enabled player submits
+        /// at most one action per call, so counts are in the range 0–2 for self-play.
+        ///
+        /// Used by <c>BaselineDecisionSource</c> to populate honest action counts in
+        /// <see cref="RlLoopStepReport"/> instead of returning <see cref="PolicyExecutionReport.Empty"/>.
+        /// </summary>
+        internal (int acceptedTotal, int rejectedTotal) ExecuteDecisionStepWithCounts()
+        {
+            EnsurePipeline();
+            if (!CanRun())
+            {
+                return (0, 0);
+            }
+
+            int accepted = 0, rejected = 0;
+
+            if (_player1Control == HeuristicControlMode.Heuristic)
+            {
+                HeuristicDecisionTrace trace = DecideAndApply(Owner.Player1);
+                if (trace.ActionAccepted) accepted++; else rejected++;
+            }
+
+            if (_player2Control == HeuristicControlMode.Heuristic)
+            {
+                HeuristicDecisionTrace trace = DecideAndApply(Owner.Player2);
+                if (trace.ActionAccepted) accepted++; else rejected++;
+            }
+
+            return (accepted, rejected);
+        }
+
         internal HeuristicDecisionTrace DecideAndApply(Owner playerId)
         {
             return DecideAndApplyInternal(playerId, preferredActorType: null);

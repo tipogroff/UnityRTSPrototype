@@ -36,7 +36,8 @@ namespace RTS.Gameplay
         [SerializeField] private HeuristicPolicyAdapter _heuristicPolicyAdapter;
 
         [Header("Week 4 Day 2 Reward")]
-        [SerializeField] private bool _enableRuntimeRewardCollector = true;
+        [Tooltip("Gates reward breakdown log output. Reward computation is always-on in the Day 4 canonical loop — this flag no longer enables/disables computation.")]
+        [SerializeField] private bool _rewardLoggingEnabled = true;
         [SerializeField] private Owner _rewardPerspective = Owner.Player1;
         [SerializeField] private bool _logRewardBreakdown;
         [SerializeField] private bool _enableSelfLossPenalty;
@@ -261,7 +262,7 @@ namespace RTS.Gameplay
             LastRewardBreakdown = report.RewardTrace.Breakdown;
             float rewardDelta = report.RewardTotal;
 
-            if (_enableRuntimeRewardCollector && _logRewardBreakdown)
+            if (_rewardLoggingEnabled && _logRewardBreakdown)
             {
                 RewardBreakdown bd = report.RewardTrace.Breakdown;
                 Debug.Log(
