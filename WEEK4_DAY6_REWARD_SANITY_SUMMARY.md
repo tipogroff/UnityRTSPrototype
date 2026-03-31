@@ -1,14 +1,66 @@
 # Week 4 Day 6: Reward Distribution Sanity-Check
 
 **Date:** March 31, 2026  
-**Status:** ✅ Completed  
-**Scope:** Baseline reward distribution validation, episode-level diagnostics, batch-level summary  
+**Status:** ⚠️ Validation Executed (Requires Follow-Up Tuning)  
+**Scope:** Baseline rollout sanity-check tooling + factual validation run results  
 
 ---
 
 ## 1. Overview
 
-Day 6 implements **sanity-checking infrastructure** for the Week 4 RL loop without modifying reward design or terminal logic. The goal is to validate that baseline/heuristic rollouts produce interpretable and non-pathological traces across reward distribution, terminal behavior, and episode lifecycle.
+Day 6 implements **sanity-checking infrastructure** for the Week 4 RL loop without modifying reward design or terminal logic.
+This artifact documents tooling readiness; actual reward/terminal validation conclusions require running baseline rollout batches and reviewing their outputs.
+
+### Validation Run Results (Actual)
+
+Run executed with existing Day 6 tooling in baseline/heuristic mode (including targeted follow-up fixes):
+
+- 10-episode batch: executed ([WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_21-21-45.md](WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_21-21-45.md))
+- 20-episode batch: **not executed** by design, because 10-episode pass still produced blocking warnings
+
+Key aggregates from the 10-episode run:
+
+- avg total reward: `0.28`
+- std/min/max total reward: `0.00 / 0.28 / 0.28`
+- avg economy/combat/terminal/shaping: `0.00 / 0.28 / 0.00 / 0.00`
+- avg step count: `2000.0` (all episodes hit step limit)
+- terminal reason distribution: `Timeout=10/10`
+- outcome distribution: `Timeout=10/10`
+- avg/max invalid action rate (measured-only): `0.0% / 0.0%`
+- sanity warnings: `4` (remaining: starvation, terminal-zero, timeout-imbalance, long-low-reward)
+
+Engineering interpretation of the 10-episode run:
+
+- Reward explosion: **not observed**.
+- Reward starvation: **observed** (mean reward remains below threshold).
+- Shaping dominance: **not observed** (shaping component remains zero in this run).
+- Invalid action rate: **resolved for this run** (0% measured invalid actions).
+- Terminal behavior: terminal pipeline processes events (`10/10`), but outcomes are degenerate (`100% Timeout`) and terminal reward is always zero.
+- Outcome plausibility for baseline: **not plausible as healthy baseline traces** (fully one-sided timeout pattern).
+- Trace interpretability: metrics are interpretable, but indicate unhealthy baseline runtime behavior that needs follow-up tuning.
+
+Preliminary Day 6 validation conclusion:
+
+- Reward distribution primary sanity-check: **failed** (starvation + degenerate outcomes).
+- Terminal behavior stability: **partially functional but not healthy** (terminal detected, but always timeout with zero terminal reward).
+- Baseline trace quality: **not yet stable/interpretable enough for sign-off**.
+- Blocking nature: **blocking for full Day 6 closure**.
+
+Implemented fixes before this rerun:
+
+1. Invalid-rate metric normalization changed to rejection ratio over measured action attempts.
+2. Baseline heuristic production selection aligned with runtime affordability checks.
+3. Baseline single-action execution report fixed to avoid cumulative reject-count leakage.
+4. Day 6 smoke test forced into heuristic-vs-idle mode for more diagnosable baseline behavior.
+5. Baseline heuristic actor selection priority shifted toward worker/combat before building/no-op.
+6. Batch runner now disables EpisodeController FixedUpdate auto-step during rollout and restores it after run.
+
+Recommended follow-up (outside this Day 6 validation pass):
+
+1. Investigate why episodes still collapse to timeout-only outcomes in baseline traces.
+2. Recheck terminal reward configuration for timeout-heavy baseline dynamics (currently zero terminal reward on timeout).
+3. Investigate economy inactivity in baseline traces (economy reward remains near zero).
+4. Rerun Day 6 sanity-check after the above fixes (10 episodes, then 20 episodes only if 10-episode pass is healthy).
 
 ### What This Day Delivers
 
@@ -63,7 +115,8 @@ Per-episode metrics struct, fields:
 - `EpisodeIndex`, `StepCount`
 - Reward breakdown: `TotalReward`, `EconomyReward`, `CombatReward`, `TerminalReward`, `ShapingReward`
 - Terminal info: `IsTerminal`, `TerminalReason`, `Winner`, `TerminalEventProcessed`, `TerminalRewardNonZero`
-- Runtime diagnostics: `InvalidActionCount`, `InvalidActionRate`
+- Runtime diagnostics: `InvalidActionCount`, `InvalidActionRate`, and availability fields
+    (`InvalidActionRateMeasured`, `InvalidActionMeasuredStepCount`, `InvalidActionUnavailableStepCount`)
 - Label: `OutcomeLabel` (Win, Loss, Draw, Timeout, InvalidRuntimeState)
 
 Provides utility methods:
@@ -77,8 +130,8 @@ Batch-level aggregation of N episodes:
 - **Episode stats:** avg steps, event counts
 - **Terminal processing:** event processed rate, non-zero reward rate, reason distribution
 - **Outcome distribution:** counts and percentages by outcome label
-- **Invalid actions:** avg rate, max rate, episode count with high rate
-- **Shaping fraction:** average proportion of reward from shaping category
+- **Invalid actions:** measured-only rates plus availability counts (measured/unavailable episodes)
+- **Shaping fraction of total:** average proportion of shaping reward in total reward sum
 - **Warnings:** list of sanity-check alerts
 
 Provides methods:
@@ -244,25 +297,25 @@ Full report includes:
 
 ### When ALL Checks Pass (no warnings)
 
-✅ **Reward distribution looks reasonable:**
+✅ **When a real batch run has no warning flags and traces are interpretable:**
 - Mean total reward is in a plausible range (not explosive, not starved)
 - Reward comes from a mix of categories, not dominated by shaping
 - Terminal events are being processed and rewarded
 
-✅ **Terminal behavior is stable:**
+✅ **Terminal behavior appears stable in that run:**
 - Episodes complete with recognized terminal reasons
 - Terminal outcomes match reward signals (wins get reward, losses don't, etc.)
 - No frequent InvalidRuntimeState or other anomalies
 
-✅ **Action space and masking appear functional:**
+✅ **Action space and masking appear functional in that run:**
 - Invalid action rate is low (<15%)
 - Episodes reach reasonable lengths (not stuck immediately)
 
-✅ **Outcome distribution is varied:**
+✅ **Outcome distribution is sufficiently varied in that run:**
 - No single outcome dominates (>80%)
 - Mix of wins, losses, draws suggests varied baseline behavior
 
-**_Next step:_ Proceed to baseline policy training or detailed trace analysis.**
+**_Next step:_ Treat the run as a passed sanity snapshot, then proceed to baseline policy training or deeper trace analysis.**
 
 ### When Warnings Detected
 
@@ -305,7 +358,7 @@ Pilot runs use 10-20 episodes for quick diagnostics:
 
 ### Baseline vs ML-Agent
 
-This sanity-check validates the **reward pipeline and terminal logic** in baseline/heuristic mode:
+This tooling is designed to validate the **reward pipeline and terminal logic** in baseline/heuristic mode once run:
 - Baseline behavior does NOT predict ML-Agent behavior
 - Baseline may be deterministic or limited; ML-Agent may learn differently
 - Reward sanity is necessary but not sufficient for ML-Agent success
@@ -466,4 +519,4 @@ public class MyDayCustomSanityTest : MonoBehaviour
 **All checks are warning-only;** they do not block execution or alter behavior.  
 **Ready for immediate use** in Play Mode via context menu or programmatic API.
 
-Reward distribution can now be validated against basic engineering sanity criteria before proceeding to policy integration (Week 4 Day 7+).
+Reward distribution and terminal behavior can now be validated against basic engineering sanity criteria via real batch runs before proceeding to policy integration (Week 4 Day 7+).

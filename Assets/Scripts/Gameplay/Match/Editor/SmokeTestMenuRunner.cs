@@ -21,6 +21,10 @@ namespace RTS.Testing.Editor
         private const string RunDay3AfterPlayModeKey = "RTS.Testing.Editor.RunDay3AfterPlayMode";
         private const string RunDay3ReadyPollsKey = "RTS.Testing.Editor.RunDay3ReadyPolls";
 
+        private const string RunRewardSanity10AfterPlayModeKey = "RTS.Testing.Editor.RunRewardSanity10AfterPlayMode";
+        private const string RunRewardSanity20AfterPlayModeKey = "RTS.Testing.Editor.RunRewardSanity20AfterPlayMode";
+        private const string RunRewardSanityReadyPollsKey      = "RTS.Testing.Editor.RunRewardSanityReadyPolls";
+
         static SmokeTestMenuRunner()
         {
             EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
@@ -29,6 +33,8 @@ namespace RTS.Testing.Editor
             EditorApplication.update += PollPendingColdStartSmoke;
             EditorApplication.update -= PollPendingColdStartSmokeDay3;
             EditorApplication.update += PollPendingColdStartSmokeDay3;
+            EditorApplication.update -= PollPendingColdStartRewardSanity;
+            EditorApplication.update += PollPendingColdStartRewardSanity;
         }
 
         [MenuItem("RTS/PlayMode/Enter")]
@@ -595,8 +601,113 @@ namespace RTS.Testing.Editor
             RunDay3TerminalSmokeTest();
         }
 
+        // ─── Day 6 Reward Sanity Check ────────────────────────────────────────────
+
+        [MenuItem("RTS/Reward Sanity/10 Episodes (Cold Start)")]
+        public static void RunRewardSanity10ColdStart()
+        {
+            if (Application.isPlaying)
+            {
+                RunRewardSanityCheck(10);
+                return;
+            }
+
+            SessionState.SetBool(RunRewardSanity10AfterPlayModeKey, true);
+            SessionState.SetBool(RunRewardSanity20AfterPlayModeKey, false);
+            SessionState.SetInt(RunRewardSanityReadyPollsKey, 0);
+            Debug.Log("[SmokeTest] Reward sanity (10 episodes) cold-start requested. Entering Play Mode...");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("RTS/Reward Sanity/20 Episodes (Cold Start)")]
+        public static void RunRewardSanity20ColdStart()
+        {
+            if (Application.isPlaying)
+            {
+                RunRewardSanityCheck(20);
+                return;
+            }
+
+            SessionState.SetBool(RunRewardSanity20AfterPlayModeKey, true);
+            SessionState.SetBool(RunRewardSanity10AfterPlayModeKey, false);
+            SessionState.SetInt(RunRewardSanityReadyPollsKey, 0);
+            Debug.Log("[SmokeTest] Reward sanity (20 episodes) cold-start requested. Entering Play Mode...");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("SmokeTest/12 - Day6 Reward Sanity 10 Episodes")]
+        public static void RunRewardSanity10()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+            RunRewardSanityCheck(10);
+        }
+
+        [MenuItem("SmokeTest/13 - Day6 Reward Sanity 20 Episodes")]
+        public static void RunRewardSanity20()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+            RunRewardSanityCheck(20);
+        }
+
+        private static void RunRewardSanityCheck(int episodeCount)
+        {
+            Day6RewardSanitySmokeTest smoke = Object.FindFirstObjectByType<Day6RewardSanitySmokeTest>();
+            if (smoke == null)
+            {
+                GameObject host = new GameObject("Day6RewardSanitySmokeTest_AutoRunner");
+                smoke = host.AddComponent<Day6RewardSanitySmokeTest>();
+                Debug.Log("[SmokeTest] Day6RewardSanitySmokeTest was auto-created for this run.");
+            }
+
+            System.Reflection.FieldInfo epField = typeof(Day6RewardSanitySmokeTest)
+                .GetField("_episodeCount", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            epField?.SetValue(smoke, episodeCount);
+
+            System.Reflection.FieldInfo verboseField = typeof(Day6RewardSanitySmokeTest)
+                .GetField("_verboseLogging", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            verboseField?.SetValue(smoke, true);
+
+            System.Reflection.FieldInfo mdField = typeof(Day6RewardSanitySmokeTest)
+                .GetField("_generateMarkdownReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            mdField?.SetValue(smoke, true);
+
+            System.Reflection.FieldInfo openField = typeof(Day6RewardSanitySmokeTest)
+                .GetField("_openReportAfterGeneration", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            openField?.SetValue(smoke, false);
+
+            Debug.Log($"[SmokeTest] Starting Day 6 reward sanity check: {episodeCount} episodes...");
+            smoke.ExecuteRewardSanityCheck();
+            Debug.Log($"[SmokeTest] Day 6 reward sanity check DONE ({episodeCount} episodes).");
+        }
+
         private static void HandlePlayModeStateChanged(PlayModeStateChange change)
         {
+            // Reward Sanity
+            bool sanity10Pending = SessionState.GetBool(RunRewardSanity10AfterPlayModeKey, false);
+            bool sanity20Pending = SessionState.GetBool(RunRewardSanity20AfterPlayModeKey, false);
+            if (sanity10Pending || sanity20Pending)
+            {
+                if (change == PlayModeStateChange.EnteredPlayMode)
+                {
+                    SessionState.SetInt(RunRewardSanityReadyPollsKey, 0);
+                    Debug.Log("[SmokeTest] Reward sanity cold-start entered Play Mode. Waiting for runtime readiness...");
+                }
+                else if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode)
+                {
+                    SessionState.EraseBool(RunRewardSanity10AfterPlayModeKey);
+                    SessionState.EraseBool(RunRewardSanity20AfterPlayModeKey);
+                    SessionState.EraseInt(RunRewardSanityReadyPollsKey);
+                }
+            }
+
             // Day 6
             if (SessionState.GetBool(RunDay6AfterPlayModeKey, false))
             {
@@ -686,6 +797,40 @@ namespace RTS.Testing.Editor
             SessionState.EraseInt(RunDay6ReadyPollsKey);
             Debug.Log("[SmokeTest] Day 6 cold-start runtime is ready. Launching suite...");
             RunDay6PipelineSmokeTest();
+        }
+
+        private static void PollPendingColdStartRewardSanity()
+        {
+            bool sanity10 = SessionState.GetBool(RunRewardSanity10AfterPlayModeKey, false);
+            bool sanity20 = SessionState.GetBool(RunRewardSanity20AfterPlayModeKey, false);
+            if ((!sanity10 && !sanity20) || !Application.isPlaying)
+            {
+                return;
+            }
+
+            int readyPolls = SessionState.GetInt(RunRewardSanityReadyPollsKey, 0) + 1;
+            SessionState.SetInt(RunRewardSanityReadyPollsKey, readyPolls);
+
+            EpisodeController episodeController = EpisodeController.Instance;
+            MatchManager matchManager = MatchManager.Instance;
+            if (episodeController == null || matchManager == null || matchManager.Phase != MatchPhase.Running)
+            {
+                if (readyPolls >= 300)
+                {
+                    Debug.LogWarning("[SmokeTest] Reward sanity cold-start timed out waiting for runtime readiness.");
+                    SessionState.EraseBool(RunRewardSanity10AfterPlayModeKey);
+                    SessionState.EraseBool(RunRewardSanity20AfterPlayModeKey);
+                    SessionState.EraseInt(RunRewardSanityReadyPollsKey);
+                }
+                return;
+            }
+
+            int episodeCount = sanity10 ? 10 : 20;
+            SessionState.EraseBool(RunRewardSanity10AfterPlayModeKey);
+            SessionState.EraseBool(RunRewardSanity20AfterPlayModeKey);
+            SessionState.EraseInt(RunRewardSanityReadyPollsKey);
+            Debug.Log($"[SmokeTest] Reward sanity cold-start runtime ready. Launching {episodeCount}-episode batch...");
+            RunRewardSanityCheck(episodeCount);
         }
 
         private static T EnsureComponent<T>(string gameObjectName) where T : Component

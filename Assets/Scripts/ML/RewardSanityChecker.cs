@@ -143,31 +143,45 @@ namespace RTS.ML
 
         private static void CheckInvalidActions(RolloutBatchSummary summary, RewardSanityCheckConfig config)
         {
-            // High average invalid rate
-            if (summary.AvgInvalidActionRate > config.HighInvalidRateThreshold)
+            if (summary.EpisodesWithMeasuredInvalidRate == 0)
             {
                 summary.SanityWarnings.Add(
-                    $"⚠️ High invalid action rate: avg = {summary.AvgInvalidActionRate:P1} " +
+                    "⚠️ Invalid action rate unavailable for this batch: action counts were not provided by the active decision source.");
+                return;
+            }
+
+            if (summary.EpisodesWithUnavailableInvalidRate > 0)
+            {
+                summary.SanityWarnings.Add(
+                    $"ℹ️ Invalid action checks are partial: measured episodes = {summary.EpisodesWithMeasuredInvalidRate}/{summary.EpisodeCount}, " +
+                    $"unavailable episodes = {summary.EpisodesWithUnavailableInvalidRate}.");
+            }
+
+            // High average invalid rate (measured episodes only)
+            if (summary.AvgInvalidActionRateMeasured > config.HighInvalidRateThreshold)
+            {
+                summary.SanityWarnings.Add(
+                    $"⚠️ High invalid action rate (measured only): avg = {summary.AvgInvalidActionRateMeasured:P1} " +
                     $"(threshold: {config.HighInvalidRateThreshold:P1}). " +
                     $"Action mask or decoder may be poorly configured.");
             }
 
-            // Extreme invalid rate in any episode
-            if (summary.MaxInvalidActionRate > config.ExtremeInvalidRateThreshold)
+            // Extreme invalid rate in any measured episode
+            if (summary.MaxInvalidActionRateMeasured > config.ExtremeInvalidRateThreshold)
             {
                 summary.SanityWarnings.Add(
-                    $"⚠️ Extreme invalid rate detected: max = {summary.MaxInvalidActionRate:P1} " +
+                    $"⚠️ Extreme invalid rate detected (measured only): max = {summary.MaxInvalidActionRateMeasured:P1} " +
                     $"(threshold: {config.ExtremeInvalidRateThreshold:P1})");
             }
 
-            // Many episodes with high invalid rate
-            float highInvalidFraction = Math.Max(1f, summary.EpisodeCount) > 0
-                ? (float)summary.EpisodesWithHighInvalidRate / summary.EpisodeCount
+            // Many measured episodes with high invalid rate
+            float highInvalidFraction = summary.EpisodesWithMeasuredInvalidRate > 0
+                ? (float)summary.EpisodesWithHighInvalidRateMeasured / summary.EpisodesWithMeasuredInvalidRate
                 : 0f;
             if (highInvalidFraction > config.HighInvalidEpisodesFraction)
             {
                 summary.SanityWarnings.Add(
-                    $"⚠️ Many episodes with high invalid rate: {highInvalidFraction:P1} of episodes " +
+                    $"⚠️ Many measured episodes with high invalid rate: {highInvalidFraction:P1} of measured episodes " +
                     $"(threshold: {config.HighInvalidEpisodesFraction:P1})");
             }
         }

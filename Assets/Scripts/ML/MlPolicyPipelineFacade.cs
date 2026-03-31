@@ -234,7 +234,7 @@ namespace RTS.ML
             return new PolicyExecutionReport(
                 new[] { decodedAction },
                 accepted ? 1 : 0,
-                _actionApplier.RejectedActionsLastStep,
+                accepted ? 0 : 1,
                 _actionApplier.RejectionReasonsLastStep,
                 _actionApplier.LastInvalidAttempt);
         }

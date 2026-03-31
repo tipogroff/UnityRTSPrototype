@@ -39,7 +39,20 @@ namespace RTS.ML
 
         // ─── Runtime diagnostics ────────────────────────────────────────────
         public int InvalidActionCount;
-        public float InvalidActionRate;  // InvalidActionCount / (StepCount + epsilon)
+        /// <summary>
+        /// True when invalid-action counts were available for at least one step.
+        /// False means rate/count are unavailable on this decision-source path.
+        /// </summary>
+        public bool InvalidActionRateMeasured;
+        /// <summary>Number of steps where ActionCountsAvailable=true.</summary>
+        public int InvalidActionMeasuredStepCount;
+        /// <summary>Number of steps where ActionCountsAvailable=false.</summary>
+        public int InvalidActionUnavailableStepCount;
+        /// <summary>
+        /// InvalidActionCount / InvalidActionMeasuredStepCount when measured,
+        /// otherwise 0.0 (must be interpreted with InvalidActionRateMeasured).
+        /// </summary>
+        public float InvalidActionRate;
 
         // ─── User-friendly outcome label ────────────────────────────────────
         /// <summary>
@@ -53,8 +66,11 @@ namespace RTS.ML
         /// </summary>
         public string GetSummaryLine()
         {
+            string invalidRateText = InvalidActionRateMeasured
+                ? $"{InvalidActionRate:P1}"
+                : "N/A";
             return $"Episode {EpisodeIndex}: reward={TotalReward:F2}, steps={StepCount}, outcome={OutcomeLabel}, " +
-                   $"terminal_reason={TerminalReason}, invalid_rate={InvalidActionRate:P1}";
+                   $"terminal_reason={TerminalReason}, invalid_rate={invalidRateText}";
         }
 
         /// <summary>
@@ -63,7 +79,10 @@ namespace RTS.ML
         /// </summary>
         public string GetCompactLine()
         {
-            return $"#{EpisodeIndex:D2} | r={TotalReward:F1} | steps={StepCount:D3} | outcome={OutcomeLabel,-8} | invalid={InvalidActionRate:P0}";
+            string invalidText = InvalidActionRateMeasured
+                ? $"{InvalidActionRate:P0}"
+                : "N/A";
+            return $"#{EpisodeIndex:D2} | r={TotalReward:F1} | steps={StepCount:D3} | outcome={OutcomeLabel,-8} | invalid={invalidText}";
         }
     }
 }

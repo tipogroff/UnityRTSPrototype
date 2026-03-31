@@ -1,7 +1,7 @@
 # Week 4 Day 6 - Implementation Checklist
 
 **Date:** March 31, 2026  
-**Status:** ✅ COMPLETE  
+**Status:** ✅ TOOLING COMPLETE / ⏳ VALIDATION RUN PENDING  
 
 ---
 
@@ -29,7 +29,9 @@
 ### ✅ Episode-Level Diagnostics
 - Total and category-breakdown reward (economy, combat, terminal, shaping)
 - Terminal state info (reason, winner, event processed flag, non-zero reward flag)
-- Invalid action rate per episode
+- Invalid action rate per episode with availability flags:
+    - measured vs unavailable
+    - measured-step and unavailable-step counters
 - Outcome label derivation (Win, Loss, Draw, Timeout, InvalidRuntimeState)
 - Utility formats: `GetSummaryLine()`, `GetCompactLine()`
 
@@ -38,7 +40,10 @@
 - Episode statistics: avg steps, event count ranges
 - Terminal event distribution and processing rates
 - Outcome distribution with counts and percentages
-- Invalid action summary: avg, max, high-rate episode count
+- Invalid action summary:
+    - measured episodes count
+    - unavailable episodes count
+    - avg/max/high-rate on measured subset only
 - Markdown and one-liner exports
 
 ### ✅ Sanity-Check Heuristics (11 Checks)
@@ -267,13 +272,13 @@ public void RewardSanityCheck()
 
 ## Next Steps
 
-1. ✅ Run 10-20 baseline episodes to validate reward distribution
+1. Run 10-20 baseline episodes to perform actual reward/terminal sanity validation
 2. Review generated markdown reports for anomalies
 3. Investigate any warnings via manual trace inspection
 4. Consider minor tuning if specific issues found (e.g., invalid action rate spike)
-5. Proceed to Day 7 (baseline policy finalization) when sanity confirmed
+5. Proceed to Day 7 (baseline policy finalization) after validation run review
 
 ---
 
-**Day 6 Status: COMPLETE**  
-**Ready for Review and Day 7 Progression**
+**Day 6 Tooling Status: COMPLETE**  
+**Validation Status: PENDING REAL BATCH RUN**

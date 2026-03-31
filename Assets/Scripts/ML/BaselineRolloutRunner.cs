@@ -64,42 +64,52 @@ namespace RTS.ML
                 Debug.Log($"[BaselineRolloutRunner] Starting batch: {episodeCount} episodes");
             }
 
-            // ─── Run N episodes sequentially ───────────────────────────────
-            for (int i = 0; i < episodeCount; i++)
+            bool previousAutoStep = _episodeController.AutoStepInFixedUpdate;
+            _episodeController.AutoStepInFixedUpdate = false;
+
+            try
             {
-                RolloutEpisodeSummary episodeSummary = RunSingleEpisode();
-                summary.Episodes.Add(episodeSummary);
+                // ─── Run N episodes sequentially ───────────────────────────────
+                for (int i = 0; i < episodeCount; i++)
+                {
+                    RolloutEpisodeSummary episodeSummary = RunSingleEpisode();
+                    summary.Episodes.Add(episodeSummary);
+
+                    if (verboseLogging)
+                    {
+                        Debug.Log($"[BaselineRolloutRunner] {episodeSummary.GetCompactLine()}");
+                    }
+                }
+
+                // ─── Compute batch aggregates ──────────────────────────────────
+                ComputeBatchAggregates(summary);
+
+                // ─── Run sanity checks ────────────────────────────────────────
+                RewardSanityChecker.CheckBatchSanity(summary, _sanityConfig);
 
                 if (verboseLogging)
                 {
-                    Debug.Log($"[BaselineRolloutRunner] {episodeSummary.GetCompactLine()}");
-                }
-            }
-
-            // ─── Compute batch aggregates ──────────────────────────────────
-            ComputeBatchAggregates(summary);
-
-            // ─── Run sanity checks ────────────────────────────────────────
-            RewardSanityChecker.CheckBatchSanity(summary, _sanityConfig);
-
-            if (verboseLogging)
-            {
-                Debug.Log($"[BaselineRolloutRunner] {summary.ToOneLine()}");
-                if (summary.SanityWarnings.Count > 0)
-                {
-                    Debug.LogWarning($"[BaselineRolloutRunner] {summary.SanityWarnings.Count} sanity warnings:");
-                    foreach (var warning in summary.SanityWarnings)
+                    Debug.Log($"[BaselineRolloutRunner] {summary.ToOneLine()}");
+                    if (summary.SanityWarnings.Count > 0)
                     {
-                        Debug.LogWarning($"  {warning}");
+                        Debug.LogWarning($"[BaselineRolloutRunner] {summary.SanityWarnings.Count} sanity warnings:");
+                        foreach (var warning in summary.SanityWarnings)
+                        {
+                            Debug.LogWarning($"  {warning}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("[BaselineRolloutRunner] ✅ No sanity warnings detected");
                     }
                 }
-                else
-                {
-                    Debug.Log("[BaselineRolloutRunner] ✅ No sanity warnings detected");
-                }
-            }
 
-            return summary;
+                return summary;
+            }
+            finally
+            {
+                _episodeController.AutoStepInFixedUpdate = previousAutoStep;
+            }
         }
 
         /// <summary>
@@ -111,16 +121,29 @@ namespace RTS.ML
             _episodeController.StartNewEpisode();
 
             int stepCount = 0;
+            int validActionCount = 0;
             int invalidActionCount = 0;
+            int invalidMeasuredStepCount = 0;
+            int invalidUnavailableStepCount = 0;
 
             // Run steps until terminal or timeout
             while (_episodeController.IsRunning)
             {
                 // Execute one RL loop cycle via public API
                 bool continueRunning = _episodeController.StepEpisodeOnce();
+                RlLoopStepReport stepReport = _episodeController.LastRlLoopStepReport;
 
                 stepCount++;
-                invalidActionCount += _episodeController.LastRlLoopStepReport.ActionsRejected;
+                if (stepReport.ActionCountsAvailable)
+                {
+                    invalidMeasuredStepCount++;
+                    validActionCount += stepReport.ActionsAccepted;
+                    invalidActionCount += stepReport.ActionsRejected;
+                }
+                else
+                {
+                    invalidUnavailableStepCount++;
+                }
 
                 if (!continueRunning || stepCount > 100000)  // Safety limit
                 {
@@ -129,7 +152,8 @@ namespace RTS.ML
             }
 
             // Capture post-episode state
-            RewardBreakdown rewardBreakdown = _episodeController.LastRewardBreakdown;
+            // Use CurrentRewardEpisodeSummary for cumulative episode totals.
+            // LastRewardBreakdown is per-step only (the final step's values) — do NOT use for episode aggregates.
             EpisodeEndReport terminalReport = _episodeController.LastTerminalReport;
             RewardEpisodeSummary rewardSummary = _episodeController.CurrentRewardEpisodeSummary;
 
@@ -139,11 +163,11 @@ namespace RTS.ML
                 EpisodeIndex = _episodeController.EpisodeIndex,
                 StepCount = stepCount,
 
-                TotalReward = rewardBreakdown.Total,
-                EconomyReward = rewardBreakdown.Economy,
-                CombatReward = rewardBreakdown.Combat,
-                TerminalReward = rewardBreakdown.Terminal,
-                ShapingReward = rewardBreakdown.Shaping,
+                    TotalReward = rewardSummary.Breakdown.Total,
+                    EconomyReward = rewardSummary.Breakdown.Economy,
+                    CombatReward = rewardSummary.Breakdown.Combat,
+                    TerminalReward = rewardSummary.Breakdown.Terminal,
+                    ShapingReward = rewardSummary.Breakdown.Shaping,
 
                 RewardEventCount = rewardSummary.TotalEventCount,
 
@@ -155,7 +179,13 @@ namespace RTS.ML
                 RuntimeEndReason = terminalReport.RuntimeEndReason,
 
                 InvalidActionCount = invalidActionCount,
-                InvalidActionRate = stepCount > 0 ? (float)invalidActionCount / stepCount : 0f,
+                InvalidActionRateMeasured = invalidMeasuredStepCount > 0,
+                InvalidActionMeasuredStepCount = invalidMeasuredStepCount,
+                InvalidActionUnavailableStepCount = invalidUnavailableStepCount,
+                // Invalid rate is rejection ratio over measured action attempts, not per-step density.
+                InvalidActionRate = (validActionCount + invalidActionCount) > 0
+                    ? (float)invalidActionCount / (validActionCount + invalidActionCount)
+                    : 0f,
 
                 OutcomeLabel = DeriveOutcomeLabel(terminalReport, stepCount)
             };
@@ -202,6 +232,7 @@ namespace RTS.ML
             float terminalSum = 0f;
             float shapingSum = 0f;
             float eventCountSum = 0f;
+            float stepCountSum = 0f;
 
             summary.MinTotalReward = float.MaxValue;
             summary.MaxTotalReward = float.MinValue;
@@ -209,12 +240,16 @@ namespace RTS.ML
             summary.MinStepCount = int.MaxValue;
             summary.MaxStepCount = int.MinValue;
 
-            float invalidRateSum = 0f;
-            float maxInvalidRate = 0f;
+            float invalidRateMeasuredSum = 0f;
+            float maxInvalidRateMeasured = 0f;
 
             int terminalEventProcessedCount = 0;
             int terminalRewardNonZeroCount = 0;
             int highInvalidRateEpisodeCount = 0;
+            int measuredInvalidEpisodes = 0;
+            int unavailableInvalidEpisodes = 0;
+            int totalInvalidMeasuredSteps = 0;
+            int totalInvalidUnavailableSteps = 0;
 
             foreach (var ep in summary.Episodes)
             {
@@ -233,13 +268,24 @@ namespace RTS.ML
                 // Step aggregation
                 summary.MinStepCount = Mathf.Min(summary.MinStepCount, ep.StepCount);
                 summary.MaxStepCount = Mathf.Max(summary.MaxStepCount, ep.StepCount);
+                stepCountSum += ep.StepCount;
 
                 // Invalid action aggregation
-                invalidRateSum += ep.InvalidActionRate;
-                maxInvalidRate = Mathf.Max(maxInvalidRate, ep.InvalidActionRate);
-                if (ep.InvalidActionRate > _sanityConfig.HighInvalidRateThreshold)
+                totalInvalidMeasuredSteps += ep.InvalidActionMeasuredStepCount;
+                totalInvalidUnavailableSteps += ep.InvalidActionUnavailableStepCount;
+                if (ep.InvalidActionRateMeasured)
                 {
-                    highInvalidRateEpisodeCount++;
+                    measuredInvalidEpisodes++;
+                    invalidRateMeasuredSum += ep.InvalidActionRate;
+                    maxInvalidRateMeasured = Mathf.Max(maxInvalidRateMeasured, ep.InvalidActionRate);
+                    if (ep.InvalidActionRate > _sanityConfig.HighInvalidRateThreshold)
+                    {
+                        highInvalidRateEpisodeCount++;
+                    }
+                }
+                else
+                {
+                    unavailableInvalidEpisodes++;
                 }
 
                 // Terminal event aggregation
@@ -273,9 +319,7 @@ namespace RTS.ML
             summary.AvgCombatReward = combatSum / n;
             summary.AvgTerminalReward = terminalSum / n;
             summary.AvgShapingReward = shapingSum / n;
-            summary.AvgStepCount = (float)summary.Episodes.Count > 0
-                ? summary.Episodes.ConvertAll(e => (float)e.StepCount).ConvertAll(x => x).Sum() / n
-                : 0f;
+            summary.AvgStepCount = stepCountSum / n;
             summary.AvgRewardEventCount = eventCountSum / n;
 
             // Compute std
@@ -283,9 +327,17 @@ namespace RTS.ML
             summary.StdTotalReward = Mathf.Sqrt(Mathf.Max(0f, variance));
 
             // Compute averages
-            summary.AvgInvalidActionRate = invalidRateSum / n;
-            summary.MaxInvalidActionRate = maxInvalidRate;
-            summary.EpisodesWithHighInvalidRate = highInvalidRateEpisodeCount;
+            summary.EpisodesWithMeasuredInvalidRate = measuredInvalidEpisodes;
+            summary.EpisodesWithUnavailableInvalidRate = unavailableInvalidEpisodes;
+            summary.TotalInvalidMeasuredSteps = totalInvalidMeasuredSteps;
+            summary.TotalInvalidUnavailableSteps = totalInvalidUnavailableSteps;
+            summary.AvgInvalidActionRateMeasured = measuredInvalidEpisodes > 0
+                ? invalidRateMeasuredSum / measuredInvalidEpisodes
+                : 0f;
+            summary.MaxInvalidActionRateMeasured = measuredInvalidEpisodes > 0
+                ? maxInvalidRateMeasured
+                : 0f;
+            summary.EpisodesWithHighInvalidRateMeasured = highInvalidRateEpisodeCount;
 
             // Terminal event statistics
             summary.TerminalEventProcessedCount = terminalEventProcessedCount;
@@ -295,25 +347,10 @@ namespace RTS.ML
                 ? (float)terminalRewardNonZeroCount / terminalEventProcessedCount
                 : 0f;
 
-            // Shaping fraction
-            float totalNonShapingSum = economySum + combatSum + terminalSum;
-            summary.AvgShapingFraction = rewardSum > 0.001f ? shapingSum / rewardSum : 0f;
-        }
-    }
-
-    /// <summary>
-    /// Helper extension to sum a list of floats.
-    /// </summary>
-    internal static class ListExtensions
-    {
-        public static float Sum(this List<float> list)
-        {
-            float sum = 0f;
-            for (int i = 0; i < list.Count; i++)
-            {
-                sum += list[i];
-            }
-            return sum;
+            // Shaping fraction of total reward sum across the batch.
+            summary.AvgShapingFractionOfTotal = Mathf.Abs(rewardSum) > 0.001f
+                ? shapingSum / rewardSum
+                : 0f;
         }
     }
 }

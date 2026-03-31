@@ -77,6 +77,11 @@ namespace RTS.Gameplay
 
         public int EpisodeIndex { get; private set; }
         public bool IsRunning => _episodeRunning && _matchManager != null && _matchManager.Phase == MatchPhase.Running;
+        public bool AutoStepInFixedUpdate
+        {
+            get => _autoStepInFixedUpdate;
+            set => _autoStepInFixedUpdate = value;
+        }
         public RewardEpisodeSummary CurrentRewardEpisodeSummary =>
             _runtimeRewardCollector != null ? _runtimeRewardCollector.CurrentEpisodeSummary : default;
 

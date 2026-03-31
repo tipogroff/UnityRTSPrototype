@@ -25,6 +25,7 @@ namespace RTS.ML
         [SerializeField] private int _episodeCount = 10;
         [SerializeField] private bool _verboseLogging = true;
         [SerializeField] private bool _generateMarkdownReport = true;
+        [SerializeField] private bool _forceHeuristicVsIdle = true;
 
         [Header("Sanity Config")]
         [SerializeField] private RewardSanityCheckConfig _sanityConfig = null;
@@ -60,6 +61,16 @@ namespace RTS.ML
             {
                 Debug.LogError("[Day6RewardSanitySmokeTest] EpisodeController not found in scene.");
                 return;
+            }
+
+            if (_forceHeuristicVsIdle)
+            {
+                HeuristicPolicyAdapter adapter = FindFirstObjectByType<HeuristicPolicyAdapter>();
+                if (adapter != null)
+                {
+                    adapter.SetPlayerControlModes(HeuristicControlMode.Heuristic, HeuristicControlMode.Idle);
+                    Debug.Log("[Day6RewardSanitySmokeTest] Control mode set to heuristic-vs-idle for sanity run.");
+                }
             }
 
             // Initialize sanity config if not provided
@@ -102,7 +113,7 @@ namespace RTS.ML
             Debug.Log($"  Economy:  {summary.AvgEconomyReward:F2}");
             Debug.Log($"  Combat:   {summary.AvgCombatReward:F2}");
             Debug.Log($"  Terminal: {summary.AvgTerminalReward:F2}");
-            Debug.Log($"  Shaping:  {summary.AvgShapingReward:F2} ({summary.AvgShapingFraction:P1} of total)");
+            Debug.Log($"  Shaping:  {summary.AvgShapingReward:F2} ({summary.AvgShapingFractionOfTotal:P1} of total)");
             Debug.Log("");
             Debug.Log("EPISODE STATISTICS:");
             Debug.Log($"  Avg Steps:   {summary.AvgStepCount:F1} (min={summary.MinStepCount}, max={summary.MaxStepCount})");
@@ -135,9 +146,11 @@ namespace RTS.ML
             }
 
             Debug.Log("INVALID ACTIONS:");
-            Debug.Log($"  Avg Rate:    {summary.AvgInvalidActionRate:P1}");
-            Debug.Log($"  Max Rate:    {summary.MaxInvalidActionRate:P1}");
-            Debug.Log($"  High Episodes (>15%): {summary.EpisodesWithHighInvalidRate}");
+            Debug.Log($"  Measured Episodes: {summary.EpisodesWithMeasuredInvalidRate}/{summary.EpisodeCount}");
+            Debug.Log($"  Unavailable Episodes: {summary.EpisodesWithUnavailableInvalidRate}/{summary.EpisodeCount}");
+            Debug.Log($"  Avg Rate (Measured Only):    {summary.AvgInvalidActionRateMeasured:P1}");
+            Debug.Log($"  Max Rate (Measured Only):    {summary.MaxInvalidActionRateMeasured:P1}");
+            Debug.Log($"  High Episodes (>15%, Measured Only): {summary.EpisodesWithHighInvalidRateMeasured}");
             Debug.Log("");
 
             if (summary.SanityWarnings.Count > 0)
@@ -208,7 +221,9 @@ namespace RTS.ML
             sb.AppendLine();
             if (summary.SanityWarnings.Count == 0)
             {
-                sb.AppendLine("✅ **Reward distribution passed baseline sanity-checks.**");
+                sb.AppendLine("✅ **No heuristic warning flags were detected in this run.**");
+                sb.AppendLine();
+                sb.AppendLine("This is an engineering sanity snapshot, not a proof of reward quality.");
             }
             else
             {
@@ -226,7 +241,7 @@ namespace RTS.ML
             sb.AppendLine($"| Economy | {summary.AvgEconomyReward:F2} |");
             sb.AppendLine($"| Combat | {summary.AvgCombatReward:F2} |");
             sb.AppendLine($"| Terminal | {summary.AvgTerminalReward:F2} |");
-            sb.AppendLine($"| Shaping | {summary.AvgShapingReward:F2} ({summary.AvgShapingFraction:P1}) |");
+            sb.AppendLine($"| Shaping | {summary.AvgShapingReward:F2} ({summary.AvgShapingFractionOfTotal:P1} of total) |");
             sb.AppendLine();
 
             // Episode statistics
@@ -282,9 +297,11 @@ namespace RTS.ML
             sb.AppendLine();
             sb.AppendLine("| Metric | Value |");
             sb.AppendLine("|--------|-------|");
-            sb.AppendLine($"| Avg Invalid Rate | {summary.AvgInvalidActionRate:P1} |");
-            sb.AppendLine($"| Max Invalid Rate | {summary.MaxInvalidActionRate:P1} |");
-            sb.AppendLine($"| Episodes with High Rate (>15%) | {summary.EpisodesWithHighInvalidRate} |");
+            sb.AppendLine($"| Episodes With Measured Invalid Rate | {summary.EpisodesWithMeasuredInvalidRate}/{summary.EpisodeCount} |");
+            sb.AppendLine($"| Episodes With Unavailable Invalid Rate | {summary.EpisodesWithUnavailableInvalidRate}/{summary.EpisodeCount} |");
+            sb.AppendLine($"| Avg Invalid Rate (Measured Only) | {summary.AvgInvalidActionRateMeasured:P1} |");
+            sb.AppendLine($"| Max Invalid Rate (Measured Only) | {summary.MaxInvalidActionRateMeasured:P1} |");
+            sb.AppendLine($"| Episodes with High Rate (>15%, Measured Only) | {summary.EpisodesWithHighInvalidRateMeasured} |");
             sb.AppendLine();
 
             // Sanity warnings
@@ -312,7 +329,8 @@ namespace RTS.ML
             sb.AppendLine("|---|--------|-------|---------|--------|----------|---------|---------|-----------|-----------|");
             foreach (var ep in summary.Episodes)
             {
-                sb.AppendLine($"| {ep.EpisodeIndex:D2} | {ep.TotalReward:F2} | {ep.StepCount:D3} | {ep.EconomyReward:F2} | {ep.CombatReward:F2} | {ep.TerminalReward:F2} | {ep.ShapingReward:F2} | {ep.OutcomeLabel,-8} | {ep.InvalidActionRate:P0} | {(ep.IsTerminal ? "✓" : "✗")} |");
+                string invalidCell = ep.InvalidActionRateMeasured ? $"{ep.InvalidActionRate:P0}" : "N/A";
+                sb.AppendLine($"| {ep.EpisodeIndex:D2} | {ep.TotalReward:F2} | {ep.StepCount:D3} | {ep.EconomyReward:F2} | {ep.CombatReward:F2} | {ep.TerminalReward:F2} | {ep.ShapingReward:F2} | {ep.OutcomeLabel,-8} | {invalidCell} | {(ep.IsTerminal ? "✓" : "✗")} |");
             }
             sb.AppendLine();
 
@@ -323,6 +341,7 @@ namespace RTS.ML
             sb.AppendLine("- Episode-level metrics: total reward, reward category breakdown, steps, invalid action rate, terminal reason");
             sb.AppendLine("- Batch aggregates: means, standard deviations, ranges, distributions");
             sb.AppendLine("- Sanity checks: flagged anomalies detected across reward magnitude, shaping dominance, invalid actions, terminal events, and outcome imbalance");
+            sb.AppendLine("- Invalid-action availability diagnostics (measured vs unavailable episodes)");
             sb.AppendLine();
 
             sb.AppendLine("### What This Report Does NOT Include");
@@ -336,7 +355,7 @@ namespace RTS.ML
             sb.AppendLine("- **Reward Magnitude:** Look for patterns in mean reward and individual episode traces. Stable, non-explosive ranges suggest no immediate reward hacking.");
             sb.AppendLine("- **Shaping vs Terminal:** If shaping dominates, the learning signal may reward intermediate spurious behavior. Typically acceptable up to 50% of total.");
             sb.AppendLine("- **Terminal Events:** High processed rate and non-zero reward indicate terminal pipeline is functioning. Low rates or zero rewards suggest terminal config may need review.");
-            sb.AppendLine("- **Invalid Actions:** High rates (>15%) indicate masking or action decoder issues. Very high rates (>30%) suggest fundamental design problems.");
+            sb.AppendLine("- **Invalid Actions:** Interpret invalid-rate only for measured episodes. N/A means action counts were unavailable for that decision-source path.");
             sb.AppendLine("- **Outcome Distribution:** Imbalance (>80% one outcome) may indicate stuck state or deterministic heuristic behavior.");
             sb.AppendLine();
 

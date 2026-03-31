@@ -103,7 +103,8 @@ namespace RTS.ML
                 TerminalWin = 1.00f,
                 TerminalLoss = -1.00f,
                 TerminalDraw = 0.00f,
-                TerminalTimeout = 0.00f,
+                // Keep timeout terminal signal non-zero so long episodes carry explicit terminal feedback.
+                TerminalTimeout = -0.25f,
                 TerminalInvalidRuntimeState = -1.00f,
 
                 ShapingInvalidCommand = -0.005f,

@@ -109,6 +109,9 @@ namespace RTS.ML
         [SerializeField] private bool _enableDecisionLogs = false;
         [SerializeField] private bool _logMaskSummary = false;
 
+        [Header("Heuristic parameters")]
+        [SerializeField] private int _maxWorkerLimit = 5;
+
         private MlPolicyPipelineFacade _policyPipeline;
 
         private readonly List<UnitRuntime> _unitsScratch = new List<UnitRuntime>(64);
@@ -401,59 +404,70 @@ namespace RTS.ML
             reason = "fallback:no-actor";
 
             // Deterministic actor scan order by flat index. This keeps runs reproducible.
-            for (int actorIndex = 0; actorIndex < ActionContract.TotalCells; actorIndex++)
+            // Priority for default baseline behavior:
+            //   1) Worker actions (economy loop)
+            //   2) Combat actions
+            //   3) Building actions (production)
+            //   4) NoOp fallback
+
+            bool filterByType = preferredActorType.HasValue;
+
+            for (int pass = 0; pass < 4; pass++)
             {
-                if (!debugMask.ActorIndexMask[actorIndex])
+                for (int actorIndex = 0; actorIndex < ActionContract.TotalCells; actorIndex++)
                 {
-                    continue;
-                }
+                    if (!debugMask.ActorIndexMask[actorIndex])
+                    {
+                        continue;
+                    }
 
-                ActorActionMask actorMask = debugMask.GetActorMask(actorIndex);
-                if (actorMask == null)
-                {
-                    continue;
-                }
+                    ActorActionMask actorMask = debugMask.GetActorMask(actorIndex);
+                    if (actorMask == null)
+                    {
+                        continue;
+                    }
 
-                GridPosition actorPos = GridPosition.FromFlatIndex(actorIndex);
-                UnitRuntime actor = _gridManager.GetOccupant(actorPos);
-                if (actor == null || actor.Owner != playerId || !actor.IsAlive)
-                {
-                    continue;
-                }
+                    GridPosition actorPos = GridPosition.FromFlatIndex(actorIndex);
+                    UnitRuntime actor = _gridManager.GetOccupant(actorPos);
+                    if (actor == null || actor.Owner != playerId || !actor.IsAlive)
+                    {
+                        continue;
+                    }
 
-                if (preferredActorType.HasValue && actor.Type != preferredActorType.Value)
-                {
-                    continue;
-                }
+                    if (filterByType && actor.Type != preferredActorType.Value)
+                    {
+                        continue;
+                    }
 
-                if (TrySelectWorkerAction(actorIndex, actor, actorMask, out DebugActionSelection workerSelection, out reason))
-                {
-                    selection = workerSelection;
-                    return true;
-                }
+                    if (pass == 0 && TrySelectWorkerAction(actorIndex, actor, actorMask, out DebugActionSelection workerSelection, out reason))
+                    {
+                        selection = workerSelection;
+                        return true;
+                    }
 
-                if (TrySelectBuildingAction(actorIndex, actor, actorMask, out DebugActionSelection buildingSelection, out reason))
-                {
-                    selection = buildingSelection;
-                    return true;
-                }
+                    if (pass == 1 && TrySelectCombatAction(playerId, actorIndex, actor, actorMask, out DebugActionSelection combatSelection, out reason))
+                    {
+                        selection = combatSelection;
+                        return true;
+                    }
 
-                if (TrySelectCombatAction(playerId, actorIndex, actor, actorMask, out DebugActionSelection combatSelection, out reason))
-                {
-                    selection = combatSelection;
-                    return true;
-                }
+                    if (pass == 2 && TrySelectBuildingAction(actorIndex, actor, actorMask, out DebugActionSelection buildingSelection, out reason))
+                    {
+                        selection = buildingSelection;
+                        return true;
+                    }
 
-                if (actorMask.IsActionTypeEnabled(UnitActionType.NoOp))
-                {
-                    reason = $"fallback:no-op actor={actorIndex}";
-                    selection = new DebugActionSelection(
-                        actorIndexFlat: actorIndex,
-                        actionType: ActionContract.ACTION_NOOP,
-                        direction: ActionContract.DIR_NORTH,
-                        produceUnitType: (int)ProducibleUnit.Worker,
-                        attackTargetLocal: 4);
-                    return true;
+                    if (pass == 3 && actorMask.IsActionTypeEnabled(UnitActionType.NoOp))
+                    {
+                        reason = $"fallback:no-op actor={actorIndex}";
+                        selection = new DebugActionSelection(
+                            actorIndexFlat: actorIndex,
+                            actionType: ActionContract.ACTION_NOOP,
+                            direction: ActionContract.DIR_NORTH,
+                            produceUnitType: (int)ProducibleUnit.Worker,
+                            attackTargetLocal: 4);
+                        return true;
+                    }
                 }
             }
 
@@ -617,7 +631,7 @@ namespace RTS.ML
                 return false;
             }
 
-            if (!TryChooseProduceType(actorMask.ProduceUnitTypeMask, out int produceTypeIndex))
+            if (!TryChooseAffordableProduceType(building.Owner, actorMask.ProduceUnitTypeMask, out int produceTypeIndex))
             {
                 return false;
             }
@@ -630,6 +644,74 @@ namespace RTS.ML
                 4);
             reason = $"building:produce type={(ProducibleUnit)produceTypeIndex}";
             return true;
+        }
+
+        private bool TryChooseAffordableProduceType(Owner owner, bool[] produceTypeMask, out int produceTypeIndex)
+        {
+            produceTypeIndex = (int)ProducibleUnit.Worker;
+            GameConfig config = _matchBootstrap != null ? _matchBootstrap.GetConfig() : null;
+            if (produceTypeMask == null || produceTypeMask.Length == 0 || _matchManager == null || config == null)
+            {
+                return false;
+            }
+
+            PlayerState playerState = _matchManager.GetPlayerState(owner);
+            if (playerState == null)
+            {
+                return false;
+            }
+
+            int workerCount = 0;
+            IReadOnlyList<UnitRuntime> ownUnits = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
+            if (ownUnits != null)
+            {
+                for (int i = 0; i < ownUnits.Count; i++)
+                {
+                    UnitRuntime unit = ownUnits[i];
+                    if (unit != null && unit.IsAlive && unit.Type == UnitType.Worker)
+                    {
+                        workerCount++;
+                    }
+                }
+            }
+
+            // Prevent infinite worker-only loops that often lead to timeout-only traces.
+            ProducibleUnit[] preference = workerCount < _maxWorkerLimit
+                ? new[] { ProducibleUnit.Worker, ProducibleUnit.Light, ProducibleUnit.Heavy, ProducibleUnit.Ranged }
+                : new[] { ProducibleUnit.Light, ProducibleUnit.Heavy, ProducibleUnit.Ranged, ProducibleUnit.Worker };
+
+            for (int i = 0; i < preference.Length; i++)
+            {
+                int idx = (int)preference[i];
+                if (idx < 0 || idx >= produceTypeMask.Length || !produceTypeMask[idx])
+                {
+                    continue;
+                }
+
+                if (!ActionContractMappings.TryMapProducibleUnitType(preference[i], out UnitType unitType))
+                {
+                    continue;
+                }
+
+                UnitDefinition definition = config.GetDefinition(unitType);
+                if (definition == null)
+                {
+                    continue;
+                }
+
+                // Keep heuristic pre-check aligned with ActionApplier.ValidateProduceAction,
+                // which currently applies a fixed MVP produce cost of 50.
+                const int runtimeProduceCost = 50;
+                if (!playerState.CanAfford(runtimeProduceCost))
+                {
+                    continue;
+                }
+
+                produceTypeIndex = idx;
+                return true;
+            }
+
+            return false;
         }
 
         private bool TrySelectCombatAction(

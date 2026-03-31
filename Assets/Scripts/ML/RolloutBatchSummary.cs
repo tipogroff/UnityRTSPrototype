@@ -56,16 +56,27 @@ namespace RTS.ML
         public Dictionary<string, int> OutcomeCounts { get; set; } = new();
 
         // ─── Invalid action statistics ───────────────────────────────────────
-        public float AvgInvalidActionRate { get; set; }
-        public float MaxInvalidActionRate { get; set; }
-        public int EpisodesWithHighInvalidRate { get; set; }   // Count with rate > 0.15
+        /// <summary>Episodes where invalid-action rate is measured and trustworthy.</summary>
+        public int EpisodesWithMeasuredInvalidRate { get; set; }
+        /// <summary>Episodes where invalid-action rate is unavailable (counts unavailable in step reports).</summary>
+        public int EpisodesWithUnavailableInvalidRate { get; set; }
+        /// <summary>Total steps contributing to measured invalid-action rates.</summary>
+        public int TotalInvalidMeasuredSteps { get; set; }
+        /// <summary>Total steps where invalid-action counts were unavailable.</summary>
+        public int TotalInvalidUnavailableSteps { get; set; }
+        /// <summary>Average invalid-action rate across measured episodes only.</summary>
+        public float AvgInvalidActionRateMeasured { get; set; }
+        /// <summary>Maximum invalid-action rate across measured episodes only.</summary>
+        public float MaxInvalidActionRateMeasured { get; set; }
+        /// <summary>Measured episodes with invalid-action rate above the threshold.</summary>
+        public int EpisodesWithHighInvalidRateMeasured { get; set; }
 
         // ─── Shaping reward ratio ────────────────────────────────────────────
         /// <summary>
-        /// Average fraction of total reward that comes from shaping vs. terminal.
+        /// Average fraction of total reward sum that comes from shaping.
         /// High values (>0.5) indicate shaping may dominate learning signal.
         /// </summary>
-        public float AvgShapingFraction { get; set; }
+        public float AvgShapingFractionOfTotal { get; set; }
 
         // ─── Sanity warnings ────────────────────────────────────────────────
         /// <summary>
@@ -96,7 +107,7 @@ namespace RTS.ML
             sb.AppendLine($"- **Combat:** {AvgCombatReward:F2}");
             sb.AppendLine($"- **Terminal:** {AvgTerminalReward:F2}");
             sb.AppendLine($"- **Shaping:** {AvgShapingReward:F2}");
-            sb.AppendLine($"- **Shaping Fraction:** {AvgShapingFraction:P1}");
+            sb.AppendLine($"- **Shaping Fraction Of Total:** {AvgShapingFractionOfTotal:P1}");
             sb.AppendLine();
 
             sb.AppendLine("## Episode Statistics");
@@ -125,9 +136,11 @@ namespace RTS.ML
             sb.AppendLine();
 
             sb.AppendLine("## Invalid Actions");
-            sb.AppendLine($"- **Avg Invalid Rate:** {AvgInvalidActionRate:P1}");
-            sb.AppendLine($"- **Max Invalid Rate:** {MaxInvalidActionRate:P1}");
-            sb.AppendLine($"- **Episodes with High Rate (>15%):** {EpisodesWithHighInvalidRate}");
+            sb.AppendLine($"- **Episodes With Measured Rate:** {EpisodesWithMeasuredInvalidRate}/{EpisodeCount}");
+            sb.AppendLine($"- **Episodes With Unavailable Rate:** {EpisodesWithUnavailableInvalidRate}/{EpisodeCount}");
+            sb.AppendLine($"- **Avg Invalid Rate (Measured Only):** {AvgInvalidActionRateMeasured:P1}");
+            sb.AppendLine($"- **Max Invalid Rate (Measured Only):** {MaxInvalidActionRateMeasured:P1}");
+            sb.AppendLine($"- **Episodes with High Rate (>15%, Measured Only):** {EpisodesWithHighInvalidRateMeasured}");
             sb.AppendLine();
 
             if (SanityWarnings.Count > 0)
@@ -152,7 +165,8 @@ namespace RTS.ML
         public string ToOneLine()
         {
             return $"Batch({EpisodeCount}): avg_reward={AvgTotalReward:F1}±{StdTotalReward:F1}, " +
-                   $"avg_steps={AvgStepCount:F0}, outcomes={string.Join("|", OutcomeCounts.Keys)}, " +
+                   $"avg_steps={AvgStepCount:F0}, invalid_measured={EpisodesWithMeasuredInvalidRate}/{EpisodeCount}, " +
+                   $"outcomes={string.Join("|", OutcomeCounts.Keys)}, " +
                    $"warnings={SanityWarnings.Count}";
         }
     }
