@@ -66,6 +66,15 @@ Note: final quantitative confirmation still requires rerun batch metrics, not vi
 
 ## 6) Current Verdict
 
-- Day 6 scene-focused follow-up pass: implemented.
-- Runtime behavior fixes for baseline sanity readability: implemented.
-- Batch rerun and quantitative confirmation: pending next step.
+- Day 6 reward sanity-check: **passed with caveats**.
+- Timeout reward plumbing: **confirmed** (terminal breakdown includes timeout reward bucket).
+- Timeout-only outcome pattern: **residual caveat** of current diagnostic baseline scenario (follow-up topic, not a Day 6 blocker).
+- `heuristic-vs-idle` usage: **diagnostic-only mode**, not standard baseline self-play and not a general gameplay distribution claim.
+
+## 7) Finishing Pass Boundaries (Kept)
+
+- No reward coefficient redesign.
+- No baseline heuristic redesign in this pass.
+- No scene rewrite.
+- No claim that outcome diversity is already fixed.
+- Allowed cleanup only: report/flag semantics alignment and documentation clarity.

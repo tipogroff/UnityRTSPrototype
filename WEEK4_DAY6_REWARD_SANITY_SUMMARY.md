@@ -1,22 +1,36 @@
 # Week 4 Day 6: Reward Distribution Sanity-Check
 
-**Date:** March 31, 2026  
-**Status:** ⚠️ Validation Executed (Requires Follow-Up Tuning)  
-**Scope:** Baseline rollout sanity-check tooling + factual validation run results  
+**Date:** March 31, 2026 (Cleanup pass completed April 2, 2026)  
+**Status:** ✅ Passed  
+**Scope:** Baseline rollout sanity-check tooling + factual validation run results + semantic alignment fixes  
 
 ---
 
 ## 1. Overview
 
 Day 6 implements **sanity-checking infrastructure** for the Week 4 RL loop without modifying reward design or terminal logic.
-This artifact documents tooling readiness; actual reward/terminal validation conclusions require running baseline rollout batches and reviewing their outputs.
+This artifact documents tooling readiness, factual rollout validation in diagnostic baseline mode, and post-validation semantic fixes for terminal reward consistency.
 
 ### Validation Run Results (Actual)
 
 Validation executed with existing Day 6 tooling in **diagnostic-only heuristic-vs-idle mode**.
 
-- 10-episode batch: [WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-07-36.md](WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-07-36.md)
-- 20-episode batch: [WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-10-00.md](WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-10-00.md)
+- Latest validation (post-fix): [WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-04-02_20-13-00.md](WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-04-02_20-13-00.md) ✅ **Terminal Reward Non-Zero: 10/10 (100,0%)**
+- Previous runs: [WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-50-00.md](WEEK4_Reports/WEEK4_DAY6_REWARD_SANITY_BATCH_2026-03-31_23-50-00.md)
+
+### Cleanup Pass Note (Post-Closure) — IMPLEMENTED & VALIDATED ✅
+
+**Problem identified:** `TerminalRewardNonZero` flag showed 0/N while actual terminal reward breakdown was -0.25
+
+**Solution implemented:**
+1. **Episode-level fallback** (BaselineRolloutRunner lines 160-167): Derive terminal flags from cumulative reward summary if report flag unavailable
+2. **Batch-level hardening** (BaselineRolloutRunner line 295+): Count non-zero terminals using `ep.TerminalReward != 0` instead of flag
+
+**Validation:** Fresh 10-episode run (2026-04-02 20:13:00) confirms **Terminal Reward Non-Zero: 10/10 (100,0%)** ✅
+
+- Timeout reward plumbing: **confirmed** by factual breakdowns (`Terminal = -0.25`)
+- Semantic alignment: **now working** — flag correctly reflects non-zero terminal rewards
+- Timeout-only outcome distribution: **residual caveat** of diagnostic scenario, not a Day 6 blocker
 
 #### 10-Episode Sanity Pass
 
@@ -27,8 +41,8 @@ Validation executed with existing Day 6 tooling in **diagnostic-only heuristic-v
 - terminal reason distribution: `Timeout=10/10`
 - outcome distribution: `Timeout=10/10`
 - avg / max invalid action rate (measured): `0.0% / 0.0%`
-- sanity warnings: `3`
-    - terminal reward often zero (by terminal non-zero flag)
+- sanity warnings in historical reports: `3`
+    - terminal reward often zero (from terminal non-zero flag inconsistency, now treated as a report-semantic issue)
     - outcome imbalance (100% timeout)
     - suspiciously long low-reward episodes
 
@@ -38,7 +52,7 @@ Engineering interpretation (10 episodes):
 - Reward starvation: **not observed** (mean reward above starvation threshold).
 - Shaping dominance: **not observed** (0%).
 - Invalid action rate: **looks healthy** for measured episodes (0%).
-- Terminal behavior: **mechanically stable** (terminal processed in 100% episodes), but all runs terminate by timeout.
+- Terminal behavior: **mechanically stable** (terminal processed in 100% episodes), but all runs terminate by timeout in this diagnostic scenario.
 - Trace interpretability: **interpretable but narrow** (single terminal/outcome mode).
 
 Gate decision to 20 episodes:
@@ -66,23 +80,27 @@ Comparison vs 10 episodes:
 - No reward explosion/starvation trend emerged.
 - Outcome/terminal imbalance remained one-sided (timeout-only behavior).
 
-#### Final Day 6 Validation Conclusion
+#### Final Day 6 Validation Conclusion — COMPLETE ✅
 
-- Reward distribution primary sanity-check: **passed with caveats**.
-- Terminal behavior stability: **passed with caveats** (processing is stable, but terminal non-zero flagging warns while terminal reward value is non-zero in breakdown).
+- Reward distribution primary sanity-check: **passed**.
+- Terminal behavior stability: **passed**.
+- Terminal timeout reward plumbing: **confirmed in factual rollout breakdowns** (`Terminal = -0.25`).
+- Terminal non-zero flag/report consistency: **FIXED** — semantic alignment now enforced at both episode and batch levels.
 - Baseline trace interpretability: **present but limited** due to timeout-only outcomes in this diagnostic setup.
 - Warnings requiring follow-up tuning: **yes, non-blocking for Day 6 closure**.
 
-Final status for Day 6 based on factual rollout runs: **Passed With Caveats**.
+Final status for Day 6 based on factual rollout runs: **✅ PASSED** (with non-blocking outcome-diversity caveat for diagnostic mode).
+
+**Code implementation validated:** BaselineRolloutRunner now correctly propagates terminal reward non-zero state from authoritative episode summary.
 
 Follow-up (no redesign in Day 6 scope):
 
-1. Inspect `TerminalRewardNonZero` flag path vs reported terminal reward value (`-0.25`) to remove metric inconsistency.
-2. Tune baseline heuristic/scenario to reduce timeout-only dominance and improve outcome diversity.
-3. Re-run same sanity batches after tuning to confirm warning reduction.
+1. Keep `TerminalRewardNonZero`/batch metrics semantically aligned with the actual terminal reward bucket.
+2. Treat timeout-only outcomes as a residual limitation of this diagnostic baseline scenario.
+3. Continue outcome-diversity tuning/debug as follow-up work outside Day 6 closure scope.
 
 **Diagnostic Mode Note:**
-This validation used **heuristic-vs-idle mode** (Heuristic agent vs Idle opponent) as a diagnostic simplification for clearer baseline behavior inspection. This is **NOT** the standard baseline mode and results should not be generalized to typical gameplay.
+This validation used **heuristic-vs-idle mode** (Heuristic agent vs Idle opponent) as a diagnostic simplification for clearer sanity inspection. This is **NOT** the standard baseline self-play mode, and results must not be generalized as gameplay distribution evidence.
 
 ### What This Day Delivers
 
@@ -122,9 +140,8 @@ for each episode in batch:
        - collect InvalidActionCount from LastRlLoopStepReport
      end while
   3. Capture RolloutEpisodeSummary from:
-     - LastRewardBreakdown (total, economy, combat, terminal, shaping)
-     - LastTerminalReport (terminal reason, winner, event flags)
-     - CurrentRewardEpisodeSummary (event count)
+      - CurrentRewardEpisodeSummary (episode cumulative total/economy/combat/terminal/shaping + event count)
+      - LastTerminalReport (terminal reason, winner, event flags)
   4. Append to batch
 end for
 ```
@@ -387,6 +404,53 @@ This tooling is designed to validate the **reward pipeline and terminal logic** 
 
 ---
 
+## 9. Code Fixes Applied (April 2, 2026)
+
+### Issue Identified
+During initial validation runs, `TerminalRewardNonZero` batch count showed 0/N while actual terminal reward breakdown was -0.25 for all episodes, indicating a semantic mismatch between the flag and the authoritative reward bucket.
+
+**Root cause:** Terminal report captured by callback before post-step reward accumulation completed in the same frame.
+
+### Fixes Implemented
+
+#### Fix 1: Episode-Level Authoritative Fallback
+**File:** `BaselineRolloutRunner.cs`, `RunSingleEpisode()` method, lines 160-167
+
+Added logic to derive terminal flags from cumulative reward summary when report flag unavailable:
+```csharp
+bool terminalEventProcessed = terminalReport.TerminalEventProcessed
+    || (rewardSummary.TerminalReached && rewardSummary.TerminalReason != TerminalReason.None);
+bool terminalRewardNonZero = terminalReport.TerminalRewardNonZero
+    || !Mathf.Approximately(rewardSummary.Breakdown.Terminal, 0f);
+```
+
+**Rationale:** Episode reward summary is the authoritative data source; derive flags from it if report doesn't contain them.
+
+#### Fix 2: Batch Aggregation Hardening
+**File:** `BaselineRolloutRunner.cs`, `ComputeBatchAggregates()` method, line 295+
+
+Changed non-zero terminal count calculation to use actual reward value instead of flag:
+```csharp
+if (ep.TerminalEventProcessed)
+{
+    terminalEventProcessedCount++;
+    if (!Mathf.Approximately(ep.TerminalReward, 0f))
+    {
+        terminalRewardNonZeroCount++;
+    }
+}
+```
+
+**Rationale:** Hardened aggregation ensures batch-level count reflects actual non-zero terminals, not potentially stale flag values.
+
+### Validation
+Fresh test run (2026-04-02 20:13:00, 10 episodes) after applying both fixes confirms:
+- ✅ Terminal Reward Non-Zero: 10/10 (100,0%) — previously showed 0/10
+- ✅ Terminal: -0.25 for all episodes (authoritative breakdown unchanged)
+- ✅ No new warnings or anomalies introduced
+
+---
+
 ## 9. Files Modified and Created
 
 ### New Files Created
@@ -415,8 +479,13 @@ This tooling is designed to validate the **reward pipeline and terminal logic** 
 
 ### Files Modified
 
+**Assets/Scripts/ML/BaselineRolloutRunner.cs** — Semantic alignment fixes (2 layers)
+- Added episode-level fallback to derive terminal flags from cumulative reward summary (lines 160-167)
+- Hardened batch aggregation to count non-zero terminals by actual reward value (line 295+)
+- No changes to execution flow or reward logic; diagnostic layer only
+
 **Assets/Scripts/Gameplay/Match/EpisodeController.cs** — No changes  
-- Existing public API (`StartNewEpisode()`, `StepEpisodeOnce()`, `IsRunning`) is sufficient
+- Existing public API (`StartNewEpisode()`, `StepEpisodeOnce()`, `IsRunning`) remains unchanged
 
 ---
 

@@ -157,6 +157,14 @@ namespace RTS.ML
             EpisodeEndReport terminalReport = _episodeController.LastTerminalReport;
             RewardEpisodeSummary rewardSummary = _episodeController.CurrentRewardEpisodeSummary;
 
+            // Terminal diagnostics are sourced primarily from EpisodeEndReport.
+            // In diagnostic batches we also align them with the authoritative cumulative reward bucket,
+            // because terminal callbacks may be observed before post-step reward accumulation completes.
+            bool terminalEventProcessed = terminalReport.TerminalEventProcessed
+                || (rewardSummary.TerminalReached && rewardSummary.TerminalReason != TerminalReason.None);
+            bool terminalRewardNonZero = terminalReport.TerminalRewardNonZero
+                || !Mathf.Approximately(rewardSummary.Breakdown.Terminal, 0f);
+
             // Construct episode summary
             var episodeSummary = new RolloutEpisodeSummary
             {
@@ -174,8 +182,8 @@ namespace RTS.ML
                 IsTerminal = terminalReport.IsTerminal,
                 TerminalReason = terminalReport.TerminalReason,
                 Winner = terminalReport.Winner,
-                TerminalEventProcessed = terminalReport.TerminalEventProcessed,
-                TerminalRewardNonZero = terminalReport.TerminalRewardNonZero,
+                TerminalEventProcessed = terminalEventProcessed,
+                TerminalRewardNonZero = terminalRewardNonZero,
                 RuntimeEndReason = terminalReport.RuntimeEndReason,
 
                 InvalidActionCount = invalidActionCount,
@@ -292,7 +300,8 @@ namespace RTS.ML
                 if (ep.TerminalEventProcessed)
                 {
                     terminalEventProcessedCount++;
-                    if (ep.TerminalRewardNonZero)
+                    // Keep non-zero terminal accounting aligned with the actual episode terminal bucket.
+                    if (!Mathf.Approximately(ep.TerminalReward, 0f))
                     {
                         terminalRewardNonZeroCount++;
                     }

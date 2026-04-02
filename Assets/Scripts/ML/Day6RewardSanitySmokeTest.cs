@@ -215,7 +215,15 @@ namespace RTS.ML
             sb.AppendLine();
             sb.AppendLine($"**Date:** {System.DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             sb.AppendLine($"**Episodes:** {summary.EpisodeCount}");
-            sb.AppendLine($"**Mode:** Baseline/Heuristic");
+            string modeLabel = _forceHeuristicVsIdle
+                ? "Diagnostic baseline snapshot (heuristic-vs-idle)"
+                : "Baseline/Heuristic";
+            sb.AppendLine($"**Mode:** {modeLabel}");
+            if (_forceHeuristicVsIdle)
+            {
+                sb.AppendLine();
+                sb.AppendLine("> This run uses a diagnostic-only control setup (Heuristic vs Idle). It is intended for sanity inspection and should not be interpreted as a general gameplay distribution baseline.");
+            }
             sb.AppendLine();
 
             // Summary
@@ -354,6 +362,7 @@ namespace RTS.ML
             sb.AppendLine();
 
             sb.AppendLine("### Interpretation Guidelines");
+            sb.AppendLine("- **Scenario Scope:** Heuristic-vs-idle is a diagnostic-only scenario; treat outcome distribution as a narrow sanity signal, not a general baseline gameplay profile.");
             sb.AppendLine("- **Reward Magnitude:** Look for patterns in mean reward and individual episode traces. Stable, non-explosive ranges suggest no immediate reward hacking.");
             sb.AppendLine("- **Shaping vs Terminal:** If shaping dominates, the learning signal may reward intermediate spurious behavior. Typically acceptable up to 50% of total.");
             sb.AppendLine("- **Terminal Events:** High processed rate and non-zero reward indicate terminal pipeline is functioning. Low rates or zero rewards suggest terminal config may need review.");
