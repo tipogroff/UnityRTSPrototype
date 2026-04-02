@@ -2,6 +2,8 @@
 
 Last update: 2026-03-19
 
+> 📄 See also: [WEEK2_GAME_FOUNDATION_SUMMARY.md](WEEK2_GAME_FOUNDATION_SUMMARY.md) — итоговый engineering summary Week 2.
+
 This file tracks what must be fixed and completed so Week 2 can be considered closed.
 
 ## 1) Critical blockers (must fix first)

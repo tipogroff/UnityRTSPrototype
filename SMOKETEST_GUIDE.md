@@ -1,5 +1,7 @@
 # 🧪 Play Mode Smoke-Test: Episode Lifecycle Cycle
 
+> 📄 See also: [WEEK2_GAME_FOUNDATION_SUMMARY.md](WEEK2_GAME_FOUNDATION_SUMMARY.md) — контекст и known issues по Week 2 foundation.
+
 ## Overview
 Проверка RL-подобного цикла матча:
 - **Start** → Episode 1 начинается

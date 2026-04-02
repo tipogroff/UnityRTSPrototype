@@ -1,8 +1,15 @@
 # Week 3 Day 1 - Observation/Action Contract Spec (Draft)
 
-Date: 2026-03-23
-Status: Draft for approval
+Date: 2026-03-23  
+Status: ✅ Approved and implemented (Finalized 2026-03-29)  
 Scope: MVP_24x24_Symmetric, transfer-compatible with Gym-microRTS v0.6.1 reference semantics
+
+## See Also
+
+For complete Week 3 context including action masking, heuristic policy, compatibility gaps, and Week 4 readiness:
+→ **[WEEK3_OBSERVATION_AND_ACTION_SUMMARY.md](WEEK3_OBSERVATION_AND_ACTION_SUMMARY.md)**
+
+---
 
 ## 1) Goal
 

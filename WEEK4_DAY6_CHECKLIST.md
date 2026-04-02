@@ -1,7 +1,15 @@
 # Week 4 Day 6 - Updated Checklist
 
-Date: 2026-03-31
-Status: Scene/runtime follow-up implemented, rerun-ready
+Date: 2026-03-31  
+Status: **✅ COMPLETE** — Day 6 validation passed, Week 4 ready for closure  
+Scope: Scene/runtime follow-up implemented, rerun-ready
+
+## See Also
+
+For complete Week 4 summary including reward design, terminal design, canonical RL loop, and Week 5 carry-over items:
+→ **[WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md](WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md)**
+
+---
 
 ## 1) Scope Kept
 

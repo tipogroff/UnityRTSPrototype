@@ -139,6 +139,13 @@ The entire optional/tunable character of timeout reward lives in RewardConfig.Te
 Guarded reset (forced episode close before step limit): this is NOT treated as Timeout.
 It is mapped to InvalidRuntimeState [GuardedReset] with RuntimeWasTerminal=false.
 
+## See Also
+
+For complete Week 4 context including reward design, RL loop architecture, baseline status, and readiness for Week 5:
+→ **[WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md](WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md)**
+
+---
+
 ## 7) Reset/New Episode Hygiene
 
 On episode start:

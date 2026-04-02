@@ -1,7 +1,14 @@
 # Week 3 Compatibility Gap List
 
-Date: 2026-03-29
+Date: 2026-03-29  
 Purpose: Finalized Day 7 artifact for tracking real compatibility bottlenecks between the two-layer Week 3 contract and the current Unity runtime.
+
+## See Also
+
+For complete Week 3 documentation including observation contract, action contract, heuristic policy, and Week 4 readiness:
+→ **[WEEK3_OBSERVATION_AND_ACTION_SUMMARY.md](WEEK3_OBSERVATION_AND_ACTION_SUMMARY.md)**
+
+---
 
 ## Scope and Reading Rules
 

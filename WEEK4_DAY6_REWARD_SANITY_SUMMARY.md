@@ -4,6 +4,11 @@
 **Status:** ✅ Passed  
 **Scope:** Baseline rollout sanity-check tooling + factual validation run results + semantic alignment fixes  
 
+## See Also
+
+For complete Week 4 context including reward categories, terminal design, canonical RL loop, and Week 5 readiness:
+→ **[WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md](WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md)**
+
 ---
 
 ## 1. Overview

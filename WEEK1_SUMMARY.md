@@ -1,5 +1,7 @@
 # Summary за первую неделю
 
+> 📄 See also: [WEEK1_EXPERIMENT_CONTRACT_SUMMARY.md](WEEK1_EXPERIMENT_CONTRACT_SUMMARY.md) — итоговый engineering summary Week 1.
+
 ## Период
 Неделя 1 (контракт MVP / baseline).
 
