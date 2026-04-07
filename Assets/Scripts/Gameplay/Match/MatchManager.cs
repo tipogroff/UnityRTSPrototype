@@ -668,7 +668,7 @@ namespace RTS.Gameplay
         private bool TryExecuteProduce(ResolvedCommand command, GameConfig config)
         {
             UnitRuntime buildingUnit = command.Unit;
-            if (buildingUnit == null || !buildingUnit.IsAlive || !buildingUnit.IsBuilding)
+            if (buildingUnit == null || !buildingUnit.IsAlive)
             {
                 return false;
             }
@@ -678,9 +678,31 @@ namespace RTS.Gameplay
                 return false;
             }
 
+            // MVP encoding: Worker + Produce = build Barracks on adjacent cell.
+            // No dedicated build-structure slot exists in the 4-slot produce contract.
+            // ProduceUnitType value is ignored for Worker actors.
+            // ML-layer canonical rule: ActionContractMappings.IsWorkerBuildBarracksAction (RTS.ML).
+            if (buildingUnit.Type == UnitType.Worker)
+            {
+                return TryWorkerBuildBarracks(buildingUnit, command.Command.Direction, config);
+            }
+
+            if (!buildingUnit.IsBuilding)
+            {
+                return false;
+            }
+
             BuildingRuntime buildingRuntime = buildingUnit.GetComponent<BuildingRuntime>();
             if (buildingRuntime == null)
             {
+                return false;
+            }
+
+            // Authoritative production rule: Base→Worker, Barracks→Light/Heavy/Ranged
+            if (!IsBuildingAllowedToProduceUnit(buildingUnit.Type, command.Command.ProduceUnitType))
+            {
+                Debug.LogWarning($"[MatchManager] {buildingUnit.Type} cannot produce {command.Command.ProduceUnitType} " +
+                                 "(production rule: Base→Worker, Barracks→Light/Heavy/Ranged)");
                 return false;
             }
 
@@ -694,6 +716,65 @@ namespace RTS.Gameplay
             };
 
             return buildingRuntime.StartProducingUnit(producedType, config);
+        }
+
+        private static bool IsBuildingAllowedToProduceUnit(UnitType buildingType, ProducibleUnit produceType)
+        {
+            return buildingType switch
+            {
+                UnitType.Base     => produceType == ProducibleUnit.Worker,
+                UnitType.Barracks => produceType == ProducibleUnit.Light
+                                  || produceType == ProducibleUnit.Heavy
+                                  || produceType == ProducibleUnit.Ranged,
+                _                 => false
+            };
+        }
+
+        private bool TryWorkerBuildBarracks(UnitRuntime worker, Direction direction, GameConfig config)
+        {
+            GridPosition targetCell = worker.GridPos.Neighbour(direction);
+
+            if (!_gridManager.IsInside(targetCell))
+            {
+                Debug.LogWarning($"[MatchManager] Worker build Barracks: target {targetCell} out of bounds");
+                return false;
+            }
+
+            if (_gridManager.IsCellOccupied(targetCell))
+            {
+                Debug.LogWarning($"[MatchManager] Worker build Barracks: target {targetCell} is occupied");
+                return false;
+            }
+
+            var barracksDefinition = config.GetDefinition(UnitType.Barracks);
+            if (barracksDefinition == null)
+            {
+                Debug.LogWarning("[MatchManager] Worker build Barracks: UnitDef_Barracks not configured in GameConfig");
+                return false;
+            }
+
+            int cost = barracksDefinition.productionCost;
+            if (!CanAfford(worker.Owner, cost))
+            {
+                Debug.LogWarning($"[MatchManager] Worker build Barracks: insufficient resources (need {cost})");
+                return false;
+            }
+
+            // Spend resources first
+            AddResources(worker.Owner, -cost);
+
+            var factory = new UnitFactory(config, _gridManager, _gridManager?.transform, _unitRegistry);
+            var barracks = factory.Spawn(UnitType.Barracks, worker.Owner, targetCell);
+            if (barracks == null)
+            {
+                // Refund on failed spawn
+                AddResources(worker.Owner, cost);
+                Debug.LogWarning($"[MatchManager] Worker build Barracks: UnitFactory spawn failed at {targetCell}");
+                return false;
+            }
+
+            Debug.Log($"[MatchManager] {worker.Owner} Worker built Barracks at {targetCell} (cost: {cost})");
+            return true;
         }
 
         private void ExecuteCombatPhase()

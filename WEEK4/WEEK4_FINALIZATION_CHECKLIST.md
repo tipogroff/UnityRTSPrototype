@@ -13,7 +13,7 @@
 - **Язык:** Русский (с техническим англ. где нужно)
 - **Структура:** 11 основных разделов
   - Обзор Недели 4
-  - Canonical RL loop (11 фаз за шаг)
+  - Canonical RL loop (9 фаз за шаг)
   - Reward design (4 категории, события, caveats)
   - Terminal design (5 reasons, truth source, semantика)
   - attack_target[26] — explicit encoding
@@ -218,7 +218,7 @@
   - Action masking
   - Reward collection (4 categories)
   - Terminal pipeline (5 reasons)
-  - Canonical RL loop (11 phases)
+  - Canonical RL loop (9 phases)
   - Episode lifecycle
 
 ✅ Validation

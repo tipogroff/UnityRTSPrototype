@@ -11,7 +11,7 @@
 - **Создан:** `WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md` (1000 строк)
   - Reward design (4 категории)
   - Terminal pipeline (5 reasons)
-  - Canonical RL loop (11 фаз)
+  - Canonical RL loop (9 фаз)
   - Baseline status + limitations
   - Week 5 readiness checklist
 - **Обновлены:** 3 existing Week 4 документа (cross-references)
@@ -63,7 +63,7 @@ Forward to Week 5 (ML-Agents)
 ✅ Action interface (7 branches, 20160 flat actions)  
 ✅ Reward system (4 categories, validated)  
 ✅ Terminal pipeline (5 reasons, canonicalized)  
-✅ Canonical RL loop (11 phases, deterministic)  
+✅ Canonical RL loop (9 phases, deterministic)  
 ✅ Baseline validation (20 episodes passed)  
 ✅ All documentation complete + honest  
 

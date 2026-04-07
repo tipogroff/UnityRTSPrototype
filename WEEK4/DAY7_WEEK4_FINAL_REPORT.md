@@ -26,7 +26,7 @@
 | # | Раздел | Что внутри |
 |---|--------|-----------|
 | I | Обзор Week 4 | Что ready, что не, honest limitations |
-| II | Canonical RL Loop | 11 фаз за шаг, инварианты, authoritariness |
+| II | Canonical RL Loop | 9 фаз за шаг, инварианты, authoritariness |
 | III | Reward Design | 4 категории (economy, combat, terminal, shaping), collection layer |
 | IV | Terminal Design | 5 reasons, truth source, 2-signal semantика |
 | V | attack_target[26] | 3×3 encoding, Chebyshev, NOT runtime truth |
@@ -218,7 +218,7 @@ POST-STEP TERMINAL
 | 1 | Lightweight cleanup Week 4 | ✅ | Cross-refs, no rewrites |
 | 2 | Reward design документация | ✅ | гл. III (4 категории, layer) |
 | 3 | Terminal design документация | ✅ | гл. IV (5 reasons, semantika) |
-| 4 | RL loop assumptions | ✅ | гл. II (11 phases) |
+| 4 | RL loop assumptions | ✅ | гл. II (9 phases) |
 | 5 | attack_target[26] semantics | ✅ | гл. V (3×3, Chebyshev) |
 | 6 | Baseline limitations | ✅ | гл. VI (narrow, diagnostic) |
 | 7 | Week 5 readiness | ✅ | гл. IX (9 ready, 6 not) |
@@ -242,7 +242,7 @@ POST-STEP TERMINAL
 
 Что готово:
   ✅ RL interface (observation/action/reward/terminal)
-  ✅ Canonical loop (11 phases, well-defined)
+  ✅ Canonical loop (9 phases, well-defined)
   ✅ Baseline diagnostics (20-episode sanity pass)
   ✅ Documentation (explicit, honest, complete)
   

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fe2527fd5fb9e54fb5c7faf43a3d79b, type: 3}
+  m_Name: UnitDef_Barracks
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Core.UnitDefinition
+  unitType: 2
+  displayName: Barracks
+  maxHitPoints: 15
+  attackDamage: 0
+  attackRange: 0
+  moveSpeed: 1
+  productionCost: 2
+  isBuilding: 1
+  productionTime: 8
+  prefab: {fileID: 5823671904923740512, guid: 7f4a2c8e1b3d5f9e02a6b4c8d0e2f1a3, type: 3}

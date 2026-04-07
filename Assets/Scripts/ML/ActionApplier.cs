@@ -120,6 +120,7 @@ namespace RTS.ML
         private readonly UnitRegistry _unitRegistry;
         private readonly MatchManager _matchManager;
         private readonly ResourceManager _resourceManager;
+        private readonly MatchBootstrap _matchBootstrap;
         private readonly List<string> _rejectionReasonsLastStep;
 
         // Diagnostics tracking
@@ -136,6 +137,7 @@ namespace RTS.ML
             _unitRegistry = unitRegistry ?? throw new System.ArgumentNullException(nameof(unitRegistry));
             _matchManager = matchManager ?? throw new System.ArgumentNullException(nameof(matchManager));
             _resourceManager = resourceManager ?? ResourceManager.Instance;
+            _matchBootstrap = MatchBootstrap.Instance;
 
             _rejectionReasonsLastStep = new List<string>();
             ResetDiagnostics();
@@ -376,7 +378,7 @@ namespace RTS.ML
                 
                 UnitActionType.Return => unitType == UnitType.Worker,  // Only workers
                 
-                UnitActionType.Produce => unitType == UnitType.Base || unitType == UnitType.Barracks,  // Only buildings
+                UnitActionType.Produce => unitType == UnitType.Base || unitType == UnitType.Barracks || unitType == UnitType.Worker,  // Buildings produce; Workers build Barracks
                 
                 UnitActionType.Attack => unitType != UnitType.Resource,
                 
@@ -517,17 +519,33 @@ namespace RTS.ML
         {
             reason = "";
 
-            // Only buildings produce
+            // MVP encoding: Worker + Produce = build Barracks on adjacent cell.
+            // ProduceUnitType slot value is ignored for Worker actors.
+            // Canonical rule: ActionContractMappings.IsWorkerBuildBarracksAction.
+            if (ActionContractMappings.IsWorkerBuildBarracksAction(unit.Type))
+                return ValidateWorkerBuildBarracks(unit, action, out reason);
+
+            // Only Base and Barracks can produce units
             if (unit.Type != UnitType.Base && unit.Type != UnitType.Barracks)
             {
                 reason = $"Unit type {unit.Type} cannot produce";
                 return false;
             }
 
-            // Get resources for player
-            var playerResources = _matchManager.GetResources(unit.Owner);
-            // For MVP, assume fixed production costs (50 per unit)
-            int unitCost = 50;
+            // Validate produce type is allowed for this building type
+            if (!IsProduceTypeAllowedForBuilding(unit.Type, action.ProduceUnitType))
+            {
+                reason = $"{unit.Type} cannot produce {action.ProduceUnitType} (production rule: Base→Worker, Barracks→Light/Heavy/Ranged)";
+                return false;
+            }
+
+            // Resolve production cost from UnitDefinition — aligned with BuildingRuntime.StartProducingUnit,
+            // which is the authoritative cost deduction path. Falls back to 50 if definition is missing.
+            GameConfig produceConfig = _matchBootstrap?.GetConfig();
+            ActionContractMappings.TryMapProducibleUnitType(action.ProduceUnitType, out UnitType producedUnitType);
+            UnitDefinition producedDef = produceConfig?.GetDefinition(producedUnitType);
+            int unitCost = producedDef != null && producedDef.productionCost > 0 ? producedDef.productionCost : 50;
+            int playerResources = _matchManager.GetResources(unit.Owner);
 
             // Validate enough resources
             if (playerResources < unitCost)
@@ -549,6 +567,56 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private bool ValidateWorkerBuildBarracks(UnitRuntime unit, AgentAction action, out string reason)
+        {
+            reason = "";
+
+            var config = _matchBootstrap?.GetConfig();
+            var barracksDefinition = config?.GetDefinition(UnitType.Barracks);
+            if (barracksDefinition == null)
+            {
+                reason = "Barracks UnitDefinition is not configured in GameConfig";
+                return false;
+            }
+
+            var targetPos = GetPositionInDirection(unit.GridPos, action.Direction);
+
+            if (!targetPos.IsInsideMap())
+            {
+                reason = $"Build target {targetPos} is out of bounds";
+                return false;
+            }
+
+            if (_gridManager.IsCellOccupied(targetPos))
+            {
+                reason = $"Build target {targetPos} is occupied";
+                return false;
+            }
+
+            int cost = barracksDefinition.productionCost;
+            int playerResources = _matchManager.GetResources(unit.Owner);
+            if (playerResources < cost)
+            {
+                reason = $"Not enough resources to build Barracks ({playerResources} < {cost})";
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsProduceTypeAllowedForBuilding(UnitType buildingType, ProducibleUnit produceType)
+        {
+            // Mirrors Gym-µRTS production rules: Base→Worker, Barracks→Light/Heavy/Ranged.
+            return buildingType switch
+            {
+                UnitType.Base     => produceType == ProducibleUnit.Worker,
+                UnitType.Barracks => produceType == ProducibleUnit.Light
+                                  || produceType == ProducibleUnit.Heavy
+                                  || produceType == ProducibleUnit.Ranged,
+                _                 => false
+            };
         }
 
         private bool ValidateAttackAction(UnitRuntime unit, AgentAction action, out string reason)
@@ -581,12 +649,19 @@ namespace RTS.ML
                 return false;
             }
 
-            // Validate target within attack range (3x3 neighborhood for MVP)
-            int dX = Mathf.Abs(action.AttackTargetPosition.X - unit.GridPos.X);
-            int dY = Mathf.Abs(action.AttackTargetPosition.Y - unit.GridPos.Y);
-            if (dX > 1 || dY > 1)
+            // Validate target within unit's definition-driven attack range.
+            // LIMITATION (tech-debt): ActionContract.AttackOffsets are all Chebyshev ≤ 1, so any
+            // commanded attack target decoded from the transfer-compatible action space is always
+            // within Chebyshev 1. The chebyshev > maxRange guard is semantically correct but
+            // never triggers in practice for the current MVP attack surface.
+            // Ranged’s attackRange=3 advantage applies only in CombatResolver auto-combat
+            // (opportunistic, not policy-commanded). See limitation note in ActionContract.cs.
+            var unitDef = _matchBootstrap?.GetConfig()?.GetDefinition(unit.Type);
+            int maxRange = unitDef != null ? unitDef.attackRange : 1;
+            int chebyshev = unit.GridPos.ChebyshevDistance(action.AttackTargetPosition);
+            if (chebyshev > maxRange)
             {
-                reason = $"Attack target {action.AttackTargetPosition} is out of range from {unit.GridPos}";
+                reason = $"Attack target {action.AttackTargetPosition} is out of range for {unit.Type} (range={maxRange}, distance={chebyshev})";
                 return false;
             }
 
@@ -707,7 +782,7 @@ namespace RTS.ML
 
         private bool CanAttackByRuntimeDefinition(UnitRuntime unit)
         {
-            MatchBootstrap bootstrap = MatchBootstrap.Instance;
+            MatchBootstrap bootstrap = _matchBootstrap ?? MatchBootstrap.Instance;
             GameConfig config = bootstrap != null ? bootstrap.GetConfig() : null;
             UnitDefinition definition = config != null ? config.GetDefinition(unit.Type) : null;
 

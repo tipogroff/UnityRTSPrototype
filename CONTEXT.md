@@ -296,3 +296,75 @@ Assets/Scripts/
   - training from scratch in Unity
 
 Главный критерий успеха — не коммерческая полнота игры, а подтверждение работоспособности подхода к генерации тактического поведения виртуального противника.
+
+## 17. Хронология реализации (Week 3–4)
+
+### Week 3 (Days 1–6) — игровой слой и ML-pipeline
+
+- `GridPosition`, `GridManager`, `MatchBootstrap`, `MatchManager` — базовая сцена и сетка.
+- `UnitModel`, `UnitRuntime`, `UnitFactory`, `UnitRegistry` — игровые сущности.
+- `ObservationBuilder` — тензор наблюдений 24×24×27.
+- `ActionContract` — 7 ветвей, 35 flat-значений на клетку, `TotalCells = H*W`.
+- `ActionDecoder`, `ActionApplier` — decode + apply pipeline (debug и transfer-compatible форматы).
+- `ActionMaskBuilder` — invalid action masking (фаза матча, движение, сбор, возврат, производство, атака).
+- `HeuristicPolicyAdapter` — эвристическое управление без ML-модели.
+- `EpisodeController` — reset/step интеграция с ML-Agents.
+- `RewardCalculator`, `ExperimentLogger` — награды и логирование метрик.
+- `CombatResolver` — авто-бой (attack range, damage), `ResourceManager`, `ProductionQueue`, `BuildingRuntime`.
+- Smoke-тесты: `ActionApplierSmokeTest` (Tests 1–12), `ActionMaskBuilderSmokeTest` (Tests 1–10),
+  `HeuristicPolicyAdapterSmokeTest` (Tests 1–6), `Day6PipelineSmokeTest`, `Day6RewardSanitySmokeTest`.
+
+### Week 4 — расширенные юниты и семантические гарантии
+
+**Что добавлено:**
+
+| Компонент | Изменение |
+|---|---|
+| `UnitType` enum | Добавлены `Barracks=2`, `Heavy=5`, `Ranged=6` |
+| `ProducibleUnit` enum | Добавлены `Heavy=2`, `Ranged=3` |
+| `UnitDef_Barracks.asset` | HP=5, productionCost=10 |
+| `UnitDef_Heavy.asset` | HP=4, atk=2, range=1, cost=2 |
+| `UnitDef_Ranged.asset` | HP=3, atk=1, range=3, cost=2 |
+| `Mat_Heavy.mat` (crimson) | Материал для Heavy prefab |
+| `Mat_Ranged.mat` (purple) | Материал для Ranged prefab |
+| `Heavy.prefab` | scale=0.8, UnitRuntime, UnitType.Heavy |
+| `Ranged.prefab` | scale=0.5×1.2×0.5, UnitRuntime, UnitType.Ranged |
+| `GameConfig_MVP.asset` | Слоты [5]=Heavy, [6]=Ranged подключены |
+| `ActionApplier.ValidateAttackAction` | `ChebyshevDistance > maxRange` вместо `dX>1\|\|dY>1` |
+| `ActionApplier.IsProduceTypeAllowedForBuilding` | Base→Worker only; Barracks→Light/Heavy/Ranged |
+| `ActionApplier.ValidateWorkerBuildBarracks` | Проверка ресурсов + занятость клетки |
+| `ActionMaskBuilder.BuildAttackMask` | Per-unit range gate через UnitDefinition |
+| `ActionMaskBuilder.BuildProduceMask` | Использует `IsWorkerBuildBarracksAction` |
+| `ActionContractMappings.IsWorkerBuildBarracksAction` | Каноническое правило MVP: Worker+Produce = build Barracks |
+| `HeuristicPolicyAdapter.TrySelectWorkerAction` | Ветка "build Barracks when !PlayerHasBarracks" |
+| `HeuristicPolicyAdapter.TryChooseAffordableProduceType` | Стоимость из `definition.productionCost` (не hardcode 50) |
+| `MatchManager.TryWorkerBuildBarracks` | Диспетчер Worker→Barracks через MatchManager |
+| `BarracksHeavyRangedSmokeTest.cs` | 8 smoke-тестов для новых механик |
+
+**Подтверждённые ограничения (зафиксированы в коде):**
+
+1. **MVP encoding tech-debt**: Worker + Produce = build Barracks. Слот `BRANCH_PRODUCE_UNIT_TYPE`
+   (Worker=0) — структурный placeholder, игнорируется при акторе типа Worker.
+   Канонический тест: `ActionContractMappings.IsWorkerBuildBarracksAction(actorType)`.
+
+2. **Commanded Ranged attack surface = Chebyshev ≤ 1**: все 9 смещений `ActionContract.AttackOffsets`
+   имеют Chebyshev ≤ 1. Параметр `attackRange=3` у Ranged не расширяет командованное пространство
+   атаки ML-агента — он влияет только на `CombatResolver` auto-combat. Расширение потребует изменения
+   ActionContract (будущая работа).
+
+3. **`PlayerHasBarracks` — эвристическое упрощение**: метод в `HeuristicPolicyAdapter` представляет
+   собой политику "строить максимум одну Казарму", а не движковое правило. Движок (ActionApplier)
+   не ограничивает количество Казарм.
+
+**Smoke-тесты Week 4 (`BarracksHeavyRangedSmokeTest.cs`):**
+
+| # | Сценарий | Что проверяется |
+|---|---|---|
+| 1 | Worker builds Barracks (valid) | Action accepted; Barracks зарегистрирован в UnitRegistry |
+| 2 | Worker build: insufficient resources | Action rejected; reason содержит "resource/cost" |
+| 3 | Worker build: target cell occupied | Action rejected; reason содержит "occupied" |
+| 4 | Base production split | Base принимает Worker, отклоняет Light/Heavy/Ranged |
+| 5 | Barracks production split | Barracks отклоняет Worker, принимает Light; Heavy/Ranged не отклоняются по production rule |
+| 6 | Heavy runtime definition | attackDamage≥2, attackRange=1; mask включает Attack при наличии соседнего врага |
+| 7 | Ranged limitation confirmed | attackRange≥2 в UnitDef; все AttackOffsets Chebyshev≤1 (limitation logged) |
+| 8 | Heuristic builds Barracks | За ≤50 шагов эвристика строит ≥1 Казарму |

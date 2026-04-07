@@ -154,28 +154,40 @@ Week 4 фиксирует reward contract для **sanity-check валидаци
 
 ### RewardConfig (текущие значения)
 
+Источник истины: `RewardConfig.CreateV1Defaults()` в `Assets/Scripts/ML/RewardTerminalContractTypes.cs`.
+
 ```csharp
-public class RewardConfig
+// RewardConfig.CreateV1Defaults()
+public struct RewardConfig
 {
     // Economy
-    public float EconomyReturnBase = 1.0f;      // per resource unit returned
-    public float EconomySpendMult = 0.1f;       // per resource spent
-    
+    public float EconomyHarvestSuccess = 0.02f;  // per resource unit harvested (carried)
+    public float EconomyReturnSuccess  = 0.05f;  // per resource unit returned to base
+    public float EconomyProduceSuccess = 0.03f;  // per unit produced
+
     // Combat
-    public float CombatKilledMult = 0.1f;       // per enemy killed
-    public float CombatLostMult = -0.1f;        // per own unit lost
-    
+    public float CombatDamageDealt    =  0.01f;  // per point of damage dealt
+    public float CombatEnemyDestroyed =  0.20f;  // per enemy unit destroyed
+    public float CombatSelfUnitLost   = -0.12f;  // per own unit lost
+    public float CombatSelfBaseLost   = -0.50f;  // per own base lost
+
     // Terminal
-    public float TerminalWin = 1.0f;
-    public float TerminalLoss = -1.0f;
-    public float TerminalDraw = 0.0f;
-    public float TerminalTimeout = -0.25f;      // diagnostic penalty placeholder
-    public float TerminalInvalidRuntimeState = -0.5f;
-    
-    // Shaping
-    public float ShapingMultiplier = 0.0f;      // placeholder: disabled
+    public float TerminalWin                 =  1.00f;
+    public float TerminalLoss                = -1.00f;
+    public float TerminalDraw                =  0.00f;
+    public float TerminalTimeout             = -0.25f;  // placeholder diagnostic penalty
+    public float TerminalInvalidRuntimeState = -1.00f;  // anomalous termination (not -0.5)
+
+    // Shaping — значения ненулевые, но гейтятся через RewardCollectorOptions (disabled by default)
+    public float ShapingInvalidCommand = -0.005f;  // гейт: EnableInvalidCommandPenalty=false
+    public float ShapingIdleStep       = -0.001f;  // не подключён в Week 4
+    public float ShapingLongEpisode    = -0.001f;  // не подключён в Week 4
 }
 ```
+
+> **Примечание о shaping:** поля `ShapingIdleStep` и `ShapingLongEpisode` определены в контракте,
+> но в Week 4 они не подключены к событиям (только `ShapingInvalidCommand` подключён через
+> `EnableInvalidCommandPenalty`, которое по умолчанию `false`). Эффективный shaping = 0.0.
 
 ### Caveats и ограничения reward design
 
@@ -281,14 +293,17 @@ Timeout НЕ является forced reset — это полноценный ter
 
 ### Terminal Evaluation Result
 
+Источник истины: `EpisodeTerminalEvaluator` в `Assets/Scripts/ML/EpisodeTerminalPipeline.cs`.
+
 ```csharp
-public struct TerminalEvaluationResult
+public readonly struct TerminalEvaluationResult
 {
-    public bool IsTerminal;
-    public TerminalReason TerminalReason;
-    public bool RuntimeWasTerminal;
-    public float AggregateRewardForDiagnostics;
-    public string DiagnosticDescription;
+    public bool IsTerminal { get; }
+    public TerminalReason TerminalReason { get; }
+    public Owner Winner { get; }               // runtime winner (Player1/Player2/Neutral)
+    public MatchEndReason RuntimeEndReason { get; }
+    public bool RuntimeWasTerminal { get; }    // false для [GuardedReset], true для authentic terminal
+    public string DiagnosticDescription { get; }
 }
 ```
 

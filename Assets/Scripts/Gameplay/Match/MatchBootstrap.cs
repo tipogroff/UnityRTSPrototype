@@ -22,6 +22,11 @@ namespace RTS.Gameplay
     {
         LegacyMvpSymmetric = 0,
         Day6Sanity24x24 = 1,
+        /// <summary>
+        /// Week 4 сценарий: 2 Worker + 2 Resource-патча на каждую сторону, без базы и боевых юнитов.
+        /// Минимальный сетап для тестирования Worker-механик (сбор, возврат, постройка Казармы).
+        /// </summary>
+        Week4TwoWorkersSymmetric = 2,
     }
 
     /// <summary>
@@ -41,8 +46,8 @@ namespace RTS.Gameplay
         [SerializeField] private GameConfig _config;
 
         [Header("Scenario preset")]
-        [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout.")]
-        [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.LegacyMvpSymmetric;
+        [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout. Week4TwoWorkersSymmetric = 2 Worker + 2 ресурса на каждую сторону.")]
+        [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week4TwoWorkersSymmetric;
         [Tooltip("Стартовые ресурсы для Day6Sanity24x24. Нужны, чтобы production был practically reachable в sanity-rollout.")]
         [Min(0)]
         [SerializeField] private int _day6SanityStartResources = 60;
@@ -201,7 +206,28 @@ namespace RTS.Gameplay
             List<(UnitType type, GridPosition pos)> p1Spawns;
             List<(UnitType type, GridPosition pos)> p2Spawns;
 
-            if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
+            if (_scenarioPreset == BootstrapScenarioPreset.Week4TwoWorkersSymmetric)
+            {
+                // Week 4: база + 2 рабочих на каждую сторону.
+                // Расстановка разнесена по Y чтобы юниты не мешали друг другу:
+                //   Base  (2, H/2)       — левый край своей зоны
+                //   Worker (5, H/2 - 2) и (5, H/2 + 2) — дальше по X, разнесены по Y
+                //   Resources (8, H/2 - 2) и (8, H/2 + 2) — ещё дальше
+                p1Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(2,     H / 2)),
+                    (UnitType.Worker, new GridPosition(5,     H / 2 - 2)),
+                    (UnitType.Worker, new GridPosition(5,     H / 2 + 2)),
+                };
+
+                p2Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(W - 3, H / 2)),
+                    (UnitType.Worker, new GridPosition(W - 6, H / 2 - 2)),
+                    (UnitType.Worker, new GridPosition(W - 6, H / 2 + 2)),
+                };
+            }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
                 // Day 6 follow-up rationale:
                 // - убираем мгновенный Light-vs-Light размен в центре;
@@ -260,7 +286,16 @@ namespace RTS.Gameplay
         {
             List<GridPosition> p1ResourcePositions;
 
-            if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
+            if (_scenarioPreset == BootstrapScenarioPreset.Week4TwoWorkersSymmetric)
+            {
+                // Ресурсы в одну строку с рабочими, на 3 клетки правее.
+                p1ResourcePositions = new List<GridPosition>
+                {
+                    new GridPosition(8, H / 2 - 2),
+                    new GridPosition(8, H / 2 + 2),
+                };
+            }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
                 // Для sanity-сценария ресурсы чуть ближе к workers, чтобы ускорить
                 // вход в economy progression и снизить долю "пустых" шагов.
@@ -301,6 +336,12 @@ namespace RTS.Gameplay
 
         private int ResolveScenarioStartResources()
         {
+            if (_scenarioPreset == BootstrapScenarioPreset.Week4TwoWorkersSymmetric)
+            {
+                // Стартовые ресурсы — достаточно для первой постройки Казармы.
+                return Mathf.Max(_day6SanityStartResources, 0);
+            }
+
             if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
                 return Mathf.Max(_day6SanityStartResources, 0);

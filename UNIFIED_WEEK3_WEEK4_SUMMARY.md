@@ -15,7 +15,7 @@
 │ WEEK 4: RL Loop Layer           │
 │ - Reward (4 категории)          │
 │ - Terminal (5 reasons)          │
-│ - Canonical RL loop (11 фаз)    │
+│ - Canonical RL loop (9 фаз)      │
 │ - Sanity-check tooling          │
 └─────────────────────────────────┘
             (layered on)
@@ -68,7 +68,7 @@
 - Optional 10D global feature vector
 
 **Action:**
-- 7 branches: NoOp, Move, Harvest, Return, Produce, Attack
+- 7 branches: `action_type`(6 values: NoOp/Move/Harvest/Return/Produce/Attack), `move_dir`, `harvest_dir`, `return_dir`, `produce_dir`, `produce_unit_type`, `attack_target`
 - 20160 flat actions per step
 - Invalid action masking (3-stage: actor → action-type → parameters)
 
@@ -87,18 +87,18 @@
 - EpisodeTerminalEvaluator derives from runtime state
 - Distinction: TerminalEventProcessed vs TerminalRewardNonZero
 
-**Canonical Loop (11 phases):**
-1. Pre-observation (observation builder reads state)
-2. Pre-mask (action mask builder)
-3. Decision (policy/heuristic decides)
-4. Decode (action decoder — AgentAction)
-5. Apply (action applier)
-6. Step (runtime).
-7. Post-reward (reward collector)
-8. Reward accumulation
-9. Post-terminal evaluation
-10. Terminal event finalization
-11. Reset or next episode
+**Canonical Loop (9 phases, per RlLoopCoordinator):**
+1. PreStepCapture (snapshot game state before step)
+2. Observation (build obs package from pre-step state)
+3. Mask (build action mask from pre-step state)
+4. ActionSubmit (policy/heuristic → ActionDecoder → ActionApplier → MatchManager.ApplyCommand)
+5. RuntimeStep (MatchManager.StepMatch() — all game logic: movement, harvest, production, combat)
+6. PostStepCapture (snapshot game state after step)
+7. RewardEval (evaluate step reward from pre/post delta)
+8. TerminalEval (EpisodeTerminalEvaluator.Evaluate post-step state)
+9. StepReport (build RlLoopStepReport with diagnostic traces)
+
+*(Episode reset/next episode — handled by EpisodeController, outside RlLoopCoordinator)*
 
 ### Invariants Protected
 - ✅ Observation shape and semantics unchanged (Week 3 → Week 4)
@@ -126,7 +126,7 @@
 ### ✅ Week 4: RL Loop (Complete)
 - [x] 4-category reward system
 - [x] 5-reason terminal pipeline
-- [x] Canonical RL loop order (11 phases)
+- [x] Canonical RL loop order (9 phases)
 - [x] RewardCollector + aggregation
 - [x] EpisodeTerminalEvaluator
 - [x] Sanity-check validation (20 episodes passed)

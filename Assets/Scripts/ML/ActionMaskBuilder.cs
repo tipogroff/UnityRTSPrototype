@@ -274,6 +274,13 @@ namespace RTS.ML
         }
 
         /// <summary>
+        /// When true, emits Debug.Log for each mask-method early exit due to missing definitions,
+        /// insufficient resources, production rule blocks, or no valid targets.
+        /// Useful for smoke-testing mask correctness without a full editor debug session.
+        /// </summary>
+        public bool DiagnosticLogging { get; set; }
+
+        /// <summary>
         /// Builds the transfer-compatible action mask for one player perspective.
         ///
         /// The mask intentionally stops at pre-sampling semantics. Runtime-only constraints such
@@ -438,6 +445,14 @@ namespace RTS.ML
             if (!IsActionSupportedByUnitType(unit.Type, UnitActionType.Produce))
                 return;
 
+            // MVP encoding: Worker + Produce = build Barracks on adjacent cell.
+            // See ActionContractMappings.IsWorkerBuildBarracksAction for the full rule.
+            if (ActionContractMappings.IsWorkerBuildBarracksAction(unit.Type))
+            {
+                BuildWorkerBuildMask(unit, actorMask);
+                return;
+            }
+
             // MatchManager.TryExecuteProduce() requires BuildingRuntime to exist.
             BuildingRuntime buildingRuntime = unit.GetComponent<BuildingRuntime>();
             if (buildingRuntime == null)
@@ -481,7 +496,10 @@ namespace RTS.ML
                 // Current runtime has no explicit Base/Barracks produce-type split;
                 // both rely on the same BuildingRuntime.StartProducingUnit path.
                 if (!CanBuildingProduceUnitType(unit.Type, produceType))
+                {
+                    if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} building@{unit.GridPos} ({unit.Type}): produce {produceType} blocked by production rule");
                     continue;
+                }
 
                 // Gym-compatible check: affordability.
                 int cost = GetProduceCost(producedDefinition);
@@ -498,6 +516,52 @@ namespace RTS.ML
             }
         }
 
+        private void BuildWorkerBuildMask(UnitRuntime unit, ActorActionMask actorMask)
+        {
+            // Worker builds Barracks on an adjacent free cell.
+            // The ProducibleUnit contract has no "build structure" slot, so slot 0 (Worker)
+            // is used as a placeholder. MatchManager routes Worker-Produce to TryWorkerBuildBarracks.
+            UnitDefinition barracksDefinition = GetUnitDefinition(UnitType.Barracks);
+            if (barracksDefinition == null)
+            {
+                if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} worker@{unit.GridPos}: build-barracks masked — Barracks definition missing in GameConfig");
+                return;
+            }
+
+            int playerResources = _matchManager.GetResources(unit.Owner);
+            int cost = GetProduceCost(barracksDefinition);
+            if (playerResources < cost)
+            {
+                if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} worker@{unit.GridPos}: build-barracks masked — insufficient resources ({playerResources} < {cost})");
+                return;
+            }
+
+            bool anyDirection = false;
+            for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
+            {
+                GridPosition target = unit.GridPos.Neighbour((Direction)i);
+                if (!_gridManager.IsInside(target))
+                    continue;
+                if (_gridManager.IsCellOccupied(target))
+                    continue;
+
+                actorMask.ProduceDirectionMask[i] = true;
+                anyDirection = true;
+            }
+
+            if (!anyDirection)
+            {
+                if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} worker@{unit.GridPos}: build-barracks masked — no free adjacent cell");
+                return;
+            }
+
+            // ProduceUnitType slot 0 (Worker) is a structurally valid placeholder only.
+            // Runtime ignores this value for Worker actors — command means "build Barracks".
+            // See ActionContractMappings.IsWorkerBuildBarracksAction for the canonical rule.
+            actorMask.ProduceUnitTypeMask[0] = true;
+            actorMask.ActionTypeMask[(int)UnitActionType.Produce] = true;
+        }
+
         private void BuildAttackMask(UnitRuntime unit, ActorActionMask actorMask)
         {
             if (!IsActionSupportedByUnitType(unit.Type, UnitActionType.Attack))
@@ -505,9 +569,14 @@ namespace RTS.ML
 
             // Runtime-aligned gate from CombatResolver semantics.
             if (!CanAttackByRuntimeDefinition(unit))
+            {
+                if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} {unit.Type}@{unit.GridPos}: attack masked — no attack capability in definition (attackDamage/attackRange=0)");
                 return;
+            }
 
             bool anyTarget = false;
+            UnitDefinition actorDef = GetUnitDefinition(unit.Type);
+            int attackRange = actorDef != null ? actorDef.attackRange : 1;
             for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
             {
                 if (!TryGetAttackTargetPosition(unit.GridPos, i, out GridPosition target))
@@ -515,6 +584,15 @@ namespace RTS.ML
 
                 // Gym-compatible checks.
                 if (target == unit.GridPos)
+                    continue;
+
+                // Per-definition range gate. Semantically correct, but note: all
+                // ActionContract.AttackOffsets are Chebyshev ≤ 1, so this check is trivially
+                // satisfied for any unit with attackRange ≥ 1 on the current MVP attack surface.
+                // Ranged (attackRange=3) gains no commanded-attack benefit over this surface.
+                // See limitation note in ActionContract.cs.
+                int distance = unit.GridPos.ChebyshevDistance(target);
+                if (distance > attackRange)
                     continue;
 
                 UnitRuntime targetUnit = _gridManager.GetOccupant(target);
@@ -564,7 +642,7 @@ namespace RTS.ML
                 UnitActionType.Move => unitType != UnitType.Resource,
                 UnitActionType.Harvest => unitType == UnitType.Worker,
                 UnitActionType.Return => unitType == UnitType.Worker,
-                UnitActionType.Produce => unitType == UnitType.Base || unitType == UnitType.Barracks,
+                UnitActionType.Produce => unitType == UnitType.Base || unitType == UnitType.Barracks || unitType == UnitType.Worker,
                 UnitActionType.Attack => unitType != UnitType.Resource,
                 _ => false
             };
@@ -600,11 +678,17 @@ namespace RTS.ML
 
         private bool CanBuildingProduceUnitType(UnitType buildingType, ProducibleUnit produceType)
         {
-            // No building-specific produce-type split exists in current runtime:
-            // MatchManager -> BuildingRuntime.StartProducingUnit() path is shared.
-            // Keep this method explicit for future extension while preserving current semantics.
-            _ = produceType;
-            return buildingType == UnitType.Base || buildingType == UnitType.Barracks;
+            // Production rules aligned with Gym-µRTS / microRTS:
+            //   Base     → Worker only
+            //   Barracks → Light, Heavy, Ranged only
+            return buildingType switch
+            {
+                UnitType.Base     => produceType == ProducibleUnit.Worker,
+                UnitType.Barracks => produceType == ProducibleUnit.Light
+                                  || produceType == ProducibleUnit.Heavy
+                                  || produceType == ProducibleUnit.Ranged,
+                _                 => false
+            };
         }
 
         private UnitDefinition GetUnitDefinition(UnitType unitType)

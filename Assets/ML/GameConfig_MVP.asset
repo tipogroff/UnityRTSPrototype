@@ -27,8 +27,8 @@ MonoBehaviour:
   unitDefinitions:
   - {fileID: 11400000, guid: 315d2729949f40da913b77b89f019e7f, type: 2}
   - {fileID: 11400000, guid: b21eef4dbf6940ee87f84fe1562ecf1a, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 9c2e4a6f8b0d2e4f6a8c0e2f4a6c8e0f, type: 2}
   - {fileID: 11400000, guid: 40a7926b62c74dedb241eea44b04e02c, type: 2}
   - {fileID: 11400000, guid: 6c0a4b8e1c9e4a7e90a5e71d4f31b1d2, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8, type: 2}
+  - {fileID: 11400000, guid: f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1, type: 2}

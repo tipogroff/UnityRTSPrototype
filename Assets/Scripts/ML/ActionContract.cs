@@ -93,6 +93,14 @@ namespace RTS.ML
         //   0 1 2
         //   3 4 5
         //   6 7 8
+        //
+        // LIMITATION (tech-debt): все 9 смещений имеют Chebyshev ≤ 1. Commanded attack
+        // range для любого юнита ограничен Chebyshev 1 на уровне action contract, независимо
+        // от UnitDefinition.attackRange. Следствие: Ranged (attackRange=3) не получает
+        // преимущества в commanded attack space — advantage работает ТОЛЬКО через
+        // CombatResolver opportunistic auto-combat. Расширение commanded range требует
+        // изменения BRANCH_ATTACK_TARGET за пределы 3×3 (вне текущего MVP scope;
+        // актуально для главы 3 диссертации при обсуждении transfer gaps).
         public static readonly (int dRow, int dCol)[] AttackOffsets = new (int, int)[]
         {
             (-1, -1), (-1, 0), (-1, 1),

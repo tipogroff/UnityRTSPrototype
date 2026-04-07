@@ -100,6 +100,27 @@ namespace RTS.ML
                    || produceType == ProducibleUnit.Ranged;
         }
 
+        /// <summary>
+        /// MVP ENCODING RULE (tech-debt, temporary): Worker + Produce action = "build Barracks".
+        ///
+        /// The 4-slot BRANCH_PRODUCE_UNIT_TYPE contract has no dedicated build-structure slot.
+        /// A Produce command issued by a Worker actor is unconditionally treated as
+        /// "build Barracks at the adjacent cell indicated by the Produce direction branch".
+        /// The ProduceUnitType slot value (Worker=0) is set only as a structurally valid
+        /// placeholder; it is IGNORED at all downstream dispatch points when actor is Worker.
+        ///
+        /// All three dispatch layers share this rule by checking actor type first:
+        ///   • ActionMaskBuilder.BuildProduceMask → BuildWorkerBuildMask
+        ///   • ActionApplier.ValidateProduceAction → ValidateWorkerBuildBarracks
+        ///   • MatchManager.TryExecuteProduce → TryWorkerBuildBarracks (game-logic layer,
+        ///     performs the same type check independently to avoid cross-layer coupling)
+        ///
+        /// Future work: replace with a dedicated produce-slot or separate action-type branch
+        /// if this encoding causes BC/teacher-pipeline confusion or policy gradient ambiguity.
+        /// </summary>
+        internal static bool IsWorkerBuildBarracksAction(UnitType actorType)
+            => actorType == UnitType.Worker;
+
         internal static bool TryGetAttackTargetPosition(GridPosition actorPosition, int localIndex, out GridPosition targetPosition)
         {
             targetPosition = GridPosition.Zero;

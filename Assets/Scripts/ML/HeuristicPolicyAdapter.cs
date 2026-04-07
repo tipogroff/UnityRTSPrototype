@@ -231,6 +231,11 @@ namespace RTS.ML
                 ? new DebugActionMaskSet(stepInput.CanonicalMask)
                 : _policyPipeline.BuildDebugMask(playerId);
 
+            if (_logMaskSummary)
+            {
+                Debug.Log($"[HeuristicPolicyAdapter] {playerId} mask built ({debugMask.TransferMask.AvailableActorCount} actors):\n{debugMask.TransferMask.BuildSummaryDump(4)}");
+            }
+
             int accepted = 0;
             int rejected = 0;
 
@@ -644,6 +649,23 @@ namespace RTS.ML
                 }
             }
 
+            // Build Barracks if the player owns none yet and the mask permits it.
+            // The mask (BuildWorkerBuildMask) already gates on resources and free adjacent cell,
+            // so this branch only fires when both conditions are met.
+            if (!PlayerHasBarracks(worker.Owner) &&
+                actorMask.IsActionTypeEnabled(UnitActionType.Produce) &&
+                TryChooseDirection(actorMask.ProduceDirectionMask, out Direction buildBarracksDir))
+            {
+                selection = new DebugActionSelection(
+                    actorIndex,
+                    ActionContract.ACTION_PRODUCE,
+                    (int)buildBarracksDir,
+                    (int)ProducibleUnit.Worker,
+                    4);
+                reason = "worker:build-barracks";
+                return true;
+            }
+
             if (actorMask.IsActionTypeEnabled(UnitActionType.Harvest) &&
                 TryChooseHarvestDirection(worker, actorMask, out Direction harvestDir))
             {
@@ -766,10 +788,9 @@ namespace RTS.ML
                     continue;
                 }
 
-                // Keep heuristic pre-check aligned with ActionApplier.ValidateProduceAction,
-                // which currently applies a fixed MVP produce cost of 50.
-                const int runtimeProduceCost = 50;
-                if (!playerState.CanAfford(runtimeProduceCost))
+                // Affordability check uses actual definition cost, aligned with
+                // BuildingRuntime.StartProducingUnit and the fixed ActionApplier.ValidateProduceAction.
+                if (!playerState.CanAfford(definition.productionCost))
                 {
                     continue;
                 }
@@ -1159,6 +1180,30 @@ namespace RTS.ML
                 return true;
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// Heuristic policy simplification (MVP baseline only).
+        /// Returns true when the player already owns at least one living Barracks.
+        ///
+        /// Used by <see cref="TrySelectWorkerAction"/> to suppress further Barracks-build attempts.
+        /// This is NOT an authoritative engine rule — the runtime imposes no cap on Barracks count.
+        /// The one-Barracks limit exists solely to keep the heuristic simple during self-play
+        /// episodes and to avoid redundant Worker turns that delay combat-unit production.
+        /// Relax or remove for multi-Barracks scenarios, curriculum stages, or BC-teacher training.
+        /// </summary>
+        private bool PlayerHasBarracks(Owner owner)
+        {
+            List<UnitRuntime> buildings = _unitRegistry?.GetBuildingsByOwner(owner);
+            if (buildings == null)
+                return false;
+            for (int i = 0; i < buildings.Count; i++)
+            {
+                UnitRuntime b = buildings[i];
+                if (b != null && b.IsAlive && b.Type == UnitType.Barracks)
+                    return true;
+            }
             return false;
         }
 
