@@ -327,11 +327,19 @@ MonoBehaviour:
   _experimentLogger: {fileID: 0}
   _heuristicDriver: {fileID: 1871236520}
   _heuristicPolicyAdapter: {fileID: 0}
+  _rewardLoggingEnabled: 1
+  _rewardPerspective: 1
+  _logRewardBreakdown: 0
+  _enableSelfLossPenalty: 0
+  _enableInvalidCommandPenalty: 0
+  _invalidPenaltyPerStepCap: 0.05
+  _logRlLoopDiagnostics: 0
   _autoStartOnPlay: 1
   _autoStepInFixedUpdate: 1
   _useHeuristicAI: 1
   _heuristicExecutionPath: 1
   _logLifecycleEvents: 0
+  _logTerminalDiagnostics: 1
   _autoRestartEpisodes: 0
   _maxEpisodes: 0
 --- !u!4 &604615633
@@ -525,7 +533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchBootstrap
   _config: {fileID: 11400000, guid: 71d74d96c6637b948b1d66710812bbd8, type: 2}
-  _scenarioPreset: 1
+  _scenarioPreset: 2
   _day6SanityStartResources: 60
   _gridManager: {fileID: 928434337}
   _matchManager: {fileID: 1145832107}
@@ -538,6 +546,52 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1160590935}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1336309891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1336309893}
+  - component: {fileID: 1336309892}
+  m_Layer: 0
+  m_Name: SmokeTestRunner_BHR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1336309892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336309891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e1eb72a796c9e24481a988c464cf7f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.ML.BarracksHeavyRangedSmokeTest
+  _runOnAwake: 1
+  _verboseLogs: 1
+--- !u!4 &1336309893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336309891}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1021,3 +1075,4 @@ SceneRoots:
   - {fileID: 1941532273}
   - {fileID: 1871236521}
   - {fileID: 1106628921}
+  - {fileID: 1336309893}
