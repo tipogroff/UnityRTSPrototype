@@ -1,0 +1,168 @@
+{
+  "status": "success",
+  "input": {
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_rollouts\\teacher_raw_debug_day3smoke_20260416T121055Z",
+    "batch_name": "teacher_raw_debug_day3smoke_20260416T121055Z",
+    "batch_mode": "debug",
+    "policy_source_id": "random-policy-fallback",
+    "input_batch_kind": "infrastructure_validation"
+  },
+  "output": {
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day4_cleanup_final",
+    "adapted_npz_files": [
+      "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day4_cleanup_final\\episode_00000.adapted.npz"
+    ],
+    "conversion_debug_jsonl": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day4_cleanup_final\\conversion_debug.jsonl"
+  },
+  "contract": {
+    "target_observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "target_action_shape_per_step": [
+      576,
+      7
+    ],
+    "target_action_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      9
+    ],
+    "source_action_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "supported_raw_action_layouts": [
+      "matrix_576x7 (supported_exact)",
+      "flat_4032 (supported_exact)",
+      "object_flat_4032 (supported_approx)",
+      "batched_flat_1x4032 (supported_approx)",
+      "batched_matrix_1x576x7 (supported_approx)"
+    ],
+    "global_vector_policy": "excluded_from_strict_bc_encoder_path",
+    "normalization_formula": {
+      "hp_channel": "clip(raw_hp / hp_divisor, 0, 1)",
+      "resource_channel": "clip(raw_res / resource_divisor, 0, 1)",
+      "hp_divisor": 1.0,
+      "resource_divisor": 1.0
+    }
+  },
+  "policy_rules": {
+    "global_vector_excluded_from_strict_bc_path": {
+      "enforced": true,
+      "scope": "pipeline_design_rule",
+      "counted_as_observed_event": false
+    }
+  },
+  "counters": {
+    "samples": {
+      "total": 32,
+      "exact": 0,
+      "adapted": 32,
+      "dropped": 0
+    },
+    "observation": {
+      "exact": 32,
+      "approximate": 0,
+      "dropped": 0,
+      "signal_loss_events": 0
+    },
+    "action": {
+      "exact": 0,
+      "adapted": 32,
+      "dropped": 0
+    },
+    "observed_gap_events": {
+      "action.attack_target_outside_local_3x3_filtered": 32,
+      "action.attack_target_reduced": 32,
+      "action.produce_type_outside_subset_filtered": 32
+    },
+    "action_cells": {
+      "attack_target_outside_local_3x3_to_noop": 2471,
+      "unsupported_produce_type_to_noop": 1299,
+      "attack_target_reduced_49_to_9": 555
+    },
+    "action_layouts": {
+      "supported_approx:object_flat_4032": 32
+    },
+    "semantic_quality": {
+      "exact": 0,
+      "adapted": 0,
+      "weakened": 32,
+      "dropped": 0
+    },
+    "semantic_weakening": {
+      "remapped_to_noop_count": 3770,
+      "semantically_weak_action_count": 32,
+      "noop_reason_counts": {
+        "noop_due_to_attack_target_out_of_local_window": 2471,
+        "noop_due_to_unsupported_produce_type": 1299
+      }
+    },
+    "top_drop_reasons": [],
+    "top_adaptation_reasons": [
+      {
+        "reason": "action:layout_object_flat_reshaped",
+        "count": 32
+      },
+      {
+        "reason": "action:produce_type_outside_mvp_subset_filtered",
+        "count": 32
+      },
+      {
+        "reason": "action:attack_target_outside_local_3x3_filtered",
+        "count": 32
+      },
+      {
+        "reason": "action:attack_target_reduced_49_to_9",
+        "count": 32
+      }
+    ]
+  },
+  "action_histograms": {
+    "input_action_type": {
+      "0": 3120,
+      "1": 3088,
+      "2": 3064,
+      "3": 3076,
+      "4": 3058,
+      "5": 3026
+    },
+    "output_action_type": {
+      "0": 6890,
+      "1": 3088,
+      "2": 3064,
+      "3": 3076,
+      "4": 1759,
+      "5": 555
+    }
+  },
+  "episodes": [
+    {
+      "episode_id": 0,
+      "total_steps": 32,
+      "converted_steps": 32,
+      "dropped_steps": 0,
+      "sample_status_counts": {
+        "adapted": 32
+      },
+      "output_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day4_cleanup_final\\episode_00000.adapted.npz"
+    }
+  ],
+  "notes": [
+    "Adapter is teacher-source-agnostic and operates on Day 3 raw exports.",
+    "No silent filtering: all drop/remap events are counted in report.",
+    "No semantic parity claim is made for Gym vs Unity action/mask runtime truth.",
+    "Input batch kind classification is informational only and is not a teacher quality score."
+  ]
+}

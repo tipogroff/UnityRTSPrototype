@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "input_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_rollouts\\teacher_raw_debug_day3smoke_20260416T121055Z",
+  "output_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_teacher_raw_debug_day3smoke_20260416T121055Z_20260416T142713Z",
+  "converted_episode_files": [
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_teacher_raw_debug_day3smoke_20260416T121055Z_20260416T142713Z\\episode_00000.adapted.npz"
+  ],
+  "conversion_report_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_teacher_raw_debug_day3smoke_20260416T121055Z_20260416T142713Z\\conversion_report.json",
+  "conversion_debug_jsonl_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_teacher_raw_debug_day3smoke_20260416T121055Z_20260416T142713Z\\conversion_debug.jsonl"
+}

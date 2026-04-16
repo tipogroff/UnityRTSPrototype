@@ -107,6 +107,44 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_
 
 This split is intentionally minimal and does not change saved artifact behavior.
 
+## Day 4 adapter command
+
+Day 4 consumes Day 3 raw exports and produces adapted artifacts with explicit reporting:
+
+```powershell
+$env:JAVA_HOME='C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME/bin;$env:Path"
+
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_py39/Scripts/python.exe \
+  c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/adapt_teacher_dataset.py \
+  --input-batch-dir c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/teacher_rollouts/teacher_raw_debug_day3smoke_20260416T121055Z \
+  --write-debug-jsonl
+```
+
+Important scope notes:
+
+- Day 4 adapter is teacher-source-agnostic and reads only exported raw dataset artifacts.
+- No BC training, no student loader, and no Unity-side import are performed in this stage.
+- No silent filtering: drops/remaps are always counted in `conversion_report.json`.
+- Raw action layout is explicitly detected and only supported layouts are normalized.
+- Extra observation channels are treated as signal-loss adaptation events, not neutral trimming.
+
+## Day 4 output artifacts
+
+Per adapted batch in `teacher_exports/teacher_adapted_<raw_batch>_<timestamp>/`:
+
+- `episode_00000.adapted.npz`, ... (primary adapted output)
+- `conversion_report.json` (mandatory conversion accounting)
+- `adapted_batch.summary.json` (artifact index)
+- `conversion_debug.jsonl` (optional per-step diagnostics)
+
+`conversion_report.json` now separates:
+
+- observed conversion events (step/sample level);
+- policy-level enforced rules (design constraints);
+- semantic weakening counters for remap-to-NoOp behavior;
+- input batch provenance kind (`infrastructure_validation` / `teacher_candidate` / `unknown`).
+
 ## What run_teacher_rollout.py does now
 
 - logs runtime versions, seeds, env/action/observation summaries;
