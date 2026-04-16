@@ -28,6 +28,20 @@ Therefore a dedicated Day 2 environment was created with Python 3.9.
 - numpy: 1.26.4
 - JPype1: 1.5.1
 
+## One-command bootstrap
+
+Use helper script in this folder:
+
+```powershell
+./setup_day2_env.ps1 -JavaHome "C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot" -AntBin "C:/Tools/apache-ant-1.10.14/bin"
+```
+
+Useful options:
+
+- `-InstallPrerequisites` installs Python 3.9 and JDK 17 via winget.
+- `-Python39Exe <path>` forces a specific Python 3.9 interpreter.
+- `-RunSmokeCheck` runs `run_teacher_rollout.py` at the end.
+
 ## Bootstrap commands used
 
 ```powershell

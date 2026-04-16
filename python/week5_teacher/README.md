@@ -10,6 +10,20 @@ Canonical Day 2 target is fixed:
 
 Day 2 is intentionally narrow and does not include exporter/adapter/BC layers.
 
+## Quick bootstrap script
+
+To reduce manual setup steps, use:
+
+```powershell
+./setup_day2_env.ps1 -JavaHome "C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot" -AntBin "C:/Tools/apache-ant-1.10.14/bin"
+```
+
+Optional switches:
+
+- `-InstallPrerequisites` to install Python 3.9 + JDK 17 via winget.
+- `-Python39Exe <path>` to pin a specific Python 3.9 executable.
+- `-RunSmokeCheck` to run the Day 2 rollout smoke test after bootstrap.
+
 ## Validated environment
 
 Validated command was executed successfully in this workspace with:
