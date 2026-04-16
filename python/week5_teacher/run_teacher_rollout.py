@@ -9,16 +9,32 @@ import json
 import logging
 import platform
 import random
-import statistics
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-
-class RolloutError(RuntimeError):
-    pass
+from teacher_export import (
+    RolloutError,
+    compute_mean,
+    compute_std,
+    sanitize_label,
+    canonical_json,
+    normalize_json_payload,
+    to_numpy_array,
+    ensure_finite_array,
+    should_write_jsonl,
+    extract_action_surface_bucket,
+    try_read_action_mask,
+    new_episode_record,
+    validate_episode_record,
+    write_episode_npz,
+    write_episode_jsonl,
+    validate_saved_episode_npz,
+    sha256_text,
+)
 
 
 CANONICAL_ENVIRONMENT_TARGET = (
@@ -113,13 +129,13 @@ class StableBaselinesPolicySource(PolicySource):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Week 5 Day 2: minimal reproducible Gym-μRTS teacher rollout path.",
+        description="Week 5 Day 3: raw teacher rollout exporter with per-episode dataset artifacts.",
     )
     parser.add_argument(
         "--policy-path",
         type=Path,
         default=None,
-        help="Path to a canonical teacher checkpoint. Day 2 currently supports Stable-Baselines3 checkpoints only.",
+        help="Path to a canonical teacher checkpoint. Current loader scope is Stable-Baselines3 checkpoints only.",
     )
     parser.add_argument(
         "--policy-algorithm",
@@ -136,7 +152,18 @@ def parse_args() -> argparse.Namespace:
         "--episodes",
         type=int,
         default=1,
-        help="Number of episodes to roll out. Smoke-check requires at least 1 terminal episode.",
+        help="Number of episodes to roll out and export.",
+    )
+    parser.add_argument(
+        "--batch-mode",
+        choices=("debug", "training"),
+        default="debug",
+        help="Batch profile label used in metadata and artifact naming.",
+    )
+    parser.add_argument(
+        "--batch-label",
+        default="raw_teacher",
+        help="Free-form label appended to artifact names (ASCII preferred).",
     )
     parser.add_argument(
         "--env-id",
@@ -164,7 +191,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--device",
         default="cpu",
-        help="Torch / Stable-Baselines3 device string. Day 2 keeps cpu as the safe default.",
+        help="Torch / Stable-Baselines3 device string. The current rollout/export path keeps cpu as the safe default.",
     )
     parser.add_argument(
         "--allow-random-policy-smoke-fallback",
@@ -181,7 +208,18 @@ def parse_args() -> argparse.Namespace:
         "--rollout-step-limit",
         type=int,
         default=5000,
-        help="Hard cap per episode. Prevents the Day 2 smoke-check from hanging indefinitely.",
+        help="Hard cap per episode. Stops rollout if terminal is not reached in time.",
+    )
+    parser.add_argument(
+        "--write-jsonl",
+        choices=("debug", "always", "never"),
+        default="debug",
+        help="Controls per-step debug .jsonl export: debug=only in debug batch mode, always, or never.",
+    )
+    parser.add_argument(
+        "--export-prefix",
+        default="teacher_raw",
+        help="Artifact filename prefix for .npz/.jsonl/.summary.json outputs.",
     )
     return parser.parse_args()
 
@@ -437,7 +475,7 @@ def coerce_scalar_reward(reward: Any, numpy_module: Optional[Any]) -> float:
             return float(array.reshape(-1)[0])
 
     raise RolloutError(
-        f"Day 2 rollout expects a scalar reward, but env.step() returned unsupported reward payload: {type(reward).__name__}."
+        f"Current rollout/export path expects a scalar reward, but env.step() returned unsupported reward payload: {type(reward).__name__}."
     )
 
 
@@ -449,7 +487,7 @@ def normalize_reset_output(reset_result: Any) -> Tuple[Any, Dict[str, Any]]:
 
 def normalize_step_output(step_result: Any) -> Tuple[Any, float, bool, bool, Dict[str, Any]]:
     if not isinstance(step_result, tuple):
-        raise RolloutError("env.step() returned a non-tuple result, which is incompatible with Day 2 rollout checks.")
+        raise RolloutError("env.step() returned a non-tuple result, which is incompatible with current rollout/export checks.")
 
     if len(step_result) == 5:
         observation, reward, terminated, truncated, info = step_result
@@ -589,7 +627,7 @@ def build_environment(
 ) -> Tuple[Any, Any, Dict[str, Any], Dict[str, Any]]:
     gym_module = modules.get("gym_api")
     if gym_module is None:
-        raise RolloutError("Neither gymnasium nor gym is installed. Day 2 rollout cannot create an environment.")
+        raise RolloutError("Neither gymnasium nor gym is installed. The current rollout/export path cannot create an environment.")
 
     make_kwargs: Dict[str, Any] = {}
     if args.map_path:
@@ -602,7 +640,7 @@ def build_environment(
     except TypeError as exc:
         if args.map_path:
             raise RolloutError(
-                "Environment construction rejected 'map_path'. Day 2 does not silently retry with a different signature, "
+                "Environment construction rejected 'map_path'. The current rollout/export path does not silently retry with a different signature, "
                 "because that would hide scenario drift. Override --env-id / --map-path with a valid combination."
             ) from exc
         raise RolloutError(f"Failed to construct environment '{args.env_id}': {exc}") from exc
@@ -673,7 +711,7 @@ def load_policy_source(
 
     if args.checkpoint_env_version is None:
         raise RolloutError(
-            "--checkpoint-env-version is required when --policy-path is used. Day 2 refuses to load a checkpoint without an explicit environment-version contract."
+            "--checkpoint-env-version is required when --policy-path is used. The Day 3 raw export path refuses to load a checkpoint without an explicit environment-version contract."
         )
 
     if versions.microrts_version is None:
@@ -690,7 +728,7 @@ def load_policy_source(
     stable_baselines3_module = modules.get("stable_baselines3")
     if stable_baselines3_module is None:
         raise RolloutError(
-            "Stable-Baselines3 is not installed, but --policy-path was provided. Day 2 only supports SB3 checkpoint loading."
+            "Stable-Baselines3 is not installed, but --policy-path was provided. Current loader scope is SB3-only checkpoint loading."
         )
 
     algorithm_lookup = {
@@ -714,7 +752,7 @@ def load_policy_source(
 
     if not hasattr(model, "observation_space") or not hasattr(model, "action_space"):
         raise RolloutError(
-            "Loaded checkpoint does not expose observation_space/action_space. Day 2 will not guess policy semantics."
+            "Loaded checkpoint does not expose observation_space/action_space. Current rollout/export path will not guess policy semantics."
         )
 
     observation_issues = compare_spaces(model.observation_space, env.observation_space, "observation_space")
@@ -733,15 +771,6 @@ def load_policy_source(
     )
 
 
-def compute_mean(values: Sequence[float]) -> float:
-    return float(statistics.fmean(values)) if values else 0.0
-
-
-def compute_std(values: Sequence[float]) -> float:
-    if len(values) < 2:
-        return 0.0
-    return float(statistics.pstdev(values))
-
 
 def run_rollouts(
     env: Any,
@@ -750,30 +779,132 @@ def run_rollouts(
     seed_bundle: SeedBundle,
     modules: Dict[str, Optional[Any]],
     logger: logging.Logger,
+    output_paths: OutputPaths,
+    timestamp: str,
+    runtime_versions: RuntimeVersions,
 ) -> Dict[str, Any]:
+    numpy_module = modules.get("numpy")
+    if numpy_module is None:
+        raise RolloutError("NumPy is required for Day 3 exporter path, but it is not installed.")
+
+    batch_label = sanitize_label(args.batch_label)
+    batch_name = f"{args.export_prefix}_{args.batch_mode}_{batch_label}_{timestamp}"
+    batch_dir = output_paths.teacher_rollouts / batch_name
+    batch_dir.mkdir(parents=True, exist_ok=True)
+
+    logger.info("Export batch directory: %s", batch_dir)
+
     episode_lengths: List[int] = []
     episode_returns: List[float] = []
     terminal_counts = {"terminated": 0, "truncated": 0}
+    step_rewards: List[float] = []
+    action_surface_histogram: Counter = Counter()
+    validation_errors: List[str] = []
+    exported_episode_files: List[str] = []
+    exported_jsonl_files: List[str] = []
+    total_steps = 0
+    mask_available_steps = 0
+    mask_sources: Counter = Counter()
+    mask_capture_errors: List[str] = []
+    jsonl_enabled = should_write_jsonl(args.write_jsonl, args.batch_mode)
+
+    batch_metadata = {
+        "batch_name": batch_name,
+        "batch_mode": args.batch_mode,
+        "batch_label": batch_label,
+        "export_prefix": args.export_prefix,
+        "policy_source_id": policy.source_id,
+        "env_id": args.env_id,
+        "env_version": runtime_versions.microrts_version,
+        "map_path": args.map_path,
+        "seed_metadata": {
+            "random_seed": seed_bundle.random_seed,
+            "env_seed": seed_bundle.env_seed,
+            "rollout_seed": seed_bundle.rollout_seed,
+        },
+    }
 
     for episode_index in range(args.episodes):
+        record = new_episode_record(episode_id=episode_index)
         episode_seed = seed_bundle.env_seed + episode_index
         observation, reset_info = reset_environment(env, episode_seed)
-        logger.info("Episode %d/%d reset with env_seed=%d info_keys=%s", episode_index + 1, args.episodes, episode_seed, sorted(reset_info.keys()))
+        logger.info(
+            "Episode %d/%d reset with env_seed=%d info_keys=%s",
+            episode_index + 1,
+            args.episodes,
+            episode_seed,
+            sorted(reset_info.keys()),
+        )
 
         done = False
         step_count = 0
         episode_return = 0.0
 
         while not done:
-            if hasattr(env, "get_action_mask"):
-                env.get_action_mask()
+            step_id = step_count
+            obs_array = to_numpy_array(observation, numpy_module, "observation_t")
+            ensure_finite_array(obs_array, numpy_module, "observation_t", record.episode_id, step_id)
+            obs_shape = list(obs_array.shape)
+            if record.observation_shape is None:
+                record.observation_shape = obs_shape
+            elif record.observation_shape != obs_shape:
+                raise RolloutError(
+                    "Observation shape drift detected inside a single episode: "
+                    f"episode_id={record.episode_id}, step_id={step_id}, "
+                    f"expected={record.observation_shape}, got={obs_shape}."
+                )
+
+            action_mask_json, mask_available, mask_source, mask_error = try_read_action_mask(
+                env=env,
+                step_info=reset_info if step_id == 0 else {},
+                numpy_module=numpy_module,
+            )
+            if mask_error:
+                mask_capture_errors.append(
+                    f"episode_id={record.episode_id}, step_id={step_id}: {mask_error}"
+                )
+            if mask_available:
+                mask_available_steps += 1
+                if mask_source:
+                    mask_sources[mask_source] += 1
+
             action = policy.predict(observation)
+            action_payload = normalize_json_payload(action, numpy_module)
+            action_json = canonical_json(action_payload)
+            action_hash = sha256_text(action_json)
             step_output = normalize_step_output(env.step(action))
             observation, reward_value, terminated, truncated, step_info = step_output
             reward_scalar = coerce_scalar_reward(reward_value, modules.get("numpy"))
             episode_return += reward_scalar
+            step_rewards.append(reward_scalar)
             step_count += 1
             done = terminated or truncated
+
+            info_payload = normalize_json_payload(step_info if isinstance(step_info, dict) else {}, numpy_module)
+            info_json = canonical_json(info_payload)
+            if isinstance(step_info, dict):
+                record.env_info_keys_union.extend(step_info.keys())
+
+            record.step_id.append(step_id)
+            record.observation_t.append(obs_array)
+            record.action_t.append(action_payload)
+            record.action_t_json.append(action_json)
+            record.action_t_hash.append(action_hash)
+            record.reward_t.append(float(reward_scalar))
+            record.done_t.append(bool(done))
+            record.terminated_t.append(bool(terminated))
+            record.truncated_t.append(bool(truncated))
+            if bool(terminated):
+                record.terminal_type_t.append("terminated")
+            elif bool(truncated):
+                record.terminal_type_t.append("truncated")
+            else:
+                record.terminal_type_t.append("ongoing")
+            record.info_t_json.append(info_json)
+            record.action_mask_t_json.append(action_mask_json)
+            record.action_mask_available_t.append(mask_available)
+
+            action_surface_histogram[extract_action_surface_bucket(action_payload)] += 1
 
             if done:
                 terminal_key = "terminated" if terminated else "truncated"
@@ -794,18 +925,129 @@ def run_rollouts(
 
         episode_lengths.append(step_count)
         episode_returns.append(episode_return)
+        total_steps += step_count
+        record.env_info_keys_union = sorted(set(record.env_info_keys_union))
+
+        episode_validation = validate_episode_record(record, numpy_module)
+        if not episode_validation.ok:
+            validation_errors.extend(episode_validation.errors)
+            continue
+
+        episode_stem = f"episode_{episode_index:05d}"
+        episode_npz_path = batch_dir / f"{episode_stem}.npz"
+        write_episode_npz(episode_npz_path, record, numpy_module, batch_metadata)
+        serialized_validation = validate_saved_episode_npz(episode_npz_path, numpy_module)
+        if not serialized_validation.ok:
+            validation_errors.extend(serialized_validation.errors)
+            continue
+        exported_episode_files.append(str(episode_npz_path))
+
+        if jsonl_enabled:
+            episode_jsonl_path = batch_dir / f"{episode_stem}.jsonl"
+            write_episode_jsonl(episode_jsonl_path, record)
+            exported_jsonl_files.append(str(episode_jsonl_path))
 
     if sum(terminal_counts.values()) == 0:
         raise RolloutError("Smoke-check failed: no episode reached terminal.")
 
+    if total_steps == 0:
+        raise RolloutError("Exporter produced zero steps. Cannot create a valid Day 3 raw batch.")
+
+    if validation_errors:
+        raise RolloutError(
+            "Day 3 primary validation failed. Export is not self-consistent. "
+            f"First error: {validation_errors[0]}"
+        )
+
+    if mask_available_steps == 0:
+        mask_recording_mode = "unavailable"
+    elif mask_available_steps == total_steps:
+        mask_recording_mode = "explicit"
+    else:
+        mask_recording_mode = "partial"
+
+    summary_payload = {
+        "timestamp_utc": timestamp,
+        "status": "success",
+        "batch_name": batch_name,
+        "batch_mode": args.batch_mode,
+        "batch_label": batch_label,
+        "format": {
+            "primary": "npz",
+            "debug": "jsonl" if jsonl_enabled else "disabled",
+        },
+        "mask_recording_mode": mask_recording_mode,
+        "mask_capture": {
+            "available_steps": mask_available_steps,
+            "total_steps": total_steps,
+            "sources": dict(mask_sources),
+            "capture_errors": mask_capture_errors,
+        },
+        "policy_source_id": policy.source_id,
+        "env_id": args.env_id,
+        "env_version": runtime_versions.microrts_version,
+        "map_path": args.map_path,
+        "seed_metadata": {
+            "random_seed": seed_bundle.random_seed,
+            "env_seed": seed_bundle.env_seed,
+            "rollout_seed": seed_bundle.rollout_seed,
+        },
+        "validation": {
+            "status": "passed",
+            "checks": [
+                "array lengths per step are consistent",
+                "episode_id / step_id are contiguous and aligned",
+                "no NaN/Inf in reward_t and observation_t",
+                "done_t finalization is terminal-consistent",
+                "no same-episode continuation after done_t=True",
+                "action payload serialization hash is stable",
+            ],
+        },
+        "batch_statistics": {
+            "episodes": args.episodes,
+            "steps": total_steps,
+            "mean_episode_length": compute_mean(episode_lengths),
+            "mean_episode_return": compute_mean(episode_returns),
+            "std_episode_return": compute_std(episode_returns),
+            "reward_mean": compute_mean(step_rewards),
+            "reward_std": compute_std(step_rewards),
+            "terminal_counts": terminal_counts,
+            "action_surface_histogram": dict(action_surface_histogram),
+        },
+        "artifacts": {
+            "batch_dir": str(batch_dir),
+            "npz_files": exported_episode_files,
+            "jsonl_files": exported_jsonl_files,
+        },
+        "notes": [
+            "Raw teacher-side representations are preserved; no Gym->Unity remap is applied.",
+            "Day 3 export is intentionally pre-adapter and pre-BC conversion.",
+            "Action histogram is a payload-surface view, not a semantic action taxonomy claim.",
+        ],
+    }
+
+    batch_summary_path = batch_dir / "batch.summary.json"
+    write_summary(batch_summary_path, summary_payload)
+
     return {
+        "batch_name": batch_name,
+        "batch_dir": str(batch_dir),
+        "batch_summary_path": str(batch_summary_path),
         "episodes": args.episodes,
+        "steps": total_steps,
         "episode_lengths": episode_lengths,
         "episode_returns": episode_returns,
         "mean_episode_length": compute_mean(episode_lengths),
         "mean_episode_return": compute_mean(episode_returns),
         "std_episode_return": compute_std(episode_returns),
+        "reward_mean": compute_mean(step_rewards),
+        "reward_std": compute_std(step_rewards),
         "terminal_counts": terminal_counts,
+        "mask_recording_mode": mask_recording_mode,
+        "mask_available_steps": mask_available_steps,
+        "npz_file_count": len(exported_episode_files),
+        "jsonl_file_count": len(exported_jsonl_files),
+        "action_surface_histogram": dict(action_surface_histogram),
     }
 
 
@@ -830,13 +1072,14 @@ def main() -> int:
     log_path = output_paths.teacher_logs / f"teacher_rollout_{timestamp}.log"
     summary_path = output_paths.teacher_logs / f"teacher_rollout_{timestamp}.summary.json"
     logger = configure_logging(log_path)
+    env: Optional[Any] = None
 
     try:
         seed_bundle = resolve_seed_bundle(args)
         modules, versions = import_runtime_modules()
         seed_process(seed_bundle, modules)
 
-        logger.info("Week 5 Day 2 rollout started.")
+        logger.info("Week 5 Day 3 raw exporter started.")
         logger.info("Output root: %s", output_paths.root)
         logger.info(
             "Seeds: random_seed=%d env_seed=%d rollout_seed=%d",
@@ -853,7 +1096,17 @@ def main() -> int:
         policy = load_policy_source(args, env, seed_bundle, versions, modules, logger)
         logger.info("Policy source: %s", json.dumps(policy.describe(), ensure_ascii=True))
 
-        rollout_stats = run_rollouts(env, policy, args, seed_bundle, modules, logger)
+        rollout_stats = run_rollouts(
+            env=env,
+            policy=policy,
+            args=args,
+            seed_bundle=seed_bundle,
+            modules=modules,
+            logger=logger,
+            output_paths=output_paths,
+            timestamp=timestamp,
+            runtime_versions=versions,
+        )
 
         smoke_check = {
             "policy_loaded": True,
@@ -896,10 +1149,10 @@ def main() -> int:
             "compatibility_scope": "shape-only",
             "semantic_parity_verified": False,
             "notes": [
-                "Day 2 policy loader is intentionally SB3-specific and not a multi-backend loader.",
-                "Day 2 implements only a runtime smoke rollout path. It is not a trajectory exporter.",
-                "Day 2 does not write rollout dataset artifacts to teacher_rollouts/.",
-                "Day 2 reward handling is intentionally strict: scalar reward payload is required.",
+                "Day 3 keeps the validated runtime contract and adds raw teacher per-episode export.",
+                "No Gym->Unity adapter conversion is applied in this script.",
+                "No BC-ready shaping is applied in this script.",
+                "Reward handling remains strict: scalar reward payload is required.",
                 env_summary["scenario_note"],
             ],
         }
@@ -907,19 +1160,19 @@ def main() -> int:
 
         logger.info("Rollout summary written to %s", summary_path)
         logger.info(
-            "Completed %d episode(s): mean_len=%.2f mean_return=%.6f std_return=%.6f terminals=%s",
+            "Completed %d episode(s) and exported raw batch '%s': steps=%d mean_len=%.2f mean_return=%.6f std_return=%.6f mask_mode=%s terminals=%s",
             rollout_stats["episodes"],
+            rollout_stats["batch_name"],
+            rollout_stats["steps"],
             rollout_stats["mean_episode_length"],
             rollout_stats["mean_episode_return"],
             rollout_stats["std_episode_return"],
+            rollout_stats["mask_recording_mode"],
             rollout_stats["terminal_counts"],
         )
-
-        if hasattr(env, "close"):
-            env.close()
         return 0
     except RolloutError as exc:
-        logger.error("Day 2 rollout failed: %s", exc)
+        logger.error("Day 3 exporter failed: %s", exc)
         summary_payload = {
             "timestamp_utc": timestamp,
             "status": "error",
@@ -938,6 +1191,9 @@ def main() -> int:
         write_summary(summary_path, summary_payload)
         logger.error("Failure summary written to %s", summary_path)
         return 1
+    finally:
+        if env is not None and hasattr(env, "close"):
+            env.close()
 
 
 if __name__ == "__main__":
