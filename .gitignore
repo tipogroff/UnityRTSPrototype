@@ -22,3 +22,8 @@ MemoryCaptures/
 *.mdb
 *.opendb
 *.VC.db
+
+# Week 5 Day 2 Python local artifacts
+python/week5_teacher/.venv_day2_py39/
+python/week5_teacher/__pycache__/
+python/week5_teacher/teacher_logs/

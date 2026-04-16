@@ -1,0 +1,15 @@
+# Week 5 Day 2 canonical teacher environment
+# Canonical target: MicroRTS-Py v0.6.1-compatible 27-channel observation surface
+# Note: This stack is validated in Python 3.9, not Python 3.10.
+
+numpy==1.26.4
+gym==0.23.1
+gymnasium==0.29.1
+stable-baselines3==2.3.2
+torch==2.8.0
+JPype1==1.5.1
+pettingzoo==1.24.3
+peewee==3.19.0
+
+# Install canonical MicroRTS package from fixed tag:
+# pip install -e git+https://github.com/Farama-Foundation/MicroRTS-Py.git@v0.6.1#egg=gym-microrts
