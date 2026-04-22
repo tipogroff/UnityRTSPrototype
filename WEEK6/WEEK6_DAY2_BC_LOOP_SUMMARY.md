@@ -89,6 +89,12 @@ Per epoch, loop emits and stores:
 - Per-branch active counts (`*_active_count`)
 - Learning rate and epoch time
 
+Aggregate objective used for training and reported total metrics:
+
+- `objective_loss_sum = sum(branch_loss_sum over active items)`
+- `objective_active_count = sum(branch_active_count)`
+- `total_loss = objective_loss_sum / objective_active_count` (if count > 0, else 0.0)
+
 Outputs:
 
 - Latest checkpoint: `student_bc_minimal_latest.pt`
@@ -97,9 +103,52 @@ Outputs:
 
 ## 9. Carry-over risks for Day 3
 
-- Action class imbalance can dominate optimization and bias reported aggregate loss.
+- Aggregate objective now weights each active supervised item equally.
+- Frequent supervised items can dominate the objective without explicit balancing schemes.
 - Semantic weakening and remap-to-noop pressure remain unresolved by this minimal loop.
 - Teacher data quality drift is still a direct risk.
 - Branches with low active counts can show noisy or unstable conditional metrics.
 - BC loss decrease alone is insufficient evidence of transfer quality in runtime semantics.
 - Architecture here is a temporary baseline and may be inadequate for final transfer objectives.
+
+## Proof-of-learning check (2026-04-22)
+
+Pinned source used (unchanged):
+
+- `python/week5_teacher/teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z`
+
+Run configuration:
+
+- epochs: 5
+- device: cpu
+- batch_size: 64
+- lr: 1e-3
+- seed: 17
+- output_dir: `python/week6_student/runs/day2_minimal_bc_proof_learning_20260422`
+
+Key epoch dynamics:
+
+- Epoch 1: train_total_loss=8.720689, val_total_loss=7.093925, train_action_type_accuracy=0.417388, val_action_type_accuracy=0.433761
+- Epoch 2: train_total_loss=6.703440, val_total_loss=6.488067, train_action_type_accuracy=0.439750, val_action_type_accuracy=0.454679
+- Epoch 3: train_total_loss=6.401443, val_total_loss=6.359179, train_action_type_accuracy=0.466447, val_action_type_accuracy=0.470758
+- Epoch 4: train_total_loss=6.295108, val_total_loss=6.382997, train_action_type_accuracy=0.479516, val_action_type_accuracy=0.487932
+- Epoch 5: train_total_loss=6.243461, val_total_loss=6.232001, train_action_type_accuracy=0.488896, val_action_type_accuracy=0.493153
+
+Artifact integrity checks:
+
+- Latest checkpoint exists: `student_bc_minimal_latest.pt`
+- Best checkpoint exists: `student_bc_minimal_best.pt`
+- Metrics history JSON exists and is parseable
+- No NaN / inf in numeric metric entries
+- Conditional branch metrics and active_count fields are present and finite
+
+Interpretation:
+
+- Baseline learning signal is present (train/val losses decrease overall; action_type accuracy increases).
+- This remains a supervised BC baseline result only and not a transfer-success claim.
+
+### carry-over objective risk retained intentionally for Day 3+
+
+- Previous risk "equal branch mean weighting" is removed by the updated aggregate objective.
+- Current aggregate objective can still be dominated by frequent supervised items (especially action_type / frequent branches).
+- This is a known balancing risk for Day 3+ and is intentionally not solved here with class weighting or focal/manual branch weights.

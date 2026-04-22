@@ -33,6 +33,8 @@ BRANCH_SPECS: tuple[BranchSpec, ...] = (
 @dataclass
 class BatchLossOutput:
     total_loss: Tensor
+    objective_loss_sum: float
+    objective_active_count: int
     loss_sum_by_branch: Dict[str, float]
     active_count_by_branch: Dict[str, int]
     correct_count_by_branch: Dict[str, int]
@@ -40,11 +42,15 @@ class BatchLossOutput:
 
 class EpochMetricAccumulator:
     def __init__(self) -> None:
+        self.objective_loss_sum: float = 0.0
+        self.objective_active_count: int = 0
         self.loss_sum_by_branch: Dict[str, float] = {spec.name: 0.0 for spec in BRANCH_SPECS}
         self.active_count_by_branch: Dict[str, int] = {spec.name: 0 for spec in BRANCH_SPECS}
         self.correct_count_by_branch: Dict[str, int] = {spec.name: 0 for spec in BRANCH_SPECS}
 
     def update(self, batch: BatchLossOutput) -> None:
+        self.objective_loss_sum += batch.objective_loss_sum
+        self.objective_active_count += batch.objective_active_count
         for spec in BRANCH_SPECS:
             name = spec.name
             self.loss_sum_by_branch[name] += batch.loss_sum_by_branch[name]
@@ -54,7 +60,11 @@ class EpochMetricAccumulator:
     def to_metrics(self, prefix: str) -> Dict[str, float | int]:
         metrics: Dict[str, float | int] = {}
 
-        total_loss = 0.0
+        total_loss = (
+            self.objective_loss_sum / self.objective_active_count
+            if self.objective_active_count > 0
+            else 0.0
+        )
         for spec in BRANCH_SPECS:
             name = spec.name
             active_count = self.active_count_by_branch[name]
@@ -64,8 +74,6 @@ class EpochMetricAccumulator:
             metrics[f"{prefix}_{name}_loss"] = float(loss_value)
             metrics[f"{prefix}_{name}_accuracy"] = float(acc_value)
             metrics[f"{prefix}_{name}_active_count"] = int(active_count)
-
-            total_loss += float(loss_value)
 
         metrics[f"{prefix}_total_loss"] = float(total_loss)
         return metrics
@@ -91,7 +99,8 @@ def compute_branchwise_loss(
     device = target_action_branches.device
     action_type_targets = target_action_branches[..., ACTION_TYPE_BRANCH_INDEX].reshape(-1)
 
-    total_loss: Tensor = torch.zeros((), device=device)
+    objective_loss_sum_tensor: Tensor = torch.zeros((), device=device)
+    objective_active_count = 0
     loss_sum_by_branch: Dict[str, float] = {}
     active_count_by_branch: Dict[str, int] = {}
     correct_count_by_branch: Dict[str, int] = {}
@@ -119,17 +128,24 @@ def compute_branchwise_loss(
 
         loss_per_item = F.cross_entropy(active_logits, active_targets, reduction="none")
         loss_sum = loss_per_item.sum()
-        loss_mean = loss_per_item.mean()
 
         preds = torch.argmax(active_logits, dim=-1)
         correct = int((preds == active_targets).sum().item())
 
-        total_loss = total_loss + loss_mean
+        objective_loss_sum_tensor = objective_loss_sum_tensor + loss_sum
+        objective_active_count += active_count
         loss_sum_by_branch[spec.name] = float(loss_sum.detach().item())
         correct_count_by_branch[spec.name] = correct
 
+    if objective_active_count > 0:
+        total_loss = objective_loss_sum_tensor / objective_active_count
+    else:
+        total_loss = torch.zeros((), device=device)
+
     return BatchLossOutput(
         total_loss=total_loss,
+        objective_loss_sum=float(objective_loss_sum_tensor.detach().item()),
+        objective_active_count=int(objective_active_count),
         loss_sum_by_branch=loss_sum_by_branch,
         active_count_by_branch=active_count_by_branch,
         correct_count_by_branch=correct_count_by_branch,
