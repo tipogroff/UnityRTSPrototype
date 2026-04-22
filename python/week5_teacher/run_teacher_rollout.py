@@ -292,6 +292,7 @@ def import_runtime_modules() -> Tuple[Dict[str, Optional[Any]], RuntimeVersions]
         "numpy": try_import("numpy"),
         "torch": try_import("torch"),
         "stable_baselines3": try_import("stable_baselines3"),
+        "sb3_contrib": try_import("sb3_contrib"),
     }
 
     gym_api_name = None
@@ -726,17 +727,24 @@ def load_policy_source(
         )
 
     stable_baselines3_module = modules.get("stable_baselines3")
+    sb3_contrib_module = modules.get("sb3_contrib")
     if stable_baselines3_module is None:
         raise RolloutError(
             "Stable-Baselines3 is not installed, but --policy-path was provided. Current loader scope is SB3-only checkpoint loading."
         )
 
-    algorithm_lookup = {
-        "ppo": stable_baselines3_module.PPO,
-        "a2c": stable_baselines3_module.A2C,
-        "dqn": stable_baselines3_module.DQN,
-    }
-    algorithm_class = algorithm_lookup[args.policy_algorithm]
+    algorithm_candidates: List[Tuple[str, Any]]
+    if args.policy_algorithm == "ppo":
+        algorithm_candidates = [("stable_baselines3.PPO", stable_baselines3_module.PPO)]
+        maskable_ppo = getattr(sb3_contrib_module, "MaskablePPO", None) if sb3_contrib_module is not None else None
+        if maskable_ppo is not None:
+            algorithm_candidates.append(("sb3_contrib.MaskablePPO", maskable_ppo))
+    else:
+        algorithm_lookup = {
+            "a2c": ("stable_baselines3.A2C", stable_baselines3_module.A2C),
+            "dqn": ("stable_baselines3.DQN", stable_baselines3_module.DQN),
+        }
+        algorithm_candidates = [algorithm_lookup[args.policy_algorithm]]
     checkpoint_hash = sha256_file(checkpoint_path)
 
     logger.info(
@@ -745,10 +753,22 @@ def load_policy_source(
         args.policy_algorithm.upper(),
         checkpoint_hash,
     )
-    try:
-        model = algorithm_class.load(str(checkpoint_path), device=args.device, print_system_info=False)
-    except Exception as exc:
-        raise RolloutError(f"Failed to load checkpoint '{checkpoint_path}': {exc}") from exc
+    model = None
+    load_errors: List[str] = []
+    loaded_via = None
+    for loader_name, algorithm_class in algorithm_candidates:
+        try:
+            model = algorithm_class.load(str(checkpoint_path), device=args.device, print_system_info=False)
+            loaded_via = loader_name
+            break
+        except Exception as exc:
+            load_errors.append(f"{loader_name}: {exc}")
+
+    if model is None:
+        joined = " | ".join(load_errors)
+        raise RolloutError(f"Failed to load checkpoint '{checkpoint_path}': {joined}")
+
+    logger.info("Checkpoint loader selected: %s", loaded_via)
 
     if not hasattr(model, "observation_space") or not hasattr(model, "action_space"):
         raise RolloutError(

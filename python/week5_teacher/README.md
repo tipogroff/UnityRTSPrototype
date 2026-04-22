@@ -63,6 +63,22 @@ Validation status:
 
 ## Day 3 quick export commands
 
+### Backend/opponent control symmetry
+
+`run_teacher_rollout.py` now exposes the same backend/opponent routing knobs used by the hardened training path:
+
+- `--backend-mode allow_fallback|preferred_only`
+- `--force-legacy-backend`
+- `--opponent-pool <comma-separated names>`
+- `--opponent-sampling static|per_reset|per_episode`
+- `--opponent-seed <int>`
+
+Scope honesty:
+
+- rollout script is runtime/export only; it does not perform training;
+- preferred backend is `gym.make`; legacy backend is controlled emergency/diagnostic fallback;
+- opponent-pool controls are most meaningful in legacy fallback/backend-managed regimes.
+
 Debug batch (small, readable, includes `.jsonl` by default):
 
 ```powershell
@@ -98,6 +114,50 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_
   --allow-random-policy-smoke-fallback \
   --rollout-step-limit 256 \
   --write-jsonl never
+```
+
+Preferred rollout path example (preferred backend first, controlled fallback allowed):
+
+```powershell
+$env:JAVA_HOME='C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME/bin;$env:Path"
+
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_py39/Scripts/python.exe \
+  c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/run_teacher_rollout.py \
+  --episodes 2 \
+  --batch-mode debug \
+  --batch-label day3_preferred_route \
+  --env-id MicrortsSelfPlayShapedReward-v1 \
+  --map-path maps/24x24/basesWorkers24x24.xml \
+  --backend-mode allow_fallback \
+  --opponent-pool passiveAI \
+  --opponent-sampling static \
+  --seed 17 \
+  --allow-random-policy-smoke-fallback \
+  --rollout-step-limit 64
+```
+
+Forced legacy diagnostic path example (explicit emergency route):
+
+```powershell
+$env:JAVA_HOME='C:/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME/bin;$env:Path"
+
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_py39/Scripts/python.exe \
+  c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/run_teacher_rollout.py \
+  --episodes 2 \
+  --batch-mode debug \
+  --batch-label day3_legacy_diag \
+  --env-id MicrortsSelfPlayShapedReward-v1 \
+  --map-path maps/24x24/basesWorkers24x24.xml \
+  --backend-mode preferred_only \
+  --force-legacy-backend \
+  --opponent-pool passiveAI,workerRushAI,lightRushAI \
+  --opponent-sampling per_episode \
+  --opponent-seed 77 \
+  --seed 17 \
+  --allow-random-policy-smoke-fallback \
+  --rollout-step-limit 64
 ```
 
 ## Current structure
@@ -260,6 +320,11 @@ Default map (`maps/24x24/basesWorkers24x24.xml`) is treated only as nearest appr
 - `--batch-label`: free-form artifact label.
 - `--env-id`: requested gym/gymnasium env id.
 - `--map-path`: map path (kept explicit to prevent scenario drift).
+- `--backend-mode`: prefer primary backend with optional controlled fallback.
+- `--force-legacy-backend`: explicit emergency/diagnostic legacy route.
+- `--opponent-pool`: opponent pool for backend-managed regimes (comma-separated).
+- `--opponent-sampling`: opponent sampling mode.
+- `--opponent-seed`: optional seed for opponent sampling.
 - `--seed`: base seed.
 - `--env-seed`: optional env seed (`seed + 1` by default).
 - `--rollout-seed`: optional rollout seed (`seed + 2` by default).
@@ -282,3 +347,94 @@ Per batch in `teacher_rollouts/teacher_raw_<mode>_<label>_<timestamp>/`:
 - `episode_00000.npz`, ... (primary raw export)
 - `episode_00000.jsonl`, ... (debug step dump, if enabled)
 - `batch.summary.json` (metadata + validation + statistics)
+
+## Day 5 validator (contract-level)
+
+Use Day 5 validator on any adapted batch directory produced by Day 4:
+
+```powershell
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/.venv_day2_py39/Scripts/python.exe \
+  c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/validate_adapted_dataset.py \
+  --adapted-batch-dir c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher/teacher_exports/teacher_adapted_day5_first_nonrandom_meaningful \
+  --strict
+```
+
+Validator outputs:
+
+- `strict_validation_day5.json` (hard failures + warnings split)
+- `quality_report_day5.json` (sanity metrics + weak spots)
+- `quality_report_day5.md` (human-readable summary)
+
+Day 5 validator now includes:
+
+- explicit `channel_validation_policy` (spec-driven, assumption-sensitive checks are marked)
+- inactive-branch anomaly summary + severity (`low|medium|high`)
+- lightweight `episode_level_diagnostics` and `top_warning_patterns`
+- explicit `bc_readiness_interpretation` boundary block
+
+Detailed Day 5 checks and report interpretation are documented in `DAY5_VALIDATION.md`.
+
+## Day 7 official entrypoints (Week 5 closure)
+
+The following scripts are the official Week 5 public entrypoints:
+
+1. Rollout/export: `run_teacher_rollout.py`
+2. Adapter: `adapt_teacher_dataset.py`
+3. Validator: `validate_adapted_dataset.py`
+4. BC-ready packaging: `build_bc_ready_dataset_day6.py`
+5. BC loader dry run: `dry_run_bc_loader.py`
+
+Expected output roots by stage:
+
+- Day 3 rollout/export: `teacher_rollouts/`, `teacher_logs/`
+- Day 4 adapter: `teacher_exports/` (`conversion_report.json`, `adapted_batch.summary.json`)
+- Day 5 validation: adapted batch local outputs (`strict_validation_day5.json`, `quality_report_day5.*`)
+- Day 6 packaging: `teacher_exports_bc/` (`bc_manifest.json`, split `.npz`, dry-run report)
+
+Current preferred BC-ready dataset (updated 2026-04-22 — post-correction baseline switch):
+
+- `teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z`
+
+Previous preferred (now historical baseline only — do not delete):
+
+- `teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z`
+
+Baseline switch reason: corrective rerun confirmed root-cause diagnosis; comparison result=better.  
+Detailed comparison: `../../WEEK5/PREFERRED_TEACHER_BASELINE_UPDATE.md`
+
+## Week 5 explicit limitations (Day 7 fixed record)
+
+- Teacher quality remains bounded by available teacher candidate quality.
+- Adapter path includes approximation and non-bijective mapping.
+- Action filtering/remapping exists, including remap-to-noop pressure.
+- Mask semantics are diagnostic/pre-sampling context, not full runtime-truth transfer.
+- Direct Gym->Unity semantic parity is not proven by Week 5.
+- Direct weight transfer remains blocked and was not a Week 5 goal.
+- BC-ready packaging and dry run do not prove BC training success.
+
+## Week 6 bridge (input contract handoff)
+
+Canonical Week 6 student-side inputs (updated 2026-04-22 — post-correction baseline switch):
+
+Preferred BC-ready run:
+
+- `teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z/`
+
+Expected files within that directory:
+
+- `bc_train.npz` (3,650 samples)
+- `bc_validation.npz` (390 samples)
+- optional `bc_debug.npz` (256 samples)
+- `bc_manifest.json`
+- `dry_run_bc_loader_report.json`
+
+Previous preferred BC-ready run (historical baseline only):
+
+- `teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z/`
+
+These files are produced by `build_bc_ready_dataset_day6.py` and verified by `dry_run_bc_loader.py`.
+
+For full Week 5 closure summary and baseline switch documentation, see:
+
+- `../../WEEK5/WEEK5_TEACHER_PIPELINE_SUMMARY.md`
+- `../../WEEK5/PREFERRED_TEACHER_BASELINE_UPDATE.md`

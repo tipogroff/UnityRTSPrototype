@@ -1,0 +1,45 @@
+{
+  "generated_at_utc": "2026-04-22T08:38:32Z",
+  "old": {
+    "label": "preferred_day5_first_nonrandom_meaningful",
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful"
+  },
+  "new": {
+    "label": "hardened_v2_teacher_candidate_20260422T074106Z",
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_hardened_v2_teacher_candidate_20260422T074106Z"
+  },
+  "decision": {
+    "comparison_result": "mixed",
+    "preferred_bc_candidate_batch": "mixed_decision",
+    "score": 2,
+    "improved_metrics": [
+      "remap_to_noop_share",
+      "class_imbalance_ratio",
+      "inactive_branch_anomaly_share"
+    ],
+    "worsened_metrics": [
+      "usable_samples",
+      "production_actions_survived_share"
+    ],
+    "warning_count_comparability": {
+      "comparable": false,
+      "reason": "episode_count_differs_and_warning_categories_identical",
+      "old_episodes": 1,
+      "new_episodes": 6,
+      "old_warning_check_types": [
+        "action.inactive_branch_nonzero",
+        "observation.categorical_soft_sum.current_action",
+        "observation.categorical_soft_sum.unit_type",
+        "quality.semantic_weakening"
+      ],
+      "new_warning_check_types": [
+        "action.inactive_branch_nonzero",
+        "observation.categorical_soft_sum.current_action",
+        "observation.categorical_soft_sum.unit_type",
+        "quality.semantic_weakening"
+      ],
+      "old_warnings_per_episode": 4.0,
+      "new_warnings_per_episode": 3.1666666666666665
+    }
+  }
+}
