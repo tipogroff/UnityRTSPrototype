@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict
 
-import torch
 from torch import Tensor, nn
+
+from student_branch_contract import BRANCH_SPECS, validate_student_branch_contract_consistency
 
 
 @dataclass(frozen=True)
@@ -39,6 +40,8 @@ class StudentBCModelMinimal(nn.Module):
         self.head_produce_unit_type = nn.Conv2d(cfg.hidden_channels, 4, kernel_size=1)
         self.head_attack_target_local = nn.Conv2d(cfg.hidden_channels, 9, kernel_size=1)
 
+        validate_student_branch_contract_consistency()
+
     @staticmethod
     def _to_cell_logits(logits_bchw: Tensor) -> Tensor:
         b, c, h, w = logits_bchw.shape
@@ -59,12 +62,17 @@ class StudentBCModelMinimal(nn.Module):
         x_bchw = x.permute(0, 3, 1, 2)
         features = self.encoder(x_bchw)
 
-        return {
-            "action_type_logits": self._to_cell_logits(self.head_action_type(features)),
-            "move_dir_logits": self._to_cell_logits(self.head_move_dir(features)),
-            "harvest_dir_logits": self._to_cell_logits(self.head_harvest_dir(features)),
-            "return_dir_logits": self._to_cell_logits(self.head_return_dir(features)),
-            "produce_dir_logits": self._to_cell_logits(self.head_produce_dir(features)),
-            "produce_unit_type_logits": self._to_cell_logits(self.head_produce_unit_type(features)),
-            "attack_target_local_logits": self._to_cell_logits(self.head_attack_target_local(features)),
+        heads_by_name = {
+            "action_type_head": self.head_action_type,
+            "move_dir_head": self.head_move_dir,
+            "harvest_dir_head": self.head_harvest_dir,
+            "return_dir_head": self.head_return_dir,
+            "produce_dir_head": self.head_produce_dir,
+            "produce_unit_type_head": self.head_produce_unit_type,
+            "attack_target_local_head": self.head_attack_target_local,
         }
+
+        outputs: Dict[str, Tensor] = {}
+        for spec in BRANCH_SPECS:
+            outputs[spec.logits_key] = self._to_cell_logits(heads_by_name[spec.head_name](features))
+        return outputs

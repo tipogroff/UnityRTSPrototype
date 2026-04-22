@@ -11,7 +11,7 @@ from typing import Any, Dict
 
 import numpy as np
 import torch
-from torch import Tensor
+from torch import Tensor, nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset
 
@@ -19,6 +19,8 @@ from student_bc_contract import BCContractError, SplitData
 from student_bc_loader import load_bc_ready_dataset
 from student_bc_metrics import EpochMetricAccumulator, compute_branchwise_loss
 from student_bc_model_minimal import StudentBCModelMinimal
+from student_architecture_transfer import build_day3_student_model
+from student_branch_contract import BRANCH_ORDER, validate_student_branch_contract_consistency
 
 
 PINNED_BC_READY_RELATIVE = Path(
@@ -36,6 +38,7 @@ class RunConfig:
     device: str
     seed: int
     output_dir: str
+    model_variant: str
 
 
 class BCSplitTorchDataset(Dataset[tuple[Tensor, Tensor]]):
@@ -78,6 +81,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--output-dir", type=Path, default=_default_output_dir())
+    parser.add_argument(
+        "--model-variant",
+        type=str,
+        choices=("minimal", "transfer"),
+        default="minimal",
+        help="Select student architecture while preserving branch-wise BC objective semantics.",
+    )
     return parser.parse_args()
 
 
@@ -106,7 +116,7 @@ def create_dataloader(split: SplitData, batch_size: int, shuffle: bool) -> DataL
 
 
 def run_epoch(
-    model: StudentBCModelMinimal,
+    model: nn.Module,
     loader: DataLoader[tuple[Tensor, Tensor]],
     device: torch.device,
     optimizer: Adam | None,
@@ -149,7 +159,7 @@ def _validate_contract_for_day2(dataset: Any) -> None:
 def _save_checkpoint(
     path: Path,
     *,
-    model: StudentBCModelMinimal,
+    model: nn.Module,
     optimizer: Adam,
     epoch: int,
     metrics: Dict[str, float | int],
@@ -166,29 +176,12 @@ def _save_checkpoint(
 
 
 def _fmt_metrics(metrics: Dict[str, float | int], prefix: str) -> str:
-    keys = [
-        f"{prefix}_total_loss",
-        f"{prefix}_action_type_loss",
-        f"{prefix}_action_type_accuracy",
-        f"{prefix}_move_dir_loss",
-        f"{prefix}_move_dir_accuracy",
-        f"{prefix}_move_dir_active_count",
-        f"{prefix}_harvest_dir_loss",
-        f"{prefix}_harvest_dir_accuracy",
-        f"{prefix}_harvest_dir_active_count",
-        f"{prefix}_return_dir_loss",
-        f"{prefix}_return_dir_accuracy",
-        f"{prefix}_return_dir_active_count",
-        f"{prefix}_produce_dir_loss",
-        f"{prefix}_produce_dir_accuracy",
-        f"{prefix}_produce_dir_active_count",
-        f"{prefix}_produce_unit_type_loss",
-        f"{prefix}_produce_unit_type_accuracy",
-        f"{prefix}_produce_unit_type_active_count",
-        f"{prefix}_attack_target_local_loss",
-        f"{prefix}_attack_target_local_accuracy",
-        f"{prefix}_attack_target_local_active_count",
-    ]
+    keys: list[str] = [f"{prefix}_total_loss"]
+    for branch_name in BRANCH_ORDER:
+        keys.append(f"{prefix}_{branch_name}_loss")
+        keys.append(f"{prefix}_{branch_name}_accuracy")
+        if branch_name != "action_type":
+            keys.append(f"{prefix}_{branch_name}_active_count")
     parts: list[str] = []
     for key in keys:
         value = metrics[key]
@@ -202,6 +195,7 @@ def _fmt_metrics(metrics: Dict[str, float | int], prefix: str) -> str:
 def main() -> int:
     args = parse_args()
     set_seed(args.seed)
+    validate_student_branch_contract_consistency()
 
     run_cfg = RunConfig(
         bc_ready_dir=str(args.bc_ready_dir),
@@ -211,6 +205,7 @@ def main() -> int:
         device=str(args.device),
         seed=int(args.seed),
         output_dir=str(args.output_dir),
+        model_variant=str(args.model_variant),
     )
 
     try:
@@ -221,7 +216,13 @@ def main() -> int:
 
     _validate_contract_for_day2(dataset)
 
-    model = StudentBCModelMinimal()
+    if args.model_variant == "minimal":
+        model: nn.Module = StudentBCModelMinimal()
+    elif args.model_variant == "transfer":
+        model = build_day3_student_model()
+    else:
+        raise ValueError(f"Unsupported --model-variant: {args.model_variant}")
+
     device = torch.device(args.device)
     model.to(device)
 
@@ -236,12 +237,15 @@ def main() -> int:
     best_val_loss = float("inf")
     history: list[Dict[str, float | int]] = []
 
-    print("=== Week 6 Day 2 Minimal BC Training ===")
+    print("=== Week 6 BC Training (Pinned BC-ready Source) ===")
     print(f"Pinned BC-ready dir: {dataset.run_dir}")
+    print(f"Model variant: {args.model_variant}")
     print(
         "Scope: supervised BC only; not RL/PPO fine-tuning; not Unity inference integration; "
         "not final architecture; does not claim transfer success"
     )
+
+    checkpoint_prefix = f"student_bc_{args.model_variant}"
 
     for epoch in range(1, args.epochs + 1):
         epoch_start = time.perf_counter()
@@ -260,7 +264,7 @@ def main() -> int:
         merged["epoch"] = epoch
         history.append(merged)
 
-        latest_path = output_dir / "student_bc_minimal_latest.pt"
+        latest_path = output_dir / f"{checkpoint_prefix}_latest.pt"
         _save_checkpoint(
             latest_path,
             model=model,
@@ -273,7 +277,7 @@ def main() -> int:
         val_total_loss = float(merged["val_total_loss"])
         if val_total_loss < best_val_loss:
             best_val_loss = val_total_loss
-            best_path = output_dir / "student_bc_minimal_best.pt"
+            best_path = output_dir / f"{checkpoint_prefix}_best.pt"
             _save_checkpoint(
                 best_path,
                 model=model,
@@ -291,6 +295,7 @@ def main() -> int:
     payload = {
         "run_config": asdict(run_cfg),
         "pinned_bc_ready_dir": str(dataset.run_dir),
+        "model_variant": args.model_variant,
         "history": history,
         "scope_honesty": {
             "supervised_bc_only": True,
@@ -308,8 +313,8 @@ def main() -> int:
     }
     metrics_path.write_text(json.dumps(payload, ensure_ascii=True, indent=2), encoding="utf-8")
 
-    print(f"\nSaved latest checkpoint: {output_dir / 'student_bc_minimal_latest.pt'}")
-    print(f"Saved best checkpoint: {output_dir / 'student_bc_minimal_best.pt'}")
+    print(f"\nSaved latest checkpoint: {output_dir / f'{checkpoint_prefix}_latest.pt'}")
+    print(f"Saved best checkpoint: {output_dir / f'{checkpoint_prefix}_best.pt'}")
     print(f"Saved metrics history: {metrics_path}")
 
     return 0
