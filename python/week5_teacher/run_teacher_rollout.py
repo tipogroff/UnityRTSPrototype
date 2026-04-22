@@ -175,6 +175,34 @@ def parse_args() -> argparse.Namespace:
         default="maps/24x24/basesWorkers24x24.xml",
         help="Candidate map path closest to Unity MVP_24x24_Symmetric. This is an approximation unless verified separately.",
     )
+    parser.add_argument(
+        "--backend-mode",
+        choices=("allow_fallback", "preferred_only"),
+        default="allow_fallback",
+        help="Prefer gym.make backend; allow or forbid controlled emergency legacy fallback.",
+    )
+    parser.add_argument(
+        "--force-legacy-backend",
+        action="store_true",
+        help="Force emergency legacy backend for diagnostics/export routing checks.",
+    )
+    parser.add_argument(
+        "--opponent-pool",
+        default="passiveAI",
+        help="Comma-separated opponent names. Mainly meaningful for legacy fallback/backend-managed regimes.",
+    )
+    parser.add_argument(
+        "--opponent-sampling",
+        choices=("static", "per_reset", "per_episode"),
+        default="static",
+        help="Opponent sampling mode for explicit opponent-pool regimes.",
+    )
+    parser.add_argument(
+        "--opponent-seed",
+        type=int,
+        default=None,
+        help="Optional seed for opponent sampling. Defaults to a deterministic seed-derived value.",
+    )
     parser.add_argument("--seed", type=int, default=7, help="Base random seed.")
     parser.add_argument(
         "--env-seed",
@@ -413,8 +441,11 @@ def compare_spaces(reference_space: Any, candidate_space: Any, path: str) -> Lis
     issues: List[str] = []
 
     if type(reference_space) is not type(candidate_space):
-        issues.append(f"{path}: type mismatch {type(reference_space).__name__} != {type(candidate_space).__name__}")
-        return issues
+        # Gym and Gymnasium often expose equivalent space classes from different modules.
+        # Treat identical class names as compatible and validate by structural attributes below.
+        if type(reference_space).__name__ != type(candidate_space).__name__:
+            issues.append(f"{path}: type mismatch {type(reference_space).__name__} != {type(candidate_space).__name__}")
+            return issues
 
     if hasattr(reference_space, "shape") and hasattr(candidate_space, "shape"):
         if tuple(reference_space.shape or ()) != tuple(candidate_space.shape or ()):
@@ -590,14 +621,93 @@ def build_legacy_microrts_vec_env(args: argparse.Namespace, logger: logging.Logg
     logger.warning(
         "Using legacy gym_microrts MicroRTSGridModeVecEnv fallback (no gym registry env-id available)."
     )
-    return MicroRTSGridModeVecEnv(
+    num_bot_envs = int(getattr(args, "num_bot_envs", 1) or 1)
+    if num_bot_envs < 1:
+        raise RolloutError("Legacy gym_microrts vector env fallback requires num_bot_envs >= 1.")
+
+    requested_opponents_raw = str(getattr(args, "opponent_pool", "passiveAI") or "passiveAI")
+    requested_opponents = [token.strip() for token in requested_opponents_raw.split(",") if token.strip()]
+    if not requested_opponents:
+        requested_opponents = ["passiveAI"]
+
+    available_opponents: List[Tuple[str, Any]] = []
+    for candidate_name in requested_opponents:
+        candidate = getattr(microrts_ai, candidate_name, None)
+        if candidate is not None:
+            available_opponents.append((candidate_name, candidate))
+        else:
+            logger.warning("Requested opponent '%s' is unavailable in gym_microrts.microrts_ai and will be ignored.", candidate_name)
+
+    if not available_opponents:
+        passive_candidate = getattr(microrts_ai, "passiveAI", None)
+        if passive_candidate is None:
+            raise RolloutError("No usable opponents found for legacy fallback backend.")
+        available_opponents = [("passiveAI", passive_candidate)]
+
+    sampling_mode = str(getattr(args, "opponent_sampling", "static") or "static").strip().lower()
+    if sampling_mode not in {"static", "per_reset", "per_episode"}:
+        raise RolloutError(f"Unsupported opponent_sampling mode: {sampling_mode}")
+
+    opponent_seed_raw = getattr(args, "opponent_seed", None)
+    if opponent_seed_raw is None:
+        opponent_seed_raw = int(getattr(args, "seed", 0)) + 103
+    opponent_rng = random.Random(int(opponent_seed_raw))
+
+    if sampling_mode == "static":
+        static_name, static_fn = available_opponents[0]
+        ai2s = [static_fn] * num_bot_envs
+        current_slot_names = [static_name] * num_bot_envs
+    else:
+        sampled_pairs = [opponent_rng.choice(available_opponents) for _ in range(num_bot_envs)]
+        ai2s = [pair[1] for pair in sampled_pairs]
+        current_slot_names = [pair[0] for pair in sampled_pairs]
+
+    logger.info(
+        "Legacy fallback opponent regime: sampling=%s pool=%s current_slots=%s",
+        sampling_mode,
+        [name for name, _fn in available_opponents],
+        current_slot_names,
+    )
+
+    env = MicroRTSGridModeVecEnv(
         num_selfplay_envs=0,
-        num_bot_envs=1,
-        ai2s=[microrts_ai.passiveAI],
+        num_bot_envs=num_bot_envs,
+        ai2s=ai2s,
         map_paths=[args.map_path],
         max_steps=min(args.rollout_step_limit, 2000),
         autobuild=False,
     )
+    setattr(
+        env,
+        "_teacher_opponent_state",
+        {
+            "sampling": sampling_mode,
+            "pool_names": [name for name, _fn in available_opponents],
+            "pool_functions": [fn for _name, fn in available_opponents],
+            "current_slot_names": list(current_slot_names),
+            "seed": int(opponent_seed_raw),
+        },
+    )
+    return env
+
+
+def summarize_opponent_regime(env: Any) -> Dict[str, Any]:
+    state = getattr(env, "_teacher_opponent_state", None)
+    if not isinstance(state, dict):
+        return {
+            "mode": "backend_managed_or_unknown",
+            "sampling": "backend_default",
+            "pool": [],
+            "current_slot_names": [],
+            "explicit_pool_enabled": False,
+        }
+    return {
+        "mode": "explicit_pool",
+        "sampling": state.get("sampling", "unknown"),
+        "pool": list(state.get("pool_names", [])),
+        "current_slot_names": list(state.get("current_slot_names", [])),
+        "explicit_pool_enabled": True,
+    }
 
 
 def derive_scenario_note(env_id: str, map_path: Optional[str]) -> str:
@@ -634,23 +744,57 @@ def build_environment(
     if args.map_path:
         make_kwargs["map_path"] = args.map_path
 
+    backend_mode = str(getattr(args, "backend_mode", "allow_fallback") or "allow_fallback").strip().lower()
+    if backend_mode not in {"allow_fallback", "preferred_only"}:
+        raise RolloutError(f"Unsupported backend_mode: {backend_mode}")
+    force_legacy_backend = bool(getattr(args, "force_legacy_backend", False))
+
     logger.info("Creating environment '%s' with kwargs=%s", args.env_id, make_kwargs or "{}")
     env_backend = "gym.make"
-    try:
-        env = gym_module.make(args.env_id, **make_kwargs)
-    except TypeError as exc:
-        if args.map_path:
-            raise RolloutError(
-                "Environment construction rejected 'map_path'. The current rollout/export path does not silently retry with a different signature, "
-                "because that would hide scenario drift. Override --env-id / --map-path with a valid combination."
-            ) from exc
-        raise RolloutError(f"Failed to construct environment '{args.env_id}': {exc}") from exc
-    except Exception as exc:
-        if modules.get("microrts") is not None:
-            env = build_legacy_microrts_vec_env(args, logger)
-            env_backend = "gym_microrts.envs.vec_env.MicroRTSGridModeVecEnv"
-        else:
+    backend_role = "preferred"
+    fallback_reason = None
+
+    if force_legacy_backend:
+        if modules.get("microrts") is None:
+            raise RolloutError("force_legacy_backend requested but gym_microrts fallback backend is unavailable.")
+        env = build_legacy_microrts_vec_env(args, logger)
+        env_backend = "gym_microrts.envs.vec_env.MicroRTSGridModeVecEnv"
+        backend_role = "emergency_fallback_forced"
+        fallback_reason = "forced_by_configuration"
+    else:
+        try:
+            env = gym_module.make(args.env_id, **make_kwargs)
+        except TypeError as exc:
+            if args.map_path:
+                raise RolloutError(
+                    "Environment construction rejected 'map_path'. The current rollout/export path does not silently retry with a different signature, "
+                    "because that would hide scenario drift. Override --env-id / --map-path with a valid combination."
+                ) from exc
             raise RolloutError(f"Failed to construct environment '{args.env_id}': {exc}") from exc
+        except Exception as exc:
+            if backend_mode == "allow_fallback" and modules.get("microrts") is not None:
+                env = build_legacy_microrts_vec_env(args, logger)
+                env_backend = "gym_microrts.envs.vec_env.MicroRTSGridModeVecEnv"
+                backend_role = "emergency_fallback_auto"
+                fallback_reason = f"preferred_backend_failure:{type(exc).__name__}"
+                logger.warning(
+                    "Preferred backend failed (%s); switched to emergency fallback backend because backend_mode=allow_fallback.",
+                    type(exc).__name__,
+                )
+            else:
+                raise RolloutError(f"Failed to construct environment '{args.env_id}': {exc}") from exc
+
+    if env_backend.startswith("gym_microrts"):
+        state = getattr(env, "_teacher_opponent_state", None)
+        if not isinstance(state, dict):
+            state = {}
+            setattr(env, "_teacher_opponent_state", state)
+        if "sampling" not in state:
+            state["sampling"] = str(getattr(args, "opponent_sampling", "static") or "static")
+        if "pool_names" not in state:
+            state["pool_names"] = ["passiveAI"]
+        if "current_slot_names" not in state:
+            state["current_slot_names"] = ["passiveAI"] * int(getattr(args, "num_bot_envs", 1) or 1)
 
     if hasattr(env, "action_space") and hasattr(env.action_space, "seed"):
         env.action_space.seed(seed_bundle.rollout_seed)
@@ -664,9 +808,18 @@ def build_environment(
     env_summary = {
         "env_id": args.env_id,
         "env_backend": env_backend,
+        "backend_role": backend_role,
+        "backend_selection": {
+            "preferred_backend": "gym.make",
+            "fallback_backend": "gym_microrts.envs.vec_env.MicroRTSGridModeVecEnv",
+            "backend_mode": backend_mode,
+            "forced_legacy_backend": force_legacy_backend,
+            "fallback_trigger_reason": fallback_reason,
+        },
         "map_path": args.map_path,
         "scenario_note": derive_scenario_note(args.env_id, args.map_path),
         "scenario_comparison_note": build_scenario_comparison_note(args.map_path),
+        "opponent_regime": summarize_opponent_regime(env),
         "canonical_environment_target": CANONICAL_ENVIRONMENT_TARGET,
         "observation_surface_expected_channels": 27,
         "observation_surface_detected_channels": observation_channels,
@@ -802,6 +955,7 @@ def run_rollouts(
     output_paths: OutputPaths,
     timestamp: str,
     runtime_versions: RuntimeVersions,
+    env_summary: Dict[str, Any],
 ) -> Dict[str, Any]:
     numpy_module = modules.get("numpy")
     if numpy_module is None:
@@ -841,6 +995,19 @@ def run_rollouts(
             "random_seed": seed_bundle.random_seed,
             "env_seed": seed_bundle.env_seed,
             "rollout_seed": seed_bundle.rollout_seed,
+        },
+        "environment_request": {
+            "backend_mode": args.backend_mode,
+            "force_legacy_backend": bool(args.force_legacy_backend),
+            "opponent_pool": [token.strip() for token in str(args.opponent_pool).split(",") if token.strip()],
+            "opponent_sampling": args.opponent_sampling,
+            "opponent_seed": args.opponent_seed,
+        },
+        "environment_runtime": {
+            "env_backend": env_summary.get("env_backend"),
+            "backend_role": env_summary.get("backend_role"),
+            "backend_selection": env_summary.get("backend_selection"),
+            "opponent_regime": env_summary.get("opponent_regime"),
         },
     }
 
@@ -1012,6 +1179,19 @@ def run_rollouts(
             "env_seed": seed_bundle.env_seed,
             "rollout_seed": seed_bundle.rollout_seed,
         },
+        "environment_request": {
+            "backend_mode": args.backend_mode,
+            "force_legacy_backend": bool(args.force_legacy_backend),
+            "opponent_pool": [token.strip() for token in str(args.opponent_pool).split(",") if token.strip()],
+            "opponent_sampling": args.opponent_sampling,
+            "opponent_seed": args.opponent_seed,
+        },
+        "environment_runtime": {
+            "env_backend": env_summary.get("env_backend"),
+            "backend_role": env_summary.get("backend_role"),
+            "backend_selection": env_summary.get("backend_selection"),
+            "opponent_regime": env_summary.get("opponent_regime"),
+        },
         "validation": {
             "status": "passed",
             "checks": [
@@ -1107,6 +1287,14 @@ def main() -> int:
             seed_bundle.env_seed,
             seed_bundle.rollout_seed,
         )
+        logger.info(
+            "Requested env routing/opponents: backend_mode=%s force_legacy_backend=%s opponent_pool=%s opponent_sampling=%s opponent_seed=%s",
+            args.backend_mode,
+            args.force_legacy_backend,
+            args.opponent_pool,
+            args.opponent_sampling,
+            args.opponent_seed,
+        )
         log_runtime_versions(logger, versions)
 
         env, initial_observation, reset_info, env_summary = build_environment(args, seed_bundle, modules, logger)
@@ -1115,6 +1303,13 @@ def main() -> int:
 
         policy = load_policy_source(args, env, seed_bundle, versions, modules, logger)
         logger.info("Policy source: %s", json.dumps(policy.describe(), ensure_ascii=True))
+        logger.info(
+            "Environment runtime summary: backend=%s role=%s fallback=%s opponents=%s",
+            env_summary.get("env_backend"),
+            env_summary.get("backend_role"),
+            env_summary.get("backend_selection", {}).get("fallback_trigger_reason"),
+            json.dumps(env_summary.get("opponent_regime", {}), ensure_ascii=True),
+        )
 
         rollout_stats = run_rollouts(
             env=env,
@@ -1126,6 +1321,7 @@ def main() -> int:
             output_paths=output_paths,
             timestamp=timestamp,
             runtime_versions=versions,
+            env_summary=env_summary,
         )
 
         smoke_check = {

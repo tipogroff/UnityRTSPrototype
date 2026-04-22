@@ -1,0 +1,182 @@
+{
+  "status": "success",
+  "generated_at_utc": "2026-04-21T10:36:43Z",
+  "schema_version": "day6.bc_ready.v1",
+  "source": {
+    "adapted_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful",
+    "adapted_batch_name": "teacher_adapted_day5_first_nonrandom_meaningful",
+    "adapted_batch_summary": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful\\adapted_batch.summary.json",
+    "conversion_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful\\conversion_report.json",
+    "strict_validation": {
+      "strict_validation_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful\\strict_validation_day5.json",
+      "status": "pass",
+      "pass_confirmed": true
+    }
+  },
+  "split_policy": {
+    "train_ratio": 0.9,
+    "val_ratio": 0.1,
+    "derived_train_probability": 0.9,
+    "debug_split_policy": "deterministic_subset_of_train",
+    "debug_size_requested": 256,
+    "seed": 17
+  },
+  "schema": {
+    "schema_version": "day6.bc_ready.v1",
+    "sample_structure": {
+      "required": {
+        "input_tensor": {
+          "dtype": "float32",
+          "shape": [
+            24,
+            24,
+            27
+          ]
+        },
+        "target_action_branches": {
+          "dtype": "int16",
+          "shape": [
+            576,
+            7
+          ],
+          "branch_sizes": [
+            6,
+            4,
+            4,
+            4,
+            4,
+            4,
+            9
+          ]
+        },
+        "metadata": {
+          "sample_id": "string",
+          "episode_id": "int32",
+          "step_id": "int32",
+          "source_episode_file": "string",
+          "split": "enum(train|validation|debug)"
+        }
+      },
+      "optional": {
+        "optional_mask": {
+          "present": false,
+          "note": "Not available in current preferred adapted batch; loader must handle absence."
+        }
+      },
+      "diagnostic_only": {
+        "diagnostic_reward_t": "float32 per step (if available)",
+        "diagnostic_done_t": "bool per step (if available)"
+      }
+    }
+  },
+  "split_files": {
+    "train": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_train.npz",
+    "validation": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_validation.npz",
+    "debug": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_debug.npz"
+  },
+  "split_summary": {
+    "train": {
+      "samples": 1804,
+      "input_tensor_shape": [
+        1804,
+        24,
+        24,
+        27
+      ],
+      "input_tensor_dtype": "float32",
+      "target_action_branches_shape": [
+        1804,
+        576,
+        7
+      ],
+      "target_action_branches_dtype": "int16",
+      "target_action_branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "mask_present": false
+    },
+    "validation": {
+      "samples": 196,
+      "input_tensor_shape": [
+        196,
+        24,
+        24,
+        27
+      ],
+      "input_tensor_dtype": "float32",
+      "target_action_branches_shape": [
+        196,
+        576,
+        7
+      ],
+      "target_action_branches_dtype": "int16",
+      "target_action_branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "mask_present": false
+    },
+    "debug": {
+      "samples": 256,
+      "input_tensor_shape": [
+        256,
+        24,
+        24,
+        27
+      ],
+      "input_tensor_dtype": "float32",
+      "target_action_branches_shape": [
+        256,
+        576,
+        7
+      ],
+      "target_action_branches_dtype": "int16",
+      "target_action_branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "mask_present": false
+    }
+  },
+  "supervised_target_readiness": {
+    "deterministic_target_branches": true,
+    "duplicate_sample_id_count": 0,
+    "conflicting_label_count": 0,
+    "action_distribution": {
+      "histogram_action_type_branch0": {
+        "0": 428000,
+        "1": 182000,
+        "2": 196000,
+        "3": 204000,
+        "4": 120000,
+        "5": 22000
+      },
+      "dominant_action_share": 0.3715277777777778,
+      "dominant_action_type": 0,
+      "degenerate_distribution": false
+    },
+    "split_structural_consistency": true,
+    "metadata_source_links": {
+      "sample_ids_unique": true,
+      "sample_id_conflicts": 0,
+      "split_index_issues": []
+    },
+    "warnings": []
+  }
+}

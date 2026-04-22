@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z",
+  "schema_version": "day6.bc_ready.v1",
+  "total_samples": 2000,
+  "split_counts": {
+    "train": 1804,
+    "validation": 196,
+    "debug": 256
+  },
+  "warnings": []
+}

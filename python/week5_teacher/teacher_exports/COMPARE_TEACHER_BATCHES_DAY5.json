@@ -1,0 +1,26 @@
+{
+  "generated_at_utc": "2026-04-19T14:30:39Z",
+  "old": {
+    "label": "teacher_adapted_day5_first_nonrandom_meaningful",
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_first_nonrandom_meaningful"
+  },
+  "new": {
+    "label": "teacher_adapted_day5_stronger_teacher_20260419T141742Z",
+    "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_stronger_teacher_20260419T141742Z"
+  },
+  "decision": {
+    "comparison_result": "not_better",
+    "preferred_bc_candidate_batch": "teacher_adapted_day5_first_nonrandom_meaningful",
+    "score": -3,
+    "improved_metrics": [
+      "remap_to_noop_share",
+      "usable_samples"
+    ],
+    "worsened_metrics": [
+      "warnings_count",
+      "class_imbalance_ratio",
+      "inactive_branch_anomaly_share",
+      "production_actions_survived_share"
+    ]
+  }
+}

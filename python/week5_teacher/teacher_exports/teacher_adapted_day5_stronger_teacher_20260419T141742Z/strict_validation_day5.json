@@ -1,0 +1,153 @@
+{
+  "run": {
+    "timestamp_utc": "2026-04-19T14:29:38Z",
+    "adapted_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_stronger_teacher_20260419T141742Z",
+    "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_stronger_teacher_20260419T141742Z",
+    "based_on_current_available_meaningful_batch": true,
+    "ongoing_long_teacher_training_not_blocking_this_run": true
+  },
+  "validation": {
+    "status": "pass",
+    "hard_failures": [],
+    "warnings": [
+      {
+        "check": "observation.categorical_soft_sum.unit_type",
+        "detail": "categorical_soft slice sum exceeds 1; potential multi-hot overlap",
+        "context": {
+          "episode_file": "episode_00000.adapted.npz",
+          "invalid_count": 1148000,
+          "encoding_type": "categorical_soft",
+          "spec_assumption": true
+        }
+      },
+      {
+        "check": "observation.categorical_soft_sum.current_action",
+        "detail": "categorical_soft slice sum exceeds 1; potential multi-hot overlap",
+        "context": {
+          "episode_file": "episode_00000.adapted.npz",
+          "invalid_count": 4000,
+          "encoding_type": "categorical_soft",
+          "spec_assumption": true
+        }
+      },
+      {
+        "check": "action.inactive_branch_nonzero",
+        "detail": "inactive branches contain non-zero values (decoder should ignore them, but this is non-canonical)",
+        "context": {
+          "episode_file": "episode_00000.adapted.npz",
+          "counts": {
+            "noop.branch_4_nonzero": 62000
+          },
+          "local_anomaly_count": 62000
+        }
+      },
+      {
+        "check": "observation.categorical_soft_sum.unit_type",
+        "detail": "categorical_soft slice sum exceeds 1; potential multi-hot overlap",
+        "context": {
+          "episode_file": "episode_00001.adapted.npz",
+          "invalid_count": 1148000,
+          "encoding_type": "categorical_soft",
+          "spec_assumption": true
+        }
+      },
+      {
+        "check": "observation.categorical_soft_sum.current_action",
+        "detail": "categorical_soft slice sum exceeds 1; potential multi-hot overlap",
+        "context": {
+          "episode_file": "episode_00001.adapted.npz",
+          "invalid_count": 4000,
+          "encoding_type": "categorical_soft",
+          "spec_assumption": true
+        }
+      },
+      {
+        "check": "action.inactive_branch_nonzero",
+        "detail": "inactive branches contain non-zero values (decoder should ignore them, but this is non-canonical)",
+        "context": {
+          "episode_file": "episode_00001.adapted.npz",
+          "counts": {
+            "noop.branch_4_nonzero": 62000
+          },
+          "local_anomaly_count": 62000
+        }
+      },
+      {
+        "check": "quality.semantic_weakening",
+        "detail": "conversion includes remap-to-noop events (semantic weakening present)",
+        "context": {
+          "remapped_to_noop_count": 436000
+        }
+      }
+    ],
+    "hard_checks_implemented": [
+      "observation shape/value/finite/one-hot/attack-channel encoding",
+      "action shape/branch sizes/branch ranges/attack local target range",
+      "global vector excluded rule (metadata + NPZ key scan)",
+      "policy-side contract consistency assumptions (no parity overclaim)"
+    ],
+    "channel_validation_policy": {
+      "owner": {
+        "encoding_type": "one_hot_strict",
+        "failure_level": "hard_failure",
+        "channel_range": [
+          2,
+          5
+        ],
+        "spec_basis": "ObservationContract owner one-hot channels [2..4]",
+        "spec_assumption": false
+      },
+      "unit_type": {
+        "encoding_type": "categorical_soft",
+        "failure_level": "warning",
+        "channel_range": [
+          5,
+          12
+        ],
+        "spec_basis": "ObservationContract unit_type block [5..11]",
+        "spec_assumption": true
+      },
+      "current_action": {
+        "encoding_type": "categorical_soft",
+        "failure_level": "warning",
+        "channel_range": [
+          12,
+          18
+        ],
+        "spec_basis": "ObservationContract current_action block [12..17]",
+        "spec_assumption": true
+      },
+      "action_direction": {
+        "encoding_type": "one_hot_strict",
+        "failure_level": "hard_failure",
+        "channel_range": [
+          18,
+          22
+        ],
+        "spec_basis": "ObservationContract action_direction one-hot channels [18..21]",
+        "spec_assumption": false
+      },
+      "produce_unit_type": {
+        "encoding_type": "one_hot_strict",
+        "failure_level": "hard_failure",
+        "channel_range": [
+          22,
+          26
+        ],
+        "spec_basis": "ObservationContract produce_unit_type one-hot channels [22..25]",
+        "spec_assumption": false
+      }
+    },
+    "policy_side_semantics_checks": {
+      "observation_contract_consistency": true,
+      "global_vector_excluded_rule_respected": true,
+      "action_decoder_assumption_consistency": true,
+      "mask_semantics_treated_as_diagnostic_only": true
+    },
+    "scope_statement": {
+      "contract_level_consistency_only": true,
+      "full_gym_unity_semantic_parity_proof": false,
+      "mask_runtime_truth_claim": false
+    }
+  }
+}

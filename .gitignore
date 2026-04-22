@@ -40,6 +40,7 @@ python/week5_teacher/teacher_rollouts/
 python/week5_teacher/teacher_exports/teacher_adapted_*/
 python/week5_teacher/teacher_exports_bc/day6_bc_ready_teacher_adapted_*/
 python/week5_teacher/teacher_models/day5_teacher_hardened_serious_*/
+python/week5_teacher/teacher_models/**/*.zip
 
 # Python caches
 python/week6_student/__pycache__/

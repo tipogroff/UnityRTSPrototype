@@ -1,0 +1,153 @@
+{
+  "status": "pass",
+  "generated_at_utc": "2026-04-21T10:36:52Z",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z",
+  "schema_version": "day6.bc_ready.v1",
+  "checks": [
+    {
+      "split": "train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_train.npz",
+      "status": "pass",
+      "samples": 1804,
+      "input_shape": [
+        1804,
+        24,
+        24,
+        27
+      ],
+      "target_shape": [
+        1804,
+        576,
+        7
+      ],
+      "branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "has_optional_mask": false,
+      "dry_run_batch": {
+        "batch_size": 64,
+        "input_batch_shape": [
+          64,
+          24,
+          24,
+          27
+        ],
+        "target_batch_shape": [
+          64,
+          576,
+          7
+        ],
+        "sample_ids_preview": [
+          "ep00000_step000000",
+          "ep00000_step000001",
+          "ep00000_step000002"
+        ]
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "split": "validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_validation.npz",
+      "status": "pass",
+      "samples": 196,
+      "input_shape": [
+        196,
+        24,
+        24,
+        27
+      ],
+      "target_shape": [
+        196,
+        576,
+        7
+      ],
+      "branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "has_optional_mask": false,
+      "dry_run_batch": {
+        "batch_size": 64,
+        "input_batch_shape": [
+          64,
+          24,
+          24,
+          27
+        ],
+        "target_batch_shape": [
+          64,
+          576,
+          7
+        ],
+        "sample_ids_preview": [
+          "ep00000_step000004",
+          "ep00000_step000016",
+          "ep00000_step000033"
+        ]
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "split": "debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_first_nonrandom_meaningful_20260421T103641Z\\bc_debug.npz",
+      "status": "pass",
+      "samples": 256,
+      "input_shape": [
+        256,
+        24,
+        24,
+        27
+      ],
+      "target_shape": [
+        256,
+        576,
+        7
+      ],
+      "branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        4,
+        9
+      ],
+      "has_optional_mask": false,
+      "dry_run_batch": {
+        "batch_size": 64,
+        "input_batch_shape": [
+          64,
+          24,
+          24,
+          27
+        ],
+        "target_batch_shape": [
+          64,
+          576,
+          7
+        ],
+        "sample_ids_preview": [
+          "ep00000_step001027",
+          "ep00000_step001091",
+          "ep00000_step000580"
+        ]
+      },
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "errors": []
+}
