@@ -27,6 +27,11 @@ bc_manifest.json
 Есть явный BC training contract поверх артефактов Week 5.
 День 2. Минимальный BC training loop по branch-wise objective
 
+Canonical Day 2 student input source (pinned):
+python/week5_teacher/teacher_exports_bc/day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z
+Status: Week 5 handoff complete (bc_train.npz, bc_validation.npz, bc_manifest.json, dry_run_bc_loader_report.json = pass).
+Rule: Day 2 training must use this BC-ready run as the current lineage source until an explicit baseline-switch decision is recorded.
+
 Задачи дня
 
 Реализовать минимальный supervised training loop для student policy.
