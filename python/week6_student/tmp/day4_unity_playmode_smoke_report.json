@@ -1,0 +1,10 @@
+{
+    "status": "pass",
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\day3_transfer_bc_main_20260423\\student_bc_transfer_best.pt",
+    "observation_validated": true,
+    "python_adapter_status": "ok",
+    "action_flat_size": 20160,
+    "unity_decode_submit_status": "pass",
+    "canonical_path_reached": true,
+    "error": ""
+}

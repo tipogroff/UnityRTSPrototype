@@ -165,3 +165,39 @@ Day 3 is considered successful when:
 - transfer candidates are explicitly and honestly classified;
 - no-transfer zones are explicit;
 - no false full-transfer claim is made.
+
+## 8) Proof-run wording correction (2026-04-23)
+
+This section clarifies interpretation wording for the supervised BC proof run with
+`StudentBCTransferModel` on the pinned BC-ready lineage.
+
+### 8.1 Optional mask interpretation
+
+- Optional mask is absent in the pinned BC-ready lineage.
+- Training remains intentionally mask-agnostic.
+- Missing mask does not imply runtime all-valid truth.
+- Optional mask is not a student input in this proof run.
+
+### 8.2 Shape interpretation wording
+
+To avoid ambiguity, keep these two shape categories separate:
+
+- **Output logits layout (forward outputs):**
+  - `action_type_logits`: `[B, 576, 6]`
+  - direction/produce logits: `[B, 576, 4]`
+  - `attack_target_local_logits`: `[B, 576, 9]`
+
+- **Head parameter tensor shapes (state_dict / Conv2d 1x1 weights):**
+  - `branch_heads.action_type_head.weight`: `[6, 96, 1, 1]`
+  - direction/produce head weights: `[4, 96, 1, 1]`
+  - `branch_heads.attack_target_local_head.weight`: `[9, 96, 1, 1]`
+
+Therefore, values such as `576`, `384`, and `864` are parameter counts for selected
+head tensors, not tensor shapes themselves.
+
+### 8.3 Scope honesty retained
+
+- No Day 2 objective semantics were changed.
+- No branch-contract order/sizes were changed.
+- No pinned lineage source was changed.
+- No runtime transfer-success claim is made from this supervised BC result.
