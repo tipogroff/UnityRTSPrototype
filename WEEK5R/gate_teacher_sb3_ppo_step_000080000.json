@@ -1,0 +1,152 @@
+{
+  "schema_version": "teacher_behavior_gate.v1",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_models\\day5_teacher_hardened_serious_v2_20260420T173711Z\\checkpoints\\teacher_sb3_ppo_step_000080000.zip",
+  "status": "FAIL_COLLAPSED_NOOP",
+  "fail_reasons": [
+    "FAIL_COLLAPSED_NOOP: movable_count=3, actor_move=0.0000, pos_delta=0, actor_noop=0.9524 > 0.90",
+    "FAIL_FALSE_FULL_TENSOR_MOVE: full_tensor_move=0.3733 >= 0.10 but actor_level_move=0.0000 < 0.05 (spurious tensor signal, not real movement)",
+    "FAIL_NO_EFFECT_BEHAVIOR: chosen_count=32, no_effect_share=1.0000 > 0.80, pos_delta=0"
+  ],
+  "warnings": [],
+  "actor_level": {
+    "full_tensor_move_share": 0.373264,
+    "actor_level_move_share": 0.0,
+    "actor_noop_share": 0.952381,
+    "ready_own_actor_count": 63,
+    "ready_movable_actor_count": 3
+  },
+  "effective_behavior": {
+    "effective_position_delta_count": 0,
+    "no_effect_action_share": 1.0,
+    "chosen_ready_own_actor_count": 32,
+    "steps_executed": 30
+  },
+  "decision_rules": {
+    "FAIL_COLLAPSED_NOOP": {
+      "triggered": true,
+      "values": {
+        "ready_movable_actor_count": 3,
+        "actor_level_move_share": 0.0,
+        "effective_position_delta_count": 0,
+        "actor_noop_share": 0.952381,
+        "threshold_noop": 0.9
+      }
+    },
+    "FAIL_FALSE_FULL_TENSOR_MOVE": {
+      "triggered": true,
+      "values": {
+        "full_tensor_move_share": 0.373264,
+        "actor_level_move_share": 0.0,
+        "threshold_full": 0.1,
+        "threshold_actor": 0.05
+      }
+    },
+    "FAIL_NO_EFFECT_BEHAVIOR": {
+      "triggered": true,
+      "values": {
+        "chosen_ready_own_actor_count": 32,
+        "no_effect_action_share": 1.0,
+        "effective_position_delta_count": 0,
+        "threshold_no_effect": 0.8
+      }
+    },
+    "SUSPICIOUS": {
+      "triggered": false,
+      "values": {
+        "actor_noop_share": 0.952381,
+        "no_effect_action_share": 1.0,
+        "threshold_noop": 0.75,
+        "threshold_no_effect": 0.6
+      }
+    },
+    "PASS": {
+      "triggered": false,
+      "values": {
+        "actor_level_move_share": 0.0,
+        "effective_position_delta_count": 0,
+        "threshold_move": 0.05
+      }
+    }
+  },
+  "meta": {
+    "generated_at_utc": "2026-04-24T19:04:39Z",
+    "algorithm_loader": "sb3_contrib.MaskablePPO",
+    "opponent": "workerRushAI",
+    "opponent_pool": [
+      "workerRushAI"
+    ],
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "episodes_actor_audit": 1,
+    "max_steps_per_episode": 60,
+    "steps_effective_audit": 30,
+    "seed": 170,
+    "device": "cpu",
+    "method_limits": [
+      "Gate runs inside Gym-µRTS only. Does NOT claim Gym->Unity semantic parity.",
+      "Full-tensor Move share is NOT evidence of real movement.",
+      "Effective-behavior state-diff is an observation proxy, not a confirmed execution stream.",
+      "Actor-level analysis covers source_unit_mask==1 cells (teacher-owned ready units)."
+    ]
+  },
+  "raw_actor_level": {
+    "full_tensor_move_share": 0.373264,
+    "actor_level_move_share": 0.0,
+    "actor_noop_share": 0.952381,
+    "ready_own_actor_count": 63,
+    "ready_movable_actor_count": 3,
+    "steps_total": 60,
+    "steps_with_ready_actors": 60,
+    "steps_with_movable_ready_actors": 3,
+    "steps_movable_ready_but_no_move": 3,
+    "full_tensor_action_distribution": {
+      "NoOp": {
+        "count": 10320,
+        "share": 0.298611
+      },
+      "Move": {
+        "count": 12900,
+        "share": 0.373264
+      },
+      "Harvest": {
+        "count": 2100,
+        "share": 0.060764
+      },
+      "Return": {
+        "count": 2460,
+        "share": 0.071181
+      },
+      "Produce": {
+        "count": 2940,
+        "share": 0.085069
+      },
+      "Attack": {
+        "count": 3840,
+        "share": 0.111111
+      }
+    },
+    "actor_level_action_distribution": {
+      "NoOp": {
+        "count": 60,
+        "share": 0.952381
+      },
+      "Harvest": {
+        "count": 3,
+        "share": 0.047619
+      }
+    }
+  },
+  "raw_effective_behavior": {
+    "effective_position_delta_count": 0,
+    "no_effect_action_share": 1.0,
+    "chosen_ready_own_actor_count": 32,
+    "outcome_distribution": {
+      "blocked_or_no_effect": 2,
+      "no_position_change": 30
+    },
+    "chosen_action_distribution": {
+      "NoOp": 30,
+      "Harvest": 2
+    },
+    "steps_executed": 30
+  }
+}
