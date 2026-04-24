@@ -79,6 +79,130 @@ namespace RTS.ML
         }
 
         /// <summary>
+        /// Decode transfer-compatible output only for the provided actor cell subset.
+        ///
+        /// This is used by the Week 6 live student path to enforce explicit pre-submit
+        /// ownership/control gating before actions reach ActionApplier.
+        /// </summary>
+        public List<AgentAction> DecodeTransferCompatibleBatchFiltered(
+            int[] actionFlat,
+            Owner playerPerspective,
+            IReadOnlyList<int> eligibleCellIndices)
+        {
+            var results = new List<AgentAction>();
+
+            if (actionFlat == null)
+            {
+                Debug.LogWarning("[ActionDecoder] DecodeTransferCompatibleBatchFiltered: actionFlat is null");
+                return results;
+            }
+
+            if (eligibleCellIndices == null || eligibleCellIndices.Count == 0)
+            {
+                return results;
+            }
+
+            int expectedLength = ActionContract.TotalActionFlatSize;
+            if (actionFlat.Length != expectedLength)
+            {
+                Debug.LogWarning($"[ActionDecoder] DecodeTransferCompatibleBatchFiltered: array length {actionFlat.Length} != expected {expectedLength}");
+                return results;
+            }
+
+            for (int i = 0; i < eligibleCellIndices.Count; i++)
+            {
+                int cellIndex = eligibleCellIndices[i];
+                if (!TryDecodeCell(actionFlat, cellIndex, playerPerspective, out var action))
+                    continue;
+
+                if (action.ActionType != UnitActionType.NoOp)
+                {
+                    results.Add(action);
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Mask-aware decode for the Week 6 live student path.
+        ///
+        /// For each eligible actor cell: decode the model's chosen action_type, then consult the
+        /// runtime ActionMaskSet to verify the action is permitted for this actor right now.
+        /// If the model chose a masked-out action type, the cell is silently treated as NoOp
+        /// (safe fallback). Branch parameters (direction, produce type, attack target) are
+        /// decoded by the normal path only after the action_type clears the mask check.
+        ///
+        /// Important: this does NOT replace runtime validation — ActionApplier remains the
+        /// authoritative gate. This is only a pre-submit live policy helper that prevents
+        /// submitting obviously disallowed action types before they reach the runtime.
+        ///
+        /// Out params carry diagnostics for the compact episode report.
+        /// </summary>
+        public List<AgentAction> DecodeTransferCompatibleBatchMaskAware(
+            int[] actionFlat,
+            Owner playerPerspective,
+            IReadOnlyList<int> eligibleCellIndices,
+            ActionMaskSet maskSet,
+            out int maskedOutChoicesCount,
+            out int fallbackToNoopCount,
+            out Dictionary<UnitActionType, int> preMaskHistogram,
+            out Dictionary<UnitActionType, int> postMaskHistogram)
+        {
+            maskedOutChoicesCount = 0;
+            fallbackToNoopCount = 0;
+            preMaskHistogram = new Dictionary<UnitActionType, int>();
+            postMaskHistogram = new Dictionary<UnitActionType, int>();
+            var results = new List<AgentAction>();
+
+            if (actionFlat == null || eligibleCellIndices == null || eligibleCellIndices.Count == 0)
+                return results;
+
+            int expectedLength = ActionContract.TotalActionFlatSize;
+            if (actionFlat.Length != expectedLength)
+            {
+                Debug.LogWarning($"[ActionDecoder] DecodeTransferCompatibleBatchMaskAware: array length {actionFlat.Length} != expected {expectedLength}");
+                return results;
+            }
+
+            for (int i = 0; i < eligibleCellIndices.Count; i++)
+            {
+                int cellIndex = eligibleCellIndices[i];
+
+                // Decode the full action first (validates unit existence, branches, etc.)
+                if (!TryDecodeCell(actionFlat, cellIndex, playerPerspective, out AgentAction action))
+                    continue;
+
+                if (action.ActionType == UnitActionType.NoOp)
+                    continue;
+
+                // Track what the model chose before mask constraint
+                IncrementActionDict(preMaskHistogram, action.ActionType);
+
+                // Check runtime mask for this actor: if the chosen action type is explicitly
+                // masked out, fall back to NoOp. maskSet may be null (e.g. baseline path or
+                // if mask build failed) — in that case treat all actions as permitted.
+                if (maskSet != null)
+                {
+                    ActorActionMask actorMask = maskSet.GetActorMaskByFlatIndex(cellIndex);
+                    if (actorMask != null && !actorMask.IsActionTypeEnabled(action.ActionType))
+                    {
+                        // Masked out: skip (safe fallback to NoOp)
+                        maskedOutChoicesCount++;
+                        fallbackToNoopCount++;
+                        continue;
+                    }
+                }
+
+                // Action type passes the mask — include it in the submission
+                results.Add(action);
+                IncrementActionDict(postMaskHistogram, action.ActionType);
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// [COMPAT] Decode action from v1_transfer_compatible_action_space — returns first non-NoOp action.
         ///
         /// Wrapper around DecodeTransferCompatibleBatch() for backward compatibility.
@@ -362,6 +486,13 @@ namespace RTS.ML
 
             produceType = (ProducibleUnit)value;
             return true;
+        }
+
+        private static void IncrementActionDict(Dictionary<UnitActionType, int> dict, UnitActionType key)
+        {
+            if (!dict.TryGetValue(key, out int current))
+                current = 0;
+            dict[key] = current + 1;
         }
 
     }

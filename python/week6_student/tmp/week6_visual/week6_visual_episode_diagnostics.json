@@ -1,0 +1,313 @@
+{
+    "report_version": "week6_episode_diagnostics_v1",
+    "generated_at_utc": "2026-04-24T11:22:41.1636460Z",
+    "episode_index": 1,
+    "steps_run": 12,
+    "terminal_reason": "Loss",
+    "student_side": {
+        "side": "Player1",
+        "candidate_cells_total": 6912,
+        "eligible_own_actor_cells": 42,
+        "filtered_out_neutral_cells": 0,
+        "filtered_out_enemy_cells": 150,
+        "filtered_out_noncontrollable_cells": 6720,
+        "commands_built_after_filter": 4,
+        "commands_submitted_after_filter": 4,
+        "wrong_owner_rejections_after_filter": 0,
+        "mask_constrained_action_selection_enabled": true,
+        "masked_out_action_type_choices_count": 23,
+        "fallback_to_noop_count": 23,
+        "pre_mask_raw_action_type_histogram": [
+            {
+                "key": "Attack",
+                "value": 10
+            },
+            {
+                "key": "Produce",
+                "value": 9
+            },
+            {
+                "key": "Return",
+                "value": 8
+            }
+        ],
+        "post_mask_action_type_histogram": [
+            {
+                "key": "Produce",
+                "value": 4
+            }
+        ],
+        "action_attempts_by_type": [
+            {
+                "key": "Produce",
+                "value": 4
+            },
+            {
+                "key": "NoOp",
+                "value": 0
+            },
+            {
+                "key": "Move",
+                "value": 0
+            },
+            {
+                "key": "Harvest",
+                "value": 0
+            },
+            {
+                "key": "Return",
+                "value": 0
+            },
+            {
+                "key": "Attack",
+                "value": 0
+            }
+        ],
+        "accepted_actions_by_type": [
+            {
+                "key": "Produce",
+                "value": 6
+            },
+            {
+                "key": "NoOp",
+                "value": 0
+            },
+            {
+                "key": "Move",
+                "value": 0
+            },
+            {
+                "key": "Harvest",
+                "value": 0
+            },
+            {
+                "key": "Return",
+                "value": 0
+            },
+            {
+                "key": "Attack",
+                "value": 0
+            }
+        ],
+        "rejected_invalid_actions_by_type": [
+            {
+                "key": "NoOp",
+                "value": 0
+            },
+            {
+                "key": "Move",
+                "value": 0
+            },
+            {
+                "key": "Harvest",
+                "value": 0
+            },
+            {
+                "key": "Return",
+                "value": 0
+            },
+            {
+                "key": "Produce",
+                "value": 0
+            },
+            {
+                "key": "Attack",
+                "value": 0
+            }
+        ],
+        "runtime_rejected_actions_by_type": [],
+        "rejection_reason_histogram": [
+            {
+                "key": "occupied_target",
+                "value": 3
+            }
+        ],
+        "move_attempts": 0,
+        "accepted_moves": 0,
+        "move_success_rate": 0.0,
+        "produce_attempts": 4,
+        "accepted_produces": 6,
+        "produced_unit_type_histogram": [
+            {
+                "key": "Ranged",
+                "value": 4
+            },
+            {
+                "key": "Worker",
+                "value": 2
+            }
+        ],
+        "attack_attempts": 0,
+        "accepted_attacks": 0,
+        "accepted_total": 6,
+        "rejected_total": 0,
+        "invalid_share": 0.0,
+        "ignored_share": 0.0,
+        "raw_chosen_action_type_histogram": [
+            {
+                "key": "Produce",
+                "value": 4
+            }
+        ]
+    },
+    "baseline_side": {
+        "side": "Player2",
+        "candidate_cells_total": 0,
+        "eligible_own_actor_cells": 0,
+        "filtered_out_neutral_cells": 0,
+        "filtered_out_enemy_cells": 0,
+        "filtered_out_noncontrollable_cells": 0,
+        "commands_built_after_filter": 0,
+        "commands_submitted_after_filter": 0,
+        "wrong_owner_rejections_after_filter": 0,
+        "mask_constrained_action_selection_enabled": false,
+        "masked_out_action_type_choices_count": 0,
+        "fallback_to_noop_count": 0,
+        "pre_mask_raw_action_type_histogram": [],
+        "post_mask_action_type_histogram": [],
+        "action_attempts_by_type": [
+            {
+                "key": "Move",
+                "value": 417
+            },
+            {
+                "key": "Produce",
+                "value": 27
+            },
+            {
+                "key": "Attack",
+                "value": 26
+            },
+            {
+                "key": "Harvest",
+                "value": 10
+            },
+            {
+                "key": "Return",
+                "value": 1
+            },
+            {
+                "key": "NoOp",
+                "value": 0
+            }
+        ],
+        "accepted_actions_by_type": [
+            {
+                "key": "Move",
+                "value": 347
+            },
+            {
+                "key": "Produce",
+                "value": 27
+            },
+            {
+                "key": "Attack",
+                "value": 25
+            },
+            {
+                "key": "Harvest",
+                "value": 10
+            },
+            {
+                "key": "Return",
+                "value": 1
+            },
+            {
+                "key": "NoOp",
+                "value": 0
+            }
+        ],
+        "rejected_invalid_actions_by_type": [
+            {
+                "key": "Move",
+                "value": 70
+            },
+            {
+                "key": "Attack",
+                "value": 1
+            },
+            {
+                "key": "NoOp",
+                "value": 0
+            },
+            {
+                "key": "Harvest",
+                "value": 0
+            },
+            {
+                "key": "Return",
+                "value": 0
+            },
+            {
+                "key": "Produce",
+                "value": 0
+            }
+        ],
+        "runtime_rejected_actions_by_type": [
+            {
+                "key": "Move",
+                "value": 70
+            },
+            {
+                "key": "Attack",
+                "value": 1
+            }
+        ],
+        "rejection_reason_histogram": [
+            {
+                "key": "other",
+                "value": 71
+            }
+        ],
+        "move_attempts": 417,
+        "accepted_moves": 347,
+        "move_success_rate": 0.8321343064308167,
+        "produce_attempts": 27,
+        "accepted_produces": 27,
+        "produced_unit_type_histogram": [
+            {
+                "key": "Light",
+                "value": 14
+            },
+            {
+                "key": "Worker",
+                "value": 13
+            }
+        ],
+        "attack_attempts": 26,
+        "accepted_attacks": 25,
+        "accepted_total": 410,
+        "rejected_total": 71,
+        "invalid_share": 0.147609144449234,
+        "ignored_share": 0.147609144449234,
+        "raw_chosen_action_type_histogram": [
+            {
+                "key": "Move",
+                "value": 417
+            },
+            {
+                "key": "Produce",
+                "value": 27
+            },
+            {
+                "key": "Attack",
+                "value": 26
+            },
+            {
+                "key": "Harvest",
+                "value": 10
+            },
+            {
+                "key": "Return",
+                "value": 1
+            }
+        ]
+    },
+    "accepted_total": 416,
+    "rejected_total": 71,
+    "invalid_share": 0.14579054713249207,
+    "ignored_share": 0.14579054713249207,
+    "interpretation_hints": [
+        "student_policy_bias_possible: produce dominates while move is rarely selected"
+    ]
+}

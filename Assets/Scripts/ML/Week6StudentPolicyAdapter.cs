@@ -21,6 +21,8 @@ namespace RTS.ML
     {
         private readonly AgentAction[] _decodedActions;
         private readonly string[] _rejectionReasons;
+        private readonly StudentLiveFilterDiagnostics _filterDiagnostics;
+        private readonly StudentMaskAwareDiagnostics _maskAwareDiagnostics;
 
         public StudentPolicyExecutionReport(
             Owner playerId,
@@ -30,6 +32,8 @@ namespace RTS.ML
             int acceptedCount,
             int rejectedCount,
             IReadOnlyList<string> rejectionReasons,
+            StudentLiveFilterDiagnostics filterDiagnostics,
+            StudentMaskAwareDiagnostics maskAwareDiagnostics,
             string error)
         {
             PlayerId = playerId;
@@ -37,6 +41,8 @@ namespace RTS.ML
             UsedCanonicalStepInput = usedCanonicalStepInput;
             _decodedActions = Copy(decodedActions);
             _rejectionReasons = CopyStrings(rejectionReasons);
+            _filterDiagnostics = filterDiagnostics;
+            _maskAwareDiagnostics = maskAwareDiagnostics;
             AcceptedCount = acceptedCount;
             RejectedCount = rejectedCount;
             Error = error ?? string.Empty;
@@ -48,6 +54,8 @@ namespace RTS.ML
         public IReadOnlyList<AgentAction> DecodedActions => _decodedActions;
         public int DecodedActionCount => _decodedActions.Length;
         public IReadOnlyList<string> RejectionReasons => _rejectionReasons;
+        public StudentLiveFilterDiagnostics FilterDiagnostics => _filterDiagnostics;
+        public StudentMaskAwareDiagnostics MaskAwareDiagnostics => _maskAwareDiagnostics;
         public int AcceptedCount { get; }
         public int RejectedCount { get; }
         public string Error { get; }
@@ -83,6 +91,96 @@ namespace RTS.ML
 
             return copy;
         }
+    }
+
+    public readonly struct StudentLiveFilterDiagnostics
+    {
+        public StudentLiveFilterDiagnostics(
+            int candidateCellsTotal,
+            int eligibleOwnActorCells,
+            int filteredOutNeutralCells,
+            int filteredOutEnemyCells,
+            int filteredOutNoncontrollableCells,
+            int commandsBuiltAfterFilter,
+            int commandsSubmittedAfterFilter,
+            int wrongOwnerRejectionsAfterFilter)
+        {
+            CandidateCellsTotal = candidateCellsTotal;
+            EligibleOwnActorCells = eligibleOwnActorCells;
+            FilteredOutNeutralCells = filteredOutNeutralCells;
+            FilteredOutEnemyCells = filteredOutEnemyCells;
+            FilteredOutNoncontrollableCells = filteredOutNoncontrollableCells;
+            CommandsBuiltAfterFilter = commandsBuiltAfterFilter;
+            CommandsSubmittedAfterFilter = commandsSubmittedAfterFilter;
+            WrongOwnerRejectionsAfterFilter = wrongOwnerRejectionsAfterFilter;
+        }
+
+        public static StudentLiveFilterDiagnostics Empty =>
+            new StudentLiveFilterDiagnostics(0, 0, 0, 0, 0, 0, 0, 0);
+
+        public int CandidateCellsTotal { get; }
+        public int EligibleOwnActorCells { get; }
+        public int FilteredOutNeutralCells { get; }
+        public int FilteredOutEnemyCells { get; }
+        public int FilteredOutNoncontrollableCells { get; }
+        public int CommandsBuiltAfterFilter { get; }
+        public int CommandsSubmittedAfterFilter { get; }
+        public int WrongOwnerRejectionsAfterFilter { get; }
+
+        public StudentLiveFilterDiagnostics WithSubmissionOutcome(
+            int commandsBuiltAfterFilter,
+            int commandsSubmittedAfterFilter,
+            int wrongOwnerRejectionsAfterFilter)
+        {
+            return new StudentLiveFilterDiagnostics(
+                CandidateCellsTotal,
+                EligibleOwnActorCells,
+                FilteredOutNeutralCells,
+                FilteredOutEnemyCells,
+                FilteredOutNoncontrollableCells,
+                commandsBuiltAfterFilter,
+                commandsSubmittedAfterFilter,
+                wrongOwnerRejectionsAfterFilter);
+        }
+    }
+
+    /// <summary>
+    /// Diagnostics for runtime mask-aware constrained action-type selection in the student live path.
+    ///
+    /// Enabled = true means the pre-submit mask check was active for this step.
+    /// MaskedOutActionTypeChoicesCount counts cells where the model's chosen action_type was
+    /// explicitly masked out and the cell was treated as NoOp (safe fallback).
+    /// PreMaskRaw/PostMask histograms reveal the gap between raw policy bias and submitted types.
+    ///
+    /// This does not replace authoritative runtime validation. It is a pre-submit helper only.
+    /// </summary>
+    public readonly struct StudentMaskAwareDiagnostics
+    {
+        public StudentMaskAwareDiagnostics(
+            bool enabled,
+            int maskedOutActionTypeChoicesCount,
+            int fallbackToNoopCount,
+            IReadOnlyDictionary<UnitActionType, int> preMaskRawHistogram,
+            IReadOnlyDictionary<UnitActionType, int> postMaskHistogram)
+        {
+            Enabled = enabled;
+            MaskedOutActionTypeChoicesCount = maskedOutActionTypeChoicesCount;
+            FallbackToNoopCount = fallbackToNoopCount;
+            PreMaskRawHistogram = preMaskRawHistogram ?? EmptyHistogram;
+            PostMaskHistogram = postMaskHistogram ?? EmptyHistogram;
+        }
+
+        private static readonly IReadOnlyDictionary<UnitActionType, int> EmptyHistogram =
+            new Dictionary<UnitActionType, int>();
+
+        public bool Enabled { get; }
+        public int MaskedOutActionTypeChoicesCount { get; }
+        public int FallbackToNoopCount { get; }
+        public IReadOnlyDictionary<UnitActionType, int> PreMaskRawHistogram { get; }
+        public IReadOnlyDictionary<UnitActionType, int> PostMaskHistogram { get; }
+
+        public static StudentMaskAwareDiagnostics Empty =>
+            new StudentMaskAwareDiagnostics(false, 0, 0, null, null);
     }
 
     public readonly struct StudentBridgeRuntimeSnapshot
@@ -385,11 +483,33 @@ namespace RTS.ML
                     ? stepInput.CanonicalMask
                     : _policyPipeline.BuildTransferCompatibleMask(playerId);
 
-                PolicyExecutionReport execution = _policyPipeline.ExecuteTransferCompatible(
+                StudentLiveFilterDiagnostics filterDiagnostics = BuildStudentFilterDiagnostics(playerId, mask, out List<int> eligibleCellIndices);
+
+                PolicyExecutionReport execution = _policyPipeline.ExecuteTransferCompatibleMaskAware(
                     adapterResult.action_flat,
                     playerId,
+                    eligibleCellIndices,
                     mask,
+                    out int maskedOutChoicesCount,
+                    out int fallbackToNoopCount,
+                    out Dictionary<UnitActionType, int> preMaskHistogram,
+                    out Dictionary<UnitActionType, int> postMaskHistogram,
                     "week6-day5-student-live");
+
+                var maskAwareDiagnostics = new StudentMaskAwareDiagnostics(
+                    enabled: true,
+                    maskedOutActionTypeChoicesCount: maskedOutChoicesCount,
+                    fallbackToNoopCount: fallbackToNoopCount,
+                    preMaskRawHistogram: preMaskHistogram,
+                    postMaskHistogram: postMaskHistogram);
+
+                int commandsBuiltAfterFilter = execution.DecodedActions.Count;
+                int commandsSubmittedAfterFilter = execution.AcceptedCount + execution.RejectedCount;
+                int wrongOwnerRejectionsAfterFilter = CountWrongOwnerRejections(execution.RejectionReasons);
+                filterDiagnostics = filterDiagnostics.WithSubmissionOutcome(
+                    commandsBuiltAfterFilter,
+                    commandsSubmittedAfterFilter,
+                    wrongOwnerRejectionsAfterFilter);
 
                 StudentPolicyExecutionReport report = new StudentPolicyExecutionReport(
                     playerId,
@@ -399,6 +519,8 @@ namespace RTS.ML
                     acceptedCount: execution.AcceptedCount,
                     rejectedCount: execution.RejectedCount,
                     rejectionReasons: execution.RejectionReasons,
+                    filterDiagnostics: filterDiagnostics,
+                    maskAwareDiagnostics: maskAwareDiagnostics,
                     error: string.Empty);
 
                 _decisionRequestsSucceeded++;
@@ -409,7 +531,10 @@ namespace RTS.ML
                 {
                     Debug.Log(
                         $"[Week6StudentPolicyAdapter] player={playerId}, canonical={canUseCanonical}, " +
-                        $"decoded={report.DecodedActionCount}, accepted={report.AcceptedCount}, rejected={report.RejectedCount}");
+                        $"decoded={report.DecodedActionCount}, accepted={report.AcceptedCount}, rejected={report.RejectedCount}, " +
+                        $"eligibleCells={report.FilterDiagnostics.EligibleOwnActorCells}, builtAfterFilter={report.FilterDiagnostics.CommandsBuiltAfterFilter}, " +
+                        $"wrongOwnerAfterFilter={report.FilterDiagnostics.WrongOwnerRejectionsAfterFilter}, " +
+                        $"maskedOut={report.MaskAwareDiagnostics.MaskedOutActionTypeChoicesCount}, fallbackNoop={report.MaskAwareDiagnostics.FallbackToNoopCount}");
                 }
 
                 _lastReportByPlayer[playerId] = report;
@@ -447,6 +572,8 @@ namespace RTS.ML
                 acceptedCount: 0,
                 rejectedCount: 0,
                 rejectionReasons: Array.Empty<string>(),
+                filterDiagnostics: StudentLiveFilterDiagnostics.Empty,
+                maskAwareDiagnostics: StudentMaskAwareDiagnostics.Empty,
                 error: finalError);
         }
 
@@ -834,6 +961,95 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private StudentLiveFilterDiagnostics BuildStudentFilterDiagnostics(
+            Owner playerId,
+            ActionMaskSet mask,
+            out List<int> eligibleCellIndices)
+        {
+            eligibleCellIndices = new List<int>(mask != null ? Mathf.Max(mask.AvailableActorCount, 0) : 0);
+
+            int candidateCellsTotal = ActionContract.TotalCells;
+            int filteredOutNeutralCells = 0;
+            int filteredOutEnemyCells = 0;
+            int filteredOutNoncontrollableCells = 0;
+            int eligibleOwnActorCells = 0;
+
+            for (int cellIndex = 0; cellIndex < ActionContract.TotalCells; cellIndex++)
+            {
+                GridPosition position = GridPosition.FromFlatIndex(cellIndex);
+                UnitRuntime unit = _gridManager.GetOccupant(position);
+
+                if (unit == null || !unit.IsAlive || unit.Type == UnitType.Resource)
+                {
+                    filteredOutNoncontrollableCells++;
+                    continue;
+                }
+
+                if (unit.Owner == Owner.Neutral)
+                {
+                    filteredOutNeutralCells++;
+                    continue;
+                }
+
+                if (unit.Owner != playerId)
+                {
+                    filteredOutEnemyCells++;
+                    continue;
+                }
+
+                bool eligibleByMask = mask != null
+                    && mask.ActorCellMask != null
+                    && cellIndex >= 0
+                    && cellIndex < mask.ActorCellMask.Length
+                    && mask.ActorCellMask[cellIndex];
+
+                if (!eligibleByMask)
+                {
+                    filteredOutNoncontrollableCells++;
+                    continue;
+                }
+
+                eligibleOwnActorCells++;
+                eligibleCellIndices.Add(cellIndex);
+            }
+
+            return new StudentLiveFilterDiagnostics(
+                candidateCellsTotal,
+                eligibleOwnActorCells,
+                filteredOutNeutralCells,
+                filteredOutEnemyCells,
+                filteredOutNoncontrollableCells,
+                0,
+                0,
+                0);
+        }
+
+        private static int CountWrongOwnerRejections(IReadOnlyList<string> rejectionReasons)
+        {
+            if (rejectionReasons == null || rejectionReasons.Count == 0)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            for (int i = 0; i < rejectionReasons.Count; i++)
+            {
+                string reason = rejectionReasons[i];
+                if (string.IsNullOrWhiteSpace(reason))
+                {
+                    continue;
+                }
+
+                if (reason.IndexOf("belongs to", StringComparison.OrdinalIgnoreCase) >= 0
+                    || reason.IndexOf("not Player", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 }

@@ -212,6 +212,63 @@ namespace RTS.ML
             return ApplyDecodedActions(decodedActions, playerPerspective, maskAtSelection, sourceActionFormat);
         }
 
+        /// <summary>
+        /// Week 6 live-student helper: execute transfer-compatible output only for eligible actor cells.
+        ///
+        /// This keeps the same authoritative branch contract and apply path, but prevents submitting
+        /// candidates decoded from non-eligible cells.
+        /// </summary>
+        public PolicyExecutionReport ExecuteTransferCompatibleFiltered(
+            int[] actionFlat,
+            Owner playerPerspective,
+            IReadOnlyList<int> eligibleCellIndices,
+            ActionMaskSet maskAtSelection = null,
+            string sourceActionFormat = "ml-policy")
+        {
+            var decodedActions = _actionDecoder.DecodeTransferCompatibleBatchFiltered(
+                actionFlat,
+                playerPerspective,
+                eligibleCellIndices);
+
+            return ApplyDecodedActions(decodedActions, playerPerspective, maskAtSelection, sourceActionFormat);
+        }
+
+        /// <summary>
+        /// Week 6 live-student helper: execute transfer-compatible output with runtime mask-aware
+        /// constrained action-type selection.
+        ///
+        /// Pre-submit gate: for each eligible actor cell, the model's chosen action_type is
+        /// checked against the runtime ActionMaskSet. If the chosen type is masked out, the cell
+        /// is treated as NoOp (safe fallback). This reduces spurious submits before they reach
+        /// the authoritative runtime.
+        ///
+        /// Important: ActionApplier and MatchManager remain the authoritative runtime gates.
+        /// This helper only prevents obviously disallowed choices from being submitted.
+        /// </summary>
+        public PolicyExecutionReport ExecuteTransferCompatibleMaskAware(
+            int[] actionFlat,
+            Owner playerPerspective,
+            IReadOnlyList<int> eligibleCellIndices,
+            ActionMaskSet maskSet,
+            out int maskedOutChoicesCount,
+            out int fallbackToNoopCount,
+            out Dictionary<UnitActionType, int> preMaskHistogram,
+            out Dictionary<UnitActionType, int> postMaskHistogram,
+            string sourceActionFormat = "ml-policy")
+        {
+            var decodedActions = _actionDecoder.DecodeTransferCompatibleBatchMaskAware(
+                actionFlat,
+                playerPerspective,
+                eligibleCellIndices,
+                maskSet,
+                out maskedOutChoicesCount,
+                out fallbackToNoopCount,
+                out preMaskHistogram,
+                out postMaskHistogram);
+
+            return ApplyDecodedActions(decodedActions, playerPerspective, maskSet, sourceActionFormat);
+        }
+
         internal DebugActionMaskSet BuildDebugMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
         {
             return _actionMaskBuilder.BuildDebugMask(playerId, noOpOnlyWhenNotRunning);

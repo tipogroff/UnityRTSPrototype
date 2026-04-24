@@ -17,6 +17,19 @@ namespace RTS.ML
     public sealed class Week6SideDiagnosticsReport
     {
         public string side;
+        public int candidate_cells_total;
+        public int eligible_own_actor_cells;
+        public int filtered_out_neutral_cells;
+        public int filtered_out_enemy_cells;
+        public int filtered_out_noncontrollable_cells;
+        public int commands_built_after_filter;
+        public int commands_submitted_after_filter;
+        public int wrong_owner_rejections_after_filter;
+        public bool mask_constrained_action_selection_enabled;
+        public int masked_out_action_type_choices_count;
+        public int fallback_to_noop_count;
+        public Week6CountEntry[] pre_mask_raw_action_type_histogram;
+        public Week6CountEntry[] post_mask_action_type_histogram;
         public Week6CountEntry[] action_attempts_by_type;
         public Week6CountEntry[] accepted_actions_by_type;
         public Week6CountEntry[] rejected_invalid_actions_by_type;
@@ -69,6 +82,19 @@ namespace RTS.ML
             public readonly Dictionary<UnitActionType, int> RuntimeRejectedByType = new Dictionary<UnitActionType, int>();
             public readonly Dictionary<string, int> RejectionReasons = new Dictionary<string, int>(StringComparer.Ordinal);
             public readonly Dictionary<string, int> RuntimeAcceptedProduceType = new Dictionary<string, int>(StringComparer.Ordinal);
+            public int CandidateCellsTotal;
+            public int EligibleOwnActorCells;
+            public int FilteredOutNeutralCells;
+            public int FilteredOutEnemyCells;
+            public int FilteredOutNoncontrollableCells;
+            public int CommandsBuiltAfterFilter;
+            public int CommandsSubmittedAfterFilter;
+            public int WrongOwnerRejectionsAfterFilter;
+            public bool MaskConstrainedEnabled;
+            public int MaskedOutActionTypeChoicesCount;
+            public int FallbackToNoopCount;
+            public readonly Dictionary<UnitActionType, int> PreMaskRawHistogram = new Dictionary<UnitActionType, int>();
+            public readonly Dictionary<UnitActionType, int> PostMaskHistogram = new Dictionary<UnitActionType, int>();
         }
 
         private readonly SideAccumulator _student;
@@ -117,6 +143,33 @@ namespace RTS.ML
             {
                 Increment(_student.RejectionReasons, NormalizeReason(rejectionReasons[i]));
             }
+        }
+
+        public void RecordStudentFilterDiagnostics(StudentLiveFilterDiagnostics diagnostics)
+        {
+            _student.CandidateCellsTotal += diagnostics.CandidateCellsTotal;
+            _student.EligibleOwnActorCells += diagnostics.EligibleOwnActorCells;
+            _student.FilteredOutNeutralCells += diagnostics.FilteredOutNeutralCells;
+            _student.FilteredOutEnemyCells += diagnostics.FilteredOutEnemyCells;
+            _student.FilteredOutNoncontrollableCells += diagnostics.FilteredOutNoncontrollableCells;
+            _student.CommandsBuiltAfterFilter += diagnostics.CommandsBuiltAfterFilter;
+            _student.CommandsSubmittedAfterFilter += diagnostics.CommandsSubmittedAfterFilter;
+            _student.WrongOwnerRejectionsAfterFilter += diagnostics.WrongOwnerRejectionsAfterFilter;
+        }
+
+        public void RecordStudentMaskAwareDiagnostics(StudentMaskAwareDiagnostics diagnostics)
+        {
+            if (diagnostics.Enabled)
+                _student.MaskConstrainedEnabled = true;
+
+            _student.MaskedOutActionTypeChoicesCount += diagnostics.MaskedOutActionTypeChoicesCount;
+            _student.FallbackToNoopCount += diagnostics.FallbackToNoopCount;
+
+            foreach (KeyValuePair<UnitActionType, int> kvp in diagnostics.PreMaskRawHistogram)
+                Increment(_student.PreMaskRawHistogram, kvp.Key, kvp.Value);
+
+            foreach (KeyValuePair<UnitActionType, int> kvp in diagnostics.PostMaskHistogram)
+                Increment(_student.PostMaskHistogram, kvp.Key, kvp.Value);
         }
 
         public void RecordHeuristicActionEvaluation(HeuristicActionEvaluation evaluation)
@@ -196,6 +249,19 @@ namespace RTS.ML
             return new Week6SideDiagnosticsReport
             {
                 side = side.Owner.ToString(),
+                candidate_cells_total = side.CandidateCellsTotal,
+                eligible_own_actor_cells = side.EligibleOwnActorCells,
+                filtered_out_neutral_cells = side.FilteredOutNeutralCells,
+                filtered_out_enemy_cells = side.FilteredOutEnemyCells,
+                filtered_out_noncontrollable_cells = side.FilteredOutNoncontrollableCells,
+                commands_built_after_filter = side.CommandsBuiltAfterFilter,
+                commands_submitted_after_filter = side.CommandsSubmittedAfterFilter,
+                wrong_owner_rejections_after_filter = side.WrongOwnerRejectionsAfterFilter,
+                mask_constrained_action_selection_enabled = side.MaskConstrainedEnabled,
+                masked_out_action_type_choices_count = side.MaskedOutActionTypeChoicesCount,
+                fallback_to_noop_count = side.FallbackToNoopCount,
+                pre_mask_raw_action_type_histogram = ToActionEntries(side.PreMaskRawHistogram),
+                post_mask_action_type_histogram = ToActionEntries(side.PostMaskHistogram),
                 action_attempts_by_type = ToActionEntries(attempts),
                 accepted_actions_by_type = ToActionEntries(acceptedFinal),
                 rejected_invalid_actions_by_type = ToActionEntries(rejectedByType),
@@ -301,6 +367,16 @@ namespace RTS.ML
             }
 
             counts[key] = value + 1;
+        }
+
+        private static void Increment<TKey>(IDictionary<TKey, int> counts, TKey key, int amount)
+        {
+            if (!counts.TryGetValue(key, out int value))
+            {
+                value = 0;
+            }
+
+            counts[key] = value + amount;
         }
 
         private static int GetCount<TKey>(IReadOnlyDictionary<TKey, int> counts, TKey key)

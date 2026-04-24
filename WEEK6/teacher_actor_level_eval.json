@@ -1,0 +1,426 @@
+{
+  "report_generated_at_utc": "2026-04-24T15:04:20Z",
+  "checkpoint": {
+    "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_models\\day5_teacher_hardened_serious_v2_20260420T173711Z\\checkpoints\\teacher_sb3_ppo_step_000080000.zip",
+    "algorithm_loader": "sb3_contrib.MaskablePPO"
+  },
+  "protocol": {
+    "episodes": 3,
+    "max_steps": 800,
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "opponent_pool": [
+      "workerRushAI"
+    ],
+    "opponent_sampling_requested": "static",
+    "episode_opponents_requested": [
+      "workerRushAI",
+      "workerRushAI",
+      "workerRushAI"
+    ],
+    "opponent_sampling_effective": "static",
+    "episode_opponents_effective": [
+      "workerRushAI",
+      "workerRushAI",
+      "workerRushAI"
+    ],
+    "opponent_sampling_note": "Legacy gym_microrts backend runs under a single JVM per process. To avoid JVM restart failures, this evaluator reuses one env/opponent for all episodes.",
+    "seed": 170
+  },
+  "teacher_side": {
+    "full_tensor_action_distribution": {
+      "NoOp": {
+        "count": 260463,
+        "share": 0.29847703520352037
+      },
+      "Move": {
+        "count": 325587,
+        "share": 0.3731057480748075
+      },
+      "Harvest": {
+        "count": 53025,
+        "share": 0.06076388888888889
+      },
+      "Return": {
+        "count": 62229,
+        "share": 0.07131119361936193
+      },
+      "Produce": {
+        "count": 74376,
+        "share": 0.08523102310231023
+      },
+      "Attack": {
+        "count": 96960,
+        "share": 0.1111111111111111
+      }
+    },
+    "full_tensor_early_game_distribution": {
+      "first_20_steps": {
+        "NoOp": {
+          "count": 10320,
+          "share": 0.2986111111111111
+        },
+        "Move": {
+          "count": 12900,
+          "share": 0.3732638888888889
+        },
+        "Harvest": {
+          "count": 2100,
+          "share": 0.06076388888888889
+        },
+        "Return": {
+          "count": 2460,
+          "share": 0.07118055555555555
+        },
+        "Produce": {
+          "count": 2940,
+          "share": 0.08506944444444445
+        },
+        "Attack": {
+          "count": 3840,
+          "share": 0.1111111111111111
+        }
+      },
+      "first_50_steps": {
+        "NoOp": {
+          "count": 25800,
+          "share": 0.2986111111111111
+        },
+        "Move": {
+          "count": 32250,
+          "share": 0.3732638888888889
+        },
+        "Harvest": {
+          "count": 5250,
+          "share": 0.06076388888888889
+        },
+        "Return": {
+          "count": 6150,
+          "share": 0.07118055555555555
+        },
+        "Produce": {
+          "count": 7350,
+          "share": 0.08506944444444445
+        },
+        "Attack": {
+          "count": 9600,
+          "share": 0.1111111111111111
+        }
+      }
+    },
+    "actor_level_chosen_action_distribution": {
+      "NoOp": {
+        "count": 1440,
+        "share": 0.9486166007905138
+      },
+      "Move": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Harvest": {
+        "count": 78,
+        "share": 0.05138339920948617
+      },
+      "Return": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Produce": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Attack": {
+        "count": 0,
+        "share": 0.0
+      }
+    },
+    "actor_level_early_game_distribution": {
+      "first_20_steps": {
+        "NoOp": {
+          "count": 60,
+          "share": 0.9523809523809523
+        },
+        "Move": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Harvest": {
+          "count": 3,
+          "share": 0.047619047619047616
+        },
+        "Return": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Produce": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Attack": {
+          "count": 0,
+          "share": 0.0
+        }
+      },
+      "first_50_steps": {
+        "NoOp": {
+          "count": 150,
+          "share": 0.9433962264150944
+        },
+        "Move": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Harvest": {
+          "count": 9,
+          "share": 0.05660377358490566
+        },
+        "Return": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Produce": {
+          "count": 0,
+          "share": 0.0
+        },
+        "Attack": {
+          "count": 0,
+          "share": 0.0
+        }
+      }
+    },
+    "move_presence_actor_level": {
+      "steps_total": 1515,
+      "steps_with_any_teacher_actor_move": 0,
+      "steps_with_any_teacher_actor_move_share": 0.0,
+      "episodes_total": 3,
+      "episodes_with_any_teacher_actor_move": 0,
+      "episodes_with_any_teacher_actor_move_share": 0.0
+    },
+    "ready_actor_summary": {
+      "steps_with_ready_teacher_actors": 1446,
+      "avg_ready_teacher_actors_per_ready_step": 1.049792531120332,
+      "steps_with_movable_ready_teacher_actors": 78,
+      "steps_movable_ready_but_no_move_selected": 78,
+      "steps_movable_ready_but_no_move_selected_share": 1.0
+    },
+    "full_tensor_vs_actor_level_move_share": {
+      "full_tensor_move_share": 0.3731057480748075,
+      "actor_level_move_share": 0.0,
+      "delta_actor_minus_full": -0.3731057480748075
+    },
+    "episode_summaries": [
+      {
+        "episode_index": 0,
+        "opponent": "workerRushAI",
+        "steps": 505,
+        "episode_return": 0.0,
+        "teacher_selected_move_on_ready_actors": false
+      },
+      {
+        "episode_index": 1,
+        "opponent": "workerRushAI",
+        "steps": 505,
+        "episode_return": 0.0,
+        "teacher_selected_move_on_ready_actors": false
+      },
+      {
+        "episode_index": 2,
+        "opponent": "workerRushAI",
+        "steps": 505,
+        "episode_return": 0.0,
+        "teacher_selected_move_on_ready_actors": false
+      }
+    ],
+    "step_trace_first_episode": [
+      {
+        "step": 0,
+        "ready_teacher_actors": 2,
+        "movable_ready_teacher_actors": 1,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1,
+          "Harvest": 1
+        },
+        "notable": "movable-ready actors existed but no Move selected"
+      },
+      {
+        "step": 1,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 2,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 3,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 4,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 5,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 6,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 7,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 8,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 9,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 10,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 11,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 12,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 13,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 14,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 15,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 16,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 17,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 18,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      },
+      {
+        "step": 19,
+        "ready_teacher_actors": 1,
+        "movable_ready_teacher_actors": 0,
+        "chosen_actions_teacher_ready_actors": {
+          "NoOp": 1
+        },
+        "notable": ""
+      }
+    ]
+  },
+  "opponent_side": {
+    "telemetry_available": false,
+    "note": "This evaluator does not read opponent-side chosen/executed action stream from env API. Teacher-side telemetry is isolated and never mixed with opponent actions."
+  },
+  "method_limits": [
+    "Actor-level behavior is computed as chosen actions over teacher ready controllable actors (source_unit_mask proxy).",
+    "Executed/effective action facts are not directly exposed in this path and are not claimed.",
+    "Move-availability summary assumes action-type mask layout [NoOp, Move, Harvest, Return, Produce, Attack] in slots [1:7]."
+  ]
+}

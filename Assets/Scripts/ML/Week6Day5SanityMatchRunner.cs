@@ -188,6 +188,8 @@ namespace RTS.ML
                     studentInvalidCommands += report.RejectedCount;
                     _diagnosticsCollector?.RecordStudentDecodedActions(report.DecodedActions);
                     _diagnosticsCollector?.RecordStudentRejectionReasons(report.RejectionReasons);
+                    _diagnosticsCollector?.RecordStudentFilterDiagnostics(report.FilterDiagnostics);
+                    _diagnosticsCollector?.RecordStudentMaskAwareDiagnostics(report.MaskAwareDiagnostics);
 
                     IReadOnlyList<AgentAction> decodedActions = report.DecodedActions;
                     for (int i = 0; i < decodedActions.Count; i++)

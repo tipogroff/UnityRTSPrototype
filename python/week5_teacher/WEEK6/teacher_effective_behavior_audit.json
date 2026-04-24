@@ -1,0 +1,4728 @@
+{
+  "generated_at_utc": "2026-04-24T17:21:35Z",
+  "checkpoint": {
+    "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_models\\day5_teacher_hardened_serious_v2_20260420T173711Z\\checkpoints\\teacher_sb3_ppo_step_000080000.zip",
+    "loader": "sb3_contrib.MaskablePPO",
+    "step_tag": "80000"
+  },
+  "protocol": {
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "opponent": "workerRushAI",
+    "requested_steps": 50,
+    "executed_steps": 50,
+    "deterministic": true
+  },
+  "shapes": {
+    "observation": [
+      1,
+      24,
+      24,
+      27
+    ],
+    "action_mask": [
+      1,
+      576,
+      78
+    ],
+    "action_spatial": [
+      576,
+      7
+    ]
+  },
+  "teacher_side_confirmation": {
+    "method": "Cross-reference source_unit_mask (mask column 0) with obs owner channels. Actual layout: ch10=neutral, ch11=player0(teacher), ch12=player1(opponent). Player 0 = RL agent (MicroRTSGridModeVecEnv, num_bot_envs=1, ai2s=[opponent]).",
+    "obs_channel_layout_verified": {
+      "HP_one_hot": "[0:5]",
+      "resources_one_hot": "[5:10]",
+      "owner_neutral": "ch10",
+      "owner_teacher_player0": "ch11",
+      "owner_opponent_player1": "ch12",
+      "unit_type_one_hot_8types": "[13:21]",
+      "current_action_one_hot": "[21:27]",
+      "total_channels": 27
+    },
+    "total_ready_source_unit_mask": 2,
+    "ready_with_teacher_owner_channel": 2,
+    "ready_with_opponent_owner_channel": 0,
+    "ready_with_neutral_owner_channel": 0,
+    "ready_with_empty_channel": 0,
+    "teacher_side_confirmed": true,
+    "dominant_side": "teacher",
+    "teacher_units_on_map": 2,
+    "opponent_units_on_map": 2,
+    "teacher_unit_types": [
+      "Worker",
+      "Base"
+    ],
+    "teacher_unit_details": [
+      {
+        "x": 1,
+        "y": 1,
+        "hp_band": 1,
+        "res_band": 0,
+        "owner": "teacher",
+        "unit_type": "Worker"
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "hp_band": 4,
+        "res_band": 0,
+        "owner": "teacher",
+        "unit_type": "Base"
+      }
+    ],
+    "opponent_unit_details": [
+      {
+        "x": 21,
+        "y": 21,
+        "hp_band": 4,
+        "res_band": 0,
+        "owner": "opponent",
+        "unit_type": "Base"
+      },
+      {
+        "x": 22,
+        "y": 22,
+        "hp_band": 1,
+        "res_band": 0,
+        "owner": "opponent",
+        "unit_type": "Worker"
+      }
+    ],
+    "confirmation_verdict": "CONFIRMED: source_unit_mask aligns with teacher owner channel (ch11=player0)."
+  },
+  "method_levels": {
+    "full_tensor": "action_type distribution over ALL spatial cells per step",
+    "ready_actor_chosen": "action_type distribution over source_unit_mask==1 cells only",
+    "effective_state_diff": "obs_before vs obs_after per ready actor; position+HP+resource changes",
+    "execution_claim": "NOT claimed. State-diff audit is an observation proxy, not a confirmed execution stream. Implicit movement is inferred from position change correlation with chosen action type."
+  },
+  "aggregate_summary": {
+    "steps_executed": 50,
+    "full_tensor_action_distribution": {
+      "NoOp": {
+        "count": 8600,
+        "share": 0.2986
+      },
+      "Move": {
+        "count": 10750,
+        "share": 0.3733
+      },
+      "Harvest": {
+        "count": 1750,
+        "share": 0.0608
+      },
+      "Return": {
+        "count": 2050,
+        "share": 0.0712
+      },
+      "Produce": {
+        "count": 2450,
+        "share": 0.0851
+      },
+      "Attack": {
+        "count": 3200,
+        "share": 0.1111
+      }
+    },
+    "full_tensor_total_cells": 28800,
+    "ready_actor_chosen_action_distribution": {
+      "NoOp": {
+        "count": 50,
+        "share": 0.9434
+      },
+      "Harvest": {
+        "count": 3,
+        "share": 0.0566
+      }
+    },
+    "ready_actor_total_choices": 53,
+    "effective_outcome_distribution": {
+      "blocked_or_no_effect": 3,
+      "no_position_change": 50
+    },
+    "effective_outcome_total": 53,
+    "move_effects_summary": {
+      "direct_move_effect_count": 0,
+      "implicit_move_via_harvest_count": 0,
+      "implicit_move_via_return_count": 0,
+      "implicit_move_via_attack_count": 0,
+      "any_move_effect_total": 0,
+      "any_move_effect_share_of_ready_choices": 0.0
+    },
+    "implicit_movement_hypothesis": {
+      "implicit_moves_total": 0,
+      "implicit_moves_by_action_type": {},
+      "harvest_causes_implicit_movement": false,
+      "return_causes_implicit_movement": false,
+      "attack_causes_implicit_movement": false,
+      "evidence_basis": "state-diff: unit not found at original position after step, found at adjacent cell"
+    }
+  },
+  "verdict": "No Move chosen and no position changes on ready actors. Teacher appears passive on these cells.",
+  "step_trace": [
+    {
+      "step": 0,
+      "ready_actor_count": 2,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1,
+        "Harvest": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 25,
+          "x": 1,
+          "y": 1,
+          "unit_type": "Worker",
+          "hp_band_before": 1,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "Harvest",
+          "chosen_action_type_raw": 2,
+          "action_params": {
+            "move_dir": "E",
+            "harvest_dir": "E",
+            "return_dir": "N",
+            "produce_dir": "N",
+            "produce_unit_type": "Light",
+            "attack_target": 25
+          },
+          "mask_context": {
+            "move_allowed": true,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": true,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "blocked_or_no_effect",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "harvest chosen but no resource gain while staying; may be blocked"
+            }
+          }
+        },
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 1,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 9,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 10,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 11,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 12,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 13,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 14,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 15,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 16,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 17,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 18,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 19,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 20,
+      "ready_actor_count": 2,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1,
+        "Harvest": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 25,
+          "x": 1,
+          "y": 1,
+          "unit_type": "Worker",
+          "hp_band_before": 1,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "Harvest",
+          "chosen_action_type_raw": 2,
+          "action_params": {
+            "move_dir": "E",
+            "harvest_dir": "E",
+            "return_dir": "N",
+            "produce_dir": "N",
+            "produce_unit_type": "Light",
+            "attack_target": 25
+          },
+          "mask_context": {
+            "move_allowed": true,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": true,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "blocked_or_no_effect",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "harvest chosen but no resource gain while staying; may be blocked"
+            }
+          }
+        },
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 21,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 22,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 23,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 24,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 25,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 26,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 27,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 28,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 29,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 30,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 31,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 32,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 33,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 34,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 35,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 36,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 37,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 38,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 1,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 39,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 40,
+      "ready_actor_count": 2,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1,
+        "Harvest": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 25,
+          "x": 1,
+          "y": 1,
+          "unit_type": "Worker",
+          "hp_band_before": 1,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "Harvest",
+          "chosen_action_type_raw": 2,
+          "action_params": {
+            "move_dir": "E",
+            "harvest_dir": "E",
+            "return_dir": "N",
+            "produce_dir": "N",
+            "produce_unit_type": "Light",
+            "attack_target": 25
+          },
+          "mask_context": {
+            "move_allowed": true,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": true,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "blocked_or_no_effect",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "harvest chosen but no resource gain while staying; may be blocked"
+            }
+          }
+        },
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 41,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 42,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 43,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 44,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 45,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 46,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 47,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 48,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 21,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    },
+    {
+      "step": 49,
+      "ready_actor_count": 1,
+      "full_tensor_action_counts": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 1
+      },
+      "actor_details": [
+        {
+          "flat_idx": 50,
+          "x": 2,
+          "y": 2,
+          "unit_type": "Base",
+          "hp_band_before": 4,
+          "res_band_before": 0,
+          "owner_confirmed": "teacher",
+          "chosen_action_type": "NoOp",
+          "chosen_action_type_raw": 0,
+          "action_params": {
+            "move_dir": "W",
+            "harvest_dir": "W",
+            "return_dir": "S",
+            "produce_dir": "E",
+            "produce_unit_type": "Barracks",
+            "attack_target": 23
+          },
+          "mask_context": {
+            "move_allowed": false,
+            "harvest_allowed": false,
+            "return_allowed": true,
+            "produce_allowed": false,
+            "attack_allowed": false,
+            "chosen_action_allowed": false
+          },
+          "effective_outcome": {
+            "outcome_class": "no_position_change",
+            "implicit_movement": false,
+            "state_changes": {
+              "hp_band_delta": 0,
+              "res_band_delta": 0,
+              "note": "NoOp chosen; no position change expected"
+            }
+          }
+        }
+      ],
+      "teacher_units_after_step": [
+        {
+          "x": 1,
+          "y": 1,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Worker"
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "teacher",
+          "unit_type": "Base"
+        }
+      ],
+      "opponent_units_after_step": [
+        {
+          "x": 21,
+          "y": 21,
+          "hp_band": 4,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Base"
+        },
+        {
+          "x": 22,
+          "y": 22,
+          "hp_band": 1,
+          "res_band": 0,
+          "owner": "opponent",
+          "unit_type": "Worker"
+        }
+      ]
+    }
+  ],
+  "opponent_side_note": "Opponent-side actions are not tracked in this script. All actor-level analysis strictly covers teacher-owned (player 0) ready units only."
+}

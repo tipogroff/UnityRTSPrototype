@@ -1,0 +1,423 @@
+{
+  "analysis_scope": {
+    "bc_ready_dir": "python\\week5_teacher\\teacher_exports_bc\\day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z",
+    "uses_pinned_bc_ready_as_primary": true,
+    "analysis_type": "offline_dataset_diagnostics_only"
+  },
+  "action_type_mapping": {
+    "source_of_truth": "Assets/Scripts/Core/UnitType.cs (RTS.Core.UnitActionType)",
+    "mapping": {
+      "0": "NoOp",
+      "1": "Move",
+      "2": "Harvest",
+      "3": "Return",
+      "4": "Produce",
+      "5": "Attack"
+    }
+  },
+  "bc_ready_distribution": {
+    "train": {
+      "total": 2102400,
+      "by_action": {
+        "NoOp": {
+          "action_id": 0,
+          "count": 843181,
+          "share": 0.4010564117199391,
+          "share_pct": 40.10564117199391
+        },
+        "Move": {
+          "action_id": 1,
+          "count": 838202,
+          "share": 0.39868816590563166,
+          "share_pct": 39.86881659056316
+        },
+        "Harvest": {
+          "action_id": 2,
+          "count": 109469,
+          "share": 0.05206858828006088,
+          "share_pct": 5.206858828006088
+        },
+        "Return": {
+          "action_id": 3,
+          "count": 125398,
+          "share": 0.05964516742770167,
+          "share_pct": 5.964516742770167
+        },
+        "Produce": {
+          "action_id": 4,
+          "count": 113150,
+          "share": 0.05381944444444445,
+          "share_pct": 5.381944444444445
+        },
+        "Attack": {
+          "action_id": 5,
+          "count": 73000,
+          "share": 0.034722222222222224,
+          "share_pct": 3.4722222222222223
+        }
+      }
+    },
+    "validation": {
+      "total": 224640,
+      "by_action": {
+        "NoOp": {
+          "action_id": 0,
+          "count": 90091,
+          "share": 0.40104611823361824,
+          "share_pct": 40.10461182336182
+        },
+        "Move": {
+          "action_id": 1,
+          "count": 89550,
+          "share": 0.39863782051282054,
+          "share_pct": 39.86378205128205
+        },
+        "Harvest": {
+          "action_id": 2,
+          "count": 11699,
+          "share": 0.052078881766381764,
+          "share_pct": 5.207888176638177
+        },
+        "Return": {
+          "action_id": 3,
+          "count": 13410,
+          "share": 0.059695512820512824,
+          "share_pct": 5.969551282051282
+        },
+        "Produce": {
+          "action_id": 4,
+          "count": 12090,
+          "share": 0.05381944444444445,
+          "share_pct": 5.381944444444445
+        },
+        "Attack": {
+          "action_id": 5,
+          "count": 7800,
+          "share": 0.034722222222222224,
+          "share_pct": 3.4722222222222223
+        }
+      }
+    },
+    "train_vs_validation_delta_count": {
+      "NoOp": 753090,
+      "Move": 748652,
+      "Harvest": 97770,
+      "Return": 111988,
+      "Produce": 101060,
+      "Attack": 65200
+    }
+  },
+  "move_share_summary": {
+    "train_move_count": 838202,
+    "train_move_share": 0.39868816590563166,
+    "val_move_count": 89550,
+    "val_move_share": 0.39863782051282054
+  },
+  "produce_vs_move_contrast": {
+    "train": {
+      "move_count": 838202,
+      "move_share": 0.39868816590563166,
+      "produce_count": 113150,
+      "produce_share": 0.05381944444444445,
+      "produce_to_move_ratio": 0.1349913266730454
+    },
+    "validation": {
+      "move_count": 89550,
+      "move_share": 0.39863782051282054,
+      "produce_count": 12090,
+      "produce_share": 0.05381944444444445,
+      "produce_to_move_ratio": 0.13500837520938022
+    }
+  },
+  "early_step_distribution": {
+    "train": {
+      "step_0_to_20": {
+        "kept_samples": 144,
+        "distribution": {
+          "total": 82944,
+          "by_action": {
+            "NoOp": {
+              "action_id": 0,
+              "count": 33264,
+              "share": 0.4010416666666667,
+              "share_pct": 40.10416666666667
+            },
+            "Move": {
+              "action_id": 1,
+              "count": 33114,
+              "share": 0.3992332175925926,
+              "share_pct": 39.92332175925926
+            },
+            "Harvest": {
+              "action_id": 2,
+              "count": 4320,
+              "share": 0.052083333333333336,
+              "share_pct": 5.208333333333334
+            },
+            "Return": {
+              "action_id": 3,
+              "count": 4902,
+              "share": 0.05910011574074074,
+              "share_pct": 5.910011574074074
+            },
+            "Produce": {
+              "action_id": 4,
+              "count": 4464,
+              "share": 0.05381944444444445,
+              "share_pct": 5.381944444444445
+            },
+            "Attack": {
+              "action_id": 5,
+              "count": 2880,
+              "share": 0.034722222222222224,
+              "share_pct": 3.4722222222222223
+            }
+          }
+        }
+      },
+      "step_0_to_50": {
+        "kept_samples": 358,
+        "distribution": {
+          "total": 206208,
+          "by_action": {
+            "NoOp": {
+              "action_id": 0,
+              "count": 82698,
+              "share": 0.4010416666666667,
+              "share_pct": 40.10416666666667
+            },
+            "Move": {
+              "action_id": 1,
+              "count": 82193,
+              "share": 0.398592683116077,
+              "share_pct": 39.8592683116077
+            },
+            "Harvest": {
+              "action_id": 2,
+              "count": 10740,
+              "share": 0.052083333333333336,
+              "share_pct": 5.208333333333334
+            },
+            "Return": {
+              "action_id": 3,
+              "count": 12319,
+              "share": 0.059740650217256365,
+              "share_pct": 5.974065021725637
+            },
+            "Produce": {
+              "action_id": 4,
+              "count": 11098,
+              "share": 0.05381944444444445,
+              "share_pct": 5.381944444444445
+            },
+            "Attack": {
+              "action_id": 5,
+              "count": 7160,
+              "share": 0.034722222222222224,
+              "share_pct": 3.4722222222222223
+            }
+          }
+        }
+      }
+    },
+    "validation": {
+      "step_0_to_20": {
+        "kept_samples": 24,
+        "distribution": {
+          "total": 13824,
+          "by_action": {
+            "NoOp": {
+              "action_id": 0,
+              "count": 5544,
+              "share": 0.4010416666666667,
+              "share_pct": 40.10416666666667
+            },
+            "Move": {
+              "action_id": 1,
+              "count": 5518,
+              "share": 0.39916087962962965,
+              "share_pct": 39.91608796296296
+            },
+            "Harvest": {
+              "action_id": 2,
+              "count": 720,
+              "share": 0.052083333333333336,
+              "share_pct": 5.208333333333334
+            },
+            "Return": {
+              "action_id": 3,
+              "count": 818,
+              "share": 0.059172453703703706,
+              "share_pct": 5.91724537037037
+            },
+            "Produce": {
+              "action_id": 4,
+              "count": 744,
+              "share": 0.05381944444444445,
+              "share_pct": 5.381944444444445
+            },
+            "Attack": {
+              "action_id": 5,
+              "count": 480,
+              "share": 0.034722222222222224,
+              "share_pct": 3.4722222222222223
+            }
+          }
+        }
+      },
+      "step_0_to_50": {
+        "kept_samples": 50,
+        "distribution": {
+          "total": 28800,
+          "by_action": {
+            "NoOp": {
+              "action_id": 0,
+              "count": 11550,
+              "share": 0.4010416666666667,
+              "share_pct": 40.10416666666667
+            },
+            "Move": {
+              "action_id": 1,
+              "count": 11479,
+              "share": 0.3985763888888889,
+              "share_pct": 39.85763888888889
+            },
+            "Harvest": {
+              "action_id": 2,
+              "count": 1500,
+              "share": 0.052083333333333336,
+              "share_pct": 5.208333333333334
+            },
+            "Return": {
+              "action_id": 3,
+              "count": 1721,
+              "share": 0.059756944444444446,
+              "share_pct": 5.975694444444445
+            },
+            "Produce": {
+              "action_id": 4,
+              "count": 1550,
+              "share": 0.05381944444444445,
+              "share_pct": 5.381944444444445
+            },
+            "Attack": {
+              "action_id": 5,
+              "count": 1000,
+              "share": 0.034722222222222224,
+              "share_pct": 3.4722222222222223
+            }
+          }
+        }
+      }
+    },
+    "uses_step_metadata_from_bc_ready": true
+  },
+  "actor_subset_distribution": {
+    "train": {
+      "available": false,
+      "reason": "Could not recover reliable owned controllable actor cells from BC-ready input_tensor encoding using strict one-hot assumptions; subset analysis skipped to avoid heuristic distortion.",
+      "selected_cells": 0,
+      "candidate_cells": 2102400
+    },
+    "validation": {
+      "available": false,
+      "reason": "Could not recover reliable owned controllable actor cells from BC-ready input_tensor encoding using strict one-hot assumptions; subset analysis skipped to avoid heuristic distortion.",
+      "selected_cells": 0,
+      "candidate_cells": 224640
+    }
+  },
+  "adaptation_input_vs_output": {
+    "available": true,
+    "conversion_report_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_exports\\teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z\\conversion_report.json",
+    "input_teacher_side": {
+      "total": 2327040,
+      "by_action": {
+        "NoOp": {
+          "action_id": 0,
+          "count": 715080,
+          "share": 0.3072916666666667,
+          "share_pct": 30.729166666666668
+        },
+        "Move": {
+          "action_id": 1,
+          "count": 927752,
+          "share": 0.39868330583058303,
+          "share_pct": 39.8683305830583
+        },
+        "Harvest": {
+          "action_id": 2,
+          "count": 121168,
+          "share": 0.05206958195819582,
+          "share_pct": 5.206958195819582
+        },
+        "Return": {
+          "action_id": 3,
+          "count": 138808,
+          "share": 0.05965002750275027,
+          "share_pct": 5.965002750275027
+        },
+        "Produce": {
+          "action_id": 4,
+          "count": 214152,
+          "share": 0.0920276402640264,
+          "share_pct": 9.20276402640264
+        },
+        "Attack": {
+          "action_id": 5,
+          "count": 210080,
+          "share": 0.09027777777777778,
+          "share_pct": 9.027777777777777
+        }
+      }
+    },
+    "output_adapted_side": {
+      "total": 2327040,
+      "by_action": {
+        "NoOp": {
+          "action_id": 0,
+          "count": 933272,
+          "share": 0.40105541804180417,
+          "share_pct": 40.10554180418042
+        },
+        "Move": {
+          "action_id": 1,
+          "count": 927752,
+          "share": 0.39868330583058303,
+          "share_pct": 39.8683305830583
+        },
+        "Harvest": {
+          "action_id": 2,
+          "count": 121168,
+          "share": 0.05206958195819582,
+          "share_pct": 5.206958195819582
+        },
+        "Return": {
+          "action_id": 3,
+          "count": 138808,
+          "share": 0.05965002750275027,
+          "share_pct": 5.965002750275027
+        },
+        "Produce": {
+          "action_id": 4,
+          "count": 125240,
+          "share": 0.05381944444444445,
+          "share_pct": 5.381944444444445
+        },
+        "Attack": {
+          "action_id": 5,
+          "count": 80800,
+          "share": 0.034722222222222224,
+          "share_pct": 3.4722222222222223
+        }
+      }
+    },
+    "delta_output_minus_input": {
+      "NoOp": 218192,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": -88912,
+      "Attack": -129280
+    }
+  }
+}

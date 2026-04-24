@@ -92,6 +92,8 @@ namespace RTS.ML
                 _invalidStudentCommands += report.RejectedCount;
                 _diagnosticsCollector?.RecordStudentDecodedActions(report.DecodedActions);
                 _diagnosticsCollector?.RecordStudentRejectionReasons(report.RejectionReasons);
+                _diagnosticsCollector?.RecordStudentFilterDiagnostics(report.FilterDiagnostics);
+                _diagnosticsCollector?.RecordStudentMaskAwareDiagnostics(report.MaskAwareDiagnostics);
             }
 
             if (currentStep > 0)

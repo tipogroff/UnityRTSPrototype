@@ -1,0 +1,1052 @@
+{
+  "generated_at_utc": "2026-04-24T16:24:22Z",
+  "checkpoint": {
+    "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\teacher_models\\day5_teacher_hardened_serious_v2_20260420T173711Z\\checkpoints\\teacher_sb3_ppo_step_000080000.zip",
+    "loader": "sb3_contrib.MaskablePPO"
+  },
+  "protocol": {
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "opponent": "workerRushAI",
+    "requested_steps": 20,
+    "executed_steps": 20
+  },
+  "shapes": {
+    "observation": [
+      1,
+      24,
+      24,
+      27
+    ],
+    "action_mask": [
+      1,
+      576,
+      78
+    ],
+    "action_spatial": [
+      576,
+      7
+    ]
+  },
+  "method": {
+    "raw_full_tensor_level": "action_type over all spatial slots",
+    "actor_proxy_level": "action_type over source_unit_mask==1 indices only",
+    "executed_fact_claim": "not claimed; this is chosen-action proxy-level check",
+    "owner_proxy_note": "owner/unit_type channel slices are optional observation-channel proxies assuming Week contract indexing"
+  },
+  "step_trace": [
+    {
+      "step": 0,
+      "source_unit_mask_ready_count": 2,
+      "source_unit_mask_ready_indices": [
+        25,
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1,
+        "Harvest": 1
+      },
+      "move_allowed_ready_actor_count": 1,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 25,
+          "x": 1,
+          "y": 1,
+          "chosen_action_type": "Harvest",
+          "move_allowed_by_action_mask": true,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 1,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 9,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 10,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 11,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 12,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 13,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 14,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 15,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 16,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 17,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 18,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "step": 19,
+      "source_unit_mask_ready_count": 1,
+      "source_unit_mask_ready_indices": [
+        50
+      ],
+      "source_unit_mask_ready_coords": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "selected_action_types_on_ready_actors": {
+        "NoOp": 1
+      },
+      "move_allowed_ready_actor_count": 0,
+      "move_selected_ready_actor_count": 0,
+      "full_tensor_action_types_count": {
+        "NoOp": 172,
+        "Move": 215,
+        "Harvest": 35,
+        "Return": 41,
+        "Produce": 49,
+        "Attack": 64
+      },
+      "ready_actor_details": [
+        {
+          "flat_index": 50,
+          "x": 2,
+          "y": 2,
+          "chosen_action_type": "NoOp",
+          "move_allowed_by_action_mask": false,
+          "observation_owner_proxy_channels_2_4": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "observation_unit_type_proxy_channels_5_11": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_actor_choices": 21,
+    "total_actor_move_choices": 0,
+    "steps_with_any_actor_move": 0,
+    "actor_move_share": 0.0,
+    "proxy_validity_hint": "source_unit_mask proxy looks valid"
+  }
+}
