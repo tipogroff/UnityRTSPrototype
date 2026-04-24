@@ -27,6 +27,11 @@ namespace RTS.Gameplay
         /// Минимальный сетап для тестирования Worker-механик (сбор, возврат, постройка Казармы).
         /// </summary>
         Week4TwoWorkersSymmetric = 2,
+        /// <summary>
+        /// Week 6 visual/sanity preset: тот же процедурный путь (Base + 2 Worker + 2 Resource),
+        /// но с более разнесённым стартом, чтобы снизить ранние искажения opening-поведения.
+        /// </summary>
+        Week6VisualSanitySpread24x24 = 3,
     }
 
     /// <summary>
@@ -46,7 +51,7 @@ namespace RTS.Gameplay
         [SerializeField] private GameConfig _config;
 
         [Header("Scenario preset")]
-        [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout. Week4TwoWorkersSymmetric = 2 Worker + 2 ресурса на каждую сторону.")]
+        [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout. Week4TwoWorkersSymmetric = 2 Worker + 2 ресурса на каждую сторону. Week6VisualSanitySpread24x24 = тот же состав, но с большей стартовой дистанцией.")]
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week4TwoWorkersSymmetric;
         [Tooltip("Стартовые ресурсы для Day6Sanity24x24. Нужны, чтобы production был practically reachable в sanity-rollout.")]
         [Min(0)]
@@ -227,6 +232,25 @@ namespace RTS.Gameplay
                     (UnitType.Worker, new GridPosition(W - 6, H / 2 + 2)),
                 };
             }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Week6VisualSanitySpread24x24)
+            {
+                // Week 6 visual/sanity: тот же процедурный состав, но стороны разнесены сильнее.
+                // Это уменьшает ранние искажения opening (ранние блокировки/контакты),
+                // сохраняя симметрию и весь существующий runtime bootstrap path.
+                p1Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(2,     H / 2 - 4)),
+                    (UnitType.Worker, new GridPosition(4,     H / 2 - 5)),
+                    (UnitType.Worker, new GridPosition(4,     H / 2 - 3)),
+                };
+
+                p2Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Base,   new GridPosition(W - 3, H / 2 + 3)),
+                    (UnitType.Worker, new GridPosition(W - 5, H / 2 + 2)),
+                    (UnitType.Worker, new GridPosition(W - 5, H / 2 + 4)),
+                };
+            }
             else if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
                 // Day 6 follow-up rationale:
@@ -295,6 +319,16 @@ namespace RTS.Gameplay
                     new GridPosition(8, H / 2 + 2),
                 };
             }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Week6VisualSanitySpread24x24)
+            {
+                // Ресурсы остаются ближе к своей стороне, чтобы opening был нейтральнее
+                // и без раннего центр-конфликта при визуальной диагностике.
+                p1ResourcePositions = new List<GridPosition>
+                {
+                    new GridPosition(7, H / 2 - 5),
+                    new GridPosition(7, H / 2 - 3),
+                };
+            }
             else if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
             {
                 // Для sanity-сценария ресурсы чуть ближе к workers, чтобы ускорить
@@ -339,6 +373,11 @@ namespace RTS.Gameplay
             if (_scenarioPreset == BootstrapScenarioPreset.Week4TwoWorkersSymmetric)
             {
                 // Стартовые ресурсы — достаточно для первой постройки Казармы.
+                return Mathf.Max(_day6SanityStartResources, 0);
+            }
+
+            if (_scenarioPreset == BootstrapScenarioPreset.Week6VisualSanitySpread24x24)
+            {
                 return Mathf.Max(_day6SanityStartResources, 0);
             }
 

@@ -147,6 +147,62 @@ def _to_json_safe_metrics(metrics: Any) -> Dict[str, float | int]:
     return safe
 
 
+def run_inference_with_loaded_model(
+    model: torch.nn.Module,
+    checkpoint_meta: Dict[str, Any],
+    obs_hwc: np.ndarray,
+    device: str,
+) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        "status": "fail",
+        "observation_shape": list(EXPECTED_OBS_SHAPE),
+        "observation_dtype": "float32",
+        "branch_order": list(BRANCH_ORDER),
+        "branch_sizes": list(EXPECTED_BC_BRANCH_SIZES),
+        "logits_keys": list(BRANCH_LOGITS_KEYS),
+    }
+
+    input_tensor = torch.from_numpy(obs_hwc).unsqueeze(0).to(device=torch.device(device))
+
+    with torch.no_grad():
+        logits_by_key = model(input_tensor)
+
+    _validate_logits_contract(logits_by_key)
+    action_flat = _build_action_flat_from_logits(logits_by_key)
+
+    logits_shapes = {
+        key: list(logits_by_key[key].shape) for key in BRANCH_LOGITS_KEYS
+    }
+
+    result.update(
+        {
+            "status": "ok",
+            "checkpoint_epoch": checkpoint_meta.get("epoch"),
+            "checkpoint_model_variant": checkpoint_meta.get("model_variant"),
+            "checkpoint_metrics": _to_json_safe_metrics(checkpoint_meta.get("metrics")),
+            "observation_element_count": int(obs_hwc.size),
+            "model_output_logits_shapes": logits_shapes,
+            "action_flat_size": len(action_flat),
+            "action_flat": action_flat,
+        }
+    )
+    return result
+
+
+def run_inference_from_observation_bin(
+    checkpoint_path: Path,
+    observation_bin: Path,
+    device: str,
+) -> Dict[str, Any]:
+    obs_hwc = _load_observation(observation_bin)
+    model, checkpoint_meta = load_student_transfer_checkpoint(checkpoint_path, device=device)
+
+    result = run_inference_with_loaded_model(model, checkpoint_meta, obs_hwc, device=device)
+    result["checkpoint_path"] = str(checkpoint_path.resolve())
+    result["observation_bin"] = str(observation_bin.resolve())
+    return result
+
+
 def main() -> int:
     args = parse_args()
 
@@ -162,33 +218,12 @@ def main() -> int:
     }
 
     try:
-        obs_hwc = _load_observation(args.observation_bin)
-
-        model, checkpoint_meta = load_student_transfer_checkpoint(args.checkpoint, device=args.device)
-
-        input_tensor = torch.from_numpy(obs_hwc).unsqueeze(0).to(device=torch.device(args.device))
-
-        with torch.no_grad():
-            logits_by_key = model(input_tensor)
-
-        _validate_logits_contract(logits_by_key)
-        action_flat = _build_action_flat_from_logits(logits_by_key)
-
-        logits_shapes = {
-            key: list(logits_by_key[key].shape) for key in BRANCH_LOGITS_KEYS
-        }
-
         result.update(
-            {
-                "status": "ok",
-                "checkpoint_epoch": checkpoint_meta.get("epoch"),
-                "checkpoint_model_variant": checkpoint_meta.get("model_variant"),
-                "checkpoint_metrics": _to_json_safe_metrics(checkpoint_meta.get("metrics")),
-                "observation_element_count": int(obs_hwc.size),
-                "model_output_logits_shapes": logits_shapes,
-                "action_flat_size": len(action_flat),
-                "action_flat": action_flat,
-            }
+            run_inference_from_observation_bin(
+                checkpoint_path=args.checkpoint,
+                observation_bin=args.observation_bin,
+                device=args.device,
+            )
         )
     except Exception as exc:  # pragma: no cover - fail-fast diagnostics for wiring
         result["error"] = str(exc)

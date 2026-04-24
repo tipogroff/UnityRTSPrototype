@@ -34,6 +34,7 @@ namespace RTS.Gameplay
         [SerializeField] private ExperimentLogger _experimentLogger;
         [SerializeField] private HeuristicDriver _heuristicDriver;
         [SerializeField] private HeuristicPolicyAdapter _heuristicPolicyAdapter;
+        [SerializeField] private Week6StudentPolicyAdapter _week6StudentPolicyAdapter;
 
         [Header("Week 4 Day 2 Reward")]
         [Tooltip("Gates reward breakdown log output. Reward computation is always-on in the Day 4 canonical loop — this flag no longer enables/disables computation.")]
@@ -55,6 +56,11 @@ namespace RTS.Gameplay
         [SerializeField] private HeuristicExecutionPath _heuristicExecutionPath = HeuristicExecutionPath.Day5PolicyPipeline;
         [SerializeField] private bool _logLifecycleEvents;
         [SerializeField] private bool _logTerminalDiagnostics = true;
+
+        [Header("Week 6 Day 5 Student Match Control")]
+        [SerializeField] private bool _enableWeek6StudentMatchControl;
+        [SerializeField] private Week6PlayerControlMode _player1DecisionMode = Week6PlayerControlMode.StudentInference;
+        [SerializeField] private Week6PlayerControlMode _player2DecisionMode = Week6PlayerControlMode.HeuristicBaseline;
 
         [Header("Auto loop")]
         [Tooltip("Автоматически запускать следующий эпизод после завершения текущего.")]
@@ -161,6 +167,13 @@ namespace RTS.Gameplay
 
             if (_episodeRunning)
             {
+                if (!ValidateWeek6ControlConfiguration(out string week6ConfigError))
+                {
+                    Debug.LogError("[EpisodeController] Week6 control configuration is invalid: " + week6ConfigError);
+                    _episodeRunning = false;
+                    return;
+                }
+
                 EpisodeIndex++;
                 _experimentLogger?.BeginEpisode();
                 _runtimeRewardCollector?.ResetEpisode();
@@ -189,6 +202,17 @@ namespace RTS.Gameplay
                         _matchManager,
                         _matchBootstrap);
                     _heuristicPolicyAdapter.ResetHeuristicState();
+                }
+
+                if (_enableWeek6StudentMatchControl && _week6StudentPolicyAdapter != null)
+                {
+                    _week6StudentPolicyAdapter.Initialize(
+                        _gridManager,
+                        _unitRegistry,
+                        _resourceManager,
+                        _matchManager,
+                        _matchBootstrap);
+                    _week6StudentPolicyAdapter.ResetEpisodeState();
                 }
             }
 
@@ -251,6 +275,13 @@ namespace RTS.Gameplay
                 return false;
             }
 
+            if (!ValidateWeek6ControlConfiguration(out string week6ConfigError))
+            {
+                Debug.LogError("[EpisodeController] Week6 control configuration is invalid during step: " + week6ConfigError);
+                _episodeRunning = false;
+                return false;
+            }
+
             // Select action source based on current heuristic settings.
             // All sources satisfy IDecisionSource contract (no StepMatch calls).
             IDecisionSource decisionSource = BuildDecisionSource();
@@ -309,6 +340,15 @@ namespace RTS.Gameplay
         /// </summary>
         private IDecisionSource BuildDecisionSource()
         {
+            if (_enableWeek6StudentMatchControl)
+            {
+                return new Week6ConfiguredDecisionSource(
+                    _heuristicPolicyAdapter,
+                    _week6StudentPolicyAdapter,
+                    _player1DecisionMode,
+                    _player2DecisionMode);
+            }
+
             if (!_useHeuristicAI)
             {
                 return IdleDecisionSource.Instance;
@@ -349,6 +389,88 @@ namespace RTS.Gameplay
         {
             ResolveReferences();
             return _matchManager != null ? _matchManager.GetMatchState() : default;
+        }
+
+        public void ConfigureWeek6PlayerControlModes(
+            bool enableStudentMatchControl,
+            Week6PlayerControlMode player1Mode,
+            Week6PlayerControlMode player2Mode)
+        {
+            _enableWeek6StudentMatchControl = enableStudentMatchControl;
+            _player1DecisionMode = player1Mode;
+            _player2DecisionMode = player2Mode;
+
+            if (!ValidateWeek6ControlConfiguration(out string week6ConfigError))
+            {
+                Debug.LogError("[EpisodeController] Rejected invalid Week6 control mode switch: " + week6ConfigError);
+            }
+        }
+
+        private bool ValidateWeek6ControlConfiguration(out string error)
+        {
+            error = string.Empty;
+
+            if (!_enableWeek6StudentMatchControl)
+            {
+                return true;
+            }
+
+            if (!IsValidWeek6Mode(_player1DecisionMode) || !IsValidWeek6Mode(_player2DecisionMode))
+            {
+                error = $"Unsupported control mode pair: p1={_player1DecisionMode}, p2={_player2DecisionMode}";
+                return false;
+            }
+
+            if (_player1DecisionMode == Week6PlayerControlMode.StudentInference
+                && _player2DecisionMode == Week6PlayerControlMode.StudentInference)
+            {
+                error = "Safe Day5 sanity mode requires exactly one student-controlled side.";
+                return false;
+            }
+
+            if (_player1DecisionMode == Week6PlayerControlMode.HeuristicBaseline
+                && _player2DecisionMode == Week6PlayerControlMode.HeuristicBaseline)
+            {
+                error = "Week6 student match control is enabled, but both sides are still heuristic baseline.";
+                return false;
+            }
+
+            if ((_player1DecisionMode == Week6PlayerControlMode.StudentInference
+                 || _player2DecisionMode == Week6PlayerControlMode.StudentInference)
+                && _week6StudentPolicyAdapter == null)
+            {
+                error = "StudentInference mode is selected, but Week6StudentPolicyAdapter is missing.";
+                return false;
+            }
+
+            if ((_player1DecisionMode == Week6PlayerControlMode.HeuristicBaseline
+                 || _player2DecisionMode == Week6PlayerControlMode.HeuristicBaseline)
+                && _heuristicPolicyAdapter == null)
+            {
+                error = "HeuristicBaseline mode is selected, but HeuristicPolicyAdapter is missing.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsValidWeek6Mode(Week6PlayerControlMode mode)
+        {
+            return mode == Week6PlayerControlMode.Idle
+                || mode == Week6PlayerControlMode.HeuristicBaseline
+                || mode == Week6PlayerControlMode.StudentInference;
+        }
+
+        public bool TryGetWeek6StudentExecutionReport(Owner playerId, out StudentPolicyExecutionReport report)
+        {
+            ResolveReferences();
+            if (_week6StudentPolicyAdapter != null)
+            {
+                return _week6StudentPolicyAdapter.TryGetLastExecutionReport(playerId, out report);
+            }
+
+            report = default;
+            return false;
         }
 
         public void SetRunning(bool running)
@@ -526,6 +648,16 @@ namespace RTS.Gameplay
                 {
                     _heuristicPolicyAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("HeuristicPolicyAdapter");
                     Debug.Log("[EpisodeController] HeuristicPolicyAdapter created automatically.");
+                }
+            }
+
+            if (_week6StudentPolicyAdapter == null)
+            {
+                _week6StudentPolicyAdapter = FindFirstObjectByType<Week6StudentPolicyAdapter>();
+                if (_week6StudentPolicyAdapter == null && _enableWeek6StudentMatchControl)
+                {
+                    _week6StudentPolicyAdapter = EnsureSceneComponent<Week6StudentPolicyAdapter>("Week6StudentPolicyAdapter");
+                    Debug.Log("[EpisodeController] Week6StudentPolicyAdapter created automatically.");
                 }
             }
 

@@ -7,6 +7,29 @@ using UnityEngine;
 
 namespace RTS.ML
 {
+    public readonly struct HeuristicActionEvaluation
+    {
+        public HeuristicActionEvaluation(
+            Owner playerId,
+            UnitActionType actionType,
+            ProducibleUnit produceUnitType,
+            bool accepted,
+            string rejectionReason)
+        {
+            PlayerId = playerId;
+            ActionType = actionType;
+            ProduceUnitType = produceUnitType;
+            Accepted = accepted;
+            RejectionReason = rejectionReason ?? string.Empty;
+        }
+
+        public Owner PlayerId { get; }
+        public UnitActionType ActionType { get; }
+        public ProducibleUnit ProduceUnitType { get; }
+        public bool Accepted { get; }
+        public string RejectionReason { get; }
+    }
+
     public enum HeuristicControlMode
     {
         Idle = 0,
@@ -117,6 +140,8 @@ namespace RTS.ML
 
         private readonly List<UnitRuntime> _unitsScratch = new List<UnitRuntime>(64);
         private readonly StringBuilder _logBuilder = new StringBuilder(256);
+
+        public event Action<HeuristicActionEvaluation> OnActionEvaluated;
 
         // Diagnostic counter: incremented each time a player falls through to the residual
         // obs/mask rebuild path because useCanonicalStepInput was true but stepInput.Perspective
@@ -270,6 +295,13 @@ namespace RTS.ML
                 {
                     rejected++;
                 }
+
+                OnActionEvaluated?.Invoke(new HeuristicActionEvaluation(
+                    playerId,
+                    decoded.ActionType,
+                    decoded.ProduceUnitType,
+                    actionAccepted,
+                    execution.PrimaryRejectionReason));
 
                 if (_enableDecisionLogs)
                 {

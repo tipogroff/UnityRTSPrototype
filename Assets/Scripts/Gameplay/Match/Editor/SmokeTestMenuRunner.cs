@@ -657,6 +657,36 @@ namespace RTS.Testing.Editor
             RunRewardSanityCheck(20);
         }
 
+        [MenuItem("SmokeTest/14 - Week6 Day5 Safe Sanity (1 Episode)")]
+        public static void RunWeek6Day5SafeSanity()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[SmokeTest] Enter Play Mode first.");
+                return;
+            }
+
+            Week6Day5SanityMatchRunner runner = Object.FindFirstObjectByType<Week6Day5SanityMatchRunner>();
+            if (runner == null)
+            {
+                GameObject host = new GameObject("Week6Day5SanityMatchRunner_AutoRunner");
+                runner = host.AddComponent<Week6Day5SanityMatchRunner>();
+                Debug.Log("[SmokeTest] Week6Day5SanityMatchRunner was auto-created for this run.");
+            }
+
+            System.Reflection.FieldInfo epField = typeof(Week6Day5SanityMatchRunner)
+                .GetField("_episodeCount", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            epField?.SetValue(runner, 1);
+
+            System.Reflection.FieldInfo verboseField = typeof(Week6Day5SanityMatchRunner)
+                .GetField("_verboseLogging", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            verboseField?.SetValue(runner, true);
+
+            Debug.Log("[SmokeTest] Starting Week6 Day5 safe sanity run (1 episode)...");
+            runner.ExecuteSanityMatches();
+            Debug.Log("[SmokeTest] Week6 Day5 safe sanity run DONE (1 episode).");
+        }
+
         private static void RunRewardSanityCheck(int episodeCount)
         {
             Day6RewardSanitySmokeTest smoke = Object.FindFirstObjectByType<Day6RewardSanitySmokeTest>();

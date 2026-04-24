@@ -130,6 +130,7 @@ namespace RTS.Gameplay
         public System.Action<MatchResolution> OnMatchResolved;
         public System.Action<int> OnStepAdvanced;
         public System.Action<MatchStateSnapshot> OnStepCompleted;
+        public System.Action<MatchCommand> OnCommandAccepted;
         public System.Action<MatchCommand, string> OnCommandRejected;
 
         private void Awake()
@@ -480,6 +481,7 @@ namespace RTS.Gameplay
 
                 _acceptedCommandsThisStep++;
                 TotalAcceptedCommands++;
+                OnCommandAccepted?.Invoke(command);
                 _lastAppliedCommandByUnit[unit] = command;
             }
         }
