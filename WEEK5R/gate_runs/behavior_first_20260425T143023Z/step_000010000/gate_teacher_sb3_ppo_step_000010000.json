@@ -1,0 +1,203 @@
+{
+  "schema_version": "teacher_behavior_gate.v1",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\retraining_runs\\behavior_first_20260425T143023Z\\checkpoints\\teacher_sb3_ppo_step_000010000.zip",
+  "status": "FAIL_NO_EFFECT_BEHAVIOR",
+  "deterministic_mode": true,
+  "opponent_sampling_mode": "per_episode",
+  "opponents_used": [
+    "coacAI",
+    "workerRushAI"
+  ],
+  "fail_reasons": [
+    "FAIL_NO_EFFECT_BEHAVIOR: chosen_count=15, no_effect_share=1.0000 > 0.80, pos_delta=0"
+  ],
+  "warnings": [
+    "Replay generation failed: OSError: JVM cannot be restarted"
+  ],
+  "actor_level": {
+    "full_tensor_move_share": 0.243056,
+    "actor_level_move_share": 0.666667,
+    "actor_noop_share": 0.0,
+    "ready_own_actor_count": 156,
+    "steps_with_ready_actors": 104,
+    "steps_with_movable_ready_actors": 4,
+    "ready_movable_actor_choice_count": 4,
+    "ready_movable_actor_count": 4
+  },
+  "effective_behavior": {
+    "effective_position_delta_count": 0,
+    "no_effect_action_share": 1.0,
+    "chosen_ready_own_actor_count": 15,
+    "steps_executed": 100
+  },
+  "decision_rules": {
+    "FAIL_COLLAPSED_NOOP": {
+      "triggered": false,
+      "values": {
+        "ready_movable_actor_count": 4,
+        "actor_level_move_share": 0.666667,
+        "effective_position_delta_count": 0,
+        "actor_noop_share": 0.0,
+        "threshold_noop": 0.9
+      }
+    },
+    "FAIL_FALSE_FULL_TENSOR_MOVE": {
+      "triggered": false,
+      "values": {
+        "full_tensor_move_share": 0.243056,
+        "actor_level_move_share": 0.666667,
+        "threshold_full": 0.1,
+        "threshold_actor": 0.05
+      }
+    },
+    "FAIL_NO_EFFECT_BEHAVIOR": {
+      "triggered": true,
+      "values": {
+        "chosen_ready_own_actor_count": 15,
+        "no_effect_action_share": 1.0,
+        "effective_position_delta_count": 0,
+        "threshold_no_effect": 0.8
+      }
+    },
+    "SUSPICIOUS": {
+      "triggered": false,
+      "values": {
+        "actor_noop_share": 0.0,
+        "no_effect_action_share": 1.0,
+        "threshold_noop": 0.75,
+        "threshold_no_effect": 0.6
+      }
+    },
+    "PASS": {
+      "triggered": false,
+      "values": {
+        "actor_level_move_share": 0.666667,
+        "effective_position_delta_count": 0,
+        "threshold_move": 0.05
+      }
+    }
+  },
+  "meta": {
+    "generated_at_utc": "2026-04-25T15:58:43Z",
+    "algorithm_loader": "sb3_contrib.MaskablePPO",
+    "opponent": "coacAI",
+    "opponent_pool": [
+      "coacAI",
+      "workerRushAI",
+      "lightRushAI",
+      "passiveAI"
+    ],
+    "opponent_sampling_mode": "per_episode",
+    "actor_audit_opponents_used": [
+      "coacAI",
+      "workerRushAI"
+    ],
+    "actor_audit_opponents_by_episode": [
+      "workerRushAI",
+      "coacAI",
+      "coacAI",
+      "workerRushAI"
+    ],
+    "effective_behavior_opponent": "workerRushAI",
+    "effective_behavior_opponent_selection": "deterministic_single_from_pool",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "episodes_actor_audit": 4,
+    "max_steps_per_episode": 256,
+    "steps_effective_audit": 100,
+    "seed": 170,
+    "device": "cpu",
+    "deterministic_mode": true,
+    "method_limits": [
+      "Gate runs inside Gym-microRTS only. Does NOT claim Gym->Unity semantic parity.",
+      "Full-tensor Move share is NOT evidence of real movement.",
+      "Effective-behavior state-diff is an observation proxy, not a confirmed execution stream.",
+      "Actor-level analysis covers source_unit_mask==1 cells (teacher-owned ready units)."
+    ]
+  },
+  "raw_actor_level": {
+    "full_tensor_move_share": 0.243056,
+    "actor_level_move_share": 0.666667,
+    "actor_noop_share": 0.0,
+    "ready_own_actor_count": 156,
+    "ready_movable_actor_choice_count": 4,
+    "ready_movable_actor_count": 4,
+    "steps_total": 1024,
+    "steps_with_ready_actors": 104,
+    "steps_with_movable_ready_actors": 4,
+    "steps_movable_ready_but_no_move": 0,
+    "opponents_used": [
+      "coacAI",
+      "workerRushAI"
+    ],
+    "opponents_by_episode": [
+      "workerRushAI",
+      "coacAI",
+      "coacAI",
+      "workerRushAI"
+    ],
+    "full_tensor_action_distribution": {
+      "NoOp": {
+        "count": 144384,
+        "share": 0.244792
+      },
+      "Move": {
+        "count": 143360,
+        "share": 0.243056
+      },
+      "Harvest": {
+        "count": 73090,
+        "share": 0.123918
+      },
+      "Return": {
+        "count": 59392,
+        "share": 0.100694
+      },
+      "Produce": {
+        "count": 87040,
+        "share": 0.147569
+      },
+      "Attack": {
+        "count": 82558,
+        "share": 0.139971
+      }
+    },
+    "actor_level_action_distribution": {
+      "Move": {
+        "count": 104,
+        "share": 0.666667
+      },
+      "Harvest": {
+        "count": 52,
+        "share": 0.333333
+      }
+    }
+  },
+  "raw_effective_behavior": {
+    "effective_position_delta_count": 0,
+    "no_effect_action_share": 1.0,
+    "chosen_ready_own_actor_count": 15,
+    "outcome_distribution": {
+      "blocked_or_no_effect": 15
+    },
+    "chosen_action_distribution": {
+      "Move": 10,
+      "Harvest": 5
+    },
+    "steps_executed": 100
+  },
+  "visual_replay": {
+    "created": false,
+    "replay_trace_path": null,
+    "replay_summary_path": null,
+    "visual_notes_path": null,
+    "frames_dir": null,
+    "visual_verdict": null,
+    "warnings": [
+      "Replay generation failed: OSError: JVM cannot be restarted"
+    ]
+  },
+  "replay_trace_path": null,
+  "replay_summary_path": null,
+  "visual_notes_path": null,
+  "frames_dir": null
+}

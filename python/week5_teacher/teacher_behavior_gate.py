@@ -114,6 +114,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--opponent-sampling", choices=("static", "per_episode"),
                    default="per_episode")
     p.add_argument("--device", default="cpu")
+    p.add_argument(
+        "--deterministic",
+        choices=("true", "false"),
+        default="true",
+        help="Policy predict mode. true=deterministic (default), false=stochastic sampling.",
+    )
     p.add_argument("--output-dir", type=Path, default=Path("WEEK5R"),
                    help="Directory to write gate JSON and Markdown (default: WEEK5R/).")
     p.add_argument("--make-replay", action="store_true",
@@ -182,16 +188,28 @@ def read_action_mask(env: Any) -> Optional[np.ndarray]:
     return None
 
 
-def predict_action(model: Any, obs: Any, action_mask: Optional[np.ndarray]) -> Any:
+def predict_action(
+    model: Any,
+    obs: Any,
+    action_mask: Optional[np.ndarray],
+    *,
+    deterministic: bool,
+) -> Any:
     if action_mask is not None:
+        # sb3_contrib.MaskablePPO.predict expects action_masks to be 2-D:
+        # [n_envs, sum(nvec)].  The gym_microrts env returns a 3-D array
+        # [n_envs, n_cells, nvec_per_cell] (e.g. [1, 576, 78]).  Flatten to
+        # [n_envs, n_cells * nvec_per_cell] so the shape contract is met.
+        mask_2d = np.asarray(action_mask)
+        if mask_2d.ndim == 3:
+            mask_2d = mask_2d.reshape(mask_2d.shape[0], -1)
         try:
-            action, _ = model.predict(obs, deterministic=True, action_masks=action_mask)
+            action, _ = model.predict(obs, deterministic=deterministic, action_masks=mask_2d)
             return action
         except TypeError:
+            # API does not accept action_masks keyword (plain PPO fallback).
             pass
-        except Exception:
-            pass
-    action, _ = model.predict(obs, deterministic=True)
+    action, _ = model.predict(obs, deterministic=deterministic)
     return action
 
 
@@ -343,6 +361,7 @@ def run_actor_level_audit(
     map_path: str,
     max_steps: int,
     episodes: int,
+    deterministic: bool,
 ) -> Dict[str, Any]:
     full_counter: Counter = Counter()
     actor_counter: Counter = Counter()
@@ -354,60 +373,59 @@ def run_actor_level_audit(
     steps_movable_no_move = 0
     steps_total = 0
     opponents_by_episode: List[str] = []
+    env_cache: Dict[str, Any] = {}
 
     for ep_id in range(episodes):
         opponent = pick_opponent(opponent_pool, opponent_sampling_mode, seed, ep_id)
         opponents_by_episode.append(opponent)
 
-        env = build_env(map_path, max_steps, opponent)
-        try:
-            obs = env.reset()
-            done = False
-            step_id = 0
-            while not done and step_id < max_steps:
-                action_mask = read_action_mask(env)
-                action = predict_action(model, obs, action_mask)
-                matrix = action_to_matrix(action)
+        env = env_cache.get(opponent)
+        if env is None:
+            env = build_env(map_path, max_steps, opponent)
+            env_cache[opponent] = env
 
-                if matrix.shape[0] != 576:
-                    raise RuntimeError(f"Expected 576 spatial slots, got {matrix.shape[0]}.")
+        obs = env.reset()
+        done = False
+        step_id = 0
+        while not done and step_id < max_steps:
+            action_mask = read_action_mask(env)
+            action = predict_action(model, obs, action_mask, deterministic=deterministic)
+            matrix = action_to_matrix(action)
 
-                action_types = matrix[:, ACT_TYPE]
-                full_counter.update(Counter(int(v) for v in action_types.tolist()))
-                steps_total += 1
+            if matrix.shape[0] != 576:
+                raise RuntimeError(f"Expected 576 spatial slots, got {matrix.shape[0]}.")
 
-                if action_mask is not None and action_mask.ndim == 3 and action_mask.shape[0] == 1:
-                    ready_mask = action_mask[0, :, MASK_SOURCE].astype(bool)
-                    ready_indices = np.where(ready_mask)[0]
-                    ready_count = int(ready_indices.size)
-                    if ready_count > 0:
-                        steps_with_ready_actors += 1
-                        ready_actor_total += ready_count
+            action_types = matrix[:, ACT_TYPE]
+            full_counter.update(Counter(int(v) for v in action_types.tolist()))
+            steps_total += 1
 
-                        step_actor = Counter(int(v) for v in action_types[ready_indices].tolist())
-                        actor_counter.update(step_actor)
+            if action_mask is not None and action_mask.ndim == 3 and action_mask.shape[0] == 1:
+                ready_mask = action_mask[0, :, MASK_SOURCE].astype(bool)
+                ready_indices = np.where(ready_mask)[0]
+                ready_count = int(ready_indices.size)
+                if ready_count > 0:
+                    steps_with_ready_actors += 1
+                    ready_actor_total += ready_count
 
-                        if action_mask.shape[2] > MASK_MOVE:
-                            move_allowed = action_mask[0, ready_indices, MASK_MOVE].astype(bool)
-                            movable_count = int(move_allowed.sum())
-                            ready_movable_actor_choice_count += movable_count
-                            if movable_count > 0:
-                                steps_with_movable_ready += 1
-                                if step_actor.get(1, 0) == 0:
-                                    steps_movable_no_move += 1
+                    step_actor = Counter(int(v) for v in action_types[ready_indices].tolist())
+                    actor_counter.update(step_actor)
 
-                transition = env.step(action)
-                if len(transition) == 5:
-                    obs, _r, terminated, truncated, _info = transition
-                    done = bool(terminated or truncated)
-                else:
-                    obs, _r, done, _info = transition
-                step_id += 1
-        finally:
-            try:
-                env.close()
-            except Exception:
-                pass
+                    if action_mask.shape[2] > MASK_MOVE:
+                        move_allowed = action_mask[0, ready_indices, MASK_MOVE].astype(bool)
+                        movable_count = int(move_allowed.sum())
+                        ready_movable_actor_choice_count += movable_count
+                        if movable_count > 0:
+                            steps_with_movable_ready += 1
+                            if step_actor.get(1, 0) == 0:
+                                steps_movable_no_move += 1
+
+            transition = env.step(action)
+            if len(transition) == 5:
+                obs, _r, terminated, truncated, _info = transition
+                done = bool(terminated or truncated)
+            else:
+                obs, _r, done, _info = transition
+            step_id += 1
 
     full_total = int(sum(full_counter.values()))
     actor_total = int(sum(actor_counter.values()))
@@ -456,6 +474,7 @@ def run_effective_behavior_audit(
     map_path: str,
     max_steps: int,
     opponent: str,
+    deterministic: bool,
 ) -> Dict[str, Any]:
     outcome_counter: Counter = Counter()
     chosen_counter: Counter = Counter()
@@ -478,7 +497,7 @@ def run_effective_behavior_audit(
             obs_arr = np.asarray(obs)
             action_mask = read_action_mask(env)
             if action_mask is None:
-                action, _ = model.predict(obs, deterministic=True)
+                action, _ = model.predict(obs, deterministic=deterministic)
                 transition = env.step(action)
                 if len(transition) == 5:
                     obs, _, terminated, truncated, _ = transition
@@ -488,7 +507,7 @@ def run_effective_behavior_audit(
                 step_id += 1
                 continue
 
-            action = predict_action(model, obs, action_mask)
+            action = predict_action(model, obs, action_mask, deterministic=deterministic)
             action_matrix = action_to_matrix(action)
             if action_matrix.shape[0] != n_cells:
                 raise RuntimeError(
@@ -532,10 +551,9 @@ def run_effective_behavior_audit(
 
             step_id += 1
     finally:
-        try:
-            env.close()
-        except Exception:
-            pass
+        # Do not close the env inside the gate process because gym_microrts/JPype
+        # cannot safely restart the JVM in the same process after shutdown.
+        pass
 
     chosen_total = int(sum(chosen_counter.values()))
     outcome_total = int(sum(outcome_counter.values()))
@@ -646,6 +664,7 @@ def build_markdown(result: Dict[str, Any]) -> str:
     lines.append("## Checkpoint")
     lines.append(f"- Path: `{result['checkpoint']}`")
     lines.append(f"- Loader: `{result['meta']['algorithm_loader']}`")
+    lines.append(f"- deterministic_mode: `{result.get('deterministic_mode', True)}`")
     lines.append(f"- Opponent sampling mode: `{result.get('opponent_sampling_mode', 'unknown')}`")
     lines.append(f"- Opponents used (actor audit): `{', '.join(result.get('opponents_used', []))}`")
     lines.append("")
@@ -731,6 +750,7 @@ def build_markdown(result: Dict[str, Any]) -> str:
 
 def main() -> int:
     args = parse_args()
+    deterministic_mode = str(args.deterministic).strip().lower() == "true"
 
     checkpoint = args.checkpoint.resolve()
     if not checkpoint.is_file():
@@ -743,6 +763,7 @@ def main() -> int:
     print(f"[gate] eff_steps    = {args.effective_steps}")
     print(f"[gate] map          = {args.map_path}")
     print(f"[gate] device       = {args.device}")
+    print(f"[gate] deterministic= {deterministic_mode}")
     print(f"[gate] output_dir   = {args.output_dir}")
     print(f"[gate] sampling     = {args.opponent_sampling}")
 
@@ -761,6 +782,7 @@ def main() -> int:
         map_path=args.map_path,
         max_steps=args.max_steps,
         episodes=args.episodes,
+        deterministic=deterministic_mode,
     )
     print(
         f"[gate] actor: full_tensor_move={actor_result['full_tensor_move_share']:.4f} "
@@ -782,6 +804,7 @@ def main() -> int:
         map_path=args.map_path,
         max_steps=args.effective_steps,
         opponent=effective_opponent,
+        deterministic=deterministic_mode,
     )
     print(
         f"[gate] eff: pos_deltas={eff_result['effective_position_delta_count']} "
@@ -850,6 +873,7 @@ def main() -> int:
         "schema_version": SCHEMA_VERSION,
         "checkpoint": str(checkpoint),
         "status": status,
+        "deterministic_mode": deterministic_mode,
         "opponent_sampling_mode": args.opponent_sampling,
         "opponents_used": actor_result.get("opponents_used", []),
         "fail_reasons": fail_reasons,
@@ -887,6 +911,7 @@ def main() -> int:
             "steps_effective_audit": args.effective_steps,
             "seed": args.seed,
             "device": args.device,
+            "deterministic_mode": deterministic_mode,
             "method_limits": [
                 "Gate runs inside Gym-microRTS only. Does NOT claim Gym->Unity semantic parity.",
                 "Full-tensor Move share is NOT evidence of real movement.",
