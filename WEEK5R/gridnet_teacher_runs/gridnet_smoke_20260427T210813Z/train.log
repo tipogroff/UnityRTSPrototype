@@ -1,0 +1,12 @@
+2026-04-27 21:08:20,134 | INFO | Opponent setup: num_bot_envs=6, first-six=[2 randomBiasedAI, 2 lightRushAI, 2 workerRushAI], extra=coacAI
+2026-04-27 21:08:20,134 | INFO | Observation shape: (24, 24, 27)
+2026-04-27 21:08:20,135 | INFO | Action nvec: [576, 6, 4, 4, 4, 4, 7, 49]
+2026-04-27 21:08:20,135 | INFO | Actor branch sizes: [6, 4, 4, 4, 4, 7, 49] (sum=78)
+2026-04-27 21:08:32,971 | INFO | update=1/6 global_step=1536 lr=0.00025 sps=128
+2026-04-27 21:08:45,026 | INFO | update=2/6 global_step=3072 lr=0.000208333 sps=127
+2026-04-27 21:08:56,763 | INFO | update=3/6 global_step=4608 lr=0.000166667 sps=128
+2026-04-27 21:09:08,463 | INFO | update=4/6 global_step=6144 lr=0.000125 sps=129
+2026-04-27 21:09:20,202 | INFO | update=5/6 global_step=7680 lr=8.33333e-05 sps=129
+2026-04-27 21:09:31,841 | INFO | update=6/6 global_step=9216 lr=4.16667e-05 sps=130
+2026-04-27 21:09:31,847 | INFO | Training finished. Final model: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_smoke_20260427T210813Z\agent_final.pt
+2026-04-27 21:09:31,847 | INFO | Run summary: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_smoke_20260427T210813Z\summary.md

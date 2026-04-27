@@ -1,0 +1,48 @@
+{
+  "schema": "week5_gridnet_manifest.v1",
+  "run_id": "gridnet_smoke_20260427T215206Z",
+  "created_utc": "2026-04-27T14:54:09.970550+00:00",
+  "command": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\train_teacher_gridnet_project.py --run-id gridnet_smoke_20260427T215206Z --total-timesteps 10000 --checkpoint-steps 10000 --num-bot-envs 6 --num-selfplay-envs 0 --seed 1 --device cpu --render-window --render-during-final-eval",
+  "artifacts": {
+    "command_txt": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\command.txt",
+    "train_log": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\train.log",
+    "run_manifest_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\run_manifest.json",
+    "checkpoints_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\checkpoints",
+    "model_metadata_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\model_metadata.json",
+    "gate_or_eval_reports_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\gate_or_eval_reports",
+    "summary_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\summary.md",
+    "final_model": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\agent_final.pt"
+  },
+  "checkpoint_reports": [
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\checkpoints\\agent_step_000010000.pt",
+      "exit_code": 1,
+      "stdout_tail": "",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\nTraceback (most recent call last):\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 358, in <module>\n    main()\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 345, in main\n    result = evaluate(args)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 190, in evaluate\n    env = build_env(args.map_path, args.max_steps, opponent)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 85, in build_env\n    return MicroRTSGridModeVecEnv(\n  File \"C:\\Temp\\MicroRTS-Py-v0.6.1\\gym_microrts\\envs\\vec_env.py\", line 117, in __init__\n    jpype.startJVM(*jvm_args, convertStrings=False)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\jpype\\_core.py\", line 223, in startJVM\n    raise OSError('JVM cannot be restarted')\nOSError: JVM cannot be restarted\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\gate_or_eval_reports\\eval_agent_step_000010000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\gate_or_eval_reports\\eval_agent_step_000010000.md"
+    }
+  ],
+  "final_eval_report": {
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\agent_final.pt",
+    "exit_code": 1,
+    "stdout_tail": "",
+    "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\nTraceback (most recent call last):\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 358, in <module>\n    main()\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 345, in main\n    result = evaluate(args)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 190, in evaluate\n    env = build_env(args.map_path, args.max_steps, opponent)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py\", line 85, in build_env\n    return MicroRTSGridModeVecEnv(\n  File \"C:\\Temp\\MicroRTS-Py-v0.6.1\\gym_microrts\\envs\\vec_env.py\", line 117, in __init__\n    jpype.startJVM(*jvm_args, convertStrings=False)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\jpype\\_core.py\", line 223, in startJVM\n    raise OSError('JVM cannot be restarted')\nOSError: JVM cannot be restarted\n",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\gate_or_eval_reports\\eval_agent_final.json",
+    "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T215206Z\\gate_or_eval_reports\\eval_agent_final.md"
+  },
+  "final_eval_status": "eval_error",
+  "final_eval_effective_position_delta_count": null,
+  "final_eval_actor_level_move_share": null,
+  "final_eval_no_effect_action_share": null,
+  "global_step_reached": 10752,
+  "overshoot_steps": 752,
+  "render_window_enabled": true,
+  "visual_eval_attempted": true,
+  "visual_eval_status": "ok",
+  "visual_eval_steps": 200,
+  "visual_eval_opponent": "randomBiasedAI",
+  "visual_eval_checkpoint_or_final_model": "final_model",
+  "visual_eval_note": "visual sanity layer only; not a replacement for actor-level evaluator",
+  "save_visual_notes": true
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "week5_gridnet_manifest.v1",
+  "run_id": "gridnet_smoke_20260427T210813Z",
+  "created_utc": "2026-04-27T14:09:31.846535+00:00",
+  "command": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\train_teacher_gridnet_project.py --run-id gridnet_smoke_20260427T210813Z --total-timesteps 10000 --checkpoint-steps 10000 --num-bot-envs 6 --num-selfplay-envs 0 --seed 1 --device cpu",
+  "artifacts": {
+    "command_txt": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\command.txt",
+    "train_log": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\train.log",
+    "run_manifest_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\run_manifest.json",
+    "checkpoints_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\checkpoints",
+    "model_metadata_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\model_metadata.json",
+    "gate_or_eval_reports_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\gate_or_eval_reports",
+    "summary_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\summary.md",
+    "final_model": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_smoke_20260427T210813Z\\agent_final.pt"
+  },
+  "checkpoint_reports": []
+}
