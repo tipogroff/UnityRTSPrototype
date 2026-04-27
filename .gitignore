@@ -42,6 +42,15 @@ python/week5_teacher/teacher_exports_bc/day6_bc_ready_teacher_adapted_*/
 python/week5_teacher/teacher_models/day5_teacher_hardened_serious_*/
 python/week5_teacher/teacher_models/**/*.zip
 /WEEK5R/retraining_runs/**/*.zip
+/WEEK5R/movement_warmup_sweeps/**/*.zip
 
 # Python caches
 python/week6_student/__pycache__/
+
+# Week5 Teacher Reference — isolated reference reproduction env (DO NOT COMMIT)
+python/week5_teacher_reference/.venv_microrts032_reference/
+python/week5_teacher_reference/external/gym-microrts-paper/
+python/week5_teacher_reference/artifacts/smoke_runs/
+python/week5_teacher_reference/artifacts/long_runs/
+python/week5_teacher_reference/__pycache__/
+python/week5_teacher_reference/scripts/__pycache__/

@@ -39,6 +39,18 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--shape-noop-penalty", type=float, default=0.001)
     p.add_argument("--shape-no-effect-penalty", type=float, default=0.002)
     p.add_argument(
+        "--shape-reward-only-move-action",
+        dest="shape_reward_only_move_action",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    p.add_argument(
+        "--shape-no-effect-ready-action-only",
+        dest="shape_no_effect_ready_action_only",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    p.add_argument(
         "--min-abort-step",
         type=int,
         default=5000,
@@ -75,10 +87,6 @@ def main() -> int:
         str(args.seed),
         "--map-path",
         args.map_path,
-        "--opponent-pool",
-        args.opponent_pool,
-        "--opponent-sampling",
-        args.opponent_sampling,
         "--device",
         args.device,
         "--output-dir",
@@ -117,6 +125,14 @@ def main() -> int:
         cmd.append("--make-replay")
     if args.activity_shaping:
         cmd.append("--activity-shaping")
+    if args.shape_reward_only_move_action:
+        cmd.append("--shape-reward-only-move-action")
+    else:
+        cmd.append("--no-shape-reward-only-move-action")
+    if args.shape_no_effect_ready_action_only:
+        cmd.append("--shape-no-effect-ready-action-only")
+    else:
+        cmd.append("--no-shape-no-effect-ready-action-only")
     if args.collect_all_checkpoints:
         cmd.append("--collect-all-checkpoints")
 

@@ -1,0 +1,198 @@
+{
+  "schema_version": "teacher_behavior_gate.v1",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\retraining_runs\\behavior_first_20260426T214549Z\\checkpoints\\teacher_sb3_ppo_step_000002000.zip",
+  "status": "SUSPICIOUS",
+  "deterministic_mode": true,
+  "opponent_sampling_mode": "static",
+  "opponents_used": [
+    "passiveAI"
+  ],
+  "fail_reasons": [],
+  "warnings": [
+    "actor_noop_share=0.9104 > 0.75 (suspicious passivity)",
+    "no_effect_action_share=0.9913 > 0.60 (suspicious no-effect rate)"
+  ],
+  "actor_level": {
+    "full_tensor_move_share": 0.000156,
+    "actor_level_move_share": 0.041219,
+    "actor_noop_share": 0.910394,
+    "ready_own_actor_count": 2232,
+    "steps_with_ready_actors": 948,
+    "steps_with_movable_ready_actors": 8,
+    "ready_movable_actor_choice_count": 8,
+    "ready_movable_actor_count": 8
+  },
+  "effective_behavior": {
+    "effective_position_delta_count": 1,
+    "no_effect_action_share": 0.991304,
+    "chosen_ready_own_actor_count": 115,
+    "steps_executed": 100
+  },
+  "decision_rules": {
+    "FAIL_COLLAPSED_NOOP": {
+      "triggered": false,
+      "values": {
+        "ready_movable_actor_count": 8,
+        "actor_level_move_share": 0.041219,
+        "effective_position_delta_count": 1,
+        "actor_noop_share": 0.910394,
+        "threshold_noop": 0.9
+      }
+    },
+    "FAIL_FALSE_FULL_TENSOR_MOVE": {
+      "triggered": false,
+      "values": {
+        "full_tensor_move_share": 0.000156,
+        "actor_level_move_share": 0.041219,
+        "threshold_full": 0.1,
+        "threshold_actor": 0.05
+      }
+    },
+    "FAIL_NO_EFFECT_BEHAVIOR": {
+      "triggered": false,
+      "values": {
+        "chosen_ready_own_actor_count": 115,
+        "no_effect_action_share": 0.991304,
+        "effective_position_delta_count": 1,
+        "threshold_no_effect": 0.8
+      }
+    },
+    "SUSPICIOUS": {
+      "triggered": true,
+      "values": {
+        "actor_noop_share": 0.910394,
+        "no_effect_action_share": 0.991304,
+        "threshold_noop": 0.75,
+        "threshold_no_effect": 0.6
+      }
+    },
+    "PASS": {
+      "triggered": false,
+      "values": {
+        "actor_level_move_share": 0.041219,
+        "effective_position_delta_count": 1,
+        "threshold_move": 0.05
+      }
+    }
+  },
+  "meta": {
+    "generated_at_utc": "2026-04-26T22:07:40Z",
+    "algorithm_loader": "sb3_contrib.MaskablePPO",
+    "opponent": "passiveAI",
+    "opponent_pool": [
+      "passiveAI"
+    ],
+    "opponent_sampling_mode": "static",
+    "actor_audit_opponents_used": [
+      "passiveAI"
+    ],
+    "actor_audit_opponents_by_episode": [
+      "passiveAI",
+      "passiveAI",
+      "passiveAI",
+      "passiveAI"
+    ],
+    "effective_behavior_opponent": "passiveAI",
+    "effective_behavior_opponent_selection": "static_first_pool_opponent",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "episodes_actor_audit": 4,
+    "max_steps_per_episode": 256,
+    "steps_effective_audit": 100,
+    "seed": 170,
+    "device": "cpu",
+    "deterministic_mode": true,
+    "method_limits": [
+      "Gate runs inside Gym-microRTS only. Does NOT claim Gym->Unity semantic parity.",
+      "Full-tensor Move share is NOT evidence of real movement.",
+      "Effective-behavior state-diff is an observation proxy, not a confirmed execution stream.",
+      "Actor-level analysis covers source_unit_mask==1 cells (teacher-owned ready units)."
+    ]
+  },
+  "raw_actor_level": {
+    "full_tensor_move_share": 0.000156,
+    "actor_level_move_share": 0.041219,
+    "actor_noop_share": 0.910394,
+    "ready_own_actor_count": 2232,
+    "ready_movable_actor_choice_count": 8,
+    "ready_movable_actor_count": 8,
+    "steps_total": 1024,
+    "steps_with_ready_actors": 948,
+    "steps_with_movable_ready_actors": 8,
+    "steps_movable_ready_but_no_move": 4,
+    "opponents_used": [
+      "passiveAI"
+    ],
+    "opponents_by_episode": [
+      "passiveAI",
+      "passiveAI",
+      "passiveAI",
+      "passiveAI"
+    ],
+    "full_tensor_action_distribution": {
+      "NoOp": {
+        "count": 589624,
+        "share": 0.999661
+      },
+      "Move": {
+        "count": 92,
+        "share": 0.000156
+      },
+      "Harvest": {
+        "count": 8,
+        "share": 1.4e-05
+      },
+      "Produce": {
+        "count": 100,
+        "share": 0.00017
+      }
+    },
+    "actor_level_action_distribution": {
+      "NoOp": {
+        "count": 2032,
+        "share": 0.910394
+      },
+      "Move": {
+        "count": 92,
+        "share": 0.041219
+      },
+      "Harvest": {
+        "count": 8,
+        "share": 0.003584
+      },
+      "Produce": {
+        "count": 100,
+        "share": 0.044803
+      }
+    }
+  },
+  "raw_effective_behavior": {
+    "effective_position_delta_count": 1,
+    "no_effect_action_share": 0.991304,
+    "chosen_ready_own_actor_count": 115,
+    "outcome_distribution": {
+      "blocked_or_no_effect": 5,
+      "implicit_move_via_other_action": 1,
+      "no_position_change": 109
+    },
+    "chosen_action_distribution": {
+      "NoOp": 110,
+      "Move": 2,
+      "Harvest": 1,
+      "Produce": 2
+    },
+    "steps_executed": 100
+  },
+  "visual_replay": {
+    "created": false,
+    "replay_trace_path": null,
+    "replay_summary_path": null,
+    "visual_notes_path": null,
+    "frames_dir": null,
+    "visual_verdict": null,
+    "warnings": []
+  },
+  "replay_trace_path": null,
+  "replay_summary_path": null,
+  "visual_notes_path": null,
+  "frames_dir": null
+}

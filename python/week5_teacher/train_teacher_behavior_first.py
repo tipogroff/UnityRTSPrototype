@@ -73,6 +73,26 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--shape-move-reward", type=float, default=0.01)
     p.add_argument("--shape-noop-penalty", type=float, default=0.001)
     p.add_argument("--shape-no-effect-penalty", type=float, default=0.002)
+    p.add_argument(
+        "--shape-reward-only-move-action",
+        dest="shape_reward_only_move_action",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "If true, shape_move_reward is applied only when a ready movable actor selects Move "
+            "and position delta is observed."
+        ),
+    )
+    p.add_argument(
+        "--shape-no-effect-ready-action-only",
+        dest="shape_no_effect_ready_action_only",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "If true, no_effect_penalty is applied only when a ready actor selects non-NoOp "
+            "and no position delta is observed."
+        ),
+    )
 
     p.add_argument("--make-replay", action="store_true")
     p.add_argument("--replay-steps", type=int, default=150)
@@ -204,22 +224,30 @@ class ActivityShapingVecEnv(VecEnvWrapper):
         move_reward: float,
         noop_penalty: float,
         no_effect_penalty: float,
+        reward_only_move_action: bool,
+        no_effect_ready_action_only: bool,
     ) -> None:
         super().__init__(venv)
         self._move_reward = float(move_reward)
         self._noop_penalty = float(noop_penalty)
         self._no_effect_penalty = float(no_effect_penalty)
+        self._reward_only_move_action = bool(reward_only_move_action)
+        self._no_effect_ready_action_only = bool(no_effect_ready_action_only)
         self._last_obs: Optional[np.ndarray] = None
         self._last_mask: Optional[np.ndarray] = None
         self._last_actions: Optional[np.ndarray] = None
         self._noop_streak = np.zeros(self.num_envs, dtype=np.int32)
         self._event_counts: Dict[str, int] = {
-            "move_reward_events": 0,
+            "position_delta_steps_total": 0,
+            "move_reward_events_total": 0,
+            "move_action_on_ready_actor_events": 0,
+            "move_action_position_delta_events": 0,
+            "nonmove_position_delta_events": 0,
+            "noop_with_ready_movable_events": 0,
             "repeated_noop_penalty_events": 0,
-            "no_effect_penalty_events": 0,
-            "ready_movable_steps": 0,
-            "position_delta_steps": 0,
             "ready_actor_nonnoop_steps": 0,
+            "no_effect_ready_action_events": 0,
+            "no_effect_penalty_events": 0,
             "action_decode_skipped_steps": 0,
         }
 
@@ -265,22 +293,31 @@ class ActivityShapingVecEnv(VecEnvWrapper):
                     move_allowed = mask_prev[env_idx, :, 2] > 0
                     ready_movable = np.logical_and(source_mask, move_allowed)
                     has_ready_movable = bool(np.any(ready_movable))
-                    self._event_counts["ready_movable_steps"] += int(has_ready_movable)
 
                     action_env = actions_cells[env_idx]
                     n_cells = min(action_env.shape[0], ready_movable.shape[0])
                     act_type = action_env[:n_cells, 0]
                     ready_slice = ready_movable[:n_cells]
                     chose_nonnoop_ready = bool(np.any(np.logical_and(ready_slice, act_type != 0)))
+                    chose_move_on_ready = bool(np.any(np.logical_and(ready_slice, act_type == 1)))
                     chose_all_noop_ready = bool(has_ready_movable and not chose_nonnoop_ready)
                     self._event_counts["ready_actor_nonnoop_steps"] += int(chose_nonnoop_ready)
+                    self._event_counts["move_action_on_ready_actor_events"] += int(chose_move_on_ready)
+                    self._event_counts["noop_with_ready_movable_events"] += int(chose_all_noop_ready)
 
                     pos_delta = pos_before[env_idx] != pos_after[env_idx]
-                    self._event_counts["position_delta_steps"] += int(pos_delta)
+                    self._event_counts["position_delta_steps_total"] += int(pos_delta)
+                    if pos_delta and chose_move_on_ready:
+                        self._event_counts["move_action_position_delta_events"] += 1
+                    elif pos_delta:
+                        self._event_counts["nonmove_position_delta_events"] += 1
 
-                    if pos_delta:
+                    reward_pos_delta = pos_delta and (
+                        chose_move_on_ready if self._reward_only_move_action else True
+                    )
+                    if reward_pos_delta:
                         rew_arr[env_idx] += self._move_reward
-                        self._event_counts["move_reward_events"] += 1
+                        self._event_counts["move_reward_events_total"] += 1
 
                     if chose_all_noop_ready:
                         self._noop_streak[env_idx] += 1
@@ -290,7 +327,14 @@ class ActivityShapingVecEnv(VecEnvWrapper):
                     else:
                         self._noop_streak[env_idx] = 0
 
-                    if chose_nonnoop_ready and not pos_delta:
+                    no_effect_ready_action = chose_nonnoop_ready and not pos_delta
+                    self._event_counts["no_effect_ready_action_events"] += int(no_effect_ready_action)
+                    if self._no_effect_ready_action_only:
+                        penalize_no_effect = no_effect_ready_action
+                    else:
+                        penalize_no_effect = has_ready_movable and not pos_delta
+
+                    if penalize_no_effect:
                         rew_arr[env_idx] -= self._no_effect_penalty
                         self._event_counts["no_effect_penalty_events"] += 1
 
@@ -715,6 +759,8 @@ def train_behavior_first(args: argparse.Namespace) -> int:
             move_reward=args.shape_move_reward,
             noop_penalty=args.shape_noop_penalty,
             no_effect_penalty=args.shape_no_effect_penalty,
+            reward_only_move_action=args.shape_reward_only_move_action,
+            no_effect_ready_action_only=args.shape_no_effect_ready_action_only,
         )
         env_for_training = shaping_env
 
@@ -763,10 +809,12 @@ def train_behavior_first(args: argparse.Namespace) -> int:
     print(f"[behavior-first] activity_shaping={args.activity_shaping}")
     if args.activity_shaping:
         print(
-            "[behavior-first] shaping config: move_reward={:.4f} noop_penalty={:.4f} no_effect_penalty={:.4f}".format(
+            "[behavior-first] shaping config: move_reward={:.4f} noop_penalty={:.4f} no_effect_penalty={:.4f} reward_only_move_action={} no_effect_ready_action_only={}".format(
                 args.shape_move_reward,
                 args.shape_noop_penalty,
                 args.shape_no_effect_penalty,
+                args.shape_reward_only_move_action,
+                args.shape_no_effect_ready_action_only,
             )
         )
     print(f"[behavior-first] min_abort_step={args.min_abort_step}  (abort suppressed for steps below this)")
@@ -923,14 +971,24 @@ def train_behavior_first(args: argparse.Namespace) -> int:
             "shape_move_reward": float(args.shape_move_reward),
             "shape_noop_penalty": float(args.shape_noop_penalty),
             "shape_no_effect_penalty": float(args.shape_no_effect_penalty),
+            "shape_reward_only_move_action": bool(args.shape_reward_only_move_action),
+            "shape_no_effect_ready_action_only": bool(args.shape_no_effect_ready_action_only),
+        },
+        "shaping_alignment_mode": {
+            "reward_only_move_action": bool(args.shape_reward_only_move_action),
+            "no_effect_ready_action_only": bool(args.shape_no_effect_ready_action_only),
         },
         "shaping_event_counts": shaping_env.get_event_counts() if shaping_env is not None else {
-            "move_reward_events": 0,
+            "position_delta_steps_total": 0,
+            "move_reward_events_total": 0,
+            "move_action_on_ready_actor_events": 0,
+            "move_action_position_delta_events": 0,
+            "nonmove_position_delta_events": 0,
+            "noop_with_ready_movable_events": 0,
             "repeated_noop_penalty_events": 0,
-            "no_effect_penalty_events": 0,
-            "ready_movable_steps": 0,
-            "position_delta_steps": 0,
             "ready_actor_nonnoop_steps": 0,
+            "no_effect_ready_action_events": 0,
+            "no_effect_penalty_events": 0,
             "action_decode_skipped_steps": 0,
         },
         "movement_warmup_notes": movement_warmup_notes,

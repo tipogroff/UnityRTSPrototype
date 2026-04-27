@@ -1,0 +1,407 @@
+{
+  "sweep_id": "movement_warmup_sweep_20260426T171413Z",
+  "generated_at_utc": "2026-04-26T23:13:30Z",
+  "ranking_rule": [
+    "1) pos_delta > 0 at 10k",
+    "2) no_effect lower at 10k",
+    "3) actor_move > 0.05 at 10k",
+    "4) actor_noop lower while avoiding no-effect collapse",
+    "5) move_action_position_delta_events > 0"
+  ],
+  "runs": [
+    {
+      "run_key": "baseline_mild_seed170",
+      "config_name": "baseline_mild",
+      "seed": 170,
+      "shape_move_reward": 0.01,
+      "shape_noop_penalty": 0.001,
+      "shape_no_effect_penalty": 0.002,
+      "train_exit_code": 0,
+      "manifest_path": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\retraining_runs\\behavior_first_20260426T171415Z\\behavior_first_run_manifest.json",
+      "stdout_tail": [
+        "|    time_elapsed         | 1709        |",
+        "|    total_timesteps      | 10240       |",
+        "| train/                  |             |",
+        "|    approx_kl            | 0.043821447 |",
+        "|    clip_fraction        | 0.159       |",
+        "|    clip_range           | 0.2         |",
+        "|    entropy_loss         | -2.5        |",
+        "|    explained_variance   | 0.529       |",
+        "|    learning_rate        | 0.0003      |",
+        "|    loss                 | -0.0125     |",
+        "|    n_updates            | 76          |",
+        "|    policy_gradient_loss | -0.0293     |",
+        "|    value_loss           | 0.06        |",
+        "-----------------------------------------",
+        "[behavior-first] gate step=10000 status=FAIL_COLLAPSED_NOOP actor_move=0.0000 pos_delta=0 no_effect=1.0000",
+        "[behavior-first] movement_warmup_success step=10000: False",
+        "[behavior-first] Abort suppressed at step 10000 (collect_all_checkpoints=True): actor_level_move_share==0 with ready_movable_actor_choice_count>0; effective_position_delta_count==0; no_effect_action_share>0.80 — continuing to next checkpoint.",
+        "[behavior-first] manifest=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\retraining_runs\\behavior_first_20260426T171415Z\\behavior_first_run_manifest.json",
+        "[behavior-first] results=WEEK5R\\TEACHER_RETRAINING_RESULTS.md",
+        "[behavior-first] run_results=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\retraining_runs\\behavior_first_20260426T171415Z\\TEACHER_RETRAINING_RESULTS.md"
+      ],
+      "stderr_tail": [
+        "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.",
+        "Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.",
+        "See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'",
+        "  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'",
+        "  parse = parser.parseString(pattern)",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'",
+        "  parser.resetCache()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'",
+        "  ParserElement.enablePackrat()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\stable_baselines3\\common\\vec_env\\base_vec_env.py:78: UserWarning: The `render_mode` attribute is not defined in your environment. It will be set to None.",
+        "  warnings.warn(\"The `render_mode` attribute is not defined in your environment. It will be set to None.\")"
+      ],
+      "checkpoints": {
+        "2000": {
+          "status": "SUSPICIOUS",
+          "actor_move": 0.01312,
+          "actor_noop": 0.976676,
+          "pos_delta": 1,
+          "no_effect": 0.992481,
+          "movement_warmup_success": true,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\gate_runs\\behavior_first_20260426T171415Z\\step_000002000\\gate_teacher_sb3_ppo_step_000002000.json"
+        },
+        "5000": {
+          "status": "SUSPICIOUS",
+          "actor_move": 0.01312,
+          "actor_noop": 0.976676,
+          "pos_delta": 1,
+          "no_effect": 0.992481,
+          "movement_warmup_success": true,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\gate_runs\\behavior_first_20260426T171415Z\\step_000005000\\gate_teacher_sb3_ppo_step_000005000.json"
+        },
+        "10000": {
+          "status": "FAIL_COLLAPSED_NOOP",
+          "actor_move": 0.0,
+          "actor_noop": 0.993939,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\baseline_mild_seed170\\gate_runs\\behavior_first_20260426T171415Z\\step_000010000\\gate_teacher_sb3_ppo_step_000010000.json"
+        }
+      },
+      "shaping_event_counts": {
+        "position_delta_steps_total": 6054,
+        "move_reward_events_total": 29,
+        "move_action_on_ready_actor_events": 54,
+        "move_action_position_delta_events": 29,
+        "nonmove_position_delta_events": 6025,
+        "noop_with_ready_movable_events": 82,
+        "repeated_noop_penalty_events": 29,
+        "ready_actor_nonnoop_steps": 232,
+        "no_effect_ready_action_events": 107,
+        "no_effect_penalty_events": 107,
+        "action_decode_skipped_steps": 0
+      },
+      "move_action_position_delta_events": 29,
+      "nonmove_position_delta_events": 6025,
+      "status": "completed_with_failures",
+      "run_id": "behavior_first_20260426T171415Z",
+      "shaping_alignment_mode": {
+        "reward_only_move_action": true,
+        "no_effect_ready_action_only": true
+      }
+    },
+    {
+      "run_key": "stronger_balanced_seed170",
+      "config_name": "stronger_balanced",
+      "seed": 170,
+      "shape_move_reward": 0.05,
+      "shape_noop_penalty": 0.005,
+      "shape_no_effect_penalty": 0.01,
+      "train_exit_code": 0,
+      "manifest_path": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\retraining_runs\\behavior_first_20260426T184712Z\\behavior_first_run_manifest.json",
+      "stdout_tail": [
+        "|    time_elapsed         | 1665        |",
+        "|    total_timesteps      | 10240       |",
+        "| train/                  |             |",
+        "|    approx_kl            | 0.018495813 |",
+        "|    clip_fraction        | 0.116       |",
+        "|    clip_range           | 0.2         |",
+        "|    entropy_loss         | -1.84       |",
+        "|    explained_variance   | -0.168      |",
+        "|    learning_rate        | 0.0003      |",
+        "|    loss                 | 0.00729     |",
+        "|    n_updates            | 76          |",
+        "|    policy_gradient_loss | -0.027      |",
+        "|    value_loss           | 0.0977      |",
+        "-----------------------------------------",
+        "[behavior-first] gate step=10000 status=FAIL_COLLAPSED_NOOP actor_move=0.0000 pos_delta=0 no_effect=1.0000",
+        "[behavior-first] movement_warmup_success step=10000: False",
+        "[behavior-first] Abort suppressed at step 10000 (collect_all_checkpoints=True): actor_level_move_share==0 with ready_movable_actor_choice_count>0; effective_position_delta_count==0; no_effect_action_share>0.80 — continuing to next checkpoint.",
+        "[behavior-first] manifest=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\retraining_runs\\behavior_first_20260426T184712Z\\behavior_first_run_manifest.json",
+        "[behavior-first] results=WEEK5R\\TEACHER_RETRAINING_RESULTS.md",
+        "[behavior-first] run_results=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\retraining_runs\\behavior_first_20260426T184712Z\\TEACHER_RETRAINING_RESULTS.md"
+      ],
+      "stderr_tail": [
+        "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.",
+        "Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.",
+        "See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'",
+        "  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'",
+        "  parse = parser.parseString(pattern)",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'",
+        "  parser.resetCache()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'",
+        "  ParserElement.enablePackrat()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\stable_baselines3\\common\\vec_env\\base_vec_env.py:78: UserWarning: The `render_mode` attribute is not defined in your environment. It will be set to None.",
+        "  warnings.warn(\"The `render_mode` attribute is not defined in your environment. It will be set to None.\")"
+      ],
+      "checkpoints": {
+        "2000": {
+          "status": "SUSPICIOUS",
+          "actor_move": 0.001337,
+          "actor_noop": 0.989305,
+          "pos_delta": 1,
+          "no_effect": 0.992481,
+          "movement_warmup_success": true,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\gate_runs\\behavior_first_20260426T184712Z\\step_000002000\\gate_teacher_sb3_ppo_step_000002000.json"
+        },
+        "5000": {
+          "status": "FAIL_NO_EFFECT_BEHAVIOR",
+          "actor_move": 0.008463,
+          "actor_noop": 0.939351,
+          "pos_delta": 0,
+          "no_effect": 0.991304,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\gate_runs\\behavior_first_20260426T184712Z\\step_000005000\\gate_teacher_sb3_ppo_step_000005000.json"
+        },
+        "10000": {
+          "status": "FAIL_COLLAPSED_NOOP",
+          "actor_move": 0.0,
+          "actor_noop": 0.997972,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_balanced_seed170\\gate_runs\\behavior_first_20260426T184712Z\\step_000010000\\gate_teacher_sb3_ppo_step_000010000.json"
+        }
+      },
+      "shaping_event_counts": {
+        "position_delta_steps_total": 5976,
+        "move_reward_events_total": 27,
+        "move_action_on_ready_actor_events": 56,
+        "move_action_position_delta_events": 27,
+        "nonmove_position_delta_events": 5949,
+        "noop_with_ready_movable_events": 63,
+        "repeated_noop_penalty_events": 12,
+        "ready_actor_nonnoop_steps": 225,
+        "no_effect_ready_action_events": 94,
+        "no_effect_penalty_events": 94,
+        "action_decode_skipped_steps": 0
+      },
+      "move_action_position_delta_events": 27,
+      "nonmove_position_delta_events": 5949,
+      "status": "completed_with_failures",
+      "run_id": "behavior_first_20260426T184712Z",
+      "shaping_alignment_mode": {
+        "reward_only_move_action": true,
+        "no_effect_ready_action_only": true
+      }
+    },
+    {
+      "run_key": "stronger_noeffect_seed170",
+      "config_name": "stronger_noeffect",
+      "seed": 170,
+      "shape_move_reward": 0.03,
+      "shape_noop_penalty": 0.003,
+      "shape_no_effect_penalty": 0.02,
+      "train_exit_code": 0,
+      "manifest_path": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\retraining_runs\\behavior_first_20260426T201747Z\\behavior_first_run_manifest.json",
+      "stdout_tail": [
+        "|    time_elapsed         | 1621        |",
+        "|    total_timesteps      | 10240       |",
+        "| train/                  |             |",
+        "|    approx_kl            | 0.024052434 |",
+        "|    clip_fraction        | 0.151       |",
+        "|    clip_range           | 0.2         |",
+        "|    entropy_loss         | -1.93       |",
+        "|    explained_variance   | 0.154       |",
+        "|    learning_rate        | 0.0003      |",
+        "|    loss                 | -0.0343     |",
+        "|    n_updates            | 76          |",
+        "|    policy_gradient_loss | -0.0297     |",
+        "|    value_loss           | 0.0999      |",
+        "-----------------------------------------",
+        "[behavior-first] gate step=10000 status=FAIL_COLLAPSED_NOOP actor_move=0.0000 pos_delta=0 no_effect=1.0000",
+        "[behavior-first] movement_warmup_success step=10000: False",
+        "[behavior-first] Abort suppressed at step 10000 (collect_all_checkpoints=True): actor_level_move_share==0 with ready_movable_actor_choice_count>0; effective_position_delta_count==0; no_effect_action_share>0.80 — continuing to next checkpoint.",
+        "[behavior-first] manifest=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\retraining_runs\\behavior_first_20260426T201747Z\\behavior_first_run_manifest.json",
+        "[behavior-first] results=WEEK5R\\TEACHER_RETRAINING_RESULTS.md",
+        "[behavior-first] run_results=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\retraining_runs\\behavior_first_20260426T201747Z\\TEACHER_RETRAINING_RESULTS.md"
+      ],
+      "stderr_tail": [
+        "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.",
+        "Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.",
+        "See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'",
+        "  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'",
+        "  parse = parser.parseString(pattern)",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'",
+        "  parser.resetCache()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'",
+        "  ParserElement.enablePackrat()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\stable_baselines3\\common\\vec_env\\base_vec_env.py:78: UserWarning: The `render_mode` attribute is not defined in your environment. It will be set to None.",
+        "  warnings.warn(\"The `render_mode` attribute is not defined in your environment. It will be set to None.\")"
+      ],
+      "checkpoints": {
+        "2000": {
+          "status": "SUSPICIOUS",
+          "actor_move": 0.004598,
+          "actor_noop": 0.547126,
+          "pos_delta": 1,
+          "no_effect": 0.990476,
+          "movement_warmup_success": true,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\gate_runs\\behavior_first_20260426T201747Z\\step_000002000\\gate_teacher_sb3_ppo_step_000002000.json"
+        },
+        "5000": {
+          "status": "FAIL_NO_EFFECT_BEHAVIOR",
+          "actor_move": 0.010067,
+          "actor_noop": 0.979866,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\gate_runs\\behavior_first_20260426T201747Z\\step_000005000\\gate_teacher_sb3_ppo_step_000005000.json"
+        },
+        "10000": {
+          "status": "FAIL_COLLAPSED_NOOP",
+          "actor_move": 0.0,
+          "actor_noop": 0.997972,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\stronger_noeffect_seed170\\gate_runs\\behavior_first_20260426T201747Z\\step_000010000\\gate_teacher_sb3_ppo_step_000010000.json"
+        }
+      },
+      "shaping_event_counts": {
+        "position_delta_steps_total": 6202,
+        "move_reward_events_total": 35,
+        "move_action_on_ready_actor_events": 66,
+        "move_action_position_delta_events": 35,
+        "nonmove_position_delta_events": 6167,
+        "noop_with_ready_movable_events": 53,
+        "repeated_noop_penalty_events": 9,
+        "ready_actor_nonnoop_steps": 250,
+        "no_effect_ready_action_events": 91,
+        "no_effect_penalty_events": 91,
+        "action_decode_skipped_steps": 0
+      },
+      "move_action_position_delta_events": 35,
+      "nonmove_position_delta_events": 6167,
+      "status": "completed_with_failures",
+      "run_id": "behavior_first_20260426T201747Z",
+      "shaping_alignment_mode": {
+        "reward_only_move_action": true,
+        "no_effect_ready_action_only": true
+      }
+    },
+    {
+      "run_key": "move_heavy_seed170",
+      "config_name": "move_heavy",
+      "seed": 170,
+      "shape_move_reward": 0.1,
+      "shape_noop_penalty": 0.002,
+      "shape_no_effect_penalty": 0.005,
+      "train_exit_code": 0,
+      "manifest_path": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\retraining_runs\\behavior_first_20260426T214549Z\\behavior_first_run_manifest.json",
+      "stdout_tail": [
+        "|    time_elapsed         | 1611        |",
+        "|    total_timesteps      | 10240       |",
+        "| train/                  |             |",
+        "|    approx_kl            | 0.015147993 |",
+        "|    clip_fraction        | 0.0942      |",
+        "|    clip_range           | 0.2         |",
+        "|    entropy_loss         | -1.38       |",
+        "|    explained_variance   | 0.166       |",
+        "|    learning_rate        | 0.0003      |",
+        "|    loss                 | -0.0189     |",
+        "|    n_updates            | 76          |",
+        "|    policy_gradient_loss | -0.0206     |",
+        "|    value_loss           | 0.0732      |",
+        "-----------------------------------------",
+        "[behavior-first] gate step=10000 status=FAIL_NO_EFFECT_BEHAVIOR actor_move=0.0034 pos_delta=0 no_effect=1.0000",
+        "[behavior-first] movement_warmup_success step=10000: False",
+        "[behavior-first] Abort suppressed at step 10000 (collect_all_checkpoints=True): effective_position_delta_count==0; no_effect_action_share>0.80 — continuing to next checkpoint.",
+        "[behavior-first] manifest=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\retraining_runs\\behavior_first_20260426T214549Z\\behavior_first_run_manifest.json",
+        "[behavior-first] results=WEEK5R\\TEACHER_RETRAINING_RESULTS.md",
+        "[behavior-first] run_results=WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\retraining_runs\\behavior_first_20260426T214549Z\\TEACHER_RETRAINING_RESULTS.md"
+      ],
+      "stderr_tail": [
+        "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.",
+        "Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.",
+        "See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'",
+        "  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'",
+        "  parse = parser.parseString(pattern)",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'",
+        "  parser.resetCache()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\matplotlib\\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'",
+        "  ParserElement.enablePackrat()",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\lib\\site-packages\\stable_baselines3\\common\\vec_env\\base_vec_env.py:78: UserWarning: The `render_mode` attribute is not defined in your environment. It will be set to None.",
+        "  warnings.warn(\"The `render_mode` attribute is not defined in your environment. It will be set to None.\")"
+      ],
+      "checkpoints": {
+        "2000": {
+          "status": "SUSPICIOUS",
+          "actor_move": 0.041219,
+          "actor_noop": 0.910394,
+          "pos_delta": 1,
+          "no_effect": 0.991304,
+          "movement_warmup_success": true,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\gate_runs\\behavior_first_20260426T214549Z\\step_000002000\\gate_teacher_sb3_ppo_step_000002000.json"
+        },
+        "5000": {
+          "status": "FAIL_COLLAPSED_NOOP",
+          "actor_move": 0.0,
+          "actor_noop": 0.993939,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\gate_runs\\behavior_first_20260426T214549Z\\step_000005000\\gate_teacher_sb3_ppo_step_000005000.json"
+        },
+        "10000": {
+          "status": "FAIL_NO_EFFECT_BEHAVIOR",
+          "actor_move": 0.003425,
+          "actor_noop": 0.986301,
+          "pos_delta": 0,
+          "no_effect": 1.0,
+          "movement_warmup_success": false,
+          "gate_json": "WEEK5R\\movement_warmup_sweeps\\movement_warmup_sweep_20260426T171413Z\\runs\\move_heavy_seed170\\gate_runs\\behavior_first_20260426T214549Z\\step_000010000\\gate_teacher_sb3_ppo_step_000010000.json"
+        }
+      },
+      "shaping_event_counts": {
+        "position_delta_steps_total": 5882,
+        "move_reward_events_total": 28,
+        "move_action_on_ready_actor_events": 64,
+        "move_action_position_delta_events": 28,
+        "nonmove_position_delta_events": 5854,
+        "noop_with_ready_movable_events": 67,
+        "repeated_noop_penalty_events": 21,
+        "ready_actor_nonnoop_steps": 227,
+        "no_effect_ready_action_events": 94,
+        "no_effect_penalty_events": 94,
+        "action_decode_skipped_steps": 0
+      },
+      "move_action_position_delta_events": 28,
+      "nonmove_position_delta_events": 5854,
+      "status": "completed_with_failures",
+      "run_id": "behavior_first_20260426T214549Z",
+      "shaping_alignment_mode": {
+        "reward_only_move_action": true,
+        "no_effect_ready_action_only": true
+      }
+    }
+  ],
+  "ranked_run_keys": [
+    "move_heavy_seed170",
+    "baseline_mild_seed170",
+    "stronger_balanced_seed170",
+    "stronger_noeffect_seed170"
+  ]
+}

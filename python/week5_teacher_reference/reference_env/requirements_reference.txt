@@ -1,0 +1,40 @@
+# Reference requirements for gym-microrts paper reproduction
+# Based on: https://github.com/vwxyzjn/gym-microrts-paper/blob/master/requirements.txt
+# Paper: Gym-uRTS: Toward Affordable Deep Reinforcement Learning Research in RTS Games (CoG 2021)
+# gym_microrts version pinned to v0.3.2 (as used in the paper experiments)
+
+# Core RL / gym stack
+gym==0.17.3
+gym-microrts==0.3.2
+stable-baselines3==1.0
+torch==1.8.0
+torchvision==0.9.0
+numpy==1.19.2
+
+# Java bridge (required by gym-microrts)
+JPype1==1.2.1
+
+# Visualization
+pyglet==1.5.0
+Pillow==8.2.0
+matplotlib==3.4.1
+seaborn==0.11.1
+
+# Utilities
+tqdm==4.60.0
+scipy==1.6.2
+pandas==1.2.3
+PyYAML==5.4.1
+cloudpickle==1.6.0
+
+# Experiment tracking (optional — skip if not using wandb)
+# wandb==0.10.24
+
+# Tensorboard
+tensorboard==2.4.1
+
+# cleanrl (paper uses cleanrl==0.4.3 style scripts, but scripts are standalone in the repo)
+# cleanrl==0.4.3
+
+# Other paper dependencies
+absl-py==0.12.0

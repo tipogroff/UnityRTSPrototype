@@ -61,6 +61,49 @@ Minimal shaping signals:
 
 The shaping wrapper is applied on the teacher-side training VecEnv only.
 
+### Shaping Alignment Modes
+
+To align shaping diagnostics with gate semantics, behavior-first training now supports:
+
+- --shape-reward-only-move-action / --no-shape-reward-only-move-action (default: true)
+- --shape-no-effect-ready-action-only / --no-shape-no-effect-ready-action-only (default: true)
+
+When reward-only-move-action is true, move reward is granted only if both are true:
+
+- ready movable actor selected Move (action_type branch index 0 equals Move=1)
+- teacher position delta occurred
+
+When disabled, legacy reward behavior is used (any teacher position delta can receive shaping reward).
+
+When no-effect-ready-action-only is true, no-effect penalty is granted only if both are true:
+
+- ready actor selected non-NoOp
+- no teacher position delta occurred
+
+This makes no-effect penalty scope explicit and auditable in manifests.
+
+### Detailed Alignment Counters
+
+shaping_event_counts now records detailed diagnostics:
+
+- position_delta_steps_total
+- move_reward_events_total
+- move_action_on_ready_actor_events
+- move_action_position_delta_events
+- nonmove_position_delta_events
+- noop_with_ready_movable_events
+- repeated_noop_penalty_events
+- ready_actor_nonnoop_steps
+- no_effect_ready_action_events
+- no_effect_penalty_events
+- action_decode_skipped_steps
+
+Why this was added:
+
+- Separate any position delta from Move-caused position delta.
+- Detect when reward credit was granted for non-Move dynamics.
+- Verify whether activity shaping promotes actor-level useful movement that gate metrics track.
+
 ## Why This Is Not Final Reward Function
 
 This scaffold is an optimization aid intended to bootstrap activity and break inert local minima. It is not intended as the final task reward definition and does not replace downstream policy quality criteria.
@@ -85,8 +128,14 @@ Behavior-first manifest now includes:
 - curriculum_mode
 - activity_shaping_enabled
 - shaping_config
+- shaping_alignment_mode
 - shaping_event_counts
 - movement_warmup_notes
+
+shaping_alignment_mode fields:
+
+- reward_only_move_action: true/false
+- no_effect_ready_action_only: true/false
 
 ## movement_warmup Success Criteria
 
@@ -106,3 +155,42 @@ To disable scaffold behavior completely:
 - do not pass --activity-shaping
 
 This keeps training on baseline behavior-first settings (unless other CLI overrides are applied).
+
+## movement_warmup Coefficient Sweep
+
+For short warmup comparison (10k), use:
+
+- python/week5_teacher/run_movement_warmup_sweep.py
+
+Default sweep configs:
+
+- baseline_mild: move=0.01 noop=0.001 no_effect=0.002
+- stronger_balanced: move=0.05 noop=0.005 no_effect=0.01
+- stronger_noeffect: move=0.03 noop=0.003 no_effect=0.02
+- move_heavy: move=0.10 noop=0.002 no_effect=0.005
+
+Run characteristics:
+
+- curriculum-mode movement_warmup
+- activity-shaping enabled
+- total-timesteps 10000
+- checkpoint-steps 2000,5000,10000
+- collect-all-checkpoints
+- replay optional (default off)
+
+Sweep artifacts:
+
+- WEEK5R/movement_warmup_sweeps/<sweep_id>/SWEEP_RESULTS.md
+- WEEK5R/movement_warmup_sweeps/<sweep_id>/sweep_results.json
+
+Ranking preference:
+
+1. pos_delta > 0 at 10k
+2. lower no_effect at 10k
+3. actor_move > 0.05 at 10k
+4. lower actor_noop without no-effect collapse
+5. move_action_position_delta_events > 0
+
+Expected next experiment:
+
+- Run sweep to 10k, choose best config by ranking, then rerun full 20k movement_warmup with selected coefficients.
