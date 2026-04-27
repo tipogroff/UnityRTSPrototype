@@ -1,75 +1,66 @@
 <#
 .SYNOPSIS
-    Long/staged reference training run for gym-microrts 0.3.2.
+    Staged long reference training run for gym-microrts 0.3.2.
 
 .DESCRIPTION
     Runs a longer training experiment using the original paper recipe.
-
-    DEFAULT: 1,000,000 timesteps (1M) as the first staged reference run.
-    This gives enough signal to verify that movement behavior emerges
-    without committing to a full paper-scale run (100M timesteps).
+    Default: 1,000,000 timesteps (1M staged sanity check).
+    Paper-level runs use ~100M timesteps -- do NOT set that without planning for
+    multi-day compute.
 
     IMPORTANT:
-      - This script does NOT start automatically.
-      - Review the configuration section below before running.
-      - Do NOT set TOTAL_TIMESTEPS to 100M+ without planning for multi-day compute.
-      - This is a REFERENCE run only — not a Unity-compatible checkpoint.
+      - This is a REFERENCE run only -- not a Unity-compatible checkpoint.
+      - Do NOT copy artifacts to python/week5_teacher or Unity pipeline.
+      - Smoke run must have passed before running this.
 
-    Paper-scale context:
-      The paper uses ~100M timesteps for final results.
-      1M is sufficient to see initial movement/combat behavior in most envs.
-      10M is a reasonable "staged sanity" run.
+.PARAMETER TotalTimesteps
+    Total environment steps. Default: 1_000_000.
 
-.NOTES
-    Prerequisites:
-      1. Run create_reference_env.ps1 and verify_reference_env.py first.
-      2. Smoke run should have passed.
-      3. Activate reference venv before running.
-      4. Set JAVA_HOME to JDK >= 1.8.0.
+.PARAMETER Seed
+    Random seed. Default: 1.
 
-    Run from repo root:
-        .\python\week5_teacher_reference\scripts\run_reference_training_long.ps1
+.PARAMETER NumBotEnvs
+    Number of bot envs. Minimum: 6 (required by ai2s formula in paper script).
+    Default: 6.
+
+.PARAMETER CaptureVideo
+    Capture episode video. Requires ffmpeg on PATH. Default: auto-detect ffmpeg.
+
+.PARAMETER ScriptToRun
+    Paper script filename (relative to external/gym-microrts-paper/).
+    Default: ppo_gridnet_diverse_encode_decode.py
+
+.EXAMPLE
+    # 100k quick staged test
+    .\run_reference_training_long.ps1 -TotalTimesteps 100000 -CaptureVideo:$false
+
+    # 1M staged reference run
+    .\run_reference_training_long.ps1 -TotalTimesteps 1000000 -CaptureVideo:$false
 #>
+param(
+    [int]    $TotalTimesteps = 1000000,
+    [int]    $Seed           = 1,
+    [int]    $NumBotEnvs     = 6,
+    [switch] $CaptureVideo,
+    [string] $ScriptToRun    = "ppo_gridnet_diverse_encode_decode.py"
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Continue"
+$PSNativeCommandUseErrorActionPreference = $false
 
-# ===========================================================================
-# CONFIGURATION — edit before running
-# ===========================================================================
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+$ScriptDir  = $PSScriptRoot
+$RefRoot    = Split-Path $ScriptDir -Parent
+$VenvPath   = Join-Path $RefRoot ".venv_microrts032_reference"
+$PaperRepo  = Join-Path $RefRoot "external\gym-microrts-paper"
+$OutputBase = Join-Path $RefRoot "artifacts\long_runs"
 
-# Total environment steps. Start with 1M for a staged sanity check.
-# Paper-level runs use ~100M — do NOT set that without explicit intent.
-$TOTAL_TIMESTEPS = 1000000   # 1M staged reference run
-
-# Random seed for reproducibility
-$SEED = 1
-
-# Capture video of episodes (requires ffmpeg)
-$CAPTURE_VIDEO = $true
-
-# Which paper script to use (from external/gym-microrts-paper/)
-# Recommended for reference: ppo_gridnet_diverse_encode_decode.py (best Gridnet agent)
-# Alternative UAS: ppo_diverse_impala.py
-$SCRIPT_TO_RUN = "ppo_gridnet_diverse_encode_decode.py"
-
-# Number of parallel envs (reduce if OOM)
-$NUM_BOT_ENVS      = 4
-$NUM_SELFPLAY_ENVS = 0
-
-# Output directory (auto-timestamped subfolder is created)
-$OUTPUT_BASE = Join-Path $PSScriptRoot "..\artifacts\long_runs"
-
-# ===========================================================================
-# END CONFIGURATION
-# ===========================================================================
-
-$ScriptDir   = $PSScriptRoot
-$RefRoot     = Split-Path $ScriptDir -Parent
-$VenvPath    = Join-Path $RefRoot ".venv_microrts032_reference"
-$PaperRepo   = Join-Path $RefRoot "external\gym-microrts-paper"
-
-# JAVA_HOME auto-detect (override if needed)
+# ---------------------------------------------------------------------------
+# Auto-detect JAVA_HOME
+# ---------------------------------------------------------------------------
 if (-not $env:JAVA_HOME) {
     $candidates = @(
         "C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot",
@@ -82,9 +73,30 @@ if (-not $env:JAVA_HOME) {
         if (Test-Path $p) {
             $env:JAVA_HOME = $p
             $env:Path      = "$p\bin;$env:Path"
+            Write-Host "  Auto-detected JAVA_HOME: $p" -ForegroundColor DarkYellow
             break
         }
     }
+}
+
+# ---------------------------------------------------------------------------
+# Auto-detect ffmpeg for CaptureVideo
+# ---------------------------------------------------------------------------
+$FfmpegAvailable = $false
+if ($null -ne (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
+    $FfmpegAvailable = $true
+}
+# If -CaptureVideo was explicitly passed, honour it; otherwise follow auto-detect
+$UseCaptureVideo = $CaptureVideo.IsPresent
+if ($CaptureVideo.IsPresent -and -not $FfmpegAvailable) {
+    Write-Host "WARNING: --CaptureVideo requested but ffmpeg not found on PATH. Disabling." -ForegroundColor DarkYellow
+    $UseCaptureVideo = $false
+}
+
+# Validation: num_bot_envs minimum
+if ($NumBotEnvs -lt 6) {
+    Write-Host "ERROR: --NumBotEnvs must be >= 6 (ai2s formula requires it). Got: $NumBotEnvs" -ForegroundColor Red
+    exit 1
 }
 
 # ---------------------------------------------------------------------------
@@ -92,16 +104,15 @@ if (-not $env:JAVA_HOME) {
 # ---------------------------------------------------------------------------
 Write-Host ""
 Write-Host "=== Reference Long Training Run ===" -ForegroundColor Cyan
-Write-Host "  Script          : $SCRIPT_TO_RUN"
-Write-Host "  Total timesteps : $TOTAL_TIMESTEPS"
-Write-Host "  Seed            : $SEED"
-Write-Host "  Capture video   : $CAPTURE_VIDEO"
-Write-Host "  Num bot envs    : $NUM_BOT_ENVS"
-Write-Host "  Num selfplay    : $NUM_SELFPLAY_ENVS"
+Write-Host "  Script          : $ScriptToRun"
+Write-Host "  Total timesteps : $TotalTimesteps"
+Write-Host "  Seed            : $Seed"
+Write-Host "  Num bot envs    : $NumBotEnvs"
+Write-Host "  Capture video   : $UseCaptureVideo"
 Write-Host "  JAVA_HOME       : $($env:JAVA_HOME)"
 Write-Host ""
-Write-Host "NOTE: Paper-level runs use ~100M timesteps. This run uses $TOTAL_TIMESTEPS." -ForegroundColor DarkYellow
-Write-Host "      This is a STAGED REFERENCE run, not a full paper reproduction." -ForegroundColor DarkYellow
+Write-Host "NOTE: Paper-level runs use ~100M timesteps. This run uses $TotalTimesteps." -ForegroundColor DarkYellow
+Write-Host "      This is a STAGED REFERENCE run -- not a Unity-compatible checkpoint." -ForegroundColor DarkYellow
 Write-Host ""
 
 $VenvPython = Join-Path $VenvPath "Scripts\python.exe"
@@ -116,7 +127,7 @@ if (-not (Test-Path $PaperRepo)) {
     exit 1
 }
 
-$ScriptPath = Join-Path $PaperRepo $SCRIPT_TO_RUN
+$ScriptPath = Join-Path $PaperRepo $ScriptToRun
 if (-not (Test-Path $ScriptPath)) {
     Write-Host "ERROR: Script not found: $ScriptPath" -ForegroundColor Red
     Write-Host "Available .py files:" -ForegroundColor DarkYellow
@@ -128,7 +139,8 @@ if (-not (Test-Path $ScriptPath)) {
 # Output directory
 # ---------------------------------------------------------------------------
 $Timestamp = (Get-Date -Format "yyyyMMddTHHmmssZ")
-$OutDir    = Join-Path $OUTPUT_BASE $Timestamp
+$ExpName   = "long_ref_${Timestamp}"
+$OutDir    = Join-Path $OutputBase $Timestamp
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
 
 Write-Host "Output dir: $OutDir" -ForegroundColor Cyan
@@ -137,17 +149,17 @@ Write-Host ""
 # ---------------------------------------------------------------------------
 # Build command
 # ---------------------------------------------------------------------------
-$Args = @(
+$TrainArgs = @(
     $ScriptPath,
-    "--total-timesteps", $TOTAL_TIMESTEPS,
-    "--seed",            $SEED,
-    "--exp-name",        "long_ref_${Timestamp}",
-    "--num-bot-envs",    $NUM_BOT_ENVS,
-    "--num-selfplay-envs", $NUM_SELFPLAY_ENVS
+    "--total-timesteps", $TotalTimesteps,
+    "--seed",            $Seed,
+    "--exp-name",        $ExpName,
+    "--num-bot-envs",    $NumBotEnvs,
+    "--num-selfplay-envs", 0
 )
-if ($CAPTURE_VIDEO) { $Args += "--capture-video" }
+if ($UseCaptureVideo) { $TrainArgs += "--capture-video" }
 
-$CmdStr = "$VenvPython $($Args -join ' ')"
+$CmdStr = "$VenvPython $($TrainArgs -join ' ')"
 $CmdStr | Out-File -FilePath (Join-Path $OutDir "long_run_command.txt") -Encoding utf8
 Write-Host "Command: $CmdStr" -ForegroundColor DarkCyan
 Write-Host ""
@@ -155,20 +167,94 @@ Write-Host ""
 # ---------------------------------------------------------------------------
 # Run
 # ---------------------------------------------------------------------------
+$StartTime   = Get-Date
 $OriginalDir = $PWD.Path
 Set-Location $PaperRepo
 
+$ExitCode = 1
 try {
     Write-Host "--- Training output begins ---" -ForegroundColor DarkGray
-    & $VenvPython @Args 2>&1 | Tee-Object -FilePath (Join-Path $OutDir "long_train.log")
+    $env:WANDB_MODE = "disabled"
+    $ErrorActionPreference = "Continue"
+    & $VenvPython @TrainArgs 2>&1 | Tee-Object -FilePath (Join-Path $OutDir "long_train.log")
     $ExitCode = $LASTEXITCODE
     Write-Host "--- Training output ends ---" -ForegroundColor DarkGray
 } finally {
+    $ErrorActionPreference = "Continue"
     Set-Location $OriginalDir
 }
 
+$EndTime = Get-Date
+$DurationSec = [int]($EndTime - $StartTime).TotalSeconds
+
 # ---------------------------------------------------------------------------
-# Collect outputs
+# Discover artifacts produced by the paper script
+# ---------------------------------------------------------------------------
+# Paper script writes (all relative to PaperRepo CWD):
+#   runs/<gym_id>__<exp_name>__<seed>__<unix_ts>/ -- TensorBoard event files (always)
+#   models/<gym_id>__<exp_name>__<seed>__<unix_ts>/agent.pt -- only with --prod-mode
+#   videos/                                       -- only with --capture-video
+$ArtifactPaths = @{}
+
+$RunDirPattern = "*__${ExpName}__${Seed}__*"
+$TBDir = Get-ChildItem (Join-Path $PaperRepo "runs") -Directory -ErrorAction SilentlyContinue |
+         Where-Object { $_.Name -like $RunDirPattern } |
+         Sort-Object LastWriteTime -Descending |
+         Select-Object -First 1
+if ($TBDir) {
+    $ArtifactPaths["tensorboard_dir"] = $TBDir.FullName
+    Write-Host "TensorBoard events: $($TBDir.FullName)" -ForegroundColor Green
+} else {
+    $ArtifactPaths["tensorboard_dir"] = $null
+}
+
+$ModelsDir = Get-ChildItem (Join-Path $PaperRepo "models") -Directory -ErrorAction SilentlyContinue |
+             Where-Object { $_.Name -like $RunDirPattern } |
+             Sort-Object LastWriteTime -Descending |
+             Select-Object -First 1
+$ModelPt = $null
+if ($ModelsDir) {
+    $ModelPt = Join-Path $ModelsDir.FullName "agent.pt"
+}
+if (Test-Path $ModelPt) {
+    $ArtifactPaths["agent_pt"] = $ModelPt
+    Write-Host "Model checkpoint: $ModelPt" -ForegroundColor Green
+} else {
+    $ArtifactPaths["agent_pt"] = $null
+    Write-Host "NOTE: agent.pt not found (expected -- paper script only saves via wandb --prod-mode)." -ForegroundColor DarkYellow
+    Write-Host "      To save a checkpoint add --prod-mode or use a custom save wrapper." -ForegroundColor DarkYellow
+}
+
+# Copy TensorBoard runs dir into output dir for archival
+if ($ArtifactPaths["tensorboard_dir"]) {
+    $TBDest = Join-Path $OutDir "tensorboard"
+    Copy-Item $ArtifactPaths["tensorboard_dir"] -Destination $TBDest -Recurse -Force
+    Write-Host "TensorBoard data copied to: $TBDest" -ForegroundColor Green
+}
+
+# Copy videos if captured
+$VideoSrc = Join-Path $PaperRepo "videos"
+$VideosFound = $false
+if (Test-Path $VideoSrc) {
+    Copy-Item $VideoSrc -Destination (Join-Path $OutDir "videos") -Recurse -Force
+    $VideosFound = $true
+    Write-Host "Videos copied to: $(Join-Path $OutDir 'videos')" -ForegroundColor Green
+}
+
+# Detect any .pt / .pth / .zip under paper repo (catch non-standard save locations)
+$ExtraModels = Get-ChildItem $PaperRepo -Include "*.pt","*.pth","*.zip" -Recurse -ErrorAction SilentlyContinue |
+               Where-Object { $_.LastWriteTime -gt $StartTime } |
+               Select-Object -ExpandProperty FullName
+if ($ExtraModels) {
+    $ArtifactPaths["extra_models"] = $ExtraModels
+    Write-Host "Extra model files found since run start:" -ForegroundColor Green
+    $ExtraModels | ForEach-Object { Write-Host "  $_" }
+} else {
+    $ArtifactPaths["extra_models"] = @()
+}
+
+# ---------------------------------------------------------------------------
+# Summary
 # ---------------------------------------------------------------------------
 Write-Host ""
 if ($ExitCode -eq 0) {
@@ -178,27 +264,34 @@ if ($ExitCode -eq 0) {
     Write-Host "See log: $(Join-Path $OutDir 'long_train.log')"
 }
 
-$VideoSrc = Join-Path $PaperRepo "videos"
-if (Test-Path $VideoSrc) {
-    Copy-Item $VideoSrc -Destination (Join-Path $OutDir "videos") -Recurse -Force
-    Write-Host "Videos copied to: $(Join-Path $OutDir 'videos')" -ForegroundColor Green
+$Summary = [ordered]@{
+    timestamp         = $Timestamp
+    exp_name          = $ExpName
+    script            = $ScriptToRun
+    total_timesteps   = $TotalTimesteps
+    seed              = $Seed
+    num_bot_envs      = $NumBotEnvs
+    num_selfplay_envs = 0
+    capture_video     = $UseCaptureVideo
+    exit_code         = $ExitCode
+    start_time        = $StartTime.ToString("o")
+    end_time          = $EndTime.ToString("o")
+    duration_sec      = $DurationSec
+    out_dir           = $OutDir
+    log_path          = (Join-Path $OutDir "long_train.log")
+    videos_found      = $VideosFound
+    checkpoints_found = ($null -ne $ArtifactPaths["agent_pt"])
+    artifact_paths    = $ArtifactPaths
+    java_home         = $env:JAVA_HOME
+    python_exe        = $VenvPython
+    notes             = @(
+        "Staged reference run. Paper uses ~100M timesteps.",
+        "agent.pt only saved with --prod-mode (wandb). Not expected in reference runs.",
+        "TensorBoard data in tensorboard/ subdirectory if training reached at least 1 update.",
+        "np.int patched to np.int32 in gym_microrts venv (numpy>=1.24 compatibility)."
+    )
 }
-
-$Summary = @{
-    timestamp        = $Timestamp
-    script           = $SCRIPT_TO_RUN
-    total_timesteps  = $TOTAL_TIMESTEPS
-    seed             = $SEED
-    num_bot_envs     = $NUM_BOT_ENVS
-    num_selfplay_envs = $NUM_SELFPLAY_ENVS
-    capture_video    = $CAPTURE_VIDEO
-    exit_code        = $ExitCode
-    out_dir          = $OutDir
-    java_home        = $env:JAVA_HOME
-    python_exe       = $VenvPython
-    note             = "Staged reference run. Paper uses ~100M timesteps."
-}
-$Summary | ConvertTo-Json -Depth 3 | Out-File -FilePath (Join-Path $OutDir "long_run_summary.json") -Encoding utf8
+$Summary | ConvertTo-Json -Depth 5 | Out-File -FilePath (Join-Path $OutDir "long_run_summary.json") -Encoding utf8
 
 Write-Host ""
 Write-Host "Artifacts saved to: $OutDir" -ForegroundColor Cyan

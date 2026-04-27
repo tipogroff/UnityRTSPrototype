@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-04-27T12:07:28.657119+00:00",
+  "env_verify": {
+    "timestamp": "2026-04-27T11:33:10.552172+00:00",
+    "python_version": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "virtual_env": "NOT_SET",
+    "versions": {
+      "gym": "0.17.3",
+      "gym_microrts": "0.3.2",
+      "stable_baselines3": "1.0",
+      "torch": "1.8.0+cpu",
+      "numpy": "1.25.2",
+      "JPype1": "1.4.1",
+      "wandb": "NOT_INSTALLED"
+    },
+    "java": {
+      "JAVA_HOME": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot\\",
+      "java_version_string": "openjdk version \"17.0.18\" 2026-01-20"
+    },
+    "gym_microrts_import": "OK",
+    "env_create": "OK (env_id=MicrortsMining-v1)",
+    "observation_space": [
+      10,
+      10,
+      27
+    ],
+    "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+    "obs_surface_check": "FULL_OBS_27_CHANNEL",
+    "exact_reference_pins": false,
+    "compatibility_fallback_used": true,
+    "notes": [
+      "Compatibility fallback detected: numpy != 1.19.2 or torch does not start with 1.8.0."
+    ],
+    "errors": [],
+    "overall_status": "PASS",
+    "registered_microrts_envs": [
+      "Microrts-v0",
+      "MicrortsMining-v1",
+      "MicrortsProduceWorker-v1",
+      "MicrortsAttackSparseReward-v1",
+      "MicrortsAttackShapedReward-v1",
+      "MicrortsAttackHRL-v1",
+      "MicrortsProduceCombatUnitsSparseReward-v1",
+      "MicrortsProduceCombatUnitsShapedReward-v1",
+      "MicrortsProduceCombatUnitHRL-v1",
+      "MicrortsRandomEnemySparseReward-v1",
+      "MicrortsRandomEnemyShapedReward1-v1",
+      "MicrortsRandomEnemyShapedReward2-v1",
+      "MicrortsRandomEnemyShapedReward3-v1",
+      "MicrortsRandomEnemyHRL1-v1",
+      "MicrortsRandomEnemyHRL2-v1",
+      "MicrortsRandomEnemyHRL3-v1",
+      "MicrortsWorkerRush-v1",
+      "MicrortsSelfPlayShapedReward-v1",
+      "MicrortsMining-v2",
+      "MicrortsProduceWorker-v2",
+      "MicrortsAttackPassiveEnemySparseReward-v2",
+      "MicrortsProduceCombatUnitsSparseReward-v2",
+      "MicrortsDefeatRandomEnemySparseReward-v2",
+      "MicrortsDefeatRandomEnemyShapedReward-v2",
+      "MicrortsDefeatWorkerRushEnemyShaped-v2",
+      "MicrortsDefeatLightRushEnemyShaped-v2",
+      "MicrortsDefeatCoacAIShaped-v2",
+      "MicrortsDefeatNaiveMCTSAIShaped-v2",
+      "MicrortsDefeatWorkerRushEnemyHRL-v2",
+      "MicrortsMining-v3",
+      "MicrortsProduceWorker-v3",
+      "MicrortsAttackPassiveEnemySparseReward-v3",
+      "MicrortsProduceCombatUnitsSparseReward-v3",
+      "MicrortsDefeatRandomEnemySparseReward-v3",
+      "MicrortsDefeatRandomEnemyShapedReward-v3",
+      "MicrortsDefeatWorkerRushEnemyShaped-v3",
+      "MicrortsDefeatLightRushEnemyShaped-v3",
+      "MicrortsDefeatCoacAIShaped-v3",
+      "MicrortsDefeatNaiveMCTSAIShaped-v3",
+      "MicrortsDefeatWorkerRushEnemyHRL-v3",
+      "MicrortsDefeatCoacAIHRL-v3",
+      "MicrortsMining-v4",
+      "MicrortsProduceWorker-v4",
+      "MicrortsAttackPassiveEnemySparseReward-v4",
+      "MicrortsProduceCombatUnitsSparseReward-v4",
+      "MicrortsDefeatRandomEnemySparseReward-v4",
+      "MicrortsDefeatRandomEnemyShapedReward-v4",
+      "MicrortsDefeatWorkerRushEnemyShaped-v4",
+      "MicrortsDefeatLightRushEnemyShaped-v4",
+      "MicrortsDefeatCoacAIShaped-v4",
+      "MicrortsDefeatNaiveMCTSAIShaped-v4",
+      "MicrortsDefeatWorkerRushEnemyHRL-v4"
+    ]
+  },
+  "total_runs": 4,
+  "smoke_run_count": 3,
+  "long_run_count": 1,
+  "runs": [
+    {
+      "run_type": "smoke",
+      "run_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\smoke_runs\\20260427T184129Z",
+      "timestamp": "20260427T184129Z",
+      "command": "\ufeffC:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\external\\gym-microrts-paper\\ppo_gridnet_diverse_encode_decode.py --total-timesteps 10000 --seed 1 --exp-name smoke_20260427T184129Z --num-bot-envs 1 --num-selfplay-envs 0",
+      "total_timesteps": 10000,
+      "seed": 1,
+      "observation_shape": [
+        10,
+        10,
+        27
+      ],
+      "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+      "videos_found": false,
+      "checkpoints_found": false,
+      "logs_found": true,
+      "exit_code": 1
+    },
+    {
+      "run_type": "smoke",
+      "run_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\smoke_runs\\20260427T184202Z",
+      "timestamp": "20260427T184202Z",
+      "command": "\ufeffC:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\external\\gym-microrts-paper\\ppo_gridnet_diverse_encode_decode.py --total-timesteps 10000 --seed 1 --exp-name smoke_20260427T184202Z --num-bot-envs 6 --num-selfplay-envs 0",
+      "total_timesteps": 10000,
+      "seed": 1,
+      "observation_shape": [
+        10,
+        10,
+        27
+      ],
+      "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+      "videos_found": false,
+      "checkpoints_found": false,
+      "logs_found": true,
+      "exit_code": 1
+    },
+    {
+      "run_type": "smoke",
+      "run_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\smoke_runs\\20260427T184310Z",
+      "timestamp": "20260427T184310Z",
+      "command": "\ufeffC:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\external\\gym-microrts-paper\\ppo_gridnet_diverse_encode_decode.py --total-timesteps 10000 --seed 1 --exp-name smoke_20260427T184310Z --num-bot-envs 6 --num-selfplay-envs 0",
+      "total_timesteps": 10000,
+      "seed": 1,
+      "observation_shape": [
+        10,
+        10,
+        27
+      ],
+      "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+      "videos_found": false,
+      "checkpoints_found": false,
+      "logs_found": true,
+      "exit_code": 0
+    },
+    {
+      "run_type": "long",
+      "run_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\long_runs\\20260427T185325Z",
+      "timestamp": "20260427T185325Z",
+      "command": "\ufeffC:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\external\\gym-microrts-paper\\ppo_gridnet_diverse_encode_decode.py --total-timesteps 100000 --seed 1 --exp-name long_ref_20260427T185325Z --num-bot-envs 6 --num-selfplay-envs 0",
+      "total_timesteps": 100000,
+      "seed": 1,
+      "observation_shape": [
+        10,
+        10,
+        27
+      ],
+      "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+      "videos_found": false,
+      "checkpoints_found": false,
+      "logs_found": true,
+      "exit_code": 0
+    }
+  ]
+}

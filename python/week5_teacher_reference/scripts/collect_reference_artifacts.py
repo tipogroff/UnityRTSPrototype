@@ -61,7 +61,7 @@ def collect_runs(base_dir: Path, run_type: str) -> list:
             summary_path = run_dir / summary_name
             if summary_path.exists():
                 try:
-                    with open(summary_path, encoding="utf-8") as f:
+                    with open(summary_path, encoding="utf-8-sig") as f:
                         s = json.load(f)
                     run_info["total_timesteps"] = s.get("total_timesteps")
                     run_info["seed"]            = s.get("seed")

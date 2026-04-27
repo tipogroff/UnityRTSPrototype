@@ -38,7 +38,7 @@ $ArtifactsBase  = Join-Path $RefRoot "artifacts\smoke_runs"
 
 $TOTAL_TIMESTEPS = 10000
 $SEED            = 1
-$CAPTURE_VIDEO   = $true
+$CAPTURE_VIDEO   = $false   # Disabled: requires ffmpeg; set to $true only if ffmpeg is on PATH
 $SCRIPT_TO_RUN   = "ppo_gridnet_diverse_encode_decode.py"   # Gridnet: best paper agent
 $ALT_SCRIPT      = "ppo_diverse_impala.py"                  # UAS: fallback
 
@@ -103,7 +103,7 @@ Write-Host ""
 # ---------------------------------------------------------------------------
 $ScriptPath = Join-Path $PaperRepo $SCRIPT_TO_RUN
 if (-not (Test-Path $ScriptPath)) {
-    Write-Host "WARNING: $SCRIPT_TO_RUN not found — trying fallback $ALT_SCRIPT" -ForegroundColor DarkYellow
+    Write-Host "WARNING: $SCRIPT_TO_RUN not found -- trying fallback $ALT_SCRIPT" -ForegroundColor DarkYellow
     $ScriptPath = Join-Path $PaperRepo $ALT_SCRIPT
     $SCRIPT_TO_RUN = $ALT_SCRIPT
 }
@@ -115,7 +115,7 @@ if (-not (Test-Path $ScriptPath)) {
     exit 1
 }
 
-$Args = @(
+$TrainArgs = @(
     $ScriptPath,
     "--total-timesteps", $TOTAL_TIMESTEPS,
     "--seed", $SEED,
@@ -123,14 +123,15 @@ $Args = @(
 )
 
 if ($CAPTURE_VIDEO) {
-    $Args += "--capture-video"
+    $TrainArgs += "--capture-video"
 }
 
-# Smoke run uses minimal envs to avoid resource pressure
-$Args += @("--num-bot-envs", "1", "--num-selfplay-envs", "0")
+# num-bot-envs must be >= 6: the script's ai2s formula produces 3 entries for
+# values 1-5 (mismatches num_envs), and exactly 6 entries when num_bot_envs==6.
+$TrainArgs += @("--num-bot-envs", "6", "--num-selfplay-envs", "0")
 
 # Save command to log
-$CmdStr = "$VenvPython $($Args -join ' ')"
+$CmdStr = "$VenvPython $($TrainArgs -join ' ')"
 $CmdStr | Out-File -FilePath (Join-Path $OutDir "smoke_command.txt") -Encoding utf8
 Write-Host "Command: $CmdStr" -ForegroundColor DarkCyan
 Write-Host ""
@@ -143,7 +144,8 @@ Set-Location $PaperRepo
 
 try {
     Write-Host "--- Training output begins ---" -ForegroundColor DarkGray
-    & $VenvPython @Args 2>&1 | Tee-Object -FilePath (Join-Path $OutDir "smoke_train.log")
+    $env:WANDB_MODE = "disabled"
+    & $VenvPython @TrainArgs 2>&1 | Tee-Object -FilePath (Join-Path $OutDir "smoke_train.log")
     $ExitCode = $LASTEXITCODE
     Write-Host "--- Training output ends ---" -ForegroundColor DarkGray
 } finally {
