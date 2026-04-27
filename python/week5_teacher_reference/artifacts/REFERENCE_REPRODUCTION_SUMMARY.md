@@ -1,6 +1,6 @@
 # Reference Reproduction Summary
 
-**Generated**: 2026-04-27T12:07:28.657119+00:00
+**Generated**: 2026-04-27T12:33:04.523275+00:00
 
 ## Environment Verification
 
@@ -12,7 +12,7 @@
 
 ## Training Runs
 
-Total runs: 4 (smoke: 3, long: 1)
+Total runs: 5 (smoke: 3, long: 2)
 
 | Type | Timestamp | Timesteps | Seed | Logs | Video | Checkpoint | Exit |
 |------|-----------|-----------|------|------|-------|------------|------|
@@ -20,6 +20,7 @@ Total runs: 4 (smoke: 3, long: 1)
 | smoke | 20260427T184202Z | 10000 | 1 | Y | N | N | 1 |
 | smoke | 20260427T184310Z | 10000 | 1 | Y | N | N | 0 |
 | long | 20260427T185325Z | 100000 | 1 | Y | N | N | 0 |
+| long | 20260427T192007Z | 100000 | 1 | Y | N | Y | 0 |
 
 ## Success Criteria
 
@@ -30,7 +31,7 @@ Total runs: 4 (smoke: 3, long: 1)
 | obs surface | FULL_OBS_27_CHANNEL |
 | training runs without crash | YES |
 | video/replay created | NOT YET |
-| checkpoint saved | NOT YET |
+| checkpoint saved | YES |
 
 ---
 _This is a reference reproduction summary — not a Unity parity report._

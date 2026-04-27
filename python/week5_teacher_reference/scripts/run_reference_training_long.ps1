@@ -30,6 +30,9 @@
     Paper script filename (relative to external/gym-microrts-paper/).
     Default: ppo_gridnet_diverse_encode_decode.py
 
+.PARAMETER LocalSaveModel
+    Use the local patched paper script and save model artifacts to the long-run output dir.
+
 .EXAMPLE
     # 100k quick staged test
     .\run_reference_training_long.ps1 -TotalTimesteps 100000 -CaptureVideo:$false
@@ -42,7 +45,8 @@ param(
     [int]    $Seed           = 1,
     [int]    $NumBotEnvs     = 6,
     [switch] $CaptureVideo,
-    [string] $ScriptToRun    = "ppo_gridnet_diverse_encode_decode.py"
+    [string] $ScriptToRun    = "ppo_gridnet_diverse_encode_decode.py",
+    [switch] $LocalSaveModel
 )
 
 Set-StrictMode -Version Latest
@@ -56,6 +60,7 @@ $ScriptDir  = $PSScriptRoot
 $RefRoot    = Split-Path $ScriptDir -Parent
 $VenvPath   = Join-Path $RefRoot ".venv_microrts032_reference"
 $PaperRepo  = Join-Path $RefRoot "external\gym-microrts-paper"
+$PatchedPaperRoot = Join-Path $RefRoot "patched_paper_scripts"
 $OutputBase = Join-Path $RefRoot "artifacts\long_runs"
 
 # ---------------------------------------------------------------------------
@@ -109,6 +114,7 @@ Write-Host "  Total timesteps : $TotalTimesteps"
 Write-Host "  Seed            : $Seed"
 Write-Host "  Num bot envs    : $NumBotEnvs"
 Write-Host "  Capture video   : $UseCaptureVideo"
+Write-Host "  Local save      : $($LocalSaveModel.IsPresent)"
 Write-Host "  JAVA_HOME       : $($env:JAVA_HOME)"
 Write-Host ""
 Write-Host "NOTE: Paper-level runs use ~100M timesteps. This run uses $TotalTimesteps." -ForegroundColor DarkYellow
@@ -127,11 +133,19 @@ if (-not (Test-Path $PaperRepo)) {
     exit 1
 }
 
-$ScriptPath = Join-Path $PaperRepo $ScriptToRun
+$SelectedScriptRoot = $PaperRepo
+if ($LocalSaveModel.IsPresent) {
+    $SelectedScriptRoot = $PatchedPaperRoot
+    if ($ScriptToRun -eq "ppo_gridnet_diverse_encode_decode.py") {
+        $ScriptToRun = "ppo_gridnet_diverse_encode_decode_local_save.py"
+    }
+}
+
+$ScriptPath = Join-Path $SelectedScriptRoot $ScriptToRun
 if (-not (Test-Path $ScriptPath)) {
     Write-Host "ERROR: Script not found: $ScriptPath" -ForegroundColor Red
     Write-Host "Available .py files:" -ForegroundColor DarkYellow
-    Get-ChildItem $PaperRepo -Filter "*.py" | ForEach-Object { Write-Host "  $($_.Name)" }
+    Get-ChildItem $SelectedScriptRoot -Filter "*.py" | ForEach-Object { Write-Host "  $($_.Name)" }
     exit 1
 }
 
@@ -141,6 +155,7 @@ if (-not (Test-Path $ScriptPath)) {
 $Timestamp = (Get-Date -Format "yyyyMMddTHHmmssZ")
 $ExpName   = "long_ref_${Timestamp}"
 $OutDir    = Join-Path $OutputBase $Timestamp
+$ModelOutDir = Join-Path $OutDir "models"
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
 
 Write-Host "Output dir: $OutDir" -ForegroundColor Cyan
@@ -158,6 +173,9 @@ $TrainArgs = @(
     "--num-selfplay-envs", 0
 )
 if ($UseCaptureVideo) { $TrainArgs += "--capture-video" }
+if ($LocalSaveModel.IsPresent) {
+    $TrainArgs += @("--local-save-model", "true", "--local-save-dir", $ModelOutDir, "--local-save-every", 0)
+}
 
 $CmdStr = "$VenvPython $($TrainArgs -join ' ')"
 $CmdStr | Out-File -FilePath (Join-Path $OutDir "long_run_command.txt") -Encoding utf8
@@ -195,6 +213,9 @@ $DurationSec = [int]($EndTime - $StartTime).TotalSeconds
 #   models/<gym_id>__<exp_name>__<seed>__<unix_ts>/agent.pt -- only with --prod-mode
 #   videos/                                       -- only with --capture-video
 $ArtifactPaths = @{}
+$ModelPaths = @()
+$CheckpointPaths = @()
+$MetadataPaths = @()
 
 $RunDirPattern = "*__${ExpName}__${Seed}__*"
 $TBDir = Get-ChildItem (Join-Path $PaperRepo "runs") -Directory -ErrorAction SilentlyContinue |
@@ -216,7 +237,7 @@ $ModelPt = $null
 if ($ModelsDir) {
     $ModelPt = Join-Path $ModelsDir.FullName "agent.pt"
 }
-if (Test-Path $ModelPt) {
+if ($null -ne $ModelPt -and (Test-Path $ModelPt)) {
     $ArtifactPaths["agent_pt"] = $ModelPt
     Write-Host "Model checkpoint: $ModelPt" -ForegroundColor Green
 } else {
@@ -253,6 +274,15 @@ if ($ExtraModels) {
     $ArtifactPaths["extra_models"] = @()
 }
 
+if (Test-Path $ModelOutDir) {
+    $ModelPaths = @(Get-ChildItem $ModelOutDir -Filter "agent_final.pt" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
+    $CheckpointPaths = @(Get-ChildItem $ModelOutDir -Include "agent_step_*.pt","*.zip" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
+    $MetadataPaths = @(Get-ChildItem $ModelOutDir -Filter "model_metadata.json" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
+}
+$ArtifactPaths["local_model_paths"] = $ModelPaths
+$ArtifactPaths["local_checkpoint_paths"] = $CheckpointPaths
+$ArtifactPaths["local_metadata_paths"] = $MetadataPaths
+
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
@@ -273,6 +303,7 @@ $Summary = [ordered]@{
     num_bot_envs      = $NumBotEnvs
     num_selfplay_envs = 0
     capture_video     = $UseCaptureVideo
+    local_save_model  = $LocalSaveModel.IsPresent
     exit_code         = $ExitCode
     start_time        = $StartTime.ToString("o")
     end_time          = $EndTime.ToString("o")
@@ -280,13 +311,17 @@ $Summary = [ordered]@{
     out_dir           = $OutDir
     log_path          = (Join-Path $OutDir "long_train.log")
     videos_found      = $VideosFound
-    checkpoints_found = ($null -ne $ArtifactPaths["agent_pt"])
+    checkpoints_found = (($null -ne $ArtifactPaths["agent_pt"]) -or $CheckpointPaths.Count -gt 0 -or $ModelPaths.Count -gt 0)
+    model_paths       = $ModelPaths
+    checkpoint_paths  = $CheckpointPaths
+    metadata_paths    = $MetadataPaths
     artifact_paths    = $ArtifactPaths
     java_home         = $env:JAVA_HOME
     python_exe        = $VenvPython
     notes             = @(
         "Staged reference run. Paper uses ~100M timesteps.",
         "agent.pt only saved with --prod-mode (wandb). Not expected in reference runs.",
+        "LocalSaveModel uses a patched local copy under patched_paper_scripts/ and does not modify external/.",
         "TensorBoard data in tensorboard/ subdirectory if training reached at least 1 update.",
         "np.int patched to np.int32 in gym_microrts venv (numpy>=1.24 compatibility)."
     )

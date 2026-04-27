@@ -54,6 +54,9 @@ def collect_runs(base_dir: Path, run_type: str) -> list:
             "checkpoints_found": False,
             "logs_found":        False,
             "exit_code":         None,
+            "model_paths":       [],
+            "checkpoint_paths":  [],
+            "metadata_paths":    [],
         }
 
         # Read summary JSON if present
@@ -66,6 +69,11 @@ def collect_runs(base_dir: Path, run_type: str) -> list:
                     run_info["total_timesteps"] = s.get("total_timesteps")
                     run_info["seed"]            = s.get("seed")
                     run_info["exit_code"]       = s.get("exit_code")
+                    run_info["model_paths"]     = s.get("model_paths") or []
+                    run_info["checkpoint_paths"] = s.get("checkpoint_paths") or []
+                    run_info["metadata_paths"]  = s.get("metadata_paths") or []
+                    if s.get("checkpoints_found") is True:
+                        run_info["checkpoints_found"] = True
                 except Exception:
                     pass
 
@@ -91,7 +99,7 @@ def collect_runs(base_dir: Path, run_type: str) -> list:
 
         # Check for checkpoints (pt / zip files)
         checkpoints = list(run_dir.rglob("*.pt")) + list(run_dir.rglob("*.zip"))
-        run_info["checkpoints_found"] = len(checkpoints) > 0
+        run_info["checkpoints_found"] = run_info["checkpoints_found"] or len(checkpoints) > 0 or len(run_info["model_paths"]) > 0 or len(run_info["checkpoint_paths"]) > 0
 
         # Try to pull obs shape from verify report if present
         verify_json = ARTIFACTS / "reference_env_verify.json"

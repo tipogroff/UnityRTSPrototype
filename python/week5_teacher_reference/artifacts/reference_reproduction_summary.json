@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-27T12:07:28.657119+00:00",
+  "generated_at": "2026-04-27T12:33:04.523275+00:00",
   "env_verify": {
     "timestamp": "2026-04-27T11:33:10.552172+00:00",
     "python_version": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
@@ -89,9 +89,9 @@
       "MicrortsDefeatWorkerRushEnemyHRL-v4"
     ]
   },
-  "total_runs": 4,
+  "total_runs": 5,
   "smoke_run_count": 3,
-  "long_run_count": 1,
+  "long_run_count": 2,
   "runs": [
     {
       "run_type": "smoke",
@@ -109,7 +109,10 @@
       "videos_found": false,
       "checkpoints_found": false,
       "logs_found": true,
-      "exit_code": 1
+      "exit_code": 1,
+      "model_paths": [],
+      "checkpoint_paths": [],
+      "metadata_paths": []
     },
     {
       "run_type": "smoke",
@@ -127,7 +130,10 @@
       "videos_found": false,
       "checkpoints_found": false,
       "logs_found": true,
-      "exit_code": 1
+      "exit_code": 1,
+      "model_paths": [],
+      "checkpoint_paths": [],
+      "metadata_paths": []
     },
     {
       "run_type": "smoke",
@@ -145,7 +151,10 @@
       "videos_found": false,
       "checkpoints_found": false,
       "logs_found": true,
-      "exit_code": 0
+      "exit_code": 0,
+      "model_paths": [],
+      "checkpoint_paths": [],
+      "metadata_paths": []
     },
     {
       "run_type": "long",
@@ -163,7 +172,35 @@
       "videos_found": false,
       "checkpoints_found": false,
       "logs_found": true,
-      "exit_code": 0
+      "exit_code": 0,
+      "model_paths": [],
+      "checkpoint_paths": [],
+      "metadata_paths": []
+    },
+    {
+      "run_type": "long",
+      "run_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\long_runs\\20260427T192007Z",
+      "timestamp": "20260427T192007Z",
+      "command": "\ufeffC:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\patched_paper_scripts\\ppo_gridnet_diverse_encode_decode_local_save.py --total-timesteps 100000 --seed 1 --exp-name long_ref_20260427T192007Z --num-bot-envs 6 --num-selfplay-envs 0 --local-save-model true --local-save-dir C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\long_runs\\20260427T192007Z\\models --local-save-every 0",
+      "total_timesteps": 100000,
+      "seed": 1,
+      "observation_shape": [
+        10,
+        10,
+        27
+      ],
+      "action_space": "MultiDiscrete([100   6   4   4   4   4   7 100])",
+      "videos_found": false,
+      "checkpoints_found": true,
+      "logs_found": true,
+      "exit_code": 0,
+      "model_paths": [
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\long_runs\\20260427T192007Z\\models\\agent_final.pt"
+      ],
+      "checkpoint_paths": [],
+      "metadata_paths": [
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\artifacts\\long_runs\\20260427T192007Z\\models\\model_metadata.json"
+      ]
     }
   ]
 }
