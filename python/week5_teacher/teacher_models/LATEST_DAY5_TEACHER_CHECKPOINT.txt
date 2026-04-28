@@ -1,1 +1,0 @@
-C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\teacher_models\day5_teacher_hardened_serious_v2_20260420T173711Z\teacher_sb3_ppo.zip

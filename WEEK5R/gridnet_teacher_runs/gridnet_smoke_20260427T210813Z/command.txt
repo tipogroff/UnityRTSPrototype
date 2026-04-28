@@ -1,1 +1,0 @@
-C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\.venv_day2_py39\Scripts\python.exe C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_gridnet\train_teacher_gridnet_project.py --run-id gridnet_smoke_20260427T210813Z --total-timesteps 10000 --checkpoint-steps 10000 --num-bot-envs 6 --num-selfplay-envs 0 --seed 1 --device cpu

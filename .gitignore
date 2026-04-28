@@ -27,30 +27,52 @@ MemoryCaptures/
 python/week5_teacher/.venv_day2_py39/
 python/week5_teacher/__pycache__/
 python/week5_teacher/teacher_logs/
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v2_20260420T173711Z/checkpoints/teacher_sb3_ppo_step_000060000.zip
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v2_20260420T173711Z/checkpoints/teacher_sb3_ppo_step_000040000.zip
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v2_20260420T173711Z/checkpoints/teacher_sb3_ppo_step_000020000.zip
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v2_20260420T173711Z/checkpoints/LATEST_INTERVAL_CHECKPOINT.txt
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v1_20260420T173607Z/teacher_sb3_ppo_failed.zip
-python/week5_teacher/teacher_models/LATEST_DAY5_TEACHER_CHECKPOINT.txt
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_v2_20260420T173711Z/checkpoints/teacher_sb3_ppo_step_000080000.zip
-
-# Week 5 generated artifacts (rollouts/exports/checkpoints)
+python/week5_teacher/teacher_models/
 python/week5_teacher/teacher_rollouts/
-python/week5_teacher/teacher_exports/teacher_adapted_*/
-python/week5_teacher/teacher_exports_bc/day6_bc_ready_teacher_adapted_*/
-python/week5_teacher/teacher_models/day5_teacher_hardened_serious_*/
-python/week5_teacher/teacher_models/**/*.zip
-/WEEK5R/retraining_runs/**/*.zip
-/WEEK5R/movement_warmup_sweeps/**/*.zip
+python/week5_teacher/teacher_exports/
+python/week5_teacher/teacher_exports_bc/
 
-# Python caches
+# Week 6 student training run outputs
+python/week6_student/runs/
 python/week6_student/__pycache__/
+
+# Python caches (all python subdirs)
+python/**/__pycache__/
 
 # Week5 Teacher Reference — isolated reference reproduction env (DO NOT COMMIT)
 python/week5_teacher_reference/.venv_microrts032_reference/
 python/week5_teacher_reference/external/gym-microrts-paper/
 python/week5_teacher_reference/artifacts/smoke_runs/
 python/week5_teacher_reference/artifacts/long_runs/
+python/week5_teacher_reference/artifacts/*.log
 python/week5_teacher_reference/__pycache__/
 python/week5_teacher_reference/scripts/__pycache__/
+
+# ── Training run output directories (generated artifacts, DO NOT COMMIT) ───────
+# WEEK5R run outputs
+/WEEK5R/gate_runs/
+/WEEK5R/gridnet_recipe_sweeps/
+/WEEK5R/gridnet_reference_parity_sweeps/
+/WEEK5R/gridnet_teacher_rollouts/
+/WEEK5R/gridnet_teacher_runs/
+/WEEK5R/mask_diagnostics/
+/WEEK5R/movement_warmup_sweeps/
+/WEEK5R/retraining_runs/
+/WEEK5R/teacher_exports/
+/WEEK5R/teacher_exports_v2/
+
+# WEEK6 generated artifacts
+/WEEK6/artifacts/
+
+# Python training — binary model / data files (wherever they land)
+**/*.pt
+**/*.npz
+**/*.pkl
+**/*.pth
+**/*.npy
+**/*.onnx
+
+# Python training — generated logs and run outputs
+**/train.log
+**/teacher_logs/
+**/teacher_rollouts/
