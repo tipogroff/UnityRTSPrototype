@@ -45,16 +45,17 @@ namespace RTS.ML
         public Direction Direction { get; }
 
         /// <summary>
-        /// Type of unit to produce (Worker, Light, Heavy, Ranged).
+        /// Produce branch payload carried from decoder.
         /// Only meaningful if ActionType == UnitActionType.Produce.
-        /// Default value: ProducibleUnit.Worker if not applicable.
+        /// Under Action Contract v2 this field carries the raw produce branch index (0..6)
+        /// in enum underlying int form; ActionApplier performs authoritative runtime mapping.
         /// </summary>
         public ProducibleUnit ProduceUnitType { get; }
 
         /// <summary>
         /// Attack target position relative to actor.
         /// Only meaningful if ActionType == UnitActionType.Attack.
-        /// For MVP, this is a local 3x3 neighborhood indexing (0..8, where 4 = center/self).
+        /// Under Action Contract v2 this is decoded from a local 7x7 index (0..48, center=24).
         /// </summary>
         public GridPosition AttackTargetPosition { get; }
 

@@ -73,6 +73,8 @@ namespace RTS.ML
             RunIsolated(TestPhaseValidation, "Test 10");
             RunIsolated(TestProduceQueueBusy, "Test 11");
             RunIsolated(TestCoordinateConvention, "Test 12");
+            RunIsolated(TestV2ProduceRuntimeSemantics, "Test 13");
+            RunIsolated(TestV2AttackRuntimeSemantics, "Test 14");
 
             Debug.Log("[ActionApplierSmokeTest] ===== All Tests Completed =====");
         }
@@ -204,8 +206,8 @@ namespace RTS.ML
                 actorIndexFlat: actorIndex,
                 actionType: (int)UnitActionType.Attack,
                 direction: 0,
-                produceUnitType: 0,
-                attackTargetLocal: 4);  // Center (self) for invalid test
+                produceUnitType: 3,
+                attackTargetLocal: 24);  // v2 center (self) for invalid test
 
             Debug.Log($"[ActionApplierSmokeTest] Decoded action: {action}");
 
@@ -235,7 +237,7 @@ namespace RTS.ML
                 actorIndexFlat: actorIndex,
                 actionType: (int)UnitActionType.Produce,
                 direction: (int)Direction.North,
-                produceUnitType: (int)ProducibleUnit.Worker,
+                produceUnitType: 3,
                 attackTargetLocal: 0);
 
             Debug.Log($"[ActionApplierSmokeTest] Decoded action: {action}");
@@ -435,7 +437,7 @@ namespace RTS.ML
                 actorIndexFlat:    actorIndex,
                 actionType:        (int)UnitActionType.Produce,
                 direction:         (int)Direction.North,
-                produceUnitType:   (int)ProducibleUnit.Worker,
+                produceUnitType:   3,
                 attackTargetLocal: 0);
 
             _applier.ResetDiagnostics();
@@ -478,6 +480,247 @@ namespace RTS.ML
             // Verify ActionApplier.GetPositionInDirection matches GridPosition.Neighbour
             // (cannot call private method directly, but both delegate to the same Neighbour() — by design)
             Debug.Log("[ActionApplierSmokeTest] ✓ ActionApplier delegates to GridPosition.Neighbour — convention unified");
+        }
+
+        private void TestV2ProduceRuntimeSemantics()
+        {
+            Debug.Log("[ActionApplierSmokeTest] Test 13: v2 Produce runtime semantics (authoritative ActionApplier)");
+
+            _matchManager.AddResources(Owner.Player1, 2000);
+
+            UnitRuntime worker = FindWorkerUnit();
+            UnitRuntime baseBuilding = FindFirstBuildingByType(UnitType.Base);
+            UnitRuntime barracksBuilding = FindFirstBuildingByType(UnitType.Barracks);
+
+            if (worker != null)
+            {
+                bool workerBuildAccepted = TryApplyProduceByV2Index(worker, 2, out string workerBuildReason);
+                bool workerResRejected = !TryApplyProduceByV2Index(worker, 0, out string workerResReason);
+                bool workerBaseRejected = !TryApplyProduceByV2Index(worker, 1, out string workerBaseReason);
+
+                Debug.Log($"[ActionApplierSmokeTest] {(workerBuildAccepted ? "✓" : "✗")} Worker + index 2 (Barracks) accepted when conditions valid");
+                Debug.Log($"[ActionApplierSmokeTest] {(workerResRejected ? "✓" : "✗")} Worker + index 0 (Resource) rejected");
+                Debug.Log($"[ActionApplierSmokeTest] {(workerBaseRejected ? "✓" : "✗")} Worker + index 1 (Base) rejected");
+
+                if (!string.IsNullOrEmpty(workerBuildReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Worker idx2 reason: {workerBuildReason}");
+                if (!string.IsNullOrEmpty(workerResReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Worker idx0 reason: {workerResReason}");
+                if (!string.IsNullOrEmpty(workerBaseReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Worker idx1 reason: {workerBaseReason}");
+            }
+
+            if (baseBuilding != null)
+            {
+                bool baseWorkerAccepted = TryApplyProduceByV2Index(baseBuilding, 3, out string baseWorkerReason);
+                bool baseBarracksRejected = !TryApplyProduceByV2Index(baseBuilding, 2, out string baseBarracksReason);
+
+                Debug.Log($"[ActionApplierSmokeTest] {(baseWorkerAccepted ? "✓" : "✗")} Base + index 3 (Worker) accepted when conditions valid");
+                Debug.Log($"[ActionApplierSmokeTest] {(baseBarracksRejected ? "✓" : "✗")} Base + index 2 (Barracks) rejected");
+
+                if (!string.IsNullOrEmpty(baseWorkerReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Base idx3 reason: {baseWorkerReason}");
+                if (!string.IsNullOrEmpty(baseBarracksReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Base idx2 reason: {baseBarracksReason}");
+            }
+
+            if (barracksBuilding != null)
+            {
+                bool barracksLightAccepted = TryApplyProduceByV2Index(barracksBuilding, 4, out string barracksLightReason);
+                bool barracksHeavyAccepted = TryApplyProduceByV2Index(barracksBuilding, 5, out string barracksHeavyReason);
+                bool barracksRangedAccepted = TryApplyProduceByV2Index(barracksBuilding, 6, out string barracksRangedReason);
+                bool barracksWorkerRejected = !TryApplyProduceByV2Index(barracksBuilding, 3, out string barracksWorkerReason);
+
+                Debug.Log($"[ActionApplierSmokeTest] {(barracksLightAccepted ? "✓" : "✗")} Barracks + index 4 (Light) accepted when conditions valid");
+                Debug.Log($"[ActionApplierSmokeTest] {(barracksHeavyAccepted ? "✓" : "✗")} Barracks + index 5 (Heavy) accepted when conditions valid");
+                Debug.Log($"[ActionApplierSmokeTest] {(barracksRangedAccepted ? "✓" : "✗")} Barracks + index 6 (Ranged) accepted when conditions valid");
+                Debug.Log($"[ActionApplierSmokeTest] {(barracksWorkerRejected ? "✓" : "✗")} Barracks + index 3 (Worker) rejected");
+
+                if (!string.IsNullOrEmpty(barracksLightReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Barracks idx4 reason: {barracksLightReason}");
+                if (!string.IsNullOrEmpty(barracksHeavyReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Barracks idx5 reason: {barracksHeavyReason}");
+                if (!string.IsNullOrEmpty(barracksRangedReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Barracks idx6 reason: {barracksRangedReason}");
+                if (!string.IsNullOrEmpty(barracksWorkerReason)) Debug.LogWarning($"[ActionApplierSmokeTest] Barracks idx3 reason: {barracksWorkerReason}");
+            }
+
+            if (worker != null)
+            {
+                bool negRejected = !TryApplyProduceByV2Index(worker, -1, out string negReason);
+                bool outRejected = !TryApplyProduceByV2Index(worker, 7, out string outReason);
+                Debug.Log($"[ActionApplierSmokeTest] {(negRejected ? "✓" : "✗")} invalid produce index -1 rejected safely");
+                Debug.Log($"[ActionApplierSmokeTest] {(outRejected ? "✓" : "✗")} invalid produce index 7 rejected safely");
+                if (!string.IsNullOrEmpty(negReason)) Debug.LogWarning($"[ActionApplierSmokeTest] idx-1 reason: {negReason}");
+                if (!string.IsNullOrEmpty(outReason)) Debug.LogWarning($"[ActionApplierSmokeTest] idx7 reason: {outReason}");
+            }
+        }
+
+        private void TestV2AttackRuntimeSemantics()
+        {
+            Debug.Log("[ActionApplierSmokeTest] Test 14: v2 Attack runtime semantics (authoritative ActionApplier)");
+
+            UnitRuntime attacker = FindCombatUnit();
+            if (attacker == null)
+            {
+                Debug.LogWarning("[ActionApplierSmokeTest] Test 14: no combat attacker found, skipping");
+                return;
+            }
+
+            // center index 24 -> self target -> reject
+            ActionContractMappings.TryGetAttackTargetPosition(attacker.GridPos, 24, out GridPosition centerTarget);
+            bool centerRejected = !TryApplyAttack(attacker, centerTarget, out string centerReason);
+            Debug.Log($"[ActionApplierSmokeTest] {(centerRejected ? "✓" : "✗")} attack center index 24 rejected");
+            if (!string.IsNullOrEmpty(centerReason)) Debug.LogWarning($"[ActionApplierSmokeTest] center reject reason: {centerReason}");
+
+            // out-of-bounds absolute target -> reject
+            bool oobRejected = !TryApplyAttack(attacker, new GridPosition(-1, -1), out string oobReason);
+            Debug.Log($"[ActionApplierSmokeTest] {(oobRejected ? "✓" : "✗")} out-of-bounds attack target rejected");
+            if (!string.IsNullOrEmpty(oobReason)) Debug.LogWarning($"[ActionApplierSmokeTest] oob reject reason: {oobReason}");
+
+            // empty cell target -> reject
+            GridPosition emptyTarget = FindFirstEmptyCellOrFallback(attacker.GridPos.Neighbour(Direction.North));
+            bool emptyRejected = !TryApplyAttack(attacker, emptyTarget, out string emptyReason);
+            Debug.Log($"[ActionApplierSmokeTest] {(emptyRejected ? "✓" : "✗")} empty attack target rejected");
+            if (!string.IsNullOrEmpty(emptyReason)) Debug.LogWarning($"[ActionApplierSmokeTest] empty reject reason: {emptyReason}");
+
+            // friendly target -> reject
+            UnitRuntime friendly = FindFriendlyTargetExcluding(attacker);
+            if (friendly != null)
+            {
+                bool friendlyRejected = !TryApplyAttack(attacker, friendly.GridPos, out string friendlyReason);
+                Debug.Log($"[ActionApplierSmokeTest] {(friendlyRejected ? "✓" : "✗")} friendly target rejected");
+                if (!string.IsNullOrEmpty(friendlyReason)) Debug.LogWarning($"[ActionApplierSmokeTest] friendly reject reason: {friendlyReason}");
+            }
+
+            // enemy target (if present) in range -> accepted
+            UnitRuntime enemy = FindEnemyTargetNear(attacker);
+            if (enemy != null)
+            {
+                bool enemyAccepted = TryApplyAttack(attacker, enemy.GridPos, out string enemyReason);
+                Debug.Log($"[ActionApplierSmokeTest] {(enemyAccepted ? "✓" : "✗")} enemy target in runtime-valid range accepted");
+                if (!string.IsNullOrEmpty(enemyReason)) Debug.LogWarning($"[ActionApplierSmokeTest] enemy apply reason: {enemyReason}");
+            }
+
+            // within representable 7x7 but outside actual runtime range -> reject
+            GridPosition farRepresentable = new GridPosition(attacker.GridPos.X + 3, attacker.GridPos.Y + 3);
+            if (farRepresentable.IsInsideMap())
+            {
+                bool farRejected = !TryApplyAttack(attacker, farRepresentable, out string farReason);
+                Debug.Log($"[ActionApplierSmokeTest] {(farRejected ? "✓" : "✗")} enemy/target outside runtime range is rejected safely");
+                if (!string.IsNullOrEmpty(farReason)) Debug.LogWarning($"[ActionApplierSmokeTest] far reject reason: {farReason}");
+            }
+        }
+
+        private bool TryApplyProduceByV2Index(UnitRuntime actor, int produceIndex, out string reason)
+        {
+            reason = string.Empty;
+            if (actor == null)
+            {
+                reason = "actor is null";
+                return false;
+            }
+
+            Direction direction = FindFirstValidDirection(actor.GridPos);
+            var action = new AgentAction(
+                actorPosition: actor.GridPos,
+                actionType: UnitActionType.Produce,
+                direction: direction,
+                produceUnitType: (ProducibleUnit)produceIndex,
+                isValid: true,
+                sourceType: ActionSourceType.Debug);
+
+            _applier.ResetDiagnostics();
+            bool applied = _applier.ApplyAction(action, actor.Owner);
+            if (!applied && _applier.RejectionReasonsLastStep.Count > 0)
+                reason = _applier.RejectionReasonsLastStep[0];
+
+            return applied;
+        }
+
+        private bool TryApplyAttack(UnitRuntime attacker, GridPosition target, out string reason)
+        {
+            reason = string.Empty;
+            if (attacker == null)
+            {
+                reason = "attacker is null";
+                return false;
+            }
+
+            var action = new AgentAction(
+                actorPosition: attacker.GridPos,
+                actionType: UnitActionType.Attack,
+                direction: Direction.North,
+                produceUnitType: (ProducibleUnit)3,
+                attackTargetPosition: target,
+                isValid: true,
+                sourceType: ActionSourceType.Debug);
+
+            _applier.ResetDiagnostics();
+            bool applied = _applier.ApplyAction(action, attacker.Owner);
+            if (!applied && _applier.RejectionReasonsLastStep.Count > 0)
+                reason = _applier.RejectionReasonsLastStep[0];
+
+            return applied;
+        }
+
+        private UnitRuntime FindFirstBuildingByType(UnitType type)
+        {
+            for (int i = 0; i < ActionContract.TotalCells; i++)
+            {
+                var pos = GridPosition.FromFlatIndex(i);
+                var unit = _gridManager.GetOccupant(pos);
+                if (unit != null && unit.Owner == Owner.Player1 && unit.Type == type)
+                    return unit;
+            }
+
+            return null;
+        }
+
+        private UnitRuntime FindFriendlyTargetExcluding(UnitRuntime attacker)
+        {
+            for (int i = 0; i < ActionContract.TotalCells; i++)
+            {
+                var pos = GridPosition.FromFlatIndex(i);
+                var unit = _gridManager.GetOccupant(pos);
+                if (unit != null && unit.Owner == attacker.Owner && unit != attacker && unit.IsAlive)
+                    return unit;
+            }
+
+            return null;
+        }
+
+        private UnitRuntime FindEnemyTargetNear(UnitRuntime attacker)
+        {
+            for (int i = 0; i < ActionContract.TotalCells; i++)
+            {
+                var pos = GridPosition.FromFlatIndex(i);
+                var unit = _gridManager.GetOccupant(pos);
+                if (unit == null || unit.Owner == attacker.Owner || unit.Owner == Owner.Neutral || !unit.IsAlive)
+                    continue;
+
+                if (attacker.GridPos.ChebyshevDistance(pos) <= 1)
+                    return unit;
+            }
+
+            return null;
+        }
+
+        private GridPosition FindFirstEmptyCellOrFallback(GridPosition fallback)
+        {
+            for (int i = 0; i < ActionContract.TotalCells; i++)
+            {
+                var pos = GridPosition.FromFlatIndex(i);
+                if (!_gridManager.IsCellOccupied(pos))
+                    return pos;
+            }
+
+            return fallback;
+        }
+
+        private Direction FindFirstValidDirection(GridPosition origin)
+        {
+            var ordered = new[] { Direction.North, Direction.East, Direction.South, Direction.West };
+            for (int i = 0; i < ordered.Length; i++)
+            {
+                var candidate = origin.Neighbour(ordered[i]);
+                if (candidate.IsInsideMap())
+                    return ordered[i];
+            }
+
+            return Direction.North;
         }
 
         private UnitRuntime FindWorkerUnit()

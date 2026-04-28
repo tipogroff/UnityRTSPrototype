@@ -10,6 +10,7 @@ import torch
 
 from load_student_checkpoint import load_student_transfer_checkpoint
 from student_branch_contract import (
+    ACTION_CONTRACT_VERSION,
     BRANCH_LOGITS_KEYS,
     BRANCH_SPECS,
     BRANCH_ORDER,
@@ -21,7 +22,7 @@ EXPECTED_OBS_SHAPE: tuple[int, int, int] = (24, 24, 27)
 EXPECTED_OBS_DTYPE = np.float32
 TOTAL_CELLS: int = 24 * 24
 BRANCH_OFFSETS: tuple[int, ...] = (0, 6, 10, 14, 18, 22, 26)
-ACTION_FLAT_SIZE_PER_CELL: int = 35
+ACTION_FLAT_SIZE_PER_CELL: int = int(sum(EXPECTED_BC_BRANCH_SIZES))
 TOTAL_ACTION_FLAT_SIZE: int = TOTAL_CELLS * ACTION_FLAT_SIZE_PER_CELL
 
 
@@ -155,6 +156,7 @@ def run_inference_with_loaded_model(
 ) -> Dict[str, Any]:
     result: Dict[str, Any] = {
         "status": "fail",
+        "action_contract_version": ACTION_CONTRACT_VERSION,
         "observation_shape": list(EXPECTED_OBS_SHAPE),
         "observation_dtype": "float32",
         "branch_order": list(BRANCH_ORDER),
@@ -208,6 +210,7 @@ def main() -> int:
 
     result: Dict[str, Any] = {
         "status": "fail",
+        "action_contract_version": ACTION_CONTRACT_VERSION,
         "checkpoint_path": str(args.checkpoint.resolve()),
         "observation_bin": str(args.observation_bin.resolve()),
         "observation_shape": list(EXPECTED_OBS_SHAPE),
@@ -237,6 +240,8 @@ def main() -> int:
 
     print("[PASS] Day4 student inference adapter succeeded")
     print(f"checkpoint={result['checkpoint_path']}")
+    print(f"action_contract_version={result['action_contract_version']}")
+    print(f"branch_sizes={result['branch_sizes']}")
     print(f"action_flat_size={result['action_flat_size']}")
     return 0
 

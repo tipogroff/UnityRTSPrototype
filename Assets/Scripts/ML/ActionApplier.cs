@@ -236,6 +236,7 @@ namespace RTS.ML
             }
 
             // Action-specific validation
+            ProducibleUnit commandProduceType = action.ProduceUnitType;
             switch (action.ActionType)
             {
                 case UnitActionType.Move:
@@ -263,7 +264,7 @@ namespace RTS.ML
                     break;
 
                 case UnitActionType.Produce:
-                    if (!ValidateProduceAction(unit, action, out var produceReason))
+                    if (!ValidateProduceAction(unit, action, out commandProduceType, out var produceReason))
                     {
                         RecordRejectionDetailed(action, playerPerspective, produceReason, maskState, sourceFormat, InferCategoryFromMask(maskAtSelection, action, InvalidAttemptCategory.RuntimeOnlyConstraint));
                         return false;
@@ -285,7 +286,9 @@ namespace RTS.ML
                 unitPosition: action.ActorPosition,
                 actionType: action.ActionType,
                 direction: action.Direction,
-                produceUnitType: action.ProduceUnitType,
+                // IMPORTANT: v2 produce branch index (0..6) is carried in AgentAction for
+                // authoritative validation only. MatchCommand still expects runtime produce enum.
+                produceUnitType: commandProduceType,
                 attackTarget: action.AttackTargetPosition,
                 hasAttackTarget: action.ActionType == UnitActionType.Attack);
 
@@ -515,15 +518,35 @@ namespace RTS.ML
             return true;
         }
 
-        private bool ValidateProduceAction(UnitRuntime unit, AgentAction action, out string reason)
+        private bool ValidateProduceAction(UnitRuntime unit, AgentAction action, out ProducibleUnit runtimeProduceType, out string reason)
         {
             reason = "";
+            runtimeProduceType = ProducibleUnit.Worker;
+
+            // v2 contract note:
+            // - produce branch index follows UnitType/Gym order [0..6]
+            // - branch-bound decode does NOT imply runtime validity
+            // - ActionApplier remains authoritative runtime truth
+            int produceBranchIndex = (int)action.ProduceUnitType;
+            if (!ActionContractMappings.TryMapV2ProduceIndexToUnitType(produceBranchIndex, out UnitType producedUnitType))
+            {
+                reason = $"Produce index {produceBranchIndex} is out of v2 range [0..{ActionContract.SIZE_PRODUCE_UNIT_TYPE - 1}]";
+                return false;
+            }
 
             // MVP encoding: Worker + Produce = build Barracks on adjacent cell.
-            // ProduceUnitType slot value is ignored for Worker actors.
-            // Canonical rule: ActionContractMappings.IsWorkerBuildBarracksAction.
+            // In v2 ordering this is index 2 (Barracks).
             if (ActionContractMappings.IsWorkerBuildBarracksAction(unit.Type))
+            {
+                if (produceBranchIndex != 2)
+                {
+                    reason = $"Worker Produce accepts only v2 index 2 (Barracks build), got {produceBranchIndex} ({producedUnitType})";
+                    return false;
+                }
+
+                runtimeProduceType = ProducibleUnit.Worker; // placeholder; MatchManager worker-produce path ignores produce type
                 return ValidateWorkerBuildBarracks(unit, action, out reason);
+            }
 
             // Only Base and Barracks can produce units
             if (unit.Type != UnitType.Base && unit.Type != UnitType.Barracks)
@@ -532,17 +555,22 @@ namespace RTS.ML
                 return false;
             }
 
-            // Validate produce type is allowed for this building type
-            if (!IsProduceTypeAllowedForBuilding(unit.Type, action.ProduceUnitType))
+            // Validate v2 branch index is allowed for this building type.
+            if (!IsProduceIndexAllowedForBuilding(unit.Type, produceBranchIndex))
             {
-                reason = $"{unit.Type} cannot produce {action.ProduceUnitType} (production rule: Base→Worker, Barracks→Light/Heavy/Ranged)";
+                reason = $"{unit.Type} cannot produce v2 index {produceBranchIndex} ({producedUnitType}) (rule: Worker-build->2, Base->3, Barracks->4/5/6)";
+                return false;
+            }
+
+            if (!TryMapProducedUnitTypeToRuntimeProduceType(producedUnitType, out runtimeProduceType))
+            {
+                reason = $"Produced UnitType {producedUnitType} is not a runtime producible unit";
                 return false;
             }
 
             // Resolve production cost from UnitDefinition — aligned with BuildingRuntime.StartProducingUnit,
             // which is the authoritative cost deduction path. Falls back to 50 if definition is missing.
             GameConfig produceConfig = _matchBootstrap?.GetConfig();
-            ActionContractMappings.TryMapProducibleUnitType(action.ProduceUnitType, out UnitType producedUnitType);
             UnitDefinition producedDef = produceConfig?.GetDefinition(producedUnitType);
             int unitCost = producedDef != null && producedDef.productionCost > 0 ? producedDef.productionCost : 50;
             int playerResources = _matchManager.GetResources(unit.Owner);
@@ -550,7 +578,7 @@ namespace RTS.ML
             // Validate enough resources
             if (playerResources < unitCost)
             {
-                reason = $"Not enough resources ({playerResources} < {unitCost} for {action.ProduceUnitType})";
+                reason = $"Not enough resources ({playerResources} < {unitCost} for {producedUnitType})";
                 return false;
             }
 
@@ -606,27 +634,46 @@ namespace RTS.ML
             return true;
         }
 
-        private static bool IsProduceTypeAllowedForBuilding(UnitType buildingType, ProducibleUnit produceType)
+        private static bool IsProduceIndexAllowedForBuilding(UnitType buildingType, int produceBranchIndex)
         {
-            // Mirrors Gym-µRTS production rules: Base→Worker, Barracks→Light/Heavy/Ranged.
+            // v2 UnitType/Gym order indices:
+            // 0 Resource (reject), 1 Base (reject), 2 Barracks (worker-build only),
+            // 3 Worker, 4 Light, 5 Heavy, 6 Ranged.
             return buildingType switch
             {
-                UnitType.Base     => produceType == ProducibleUnit.Worker,
-                UnitType.Barracks => produceType == ProducibleUnit.Light
-                                  || produceType == ProducibleUnit.Heavy
-                                  || produceType == ProducibleUnit.Ranged,
+                UnitType.Base     => produceBranchIndex == 3,
+                UnitType.Barracks => produceBranchIndex == 4
+                                  || produceBranchIndex == 5
+                                  || produceBranchIndex == 6,
                 _                 => false
             };
+        }
+
+        private static bool TryMapProducedUnitTypeToRuntimeProduceType(UnitType producedUnitType, out ProducibleUnit runtimeProduceType)
+        {
+            runtimeProduceType = producedUnitType switch
+            {
+                UnitType.Worker => ProducibleUnit.Worker,
+                UnitType.Light => ProducibleUnit.Light,
+                UnitType.Heavy => ProducibleUnit.Heavy,
+                UnitType.Ranged => ProducibleUnit.Ranged,
+                _ => ProducibleUnit.Worker
+            };
+
+            return producedUnitType == UnitType.Worker
+                   || producedUnitType == UnitType.Light
+                   || producedUnitType == UnitType.Heavy
+                   || producedUnitType == UnitType.Ranged;
         }
 
         private bool ValidateAttackAction(UnitRuntime unit, AgentAction action, out string reason)
         {
             reason = "";
 
-            // Week 3 limitation note:
-            // ActionApplier validates explicit local attack intent here, but final combat execution
-            // still remains subject to the current CombatResolver runtime behavior downstream.
-            // That residual gap is documented, not hidden.
+            // Runtime authority note:
+            // v2 branch expansion (7x7 / 49) only makes more local targets representable.
+            // It does NOT weaken runtime validation. ActionApplier remains authoritative truth:
+            // self-target, out-of-bounds, empty/friendly targets, and range violations are rejected safely.
 
             // Can all non-resource units attack?
             if (unit.Type == UnitType.Resource)

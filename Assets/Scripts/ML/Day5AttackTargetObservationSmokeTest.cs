@@ -9,7 +9,7 @@ namespace RTS.ML
     /// <summary>
     /// Focused Day 5 checks for observation channel attack_target[26].
     ///
-    /// Validates that the channel is computed from the same local 3x3 target space as
+    /// Validates that the channel is computed from the same local 7x7 target space as
     /// ActionContract/ActionDecoder/ActionMaskBuilder and remains in [0,1].
     /// </summary>
     public class Day5AttackTargetObservationSmokeTest : MonoBehaviour
@@ -53,7 +53,7 @@ namespace RTS.ML
 
             // Representative target convention note — informational, not a failing check.
             Debug.Log("[Day5AttackTargetObservationSmokeTest] Representative target convention: " +
-                "first valid enemy in local 3x3 scan [0..8]. " +
+                "first valid enemy in local 7x7 scan [0..48]. " +
                 "Observation-side rule ONLY. Not synced with runtime combat target.");
 
             if (issues.Count > 0)
@@ -133,7 +133,7 @@ namespace RTS.ML
             if (attackCapableCount > 0 && withTargetCount == 0)
             {
                 Debug.LogWarning(
-                    $"[Day5AttackTargetObservationSmokeTest] {perspective}: no actors with valid local 3x3 enemy targets in current scene state.");
+                    $"[Day5AttackTargetObservationSmokeTest] {perspective}: no actors with valid local 7x7 enemy targets in current scene state.");
             }
         }
 
@@ -163,7 +163,7 @@ namespace RTS.ML
         private static void ValidateNoTargetSentinelUnambiguous(List<string> issues)
         {
             // Under (localIndex + 1) / SIZE encoding, no valid index maps to 0.0f.
-            // Verify the full 9-index range stays strictly above 0.
+            // Verify the full v2 local-index range stays strictly above 0.
             for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
             {
                 float v = NormalizeAttackTargetLocal(i);
@@ -316,7 +316,7 @@ namespace RTS.ML
         private static float NormalizeAttackTargetLocal(int localIndex)
         {
             // Must match ObservationBuilder.NormalizeAttackTargetLocal.
-            // Encoding: (localIndex + 1) / SIZE → range [1/9, 1.0]; sentinel 0f is unambiguous.
+            // Encoding: (localIndex + 1) / SIZE → range [1/49, 1.0] for v2; sentinel 0f is unambiguous.
             int size = ActionContract.SIZE_ATTACK_TARGET;
             if (size <= 0)
             {

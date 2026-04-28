@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from load_student_checkpoint import load_student_transfer_checkpoint
+from student_branch_contract import ACTION_CONTRACT_VERSION
 from student_inference_adapter import _load_observation, run_inference_with_loaded_model
 
 
@@ -48,6 +49,7 @@ def main() -> int:
     print_json(
         {
             "status": "ready",
+            "action_contract_version": ACTION_CONTRACT_VERSION,
             "checkpoint_path": str(args.checkpoint.resolve()),
             "checkpoint_epoch": checkpoint_meta.get("epoch"),
             "checkpoint_model_variant": checkpoint_meta.get("model_variant"),

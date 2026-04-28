@@ -62,7 +62,7 @@ BRANCH_SPECS: tuple[StudentBranchSpec, ...] = (
         target_index=5,
         logits_key="produce_unit_type_logits",
         head_name="produce_unit_type_head",
-        branch_size=4,
+        branch_size=7,
         action_type_gate_value=4,
     ),
     StudentBranchSpec(
@@ -70,12 +70,13 @@ BRANCH_SPECS: tuple[StudentBranchSpec, ...] = (
         target_index=6,
         logits_key="attack_target_local_logits",
         head_name="attack_target_local_head",
-        branch_size=9,
+        branch_size=49,
         action_type_gate_value=5,
     ),
 )
 
-EXPECTED_BC_BRANCH_SIZES: tuple[int, ...] = (6, 4, 4, 4, 4, 4, 9)
+ACTION_CONTRACT_VERSION: str = "v2_gridnet_compatible"
+EXPECTED_BC_BRANCH_SIZES: tuple[int, ...] = (6, 4, 4, 4, 4, 7, 49)
 ACTION_TYPE_TARGET_INDEX: int = 0
 
 BRANCH_ORDER: tuple[str, ...] = tuple(spec.branch_name for spec in BRANCH_SPECS)
@@ -89,6 +90,7 @@ LOGITS_KEY_TO_SPEC: Dict[str, StudentBranchSpec] = {spec.logits_key: spec for sp
 
 def get_branch_contract_summary() -> Dict[str, Any]:
     return {
+        "action_contract_version": ACTION_CONTRACT_VERSION,
         "branch_order": list(BRANCH_ORDER),
         "expected_bc_branch_sizes": list(EXPECTED_BC_BRANCH_SIZES),
         "branch_specs": [asdict(spec) for spec in BRANCH_SPECS],

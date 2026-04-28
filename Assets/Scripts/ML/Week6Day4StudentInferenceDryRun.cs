@@ -11,7 +11,8 @@ namespace RTS.ML
 {
     /// <summary>
     /// Week 6 Day 4 technical dry run:
-    /// Unity observation -> student checkpoint inference (Python bridge) -> decoder -> ActionApplier.
+    /// Unity observation -> student checkpoint inference (Python bridge) -> decoder -> ActionApplier
+    /// under v2/Gridnet-compatible action contract [6,4,4,4,4,7,49].
     ///
     /// This component validates wiring only and does not claim gameplay quality.
     /// </summary>
@@ -19,12 +20,14 @@ namespace RTS.ML
     public sealed class Week6Day4StudentInferenceDryRun : MonoBehaviour
     {
         private const string ExpectedStudentCheckpointFileName = "student_bc_transfer_best.pt";
+        private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
         private sealed class AdapterResult
         {
             public string status;
             public string error;
+            public string action_contract_version;
             public string checkpoint_path;
             public int checkpoint_epoch;
             public string checkpoint_model_variant;
@@ -43,6 +46,8 @@ namespace RTS.ML
         {
             public string status = "fail";
             public string checkpoint_path = string.Empty;
+            public string action_contract_version = string.Empty;
+            public int[] branch_sizes = Array.Empty<int>();
             public bool observation_validated;
             public string python_adapter_status = "fail";
             public int action_flat_size;
@@ -243,6 +248,8 @@ namespace RTS.ML
                 FailAndWriteReport(smokeReport, smokeReportPath, adapterPayloadError);
                 return;
             }
+            smokeReport.action_contract_version = adapter.action_contract_version ?? string.Empty;
+            smokeReport.branch_sizes = adapter.branch_sizes ?? Array.Empty<int>();
             smokeReport.action_flat_size = adapter.action_flat_size;
 
             ActionMaskSet mask = _pipeline.BuildTransferCompatibleMask(_playerPerspective);
@@ -278,6 +285,7 @@ namespace RTS.ML
             Debug.Log(
                 "[Week6Day4StudentInferenceDryRun] PASS technical wiring: " +
                 $"checkpoint={adapter.checkpoint_path}, epoch={adapter.checkpoint_epoch}, " +
+                $"actionContract={adapter.action_contract_version}, branchSizes=[{string.Join(",", adapter.branch_sizes ?? Array.Empty<int>())}], " +
                 $"decodedActions={execution.DecodedActions.Count}, accepted={execution.AcceptedCount}, rejected={execution.RejectedCount}. " +
                 $"report={smokeReportPath}. " +
                 "Scope note: this is Day 4 technical integration only; no gameplay strength claim.");
@@ -517,11 +525,35 @@ namespace RTS.ML
             {
                 if (adapter.branch_sizes[i] != expectedBranchSizes[i])
                 {
+                    bool isLegacyV1 =
+                        adapter.branch_sizes.Length == 7
+                        && adapter.branch_sizes[0] == 6
+                        && adapter.branch_sizes[1] == 4
+                        && adapter.branch_sizes[2] == 4
+                        && adapter.branch_sizes[3] == 4
+                        && adapter.branch_sizes[4] == 4
+                        && adapter.branch_sizes[5] == 4
+                        && adapter.branch_sizes[6] == 9;
+
+                    if (isLegacyV1)
+                    {
+                        error = "v1 action contract artifact is incompatible with Unity v2 runtime";
+                        return false;
+                    }
+
                     error =
                         "Branch size mismatch. " +
                         $"index={i}, expected={expectedBranchSizes[i]}, got={adapter.branch_sizes[i]}";
                     return false;
                 }
+            }
+
+            if (!string.Equals(adapter.action_contract_version, ExpectedActionContractVersion, StringComparison.Ordinal))
+            {
+                error =
+                    "action_contract_version mismatch. " +
+                    $"Expected {ExpectedActionContractVersion}, got {adapter.action_contract_version}";
+                return false;
             }
 
             if (adapter.action_flat == null)

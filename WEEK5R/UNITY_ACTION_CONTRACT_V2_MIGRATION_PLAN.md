@@ -365,3 +365,156 @@ What was intentionally NOT changed in Step 2:
 
 Pending after Step 2:
 - ActionApplier full v2 runtime semantics remain pending as a separate authoritative-runtime step.
+
+Step 3 status: completed (authoritative ActionApplier runtime semantics).
+
+Changed files:
+- Assets/Scripts/ML/ActionApplier.cs
+- Assets/Scripts/ML/ActionDecoder.cs
+- Assets/Scripts/ML/ActionApplierSmokeTest.cs
+
+What was changed in Step 3:
+- ActionApplier produce validation is now authoritative by v2 produce branch index (0..6) semantics, not by collapsed legacy 4-slot enum values.
+- Explicit context-valid produce acceptance/rejection implemented by actor type:
+  - Worker: only index 2 (Barracks build path) allowed.
+  - Base: only index 3 (Worker) allowed.
+  - Barracks: only indices 4/5/6 (Light/Heavy/Ranged) allowed.
+  - Invalid combinations are rejected safely with explicit diagnostics.
+- ActionApplier now normalizes accepted v2 produce indices into runtime ProducibleUnit only after validation, immediately before MatchCommand creation.
+- ActionApplier attack semantics remain authoritative and strict (representability in 7x7 does not imply validity).
+- ActionDecoder now preserves raw v2 produce branch index in AgentAction.ProduceUnitType (underlying int) so ActionApplier can apply index-level authoritative checks without ambiguity.
+- ActionApplierSmokeTest extended with Step 3-oriented v2 produce and attack semantic checks (safe reject and runtime-valid accept paths).
+
+Validation status after Step 3 edits:
+- Compile diagnostics for changed C# files are clean:
+  - Assets/Scripts/ML/ActionApplier.cs
+  - Assets/Scripts/ML/ActionDecoder.cs
+  - Assets/Scripts/ML/ActionApplierSmokeTest.cs
+
+What was intentionally NOT changed in Step 3:
+- No BC pipeline migration.
+- No teacher training pipeline changes.
+- No claim of full Unity/Python parity beyond completed migration steps.
+
+Step 4 status: completed (bridge/student shape alignment + observation/docs cleanup).
+
+Changed files:
+- Assets/Scripts/ML/Week6StudentPolicyAdapter.cs
+- Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs
+- Assets/Scripts/ML/Day6PipelineSmokeTest.cs
+- Assets/Scripts/ML/ObservationBuilder.cs
+- Assets/Scripts/ML/ObservationContract.cs
+- Assets/Scripts/ML/Day5AttackTargetObservationSmokeTest.cs
+- Assets/Scripts/ML/AgentAction.cs
+- python/week6_student/student_branch_contract.py
+- python/week6_student/student_inference_adapter.py
+- python/week6_student/student_inference_server.py
+
+What was changed in Step 4:
+- Week6 bridge/student payload checks were hardened for Unity v2 contract:
+  - required branch order for action heads.
+  - required branch sizes [6,4,4,4,4,7,49].
+  - required action_flat_size = 44928.
+  - explicit contract version field added/validated: action_contract_version = v2_gridnet_compatible.
+  - explicit fail-fast reject for legacy v1 payload shape with message:
+    "v1 action contract artifact is incompatible with Unity v2 runtime".
+- Week6 Day4 dry-run logs/report now include v2 contract version and branch_sizes diagnostics.
+- Day6 pipeline smoke was aligned with v2 examples:
+  - attack center index 24 rejection path.
+  - production checks with v2 produce indices (Base->3, Worker->2 when scene supports, Barracks->4/5/6 when available).
+- Observation comments/docs were cleaned up:
+  - attack_target channel wording now references local 7x7 representation and normalized-by-size encoding.
+  - explicit note that channel is diagnostic/observation-side only; runtime truth remains ActionApplier/MatchManager.
+
+Validation status after Step 4 edits:
+- C# compile diagnostics: pending runtime execution check in Unity Editor; static diagnostics run in IDE should be clean for changed files.
+- Python adapter scripts updated for v2 shape metadata and contract version tagging.
+
+Remaining pending after Step 4:
+- End-to-end runtime smoke execution in Unity Editor (ContextMenu/PlayMode paths).
+- BC/student retraining with v2 branch heads (if required by current checkpoint lineage).
+
+What was intentionally NOT changed in Step 4:
+- No teacher training pipeline changes.
+- No BC-ready packaging.
+- No Unity parity claim beyond verified migration-step wiring and checks.
+
+Step 5 status: partial (runtime smoke/regression execution + report).
+
+Smoke report path:
+- WEEK5R/UNITY_ACTION_CONTRACT_V2_SMOKE_REPORT.md
+
+Tests run in this step (Unity Editor menu-invokable via MCP):
+- SmokeTest/5 - ML Action Pipeline Smoke Test (ActionApplierSmokeTest)
+- SmokeTest/6 - ML Action Masking Smoke Test (ActionMaskBuilderSmokeTest)
+- SmokeTest/10 - Day6 Pipeline Smoke Test (Day6PipelineSmokeTest)
+
+Observed outcomes summary:
+- ActionMaskBuilderSmokeTest: PASS on key v2 checks (produce len=7, attack len=49, center=24 disabled, v2 produce-slot semantics).
+- ActionApplierSmokeTest: PARTIAL (v2 produce semantics PASS; attack sub-check skipped in run due to no combat attacker in scene snapshot).
+- Day6PipelineSmokeTest: FAIL (1/5 scenario failed: Production queue did not start after accepted produce command).
+
+ContextMenu-only tests not executed from current MCP menu runner path:
+- ActionContractV2SmokeTest
+- ActionDecoderV2SmokeTest
+- Day5AttackTargetObservationSmokeTest
+- Week6Day4StudentInferenceDryRun relevant smoke path
+- Week6StudentPolicyAdapter manifest accept/reject smoke
+
+Remaining blockers after Step 5:
+- Fix/triage Day6PipelineSmokeTest production scenario failure before claiming runtime readiness.
+- Execute and capture results for the listed ContextMenu-only smoke tests to fully close Step 5 evidence.
+
+Step 5 readiness decision:
+- v2 runtime smoke readiness for BC/student retraining path: not yet (partial only).
+
+Step 5 follow-up triage (Day6 production failure): completed.
+
+Triage target:
+- Day6PipelineSmokeTest production scenario failure: "Production queue did not start after accepted produce command".
+
+Root cause classification (A-F):
+- D. MatchCommand/acceptance path was fine; queue assertion checked wrong producer semantics path.
+- Scenario could select Worker as first Produce-capable actor. Worker Produce means immediate Barracks build, not queue start on worker.
+
+Files changed in triage:
+- Assets/Scripts/ML/Day6PipelineSmokeTest.cs
+- WEEK5R/UNITY_ACTION_CONTRACT_V2_SMOKE_REPORT.md
+- WEEK5R/UNITY_ACTION_CONTRACT_V2_MIGRATION_PLAN.md
+
+Exact fix applied:
+- Production scenario now selects Base/Barracks producer for queue-based assertions.
+- Added diagnostic logging in production path:
+  - actor/type/position/resources
+  - selected branches (action_type, produce_dir, raw v2 produce index)
+  - decoded AgentAction fields
+  - ActionApplier accepted/rejected + reason
+  - expected MatchCommand payload semantics
+  - queue state before apply / after apply / after step
+  - step timing expectation note (queue expected after StepMatch)
+- Added regression assertions:
+  - action accepted
+  - produced type matches v2 semantic mapping
+  - queue starts on expected producer
+  - queued unit type matches expected unit type
+  - no legacy v1 index assumptions in production path assertions
+
+Rerun results after fix:
+- SmokeTest/10 - Day6 Pipeline Smoke Test: PASS (5/5 scenarios)
+- SmokeTest/5 - ML Action Pipeline Smoke Test: executed, no new regressions observed in v2 produce semantics checks
+- SmokeTest/6 - ML Action Masking Smoke Test: executed, no regressions observed in v2 mask semantics checks
+
+Updated status:
+- Day6PipelineSmokeTest: PASS
+- Step 5 classification: PASS_WITH_MANUAL_PENDING
+
+Remaining pending ContextMenu-only smokes:
+- ActionContractV2SmokeTest
+- ActionDecoderV2SmokeTest
+- Day5AttackTargetObservationSmokeTest
+- Week6Day4StudentInferenceDryRun relevant smoke path
+- Week6StudentPolicyAdapter manifest accept/reject smoke
+
+Runtime readiness note:
+- Unity v2 runtime is now ready for ContextMenu-only evidence collection.
+- Final full Step 5 closure still requires executing and capturing those ContextMenu-only smoke results.

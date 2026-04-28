@@ -276,7 +276,7 @@ namespace RTS.ML
         /// - owner кодируется как [neutral, friendly, enemy] относительно playerPerspective;
         /// - ресурсный канал дополнительно отражает переносимый ресурс friendly-worker;
         /// - current_action для производящих зданий отражает Produce;
-        /// - attack_target использует Week 4 Day 5 semantics: normalized local 3x3 target index.
+        /// - attack_target uses v2 diagnostic semantics: normalized local 7x7 representative target index.
         /// </summary>
         private void FillObservationMvpTransfer(
             Owner playerPerspective,
@@ -395,7 +395,7 @@ namespace RTS.ML
                         ObservationContract.CH_PRODUCE_COUNT,
                         produceHotIndex);
 
-                    // [26] attack_target: observation-side local 3x3 representative target signal.
+                    // [26] attack_target: observation-side local 7x7 representative target signal.
                     obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] =
                         ComputeAttackTargetChannelValue(unit, playerPerspective, unitsByPos);
                 }
@@ -518,7 +518,7 @@ namespace RTS.ML
                     ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_PRODUCE_BASE,
                         ObservationContract.CH_PRODUCE_COUNT, produceHotIndex);
 
-                    // === Канал [26]: attack_target (normalized local 3x3 target index) ===
+                    // === Канал [26]: attack_target (normalized local 7x7 representative target index) ===
                     obs[baseIndex + ObservationContract.CH_ATTACK_TARGET] =
                         ComputeAttackTargetChannelValue(unit, playerPerspective, unitsByPos);
                 }
@@ -553,7 +553,7 @@ namespace RTS.ML
 
         private static float NormalizeAttackTargetLocal(int localIndex)
         {
-            // Encode as (localIndex + 1) / SIZE so the range is [1/9 ≈ 0.111, 1.0].
+            // Encode as (localIndex + 1) / SIZE so the range is [1/49, 1.0] under v2.
             // AttackTargetNoTargetValue (0f) cannot be produced by any valid index under this
             // formula, making the no-target sentinel unambiguous — no disambiguation context needed.
             if (ActionContract.SIZE_ATTACK_TARGET <= 0)
@@ -566,7 +566,7 @@ namespace RTS.ML
 
         // OBSERVATION ENCODING RULE — selects a representative attack target for channel 26.
         // This is NOT the runtime combat selector. It does not affect ActionApplier or MatchManager.
-        // Convention: deterministic first-scan across local 3x3 indices [0..8], same geometry as
+        // Convention: deterministic first-scan across local 7x7 indices [0..48], same geometry as
         // ActionContractMappings.TryGetAttackTargetPosition. The result is an observation signal
         // for the policy to learn from; actual combat resolution is governed by MatchManager.
         private bool TrySelectRepresentativeAttackTargetLocal(

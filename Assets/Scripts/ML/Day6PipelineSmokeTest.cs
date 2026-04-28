@@ -15,6 +15,8 @@ namespace RTS.ML
     /// </summary>
     public sealed class Day6PipelineSmokeTest : MonoBehaviour
     {
+        private const int V2AttackCenterIndex = 24;
+
         [SerializeField] private bool _runOnAwake = true;
         [SerializeField] private bool _verbose = true;
         [SerializeField] private bool _throwOnSuiteFailure = true;
@@ -332,6 +334,14 @@ namespace RTS.ML
             int attackLocal = AttackLocalIndex(attacker.GridPos, target.GridPos);
             Require(IsActionAllowedByMask(snapshot.TransferMask, attacker.GridPos, UnitActionType.Attack), "Attack not enabled by mask for attacker");
 
+            ActorActionMask attackerMask = snapshot.TransferMask.GetActorMask(attacker.GridPos);
+            if (attackerMask != null
+                && attackerMask.AttackTargetLocalMask != null
+                && attackerMask.AttackTargetLocalMask.Length > V2AttackCenterIndex)
+            {
+                Require(!attackerMask.AttackTargetLocalMask[V2AttackCenterIndex], "Attack center index 24 must be masked out");
+            }
+
             int targetHpBefore = target.HP;
             bool attackApplied = ApplyDebugAction(snapshot.TransferMask, _playerUnderTest, attacker.GridPos.ToFlatIndex(), ActionContract.ACTION_ATTACK, (int)Direction.North, (int)ProducibleUnit.Worker, attackLocal, "debug");
             Require(attackApplied, "Valid attack command rejected before runtime step");
@@ -345,14 +355,14 @@ namespace RTS.ML
             Debug.Log("[Day6PipelineSmokeTest] NOTE: Attack scenario validates pipeline submission plus combat effect, not strict target-preserving end-to-end semantics.");
 
             PipelineSnapshot invalidSnapshot = BuildPipelineSnapshot(_playerUnderTest);
-            bool invalidAttackApplied = ApplyDebugAction(invalidSnapshot.TransferMask, _playerUnderTest, attacker.GridPos.ToFlatIndex(), ActionContract.ACTION_ATTACK, (int)Direction.North, (int)ProducibleUnit.Worker, 4, "debug");
+            bool invalidAttackApplied = ApplyDebugAction(invalidSnapshot.TransferMask, _playerUnderTest, attacker.GridPos.ToFlatIndex(), ActionContract.ACTION_ATTACK, (int)Direction.North, 3, V2AttackCenterIndex, "debug");
             Require(!invalidAttackApplied, "Invalid self-target attack unexpectedly accepted");
             Require(_applier.RejectionReasonsLastStep.Count > 0, "Invalid attack rejection reason is missing");
         }
 
         private void TestProductionScenario(ScenarioExecution scenario)
         {
-            UnitRuntime building = FindFirstActorWithAction(BuildPipelineSnapshot(_playerUnderTest).TransferMask, _playerUnderTest, UnitActionType.Produce);
+            UnitRuntime building = FindFirstBuildingProducerActor(BuildPipelineSnapshot(_playerUnderTest).TransferMask, _playerUnderTest);
             if (building == null)
             {
                 scenario.MarkFallback("no producible building in prepared state; reconstructing with spawned base+runtime");
@@ -369,21 +379,109 @@ namespace RTS.ML
             ActorActionMask actorMask = snapshot.TransferMask.GetActorMask(building.GridPos);
             Require(actorMask != null, "Production actor mask missing");
             Require(TryFindEnabledDirection(actorMask.ProduceDirectionMask, out Direction produceDir), "No produce direction enabled by mask");
-            Require(TryFindEnabledProduceType(actorMask.ProduceUnitTypeMask, out ProducibleUnit produceType), "No produce unit type enabled by mask");
 
             RequireObservationFriendlyActor(snapshot, building, "production actor should be friendly in observation");
 
-            bool produceApplied = ApplyDebugAction(snapshot.TransferMask, _playerUnderTest, building.GridPos.ToFlatIndex(), ActionContract.ACTION_PRODUCE, (int)produceDir, (int)produceType, 4, "debug");
+            int preferredProduceIndex = ResolvePreferredV2ProduceIndex(building, actorMask);
+            int actorIndexFlat = building.GridPos.ToFlatIndex();
+
+            int playerResourcesBefore = _matchManager.GetResources(_playerUnderTest);
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] actor id={building.GetInstanceID()}, type={building.Type}, pos={building.GridPos}, carried={building.CarriedResources}, playerRes={playerResourcesBefore}");
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] selected branches: action_type={ActionContract.ACTION_PRODUCE}, produce_dir={(int)produceDir}, produce_unit_type_raw_v2={preferredProduceIndex}");
+
+            AgentAction decodedProduceAction = _decoder.DecodeDebug(
+                actorIndexFlat,
+                ActionContract.ACTION_PRODUCE,
+                (int)produceDir,
+                preferredProduceIndex,
+                V2AttackCenterIndex);
+
+            int decodedProduceRaw = (int)decodedProduceAction.ProduceUnitType;
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] decoded action: ActionType={decodedProduceAction.ActionType}, ProduceDirection={decodedProduceAction.Direction}, ProduceUnitTypeRaw={decodedProduceRaw}");
+
+            Require(ActionContractMappings.TryMapV2ProduceIndexToUnitType(decodedProduceRaw, out UnitType expectedProducedUnitType), $"Cannot map decoded v2 produce index {decodedProduceRaw} to UnitType");
+            bool hasRuntimeProducePayload = TryMapUnitTypeToRuntimeProducible(expectedProducedUnitType, out ProducibleUnit expectedRuntimeProduceType);
+
+            GridPosition expectedBuildCell = building.GridPos.Neighbour(produceDir);
+            string payloadTarget = building.Type == UnitType.Worker ? expectedBuildCell.ToString() : "n/a";
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] expected MatchCommand payload: command=Produce, producerId={building.GetInstanceID()}, producerType={building.Type}, producedUnitType={expectedProducedUnitType}, runtimeProducible={(hasRuntimeProducePayload ? expectedRuntimeProduceType.ToString() : "n/a")}, targetCell={payloadTarget}");
+
+            if (building.Type == UnitType.Base)
+            {
+                bool invalidBaseToBarracks = ApplyDebugAction(snapshot.TransferMask, _playerUnderTest, building.GridPos.ToFlatIndex(), ActionContract.ACTION_PRODUCE, (int)produceDir, 2, V2AttackCenterIndex, "debug");
+                Require(!invalidBaseToBarracks, "Base->produce index 2 (Barracks) unexpectedly accepted");
+            }
+
+            if (building.Type == UnitType.Barracks)
+            {
+                bool invalidBarracksToWorker = ApplyDebugAction(snapshot.TransferMask, _playerUnderTest, building.GridPos.ToFlatIndex(), ActionContract.ACTION_PRODUCE, (int)produceDir, 3, V2AttackCenterIndex, "debug");
+                Require(!invalidBarracksToWorker, "Barracks->produce index 3 (Worker) unexpectedly accepted");
+            }
+
+            ProductionQueueSnapshot queueBeforeApply = CaptureQueueSnapshot(building);
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] queue before apply: {queueBeforeApply}");
+
+            _applier.ResetDiagnostics();
+            bool produceApplied = _applier.ApplyAction(decodedProduceAction, _playerUnderTest, snapshot.TransferMask, "debug");
+            string rejectionReason = _applier.RejectionReasonsLastStep.Count > 0 ? _applier.RejectionReasonsLastStep[0] : "none";
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] applier result: accepted={produceApplied}, reason={rejectionReason}");
+
+            ProductionQueueSnapshot queueAfterApplyBeforeStep = CaptureQueueSnapshot(building);
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] queue after apply (before step): {queueAfterApplyBeforeStep}");
+
             Require(produceApplied, "Valid produce action was rejected");
+            Require(decodedProduceAction.ActionType == UnitActionType.Produce, "Decoded action type mismatch in production scenario");
+            Require(decodedProduceRaw == preferredProduceIndex, "Decoded produce index does not match selected v2 index");
+
+            if (building.Type == UnitType.Base)
+            {
+                Require(preferredProduceIndex == 3, "Base scenario must use v2 produce index 3 (Worker)");
+                Require(expectedProducedUnitType == UnitType.Worker, "Base production expected Worker from v2 index 3");
+            }
+            else if (building.Type == UnitType.Barracks)
+            {
+                Require(preferredProduceIndex >= 4 && preferredProduceIndex <= 6, "Barracks scenario must use v2 produce index 4/5/6");
+                Require(expectedProducedUnitType == UnitType.Light || expectedProducedUnitType == UnitType.Heavy || expectedProducedUnitType == UnitType.Ranged,
+                    "Barracks production expected Light/Heavy/Ranged from v2 index 4/5/6");
+            }
+
+            Debug.Log("[Day6PipelineSmokeTest] [ProductionDiag] timing: queue is expected to start only after MatchManager.StepMatch executes pending produce commands");
 
             _matchManager.StepMatch();
 
-            BuildingRuntime runtime = building.GetComponent<BuildingRuntime>();
-            ProductionQueue queue = runtime != null ? runtime.GetProductionQueue() : null;
-            Require(queue != null && queue.IsProducing, "Production queue did not start after accepted produce command");
+            ProductionQueueSnapshot queueAfterStep = CaptureQueueSnapshot(building);
+            Debug.Log($"[Day6PipelineSmokeTest] [ProductionDiag] queue after step: {queueAfterStep}");
+            Require(queueAfterStep.HasQueue && queueAfterStep.IsProducing, "Production queue did not start after accepted produce command");
+            Require(queueAfterStep.QueueItemCount == 1, "Production queue must contain exactly one active item after accepted produce command");
+            Require(queueAfterStep.QueuedUnitType.HasValue, "Production queue started but queued unit type is missing");
+            Require(queueAfterStep.QueuedUnitType.Value == expectedProducedUnitType,
+                $"Queued unit type mismatch: expected {expectedProducedUnitType}, got {queueAfterStep.QueuedUnitType.Value}");
+
+            UnitRuntime workerBuilder = FindActorByTypeWithAction(snapshot.TransferMask, _playerUnderTest, UnitType.Worker, UnitActionType.Produce);
+            if (workerBuilder != null)
+            {
+                ActorActionMask workerMask = snapshot.TransferMask.GetActorMask(workerBuilder.GridPos);
+                if (workerMask != null
+                    && workerMask.ProduceUnitTypeMask != null
+                    && workerMask.ProduceUnitTypeMask.Length > 2
+                    && workerMask.ProduceUnitTypeMask[2]
+                    && TryFindEnabledDirection(workerMask.ProduceDirectionMask, out Direction workerProduceDir))
+                {
+                    bool workerBuildBarracksApplied = ApplyDebugAction(
+                        snapshot.TransferMask,
+                        _playerUnderTest,
+                        workerBuilder.GridPos.ToFlatIndex(),
+                        ActionContract.ACTION_PRODUCE,
+                        (int)workerProduceDir,
+                        2,
+                        V2AttackCenterIndex,
+                        "debug");
+                    Require(workerBuildBarracksApplied, "Worker->produce index 2 (Barracks build) was rejected under valid mask state");
+                }
+            }
 
             PipelineSnapshot busySnapshot = BuildPipelineSnapshot(_playerUnderTest);
-            bool busyApplied = ApplyDebugAction(busySnapshot.TransferMask, _playerUnderTest, building.GridPos.ToFlatIndex(), ActionContract.ACTION_PRODUCE, (int)produceDir, (int)produceType, 4, "debug");
+            bool busyApplied = ApplyDebugAction(busySnapshot.TransferMask, _playerUnderTest, building.GridPos.ToFlatIndex(), ActionContract.ACTION_PRODUCE, (int)produceDir, preferredProduceIndex, V2AttackCenterIndex, "debug");
             Require(!busyApplied, "Produce command accepted while queue was busy");
             Require(_applier.RejectionReasonsLastStep.Count > 0, "Busy queue rejection reason is missing");
         }
@@ -395,7 +493,7 @@ namespace RTS.ML
             PipelineSnapshot snapshot = BuildPipelineSnapshot(_playerUnderTest);
             int stepBefore = _matchManager.Step;
 
-            AgentAction invalidDecoded = _decoder.DecodeDebug(-1, ActionContract.ACTION_MOVE, ActionContract.DIR_NORTH, (int)ProducibleUnit.Worker, 4);
+            AgentAction invalidDecoded = _decoder.DecodeDebug(-1, ActionContract.ACTION_MOVE, ActionContract.DIR_NORTH, 3, V2AttackCenterIndex);
             _applier.ResetDiagnostics();
             bool invalidApplied = _applier.ApplyAction(invalidDecoded, _playerUnderTest, snapshot.TransferMask, "debug");
 
@@ -403,7 +501,7 @@ namespace RTS.ML
             Require(_applier.LastInvalidAttempt.HasValue, "Invalid attempt log is missing for invalid actor index");
             Require(_applier.LastInvalidAttempt.Value.Category == InvalidAttemptCategory.InvalidInput, "Invalid input category was not assigned for invalid actor index");
 
-            AgentAction fallbackNoOp = _decoder.DecodeDebug(ActionContract.TotalCells, ActionContract.ACTION_NOOP, ActionContract.DIR_NORTH, (int)ProducibleUnit.Worker, 4);
+            AgentAction fallbackNoOp = _decoder.DecodeDebug(ActionContract.TotalCells, ActionContract.ACTION_NOOP, ActionContract.DIR_NORTH, 3, V2AttackCenterIndex);
             bool fallbackApplied = _applier.ApplyAction(fallbackNoOp, _playerUnderTest, snapshot.TransferMask, "debug");
             _matchManager.StepMatch();
 
@@ -462,6 +560,95 @@ namespace RTS.ML
             }
 
             return null;
+        }
+
+        private UnitRuntime FindActorByTypeWithAction(ActionMaskSet mask, Owner owner, UnitType type, UnitActionType actionType)
+        {
+            if (mask == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < ActionContract.TotalCells; i++)
+            {
+                if (!mask.ActorCellMask[i])
+                {
+                    continue;
+                }
+
+                ActorActionMask actorMask = mask.GetActorMaskByFlatIndex(i);
+                if (actorMask == null || !actorMask.IsActionTypeEnabled(actionType))
+                {
+                    continue;
+                }
+
+                UnitRuntime actor = _gridManager.GetOccupant(GridPosition.FromFlatIndex(i));
+                if (actor != null && actor.Owner == owner && actor.IsAlive && actor.Type == type)
+                {
+                    return actor;
+                }
+            }
+
+            return null;
+        }
+
+        private UnitRuntime FindFirstBuildingProducerActor(ActionMaskSet mask, Owner owner)
+        {
+            UnitRuntime baseProducer = FindActorByTypeWithAction(mask, owner, UnitType.Base, UnitActionType.Produce);
+            if (baseProducer != null)
+            {
+                return baseProducer;
+            }
+
+            return FindActorByTypeWithAction(mask, owner, UnitType.Barracks, UnitActionType.Produce);
+        }
+
+        private readonly struct ProductionQueueSnapshot
+        {
+            public ProductionQueueSnapshot(bool hasQueue, bool isProducing, UnitType? queuedUnitType, int remainingTime)
+            {
+                HasQueue = hasQueue;
+                IsProducing = isProducing;
+                QueuedUnitType = queuedUnitType;
+                RemainingTime = remainingTime;
+            }
+
+            public bool HasQueue { get; }
+            public bool IsProducing { get; }
+            public UnitType? QueuedUnitType { get; }
+            public int RemainingTime { get; }
+            public int QueueItemCount => QueuedUnitType.HasValue ? 1 : 0;
+
+            public override string ToString()
+                => $"hasQueue={HasQueue}, isProducing={IsProducing}, queueItemCount={QueueItemCount}, queuedType={(QueuedUnitType.HasValue ? QueuedUnitType.Value.ToString() : "none")}, remaining={RemainingTime}";
+        }
+
+        private static ProductionQueueSnapshot CaptureQueueSnapshot(UnitRuntime building)
+        {
+            BuildingRuntime runtime = building != null ? building.GetComponent<BuildingRuntime>() : null;
+            ProductionQueue queue = runtime != null ? runtime.GetProductionQueue() : null;
+            UnitType? queuedType = queue != null ? queue.CurrentProducingType : null;
+            int remaining = queue != null ? queue.ProductionTimeRemaining : 0;
+            bool isProducing = queue != null && queue.IsProducing;
+
+            return new ProductionQueueSnapshot(queue != null, isProducing, queuedType, remaining);
+        }
+
+        private static bool TryMapUnitTypeToRuntimeProducible(UnitType unitType, out ProducibleUnit runtimeType)
+        {
+            runtimeType = unitType switch
+            {
+                UnitType.Worker => ProducibleUnit.Worker,
+                UnitType.Light => ProducibleUnit.Light,
+                UnitType.Heavy => ProducibleUnit.Heavy,
+                UnitType.Ranged => ProducibleUnit.Ranged,
+                _ => ProducibleUnit.Worker
+            };
+
+            return unitType == UnitType.Worker
+                   || unitType == UnitType.Light
+                   || unitType == UnitType.Heavy
+                   || unitType == UnitType.Ranged;
         }
 
         private bool IsActionAllowedByMask(ActionMaskSet mask, GridPosition actorPos, UnitActionType actionType)
@@ -771,6 +958,35 @@ namespace RTS.ML
             return false;
         }
 
+        private static int ResolvePreferredV2ProduceIndex(UnitRuntime building, ActorActionMask actorMask)
+        {
+            if (building != null)
+            {
+                if (building.Type == UnitType.Base)
+                {
+                    return 3;
+                }
+
+                if (building.Type == UnitType.Barracks && actorMask?.ProduceUnitTypeMask != null)
+                {
+                    for (int i = 4; i <= 6; i++)
+                    {
+                        if (i < actorMask.ProduceUnitTypeMask.Length && actorMask.ProduceUnitTypeMask[i])
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+
+            if (actorMask != null && TryFindEnabledProduceType(actorMask.ProduceUnitTypeMask, out ProducibleUnit fallbackType))
+            {
+                return (int)fallbackType;
+            }
+
+            return 3;
+        }
+
         private static int AttackLocalIndex(GridPosition attacker, GridPosition target)
         {
             int dx = target.X - attacker.X;
@@ -785,7 +1001,7 @@ namespace RTS.ML
                 }
             }
 
-            return 4;
+            return V2AttackCenterIndex;
         }
 
         private void RequireObservationFriendlyActor(PipelineSnapshot snapshot, UnitRuntime actor, string message)

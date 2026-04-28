@@ -500,14 +500,11 @@ namespace RTS.ML
                 return false;
             }
 
-            produceType = v2UnitType switch
-            {
-                UnitType.Worker => ProducibleUnit.Worker,
-                UnitType.Light => ProducibleUnit.Light,
-                UnitType.Heavy => ProducibleUnit.Heavy,
-                UnitType.Ranged => ProducibleUnit.Ranged,
-                _ => ProducibleUnit.Worker
-            };
+            // Preserve raw v2 index in AgentAction.ProduceUnitType (underlying int), so
+            // ActionApplier can apply authoritative v2 runtime semantics by index.
+            // Runtime producible enum normalization happens in ActionApplier right before
+            // MatchCommand submission.
+            produceType = (ProducibleUnit)value;
 
             return true;
         }

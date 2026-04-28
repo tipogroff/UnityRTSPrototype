@@ -216,6 +216,7 @@ namespace RTS.ML
     public sealed class Week6StudentPolicyAdapter : MonoBehaviour
     {
         private const string ExpectedStudentCheckpointFileName = "student_bc_transfer_best.pt";
+        private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
         private sealed class BridgeReadyEnvelope
@@ -250,6 +251,7 @@ namespace RTS.ML
         {
             public string status;
             public string error;
+            public string action_contract_version;
             public string checkpoint_path;
             public int checkpoint_epoch;
             public string checkpoint_model_variant;
@@ -261,6 +263,47 @@ namespace RTS.ML
             public string[] logits_keys;
             public int action_flat_size;
             public int[] action_flat;
+        }
+
+        [ContextMenu("Run Week6 Adapter Contract Validation Smoke")]
+        private void RunAdapterContractValidationSmoke()
+        {
+            string[] expectedBranchOrder = BuildExpectedBranchOrder();
+            int[] expectedBranchSizes = BuildExpectedBranchSizes();
+
+            var v2Payload = new AdapterResult
+            {
+                status = "ok",
+                action_contract_version = ExpectedActionContractVersion,
+                observation_shape = new[] { ObservationContract.GridH, ObservationContract.GridW, ObservationContract.ChannelsPerCell },
+                observation_dtype = "float32",
+                branch_order = expectedBranchOrder,
+                branch_sizes = expectedBranchSizes,
+                action_flat_size = ActionContract.TotalActionFlatSize,
+                action_flat = new int[ActionContract.TotalActionFlatSize],
+            };
+
+            bool v2Accepted = ValidateAdapterPayload(v2Payload, out string v2Error);
+            Debug.Log(v2Accepted
+                ? "[Week6StudentPolicyAdapter] ✓ v2 manifest payload accepted"
+                : "[Week6StudentPolicyAdapter] ✗ v2 manifest payload rejected: " + v2Error);
+
+            var v1Payload = new AdapterResult
+            {
+                status = "ok",
+                action_contract_version = "v1_transfer_compatible",
+                observation_shape = new[] { ObservationContract.GridH, ObservationContract.GridW, ObservationContract.ChannelsPerCell },
+                observation_dtype = "float32",
+                branch_order = expectedBranchOrder,
+                branch_sizes = new[] { 6, 4, 4, 4, 4, 4, 9 },
+                action_flat_size = 20160,
+                action_flat = new int[20160],
+            };
+
+            bool v1Accepted = ValidateAdapterPayload(v1Payload, out string v1Error);
+            Debug.Log(!v1Accepted
+                ? "[Week6StudentPolicyAdapter] ✓ v1 manifest payload rejected: " + v1Error
+                : "[Week6StudentPolicyAdapter] ✗ v1 manifest payload unexpectedly accepted");
         }
 
         [Header("Scene references")]
@@ -952,12 +995,109 @@ namespace RTS.ML
                 return false;
             }
 
+            string[] expectedBranchOrder = BuildExpectedBranchOrder();
+            if (adapter.branch_order == null || adapter.branch_order.Length != expectedBranchOrder.Length)
+            {
+                error = "Adapter branch_order is missing or malformed.";
+                return false;
+            }
+
+            for (int i = 0; i < expectedBranchOrder.Length; i++)
+            {
+                if (!string.Equals(adapter.branch_order[i], expectedBranchOrder[i], StringComparison.Ordinal))
+                {
+                    error =
+                        "Adapter branch_order mismatch. " +
+                        $"index={i}, expected={expectedBranchOrder[i]}, got={adapter.branch_order[i]}";
+                    return false;
+                }
+            }
+
+            int[] expectedBranchSizes = BuildExpectedBranchSizes();
+            if (adapter.branch_sizes == null || adapter.branch_sizes.Length != expectedBranchSizes.Length)
+            {
+                error = "Adapter branch_sizes are missing or malformed.";
+                return false;
+            }
+
+            bool matchesV1Legacy = MatchesArray(adapter.branch_sizes, new[] { 6, 4, 4, 4, 4, 4, 9 });
+            if (matchesV1Legacy)
+            {
+                error = "v1 action contract artifact is incompatible with Unity v2 runtime";
+                return false;
+            }
+
+            for (int i = 0; i < expectedBranchSizes.Length; i++)
+            {
+                if (adapter.branch_sizes[i] != expectedBranchSizes[i])
+                {
+                    error =
+                        "Adapter branch_sizes mismatch. " +
+                        $"index={i}, expected={expectedBranchSizes[i]}, got={adapter.branch_sizes[i]}";
+                    return false;
+                }
+            }
+
+            if (!string.Equals(adapter.action_contract_version, ExpectedActionContractVersion, StringComparison.Ordinal))
+            {
+                error =
+                    "Adapter action_contract_version mismatch. " +
+                    $"Expected {ExpectedActionContractVersion}, got {adapter.action_contract_version}";
+                return false;
+            }
+
             if (adapter.action_flat == null || adapter.action_flat_size != ActionContract.TotalActionFlatSize)
             {
                 error =
                     "Action flat size mismatch from adapter. " +
                     $"Expected {ActionContract.TotalActionFlatSize}, got {adapter.action_flat_size}";
                 return false;
+            }
+
+            return true;
+        }
+
+        private static string[] BuildExpectedBranchOrder()
+        {
+            return new[]
+            {
+                "action_type",
+                "move_dir",
+                "harvest_dir",
+                "return_dir",
+                "produce_dir",
+                "produce_unit_type",
+                "attack_target_local",
+            };
+        }
+
+        private static int[] BuildExpectedBranchSizes()
+        {
+            return new[]
+            {
+                ActionContract.SIZE_ACTION_TYPE,
+                ActionContract.SIZE_DIRECTION,
+                ActionContract.SIZE_DIRECTION,
+                ActionContract.SIZE_DIRECTION,
+                ActionContract.SIZE_DIRECTION,
+                ActionContract.SIZE_PRODUCE_UNIT_TYPE,
+                ActionContract.SIZE_ATTACK_TARGET,
+            };
+        }
+
+        private static bool MatchesArray(int[] actual, int[] expected)
+        {
+            if (actual == null || expected == null || actual.Length != expected.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                if (actual[i] != expected[i])
+                {
+                    return false;
+                }
             }
 
             return true;
