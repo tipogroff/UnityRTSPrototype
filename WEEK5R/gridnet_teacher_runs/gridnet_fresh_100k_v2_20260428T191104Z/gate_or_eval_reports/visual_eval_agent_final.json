@@ -1,0 +1,268 @@
+{
+  "schema": "gridnet_visual_eval.v1",
+  "timestamp_utc": "2026-04-28T12:28:06Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_fresh_100k_v2_20260428T191104Z\\agent_final.pt",
+  "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_fresh_100k_v2_20260428T191104Z\\model_metadata.json",
+  "opponent": "randomBiasedAI",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "max_steps": 300,
+  "fps": 8,
+  "visual_eval_status": "active",
+  "deterministic_mode": true,
+  "steps_run": 300,
+  "episode_done": true,
+  "actor_level_move_share": 0.008032128514056224,
+  "actor_noop_share": 0.9548192771084337,
+  "effective_position_delta_count": 13,
+  "no_effect_action_share": 0.9761904761904762,
+  "ready_movable_actor_choice_count": 912,
+  "ready_nonnoop_steps": 42,
+  "no_effect_ready_nonnoop_steps": 41,
+  "full_action_counts": {
+    "NoOp": 172755,
+    "Move": 8,
+    "Harvest": 2,
+    "Produce": 35
+  },
+  "ready_actor_action_counts": {
+    "NoOp": 951,
+    "Move": 8,
+    "Harvest": 2,
+    "Produce": 35
+  },
+  "step_trace": [
+    {
+      "step": 0,
+      "ready_count": 2,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Harvest": 1,
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 1,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 2,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 3,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 4,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 5,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 6,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 7,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 8,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 9,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 10,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 11,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 12,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 13,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 14,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 15,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 16,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 17,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 18,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 19,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 20,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 21,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 22,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 23,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 24,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 25,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 26,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 27,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 28,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 29,
+      "ready_count": 1,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Produce": 1
+      },
+      "position_delta": false
+    }
+  ]
+}

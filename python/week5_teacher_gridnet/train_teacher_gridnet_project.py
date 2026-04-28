@@ -84,6 +84,9 @@ def parse_args() -> argparse.Namespace:
 
     p.add_argument("--total-timesteps", type=int, default=100000)
     p.add_argument("--checkpoint-steps", default="20000,50000,100000")
+    p.add_argument("--resume-from-checkpoint", type=Path, default=None)
+    p.add_argument("--resume-model-metadata", type=Path, default=None)
+    p.add_argument("--initial-global-step", type=int, default=0)
 
     p.add_argument("--eval-after-checkpoint", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--eval-episodes", type=int, default=4)
@@ -164,6 +167,12 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=True)
+
+
+def maybe_read_json(path: Optional[Path]) -> Optional[Dict[str, Any]]:
+    if path is None:
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def build_model_metadata(
@@ -249,6 +258,7 @@ def build_env(args: argparse.Namespace, logger: FileAndConsoleLogger):
         render_theme=2,
         ai2s=ai2s,
         reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
+        autobuild=False,
     )
 
     try:
@@ -476,8 +486,17 @@ def main() -> None:
     args = parse_args()
     if args.num_bot_envs < 6:
         raise ValueError("num_bot_envs must be >= 6 to match the intended diverse-bot setup.")
+    if args.initial_global_step < 0:
+        raise ValueError("initial-global-step must be >= 0.")
+    if args.total_timesteps <= args.initial_global_step:
+        raise ValueError("total-timesteps must be greater than initial-global-step.")
+    if args.resume_from_checkpoint is not None and not args.resume_from_checkpoint.is_file():
+        raise FileNotFoundError(f"resume checkpoint not found: {args.resume_from_checkpoint}")
+    if args.resume_model_metadata is not None and not args.resume_model_metadata.is_file():
+        raise FileNotFoundError(f"resume model metadata not found: {args.resume_model_metadata}")
 
     checkpoint_steps = parse_checkpoint_steps(args.checkpoint_steps, args.total_timesteps)
+    checkpoint_steps = [step for step in checkpoint_steps if step > args.initial_global_step]
     args.batch_size = int((args.num_bot_envs + args.num_selfplay_envs) * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.n_minibatch)
     if args.minibatch_size <= 0:
@@ -522,6 +541,13 @@ def main() -> None:
     logger.info("Actor branch sizes: %s (sum=%s)", branch_sizes, actor_output_channels)
 
     agent = Agent(obs_shape, nvec).to(device)
+    resume_metadata = maybe_read_json(args.resume_model_metadata)
+    if args.resume_from_checkpoint is not None:
+        logger.info("Resuming model weights from checkpoint: %s", args.resume_from_checkpoint)
+        state_dict = torch.load(args.resume_from_checkpoint, map_location=device)
+        agent.load_state_dict(state_dict)
+    if resume_metadata is not None:
+        logger.info("Loaded resume metadata: %s", args.resume_model_metadata)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     run_name = f"gridnet_project__{args.seed}__{utc_stamp()}"
@@ -554,8 +580,9 @@ def main() -> None:
     next_obs = torch.as_tensor(envs.reset(), device=device, dtype=torch.float32)
     next_done = torch.zeros(envs.num_envs, device=device)
 
-    num_updates = max(1, math.ceil(args.total_timesteps / args.batch_size))
-    global_step = 0
+    remaining_timesteps = args.total_timesteps - args.initial_global_step
+    num_updates = max(1, math.ceil(remaining_timesteps / args.batch_size))
+    global_step = int(args.initial_global_step)
     start_time = time.time()
 
     evaluator_script = Path(__file__).resolve().parent / "evaluate_gridnet_actor_level.py"
@@ -794,6 +821,11 @@ def main() -> None:
         "final_eval_actor_level_move_share": final_eval_actor_level_move_share,
         "final_eval_no_effect_action_share": final_eval_no_effect_action_share,
         "global_step_reached": int(global_step),
+        "initial_global_step": int(args.initial_global_step),
+        "remaining_timesteps_planned": int(remaining_timesteps),
+        "resume_from_checkpoint": str(args.resume_from_checkpoint) if args.resume_from_checkpoint is not None else None,
+        "resume_model_metadata": str(args.resume_model_metadata) if args.resume_model_metadata is not None else None,
+        "resume_metadata_schema": (resume_metadata or {}).get("schema") if resume_metadata else None,
         "overshoot_steps": int(overshoot_steps),
         "render_window_enabled": bool(args.render_window),
         "visual_eval_attempted": bool(visual_eval.get("visual_eval_attempted", False)),
@@ -820,7 +852,11 @@ def main() -> None:
         f"- created_utc: {datetime.now(timezone.utc).isoformat()}",
         f"- total_timesteps_target: {args.total_timesteps}",
         f"- global_step_reached: {global_step}",
+        f"- initial_global_step: {args.initial_global_step}",
+        f"- remaining_timesteps_planned: {remaining_timesteps}",
         f"- overshoot_steps: {overshoot_steps}",
+        f"- resume_from_checkpoint: {args.resume_from_checkpoint}",
+        f"- resume_model_metadata: {args.resume_model_metadata}",
         f"- map_path: {args.map_path}",
         f"- observation_shape: {list(obs_shape)}",
         f"- action_nvec: {nvec}",

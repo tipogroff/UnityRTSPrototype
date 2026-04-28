@@ -1,0 +1,322 @@
+{
+  "run": {
+    "timestamp_utc": "2026-04-28T11:50:34Z",
+    "adapted_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_200k_stoch_ab_v2_20260428T000000Z",
+    "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_200k_stoch_ab_v2_20260428T000000Z",
+    "based_on_current_available_meaningful_batch": true,
+    "ongoing_long_teacher_training_not_blocking_this_run": true
+  },
+  "quality": {
+    "usable_samples": 2048,
+    "dropped_samples": 0,
+    "conversion_loss_share": 0.0,
+    "usable_vs_dropped_ratio": 2048.0,
+    "remap_to_noop_count": 0,
+    "remap_to_noop_share": 0.0,
+    "semantic_weakening_share": 0.0,
+    "observation_signal_loss_share": 0.0,
+    "production_actions_survived_share": 1.0,
+    "class_imbalance": {
+      "distribution_share_by_action_type": {
+        "0": 0.16766272650824654,
+        "1": 0.16632503933376735,
+        "2": 0.16616990831163195,
+        "3": 0.16636233859592015,
+        "4": 0.1667115953233507,
+        "5": 0.16676839192708334
+      },
+      "imbalance_ratio_max_to_min_nonzero": 1.0089836855046883
+    },
+    "inactive_branch_anomalies": {
+      "inactive_branch_anomaly_count": 0,
+      "inactive_branch_anomaly_share": 0.0,
+      "inactive_branch_warning_severity": "low",
+      "inactive_branch_counts": {},
+      "severity_thresholds": {
+        "high": 0.1,
+        "medium": 0.03
+      }
+    },
+    "main_weak_spots_detected": [
+      "No dominant weak spot detected in this batch-level sanity scan."
+    ]
+  },
+  "sanity": {
+    "episodes_scanned": 4,
+    "steps_scanned": 2048,
+    "action_type_distribution": {
+      "0": 197783,
+      "1": 196205,
+      "2": 196022,
+      "3": 196249,
+      "4": 196661,
+      "5": 196728
+    },
+    "attack_local_target_cases": {
+      "attack_action_count": 196728,
+      "attack_action_share": 0.16676839192708334
+    },
+    "produce_cases": {
+      "produce_action_count": 196661,
+      "produce_action_share": 0.1667115953233507
+    },
+    "conversion_report_observed_gaps": {
+      "action.attack_target_requires_unity_v2_validation": 2048,
+      "action.produce_type_requires_unity_v2_validation": 2048,
+      "action.requires_unity_v2_validation": 2048
+    },
+    "sampled_episodes": [
+      {
+        "episode_file": "episode_00000.adapted.npz",
+        "episode_id": 0,
+        "steps": 512,
+        "action_type_histogram": {
+          "0": 49901,
+          "1": 49119,
+          "2": 49047,
+          "3": 49036,
+          "4": 48662,
+          "5": 49147
+        },
+        "attack_actions": 49147,
+        "produce_actions": 48662,
+        "inactive_branch_anomaly_count": 0,
+        "inactive_branch_anomaly_share": 0.0
+      },
+      {
+        "episode_file": "episode_00001.adapted.npz",
+        "episode_id": 1,
+        "steps": 512,
+        "action_type_histogram": {
+          "0": 49174,
+          "1": 49214,
+          "2": 48973,
+          "3": 49095,
+          "4": 49342,
+          "5": 49114
+        },
+        "attack_actions": 49114,
+        "produce_actions": 49342,
+        "inactive_branch_anomaly_count": 0,
+        "inactive_branch_anomaly_share": 0.0
+      },
+      {
+        "episode_file": "episode_00002.adapted.npz",
+        "episode_id": 2,
+        "steps": 512,
+        "action_type_histogram": {
+          "0": 49141,
+          "1": 49123,
+          "2": 48990,
+          "3": 48978,
+          "4": 49395,
+          "5": 49285
+        },
+        "attack_actions": 49285,
+        "produce_actions": 49395,
+        "inactive_branch_anomaly_count": 0,
+        "inactive_branch_anomaly_share": 0.0
+      }
+    ],
+    "episode_level_diagnostics": {
+      "episodes": [
+        {
+          "episode_file": "episode_00000.adapted.npz",
+          "episode_id": 0,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00001.adapted.npz",
+          "episode_id": 1,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00002.adapted.npz",
+          "episode_id": 2,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00003.adapted.npz",
+          "episode_id": 3,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        }
+      ],
+      "top_problematic_episodes": [
+        {
+          "episode_file": "episode_00000.adapted.npz",
+          "episode_id": 0,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00001.adapted.npz",
+          "episode_id": 1,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00002.adapted.npz",
+          "episode_id": 2,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        },
+        {
+          "episode_file": "episode_00003.adapted.npz",
+          "episode_id": 3,
+          "steps": 512,
+          "contract_issues": {
+            "hard_failure_count": 2,
+            "warning_count": 2
+          },
+          "dropped_step_share": 0.0,
+          "semantic_weakening": {
+            "weakened_step_share": 0.0
+          },
+          "action_remap_concentration": {
+            "remap_to_noop_share_per_action_cell": 0.0
+          },
+          "inactive_branch_anomaly": {
+            "count": 0,
+            "share": 0.0
+          },
+          "top_warning_reasons": [],
+          "problem_score": 8.0
+        }
+      ],
+      "top_warning_patterns": []
+    }
+  },
+  "bc_readiness_interpretation": {
+    "day5_proves": [
+      "Adapted dataset was checked for contract-level structural consistency against explicit Day5 validation policy.",
+      "Hard contract failures and soft warnings are separated and reproducible.",
+      "Batch-level and limited episode-level diagnostics are available for next decision point."
+    ],
+    "day5_does_not_prove": [
+      "No BC training quality guarantee or policy performance guarantee is established.",
+      "No full Gym<->Unity semantic parity is proven by this validator.",
+      "No Unity runtime behavior equivalence claim is made."
+    ],
+    "next_decision_options": [
+      "Run the same validator on newer stronger adapted teacher batches.",
+      "If hard failures remain, fix adapter/contract assumptions before BC smoke.",
+      "If hard failures are resolved, proceed with a short BC smoke in a separate stage."
+    ]
+  }
+}

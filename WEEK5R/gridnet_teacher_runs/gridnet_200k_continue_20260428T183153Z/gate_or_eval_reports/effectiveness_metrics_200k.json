@@ -1,0 +1,775 @@
+{
+  "det_roll": {
+    "mean_return": 2.0,
+    "std_return": 0.0,
+    "noop_share": 0.9997660319010416,
+    "entropy": 0.002280992090490239,
+    "entropy_norm": 0.0012730459247819465,
+    "top_action": "NoOp",
+    "top_share": 0.9997660319010416,
+    "distribution": {
+      "Harvest": 8,
+      "Move": 248,
+      "NoOp": 1179372,
+      "Produce": 20
+    }
+  },
+  "stoch_roll": {
+    "mean_return": 13.75,
+    "std_return": 5.629165124598851,
+    "noop_share": 0.16766272650824654,
+    "entropy": 1.7917550922147902,
+    "entropy_norm": 0.9999975571423844,
+    "top_action": "NoOp",
+    "top_share": 0.16766272650824654,
+    "distribution": {
+      "Attack": 196728,
+      "Harvest": 196022,
+      "Move": 196205,
+      "NoOp": 197783,
+      "Produce": 196661,
+      "Return": 196249
+    }
+  },
+  "det_adapter": {
+    "remap_to_noop_count": 0,
+    "remap_to_noop_share": 0.0,
+    "semantic_weakening_share": 0.0,
+    "usable_samples": 2048,
+    "dropped_samples": 0,
+    "effective_non_noop_share": 1.0,
+    "move_survived_share": 1.0,
+    "produce_survived_share": 1.0,
+    "attack_survived_share": 0.0
+  },
+  "stoch_adapter": {
+    "remap_to_noop_count": 0,
+    "remap_to_noop_share": 0.0,
+    "semantic_weakening_share": 0.0,
+    "usable_samples": 2048,
+    "dropped_samples": 0,
+    "effective_non_noop_share": 1.0,
+    "move_survived_share": 1.0,
+    "produce_survived_share": 1.0,
+    "attack_survived_share": 1.0
+  },
+  "det_multi": {
+    "schema": "gridnet_multiopponent_eval.v1",
+    "timestamp_utc": "2026-04-28T11:45:43Z",
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\agent_final.pt",
+    "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\model_metadata.json",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "episodes_per_opponent": 4,
+    "max_steps": 256,
+    "effective_steps": 100,
+    "deterministic_mode": true,
+    "opponents_evaluated": [
+      "randomBiasedAI",
+      "lightRushAI",
+      "workerRushAI",
+      "coacAI"
+    ],
+    "aggregate": {
+      "pass_count": 0,
+      "total_opponents": 4,
+      "any_positive_position_delta": true,
+      "all_passing_have_no_effect_lt_1": true,
+      "aggregate_verdict": "FAIL_ALL",
+      "aggregate_note": "No PASS on any of 4 opponents."
+    },
+    "per_opponent": [
+      {
+        "opponent": "randomBiasedAI",
+        "status": "SUSPICIOUS",
+        "gate_status": "SUSPICIOUS",
+        "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+        "actor_level_move_share": 0.014771048744460856,
+        "actor_noop_share": 0.9748892171344166,
+        "effective_position_delta_count": 52,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 2480,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 589756,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 2640,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        }
+      },
+      {
+        "opponent": "lightRushAI",
+        "status": "SUSPICIOUS",
+        "gate_status": "SUSPICIOUS",
+        "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+        "actor_level_move_share": 0.014771048744460856,
+        "actor_noop_share": 0.9748892171344166,
+        "effective_position_delta_count": 52,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 2480,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 589756,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 2640,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        }
+      },
+      {
+        "opponent": "workerRushAI",
+        "status": "SUSPICIOUS",
+        "gate_status": "SUSPICIOUS",
+        "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+        "actor_level_move_share": 0.014771048744460856,
+        "actor_noop_share": 0.9748892171344166,
+        "effective_position_delta_count": 52,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 2480,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 589756,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 2640,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        }
+      },
+      {
+        "opponent": "coacAI",
+        "status": "SUSPICIOUS",
+        "gate_status": "SUSPICIOUS",
+        "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+        "actor_level_move_share": 0.014771048744460856,
+        "actor_noop_share": 0.9748892171344166,
+        "effective_position_delta_count": 52,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 2480,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 589756,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 2640,
+          "Move": 40,
+          "Harvest": 8,
+          "Produce": 20
+        }
+      }
+    ]
+  },
+  "stoch_multi": {
+    "schema": "gridnet_multiopponent_eval.v1",
+    "timestamp_utc": "2026-04-28T11:46:19Z",
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\agent_final.pt",
+    "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\model_metadata.json",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "episodes_per_opponent": 4,
+    "max_steps": 256,
+    "effective_steps": 100,
+    "deterministic_mode": false,
+    "opponents_evaluated": [
+      "randomBiasedAI",
+      "lightRushAI",
+      "workerRushAI",
+      "coacAI"
+    ],
+    "aggregate": {
+      "pass_count": 4,
+      "total_opponents": 4,
+      "any_positive_position_delta": true,
+      "all_passing_have_no_effect_lt_1": true,
+      "aggregate_verdict": "CANDIDATE_VIABLE",
+      "aggregate_note": "PASS on 4/4 opponents. Consider continuation training or BC export."
+    },
+    "per_opponent": [
+      {
+        "opponent": "randomBiasedAI",
+        "status": "PASS",
+        "gate_status": "PASS",
+        "verdict": "Actor-level effective movement detected.",
+        "actor_level_move_share": 0.31483870967741934,
+        "actor_noop_share": 0.4593548387096774,
+        "effective_position_delta_count": 180,
+        "no_effect_action_share": 0.8356940509915014,
+        "ready_movable_actor_choice_count": 573,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 98321,
+          "Move": 98434,
+          "Harvest": 98202,
+          "Return": 98339,
+          "Produce": 98303,
+          "Attack": 98225
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 356,
+          "Move": 244,
+          "Harvest": 16,
+          "Return": 9,
+          "Produce": 150
+        }
+      },
+      {
+        "opponent": "lightRushAI",
+        "status": "PASS",
+        "gate_status": "PASS",
+        "verdict": "Actor-level effective movement detected.",
+        "actor_level_move_share": 0.1602972399150743,
+        "actor_noop_share": 0.5212314225053079,
+        "effective_position_delta_count": 124,
+        "no_effect_action_share": 0.9143576826196473,
+        "ready_movable_actor_choice_count": 383,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 98852,
+          "Move": 98373,
+          "Harvest": 97707,
+          "Return": 97942,
+          "Produce": 98284,
+          "Attack": 98666
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 491,
+          "Move": 151,
+          "Harvest": 13,
+          "Return": 8,
+          "Produce": 279
+        }
+      },
+      {
+        "opponent": "workerRushAI",
+        "status": "PASS",
+        "gate_status": "PASS",
+        "verdict": "Actor-level effective movement detected.",
+        "actor_level_move_share": 0.22456140350877193,
+        "actor_noop_share": 0.47251461988304094,
+        "effective_position_delta_count": 145,
+        "no_effect_action_share": 0.8723404255319149,
+        "ready_movable_actor_choice_count": 491,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 98820,
+          "Move": 98659,
+          "Harvest": 97949,
+          "Return": 98261,
+          "Produce": 98037,
+          "Attack": 98098
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 404,
+          "Move": 192,
+          "Harvest": 17,
+          "Return": 11,
+          "Produce": 231
+        }
+      },
+      {
+        "opponent": "coacAI",
+        "status": "PASS",
+        "gate_status": "PASS",
+        "verdict": "Actor-level effective movement detected.",
+        "actor_level_move_share": 0.3230994152046784,
+        "actor_noop_share": 0.4780701754385965,
+        "effective_position_delta_count": 173,
+        "no_effect_action_share": 0.8533333333333334,
+        "ready_movable_actor_choice_count": 534,
+        "subprocess_returncode": 0,
+        "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+        "full_action_counts": {
+          "NoOp": 98733,
+          "Move": 98179,
+          "Harvest": 98463,
+          "Return": 98217,
+          "Produce": 98332,
+          "Attack": 97900
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 327,
+          "Move": 221,
+          "Harvest": 19,
+          "Return": 13,
+          "Produce": 104
+        }
+      }
+    ]
+  },
+  "visual": {
+    "schema": "gridnet_visual_eval.v1",
+    "timestamp_utc": "2026-04-28T11:47:19Z",
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\agent_final.pt",
+    "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\model_metadata.json",
+    "opponent": "randomBiasedAI",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "max_steps": 300,
+    "fps": 8,
+    "visual_eval_status": "active",
+    "deterministic_mode": true,
+    "steps_run": 300,
+    "episode_done": true,
+    "actor_level_move_share": 0.019889502762430938,
+    "actor_noop_share": 0.9723756906077348,
+    "effective_position_delta_count": 17,
+    "no_effect_action_share": 1.0,
+    "ready_movable_actor_choice_count": 760,
+    "ready_nonnoop_steps": 17,
+    "no_effect_ready_nonnoop_steps": 17,
+    "full_action_counts": {
+      "NoOp": 172775,
+      "Move": 18,
+      "Harvest": 2,
+      "Produce": 5
+    },
+    "ready_actor_action_counts": {
+      "NoOp": 880,
+      "Move": 18,
+      "Harvest": 2,
+      "Produce": 5
+    },
+    "step_trace": [
+      {
+        "step": 0,
+        "ready_count": 2,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "Harvest": 1,
+          "Produce": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 1,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 2,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 3,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 4,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 5,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 6,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 7,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 8,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 9,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 10,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 11,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 12,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 13,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 14,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 15,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 16,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 17,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 18,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 19,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 20,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 21,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 22,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 23,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 24,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 25,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 26,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 27,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 28,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 29,
+        "ready_count": 1,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "NoOp": 1
+        },
+        "position_delta": false
+      }
+    ]
+  },
+  "final_eval_single": {
+    "schema": "gridnet_actor_level_eval.v1",
+    "timestamp_utc": "2026-04-28T11:44:44Z",
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\agent_final.pt",
+    "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_200k_continue_20260428T183153Z\\model_metadata.json",
+    "status": "SUSPICIOUS",
+    "gate_status": "SUSPICIOUS",
+    "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+    "episodes": 4,
+    "max_steps": 256,
+    "effective_steps": 100,
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "opponents_used": [
+      "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+      "randomBiasedAI",
+      "randomBiasedAI",
+      "randomBiasedAI",
+      "randomBiasedAI"
+    ],
+    "actor_level_move_share": 0.014771048744460856,
+    "actor_noop_share": 0.9748892171344166,
+    "effective_position_delta_count": 52,
+    "no_effect_action_share": 1.0,
+    "ready_movable_actor_choice_count": 2480,
+    "ready_nonnoop_steps": 52,
+    "no_effect_ready_nonnoop_steps": 52,
+    "deterministic_mode": true,
+    "full_action_counts": {
+      "NoOp": 589756,
+      "Move": 40,
+      "Harvest": 8,
+      "Produce": 20
+    },
+    "ready_actor_action_counts": {
+      "NoOp": 2640,
+      "Move": 40,
+      "Harvest": 8,
+      "Produce": 20
+    },
+    "trace": [
+      {
+        "step": 0,
+        "ready_count": 2,
+        "movable_ready_count": 1,
+        "chosen_ready_actions": {
+          "Harvest": 1,
+          "Produce": 1
+        },
+        "position_delta": false
+      },
+      {
+        "step": 1,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 2,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 3,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 4,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 5,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 6,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 7,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 8,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 9,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 10,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 11,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 12,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 13,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 14,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 15,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 16,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 17,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 18,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      },
+      {
+        "step": 19,
+        "ready_count": 0,
+        "movable_ready_count": 0,
+        "chosen_ready_actions": {},
+        "position_delta": false
+      }
+    ]
+  }
+}
