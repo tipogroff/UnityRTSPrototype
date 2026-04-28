@@ -268,8 +268,20 @@ namespace RTS.ML
         [ContextMenu("Run Week6 Adapter Contract Validation Smoke")]
         private void RunAdapterContractValidationSmoke()
         {
+            bool passed = RunAdapterContractValidationSmokeForEvidence(out string details);
+            Debug.Log(passed
+                ? "[Week6StudentPolicyAdapter] Adapter contract validation smoke PASSED: " + details
+                : "[Week6StudentPolicyAdapter] Adapter contract validation smoke FAILED: " + details);
+        }
+
+        public bool RunAdapterContractValidationSmokeForEvidence(out string details)
+        {
             string[] expectedBranchOrder = BuildExpectedBranchOrder();
             int[] expectedBranchSizes = BuildExpectedBranchSizes();
+
+            bool branchShapeMatchesV2 = MatchesArray(expectedBranchSizes, new[] { 6, 4, 4, 4, 4, 7, 49 });
+            bool flatSizeMatchesV2 = ActionContract.TotalActionFlatSize == 44928;
+            bool contractVersionMatches = string.Equals(ExpectedActionContractVersion, "v2_gridnet_compatible", StringComparison.Ordinal);
 
             var v2Payload = new AdapterResult
             {
@@ -284,9 +296,6 @@ namespace RTS.ML
             };
 
             bool v2Accepted = ValidateAdapterPayload(v2Payload, out string v2Error);
-            Debug.Log(v2Accepted
-                ? "[Week6StudentPolicyAdapter] ✓ v2 manifest payload accepted"
-                : "[Week6StudentPolicyAdapter] ✗ v2 manifest payload rejected: " + v2Error);
 
             var v1Payload = new AdapterResult
             {
@@ -301,9 +310,30 @@ namespace RTS.ML
             };
 
             bool v1Accepted = ValidateAdapterPayload(v1Payload, out string v1Error);
-            Debug.Log(!v1Accepted
+            bool v1RejectedWithExpectedMessage = !v1Accepted
+                && string.Equals(v1Error, "v1 action contract artifact is incompatible with Unity v2 runtime", StringComparison.Ordinal);
+
+            bool passed = v2Accepted
+                          && v1RejectedWithExpectedMessage
+                          && branchShapeMatchesV2
+                          && flatSizeMatchesV2
+                          && contractVersionMatches;
+
+            details =
+                $"v2Accepted={v2Accepted}, " +
+                $"v2Error={(string.IsNullOrWhiteSpace(v2Error) ? "<none>" : v2Error)}, " +
+                $"v1RejectedWithExpectedMessage={v1RejectedWithExpectedMessage}, " +
+                $"v1Error={(string.IsNullOrWhiteSpace(v1Error) ? "<none>" : v1Error)}, " +
+                $"branchSizesV2={branchShapeMatchesV2}, actionFlat44928={flatSizeMatchesV2}, contractVersion={contractVersionMatches}";
+
+            Debug.Log(v2Accepted
+                ? "[Week6StudentPolicyAdapter] ✓ v2 manifest payload accepted"
+                : "[Week6StudentPolicyAdapter] ✗ v2 manifest payload rejected: " + v2Error);
+            Debug.Log(v1RejectedWithExpectedMessage
                 ? "[Week6StudentPolicyAdapter] ✓ v1 manifest payload rejected: " + v1Error
-                : "[Week6StudentPolicyAdapter] ✗ v1 manifest payload unexpectedly accepted");
+                : "[Week6StudentPolicyAdapter] ✗ v1 manifest payload check failed");
+
+            return passed;
         }
 
         [Header("Scene references")]

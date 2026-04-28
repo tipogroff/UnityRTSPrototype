@@ -506,15 +506,39 @@ Rerun results after fix:
 
 Updated status:
 - Day6PipelineSmokeTest: PASS
-- Step 5 classification: PASS_WITH_MANUAL_PENDING
+- Day5AttackTargetObservationSmokeTest: PASS (after smoke-test normalization fix)
+- Week6Day4StudentInferenceDryRun: SKIPPED_CONFIG_REQUIRED (v1 checkpoint artifact mismatch)
+- Step 5 classification: PASS_WITH_CONFIG_SKIP
 
-Remaining pending ContextMenu-only smokes:
-- ActionContractV2SmokeTest
-- ActionDecoderV2SmokeTest
-- Day5AttackTargetObservationSmokeTest
-- Week6Day4StudentInferenceDryRun relevant smoke path
-- Week6StudentPolicyAdapter manifest accept/reject smoke
+ContextMenu-only evidence closure implementation:
+- Added global runner: Assets/Scripts/ML/ActionContractV2GlobalSmokeRunner.cs
+- Added global menu trigger: SmokeTest/11 - Unity Action Contract v2 Full Evidence Smoke
+- Added Week6 adapter public evidence wrapper:
+  - Week6StudentPolicyAdapter.RunAdapterContractValidationSmokeForEvidence(out string details)
+- Shifted Day3 menu slot to avoid path collision:
+  - SmokeTest/15 - Day3 Terminal Pipeline Smoke Test
+
+Global runner execution result (SmokeTest/11) after fixes:
+- ActionContractV2SmokeTest.Run -> PASS
+- ActionDecoderV2SmokeTest.Run -> PASS
+- Day5AttackTargetObservationSmokeTest.RunChecks -> PASS
+- Week6Day4StudentInferenceDryRun.RunDryRun -> SKIPPED_WITH_REASON
+  - SKIPPED_CONFIG_REQUIRED: checkpoint branch heads are v1-sized (produce=4, attack=9) and incompatible with v2 [6,4,4,4,4,7,49]
+- Week6StudentPolicyAdapter.RunAdapterContractValidationSmokeForEvidence -> PASS
+
+Runner aggregate:
+- pass=4, fail=0, skipped=1
+
+Root causes and exact fixes:
+- Day5AttackTargetObservationSmokeTest (24 mismatches)
+  - Root cause: test-side round-trip used `(normalized * (SIZE-1))` while encoding is `(index+1)/SIZE`.
+  - Fix: restore now uses `round(normalized * SIZE) - 1`, explicit index checks (0/24/48 + intermediates), and richer diagnostics (raw/normalized/restored/expected/denominator/size).
+  - Additional stability fix: manager resolution uses scene fallback, preventing false negatives when singleton `Instance` is not yet bound.
+- Week6Day4StudentInferenceDryRun (exitCode=1)
+  - Root cause class: E (v1 checkpoint incompatible with v2 branch heads).
+  - Fix: expanded Python invocation diagnostics and classified this specific mismatch as `SKIPPED_CONFIG_REQUIRED` instead of unexplained FAIL.
 
 Runtime readiness note:
-- Unity v2 runtime is now ready for ContextMenu-only evidence collection.
-- Final full Step 5 closure still requires executing and capturing those ContextMenu-only smoke results.
+- Unity v2 runtime smoke gate is now green for runtime-critical checks.
+- Proceeding to v2 BC/student retraining path is allowed from Unity-side runtime readiness standpoint,
+  with one explicit configuration prerequisite: provide a v2-compatible Day4 checkpoint artifact to convert Week6Day4 from SKIPPED to PASS.

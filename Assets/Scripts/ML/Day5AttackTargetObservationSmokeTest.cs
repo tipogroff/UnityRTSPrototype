@@ -30,9 +30,12 @@ namespace RTS.ML
         [ContextMenu("Run Day5 AttackTarget Checks")]
         public void RunChecks()
         {
-            var grid = GridManager.Instance;
-            var unitRegistry = UnitRegistry.Instance;
-            var resourceManager = ResourceManager.Instance;
+            var grid = GridManager.Instance
+                       ?? FindFirstObjectByType<GridManager>(FindObjectsInactive.Include);
+            var unitRegistry = UnitRegistry.Instance
+                               ?? FindFirstObjectByType<UnitRegistry>(FindObjectsInactive.Include);
+            var resourceManager = ResourceManager.Instance
+                                  ?? FindFirstObjectByType<ResourceManager>(FindObjectsInactive.Include);
 
             if (grid == null || unitRegistry == null || resourceManager == null)
             {
@@ -220,8 +223,34 @@ namespace RTS.ML
         private static void ValidateGeometryAndNormalization(List<string> issues)
         {
             var center = new GridPosition(12, 12);
+            int size = ActionContract.SIZE_ATTACK_TARGET;
+            int denominator = size;
 
-            for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
+            int[] explicitIndices =
+            {
+                0,
+                Mathf.Clamp(24, 0, Mathf.Max(0, size - 1)),
+                Mathf.Clamp(48, 0, Mathf.Max(0, size - 1)),
+                Mathf.Clamp(7, 0, Mathf.Max(0, size - 1)),
+                Mathf.Clamp(13, 0, Mathf.Max(0, size - 1)),
+                Mathf.Clamp(35, 0, Mathf.Max(0, size - 1)),
+            };
+
+            for (int i = 0; i < explicitIndices.Length; i++)
+            {
+                int idx = explicitIndices[i];
+                float normalizedSample = NormalizeAttackTargetLocal(idx);
+                int restoredSample = RestoreAttackTargetLocal(normalizedSample);
+                if (restoredSample != idx)
+                {
+                    issues.Add(
+                        "normalization-explicit: " +
+                        $"raw={idx} normalized={normalizedSample:F6} restored={restoredSample} expected={idx} " +
+                        $"denominator={denominator} size={size}");
+                }
+            }
+
+            for (int i = 0; i < size; i++)
             {
                 if (!ActionContractMappings.TryGetAttackTargetPosition(center, i, out GridPosition mapped))
                 {
@@ -239,12 +268,32 @@ namespace RTS.ML
                 }
 
                 float normalized = NormalizeAttackTargetLocal(i);
-                int recovered = Mathf.RoundToInt(normalized * (ActionContract.SIZE_ATTACK_TARGET - 1));
+                int recovered = RestoreAttackTargetLocal(normalized);
                 if (recovered != i)
                 {
-                    issues.Add($"normalization: local index {i} round-trip mismatch (recovered={recovered}).");
+                    issues.Add(
+                        "normalization: " +
+                        $"raw={i} normalized={normalized:F6} restored={recovered} expected={i} " +
+                        $"denominator={denominator} size={size}");
                 }
             }
+        }
+
+        private static int RestoreAttackTargetLocal(float normalized)
+        {
+            int size = ActionContract.SIZE_ATTACK_TARGET;
+            if (size <= 0)
+            {
+                return -1;
+            }
+
+            if (normalized <= 0f)
+            {
+                return -1;
+            }
+
+            int restored = Mathf.RoundToInt(normalized * size) - 1;
+            return Mathf.Clamp(restored, 0, size - 1);
         }
 
         private static float ComputeExpectedAttackTargetValue(

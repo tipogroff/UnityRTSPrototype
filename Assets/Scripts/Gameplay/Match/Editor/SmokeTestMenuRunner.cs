@@ -522,7 +522,7 @@ namespace RTS.Testing.Editor
             Debug.Log("[SmokeTest] Day 6 pipeline smoke test invoked.");
         }
 
-        [MenuItem("SmokeTest/11 - Day3 Terminal Pipeline Smoke Test")]
+        [MenuItem("SmokeTest/15 - Day3 Terminal Pipeline Smoke Test")]
         public static void RunDay3TerminalSmokeTest()
         {
             if (!Application.isPlaying)

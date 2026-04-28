@@ -54,6 +54,18 @@ namespace RTS.ML
             public string unity_decode_submit_status = "fail";
             public bool canonical_path_reached;
             public string error = string.Empty;
+            public string python_executable_path = string.Empty;
+            public string adapter_script_path = string.Empty;
+            public string observation_bin_path = string.Empty;
+            public string output_json_path = string.Empty;
+            public string working_directory = string.Empty;
+            public string command_line_args = string.Empty;
+            public string python_stdout = string.Empty;
+            public string python_stderr = string.Empty;
+            public int python_exit_code = -1;
+            public bool output_json_exists;
+            public string output_json_status = string.Empty;
+            public string output_json_error = string.Empty;
         }
 
         [Header("Execution")]
@@ -142,6 +154,12 @@ namespace RTS.ML
             string observationBinPath = Path.Combine(artifactDir, "unity_observation.bin");
             string adapterResultPath = Path.Combine(artifactDir, "student_inference_result.json");
 
+            smokeReport.python_executable_path = pythonPath;
+            smokeReport.adapter_script_path = adapterPath;
+            smokeReport.observation_bin_path = observationBinPath;
+            smokeReport.output_json_path = adapterResultPath;
+            smokeReport.working_directory = projectRoot;
+
             ObservationPackage observationPackage = _pipeline.BuildObservationPackage(_playerPerspective, ObservationMode.UnityMvpTransfer);
             ObservationValidationResult validation = _observationBuilder.ValidateObservation(observationPackage.SpatialObservation);
             if (!validation.IsValid)
@@ -191,6 +209,13 @@ namespace RTS.ML
                 "--output-json " + Quote(adapterResultPath) + " " +
                 "--device cpu";
 
+            smokeReport.command_line_args = arguments;
+            Debug.Log(
+                "[Week6Day4StudentInferenceDryRun] Python invocation diagnostics: " +
+                $"python={pythonPath}, script={adapterPath}, checkpoint={checkpointPath}, " +
+                $"observation_bin={observationBinPath}, output_json={adapterResultPath}, " +
+                $"working_dir={projectRoot}, args={arguments}");
+
             bool bridgeOk = RunProcess(
                 pythonPath,
                 arguments,
@@ -198,6 +223,18 @@ namespace RTS.ML
                 out string stdout,
                 out string stderr,
                 out int exitCode);
+
+            smokeReport.python_stdout = stdout;
+            smokeReport.python_stderr = stderr;
+            smokeReport.python_exit_code = exitCode;
+            smokeReport.output_json_exists = File.Exists(adapterResultPath);
+
+            if (smokeReport.output_json_exists)
+            {
+                TryReadAdapterFailureSummary(adapterResultPath, out string outStatus, out string outError);
+                smokeReport.output_json_status = outStatus;
+                smokeReport.output_json_error = outError;
+            }
 
             if (_verboseLogs)
             {
@@ -214,11 +251,22 @@ namespace RTS.ML
 
             if (!bridgeOk || exitCode != 0)
             {
+                if (IsLikelyV1CheckpointHeadMismatch(smokeReport.output_json_error))
+                {
+                    SkipConfigAndWriteReport(
+                        smokeReport,
+                        smokeReportPath,
+                        "SKIPPED_CONFIG_REQUIRED: checkpoint branch heads are v1-sized (produce=4, attack=9) " +
+                        "and incompatible with Unity v2 contract [6,4,4,4,4,7,49]. Provide v2-compatible checkpoint artifact.");
+                    return;
+                }
+
                 FailAndWriteReport(
                     smokeReport,
                     smokeReportPath,
                     "Python adapter failed. " +
-                    $"exitCode={exitCode}");
+                    $"exitCode={exitCode}, outputJsonExists={smokeReport.output_json_exists}, " +
+                    $"outputJsonStatus={smokeReport.output_json_status}, outputJsonError={smokeReport.output_json_error}");
                 return;
             }
             smokeReport.python_adapter_status = "ok";
@@ -297,6 +345,14 @@ namespace RTS.ML
             report.error = error;
             WriteSmokeReport(report, reportPath);
             Debug.LogError("[Week6Day4StudentInferenceDryRun] " + error + " | report=" + reportPath);
+        }
+
+        private static void SkipConfigAndWriteReport(Day4PlayModeSmokeReport report, string reportPath, string reason)
+        {
+            report.status = "skipped_config_required";
+            report.error = reason;
+            WriteSmokeReport(report, reportPath);
+            Debug.LogWarning("[Week6Day4StudentInferenceDryRun] " + reason + " | report=" + reportPath);
         }
 
         private bool ResolveRuntimeReferences()
@@ -579,6 +635,47 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private static void TryReadAdapterFailureSummary(string adapterResultPath, out string status, out string error)
+        {
+            status = string.Empty;
+            error = string.Empty;
+
+            try
+            {
+                string jsonText = File.ReadAllText(adapterResultPath);
+                AdapterResult adapter = JsonUtility.FromJson<AdapterResult>(jsonText);
+                if (adapter == null)
+                {
+                    status = "parse_null";
+                    error = "adapter output JSON parsed to null";
+                    return;
+                }
+
+                status = adapter.status ?? string.Empty;
+                error = adapter.error ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                status = "parse_error";
+                error = ex.Message;
+            }
+        }
+
+        private static bool IsLikelyV1CheckpointHeadMismatch(string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                return false;
+            }
+
+            return error.Contains("produce_unit_type_head.weight", StringComparison.Ordinal)
+                   && error.Contains("torch.Size([4", StringComparison.Ordinal)
+                   && error.Contains("torch.Size([7", StringComparison.Ordinal)
+                   && error.Contains("attack_target_local_head.weight", StringComparison.Ordinal)
+                   && error.Contains("torch.Size([9", StringComparison.Ordinal)
+                   && error.Contains("torch.Size([49", StringComparison.Ordinal);
         }
     }
 }
