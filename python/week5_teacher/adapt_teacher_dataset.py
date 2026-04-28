@@ -54,6 +54,15 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional explicit divisor for observation resources normalization channel [1].",
     )
+    parser.add_argument(
+        "--target-action-contract",
+        choices=("v1_mvp", "v2_gridnet_compatible"),
+        default="v1_mvp",
+        help=(
+            "Target action contract mode. v1_mvp keeps Unity MVP branch sizes [6,4,4,4,4,4,9]. "
+            "v2_gridnet_compatible uses [6,4,4,4,4,7,49]."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -82,6 +91,7 @@ def main() -> None:
         write_debug_jsonl=bool(args.write_debug_jsonl),
         hp_divisor=args.hp_divisor,
         resource_divisor=args.resource_divisor,
+        target_action_contract=str(args.target_action_contract),
     )
 
     result = run_adaptation(

@@ -48,6 +48,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device", default="cpu")
     p.add_argument("--output-json", type=Path, required=True)
     p.add_argument("--output-md", type=Path, required=True)
+    p.add_argument(
+        "--deterministic",
+        choices=("true", "false"),
+        default="true",
+        help="true = argmax (deterministic); false = sample from masked categorical (stochastic).",
+    )
     return p.parse_args()
 
 
@@ -159,6 +165,7 @@ def load_agent(checkpoint: Path, metadata_path: Path, device: torch.device) -> T
 
 
 def evaluate(args: argparse.Namespace) -> Dict[str, Any]:
+    deterministic_flag: bool = getattr(args, "deterministic", "true") != "false"
     checkpoint = args.checkpoint.resolve()
     metadata_path = args.model_metadata.resolve()
     if not checkpoint.is_file():
@@ -209,7 +216,7 @@ def evaluate(args: argparse.Namespace) -> Dict[str, Any]:
                         obs_t,
                         invalid_action_masks=mask_t,
                         action=None,
-                        deterministic=True,
+                        deterministic=deterministic_flag,
                     )
 
                 action_np = action_t[0].detach().cpu().numpy().astype(np.int64)
@@ -313,6 +320,7 @@ def evaluate(args: argparse.Namespace) -> Dict[str, Any]:
         "ready_movable_actor_choice_count": int(ready_movable_actor_choice_count),
         "ready_nonnoop_steps": int(ready_nonnoop_steps),
         "no_effect_ready_nonnoop_steps": int(no_effect_ready_nonnoop_steps),
+        "deterministic_mode": deterministic_flag,
         "full_action_counts": {ACTION_NAMES.get(k, str(k)): int(v) for k, v in sorted(full_action_counter.items())},
         "ready_actor_action_counts": {ACTION_NAMES.get(k, str(k)): int(v) for k, v in sorted(actor_action_counter.items())},
         "trace": trace,
@@ -353,6 +361,7 @@ def main() -> None:
 
     print(f"[gate] status={result['status']}")
     print(f"[gate] verdict={result['verdict']}")
+    print(f"[gate] deterministic_mode={result['deterministic_mode']}")
     print(f"[gate] actor_level_move_share={result['actor_level_move_share']:.6f}")
     print(f"[gate] actor_noop_share={result['actor_noop_share']:.6f}")
     print(f"[gate] effective_position_delta_count={result['effective_position_delta_count']}")

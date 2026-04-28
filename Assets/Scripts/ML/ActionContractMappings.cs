@@ -101,6 +101,31 @@ namespace RTS.ML
         }
 
         /// <summary>
+        /// Maps v2 contract-level produce branch index to UnitType using Gym/Gridnet order:
+        /// 0=Resource, 1=Base, 2=Barracks, 3=Worker, 4=Light, 5=Heavy, 6=Ranged.
+        ///
+        /// IMPORTANT: successful mapping to UnitType does not mean the Produce action is valid
+        /// in the current runtime context. Context-validity (actor type, game rules, queue, etc.)
+        /// is determined by mask/runtime validation layers.
+        /// </summary>
+        internal static bool TryMapV2ProduceIndexToUnitType(int index, out UnitType unitType)
+        {
+            unitType = index switch
+            {
+                0 => UnitType.Resource,
+                1 => UnitType.Base,
+                2 => UnitType.Barracks,
+                3 => UnitType.Worker,
+                4 => UnitType.Light,
+                5 => UnitType.Heavy,
+                6 => UnitType.Ranged,
+                _ => UnitType.Worker
+            };
+
+            return index >= 0 && index < ActionContract.SIZE_PRODUCE_UNIT_TYPE;
+        }
+
+        /// <summary>
         /// MVP ENCODING RULE (tech-debt, temporary): Worker + Produce action = "build Barracks".
         ///
         /// The 4-slot BRANCH_PRODUCE_UNIT_TYPE contract has no dedicated build-structure slot.

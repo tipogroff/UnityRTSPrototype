@@ -271,7 +271,7 @@ namespace RTS.ML
                 return AgentAction.CreateInvalid(actorPos, produceError, ActionSourceType.Debug);
             }
 
-            // Decode attack target from local 3x3 index
+            // Decode attack target from local 7x7 index (49 entries)
             GridPosition attackTarget = default;
             if (unitActionType == UnitActionType.Attack)
             {
@@ -472,7 +472,16 @@ namespace RTS.ML
         }
 
         /// <summary>
-        /// Convert produce unit type index to enum.
+        /// Convert v2 produce branch index to runtime produce enum.
+        ///
+        /// v2 produce_unit_type branch index follows Gym/Gridnet UnitType order:
+        /// 0 Resource, 1 Base, 2 Barracks, 3 Worker, 4 Light, 5 Heavy, 6 Ranged.
+        ///
+        /// IMPORTANT:
+        /// - Branch-bound decode validity does NOT imply runtime Produce validity.
+        /// - Runtime/context validation remains authoritative in ActionMaskBuilder + ActionApplier.
+        /// - AgentAction currently carries ProducibleUnit (4-value runtime enum), so non-producible
+        ///   v2 values (Resource/Base/Barracks) are represented via placeholder mapping here.
         /// </summary>
         private bool TryValidateProduceUnitType(int value, out ProducibleUnit produceType, out string error)
         {
@@ -484,7 +493,22 @@ namespace RTS.ML
                 return false;
             }
 
-            produceType = (ProducibleUnit)value;
+            if (!ActionContractMappings.TryMapV2ProduceIndexToUnitType(value, out UnitType v2UnitType))
+            {
+                error = $"Cannot map v2 produce branch index {value}";
+                produceType = ProducibleUnit.Worker;
+                return false;
+            }
+
+            produceType = v2UnitType switch
+            {
+                UnitType.Worker => ProducibleUnit.Worker,
+                UnitType.Light => ProducibleUnit.Light,
+                UnitType.Heavy => ProducibleUnit.Heavy,
+                UnitType.Ranged => ProducibleUnit.Ranged,
+                _ => ProducibleUnit.Worker
+            };
+
             return true;
         }
 

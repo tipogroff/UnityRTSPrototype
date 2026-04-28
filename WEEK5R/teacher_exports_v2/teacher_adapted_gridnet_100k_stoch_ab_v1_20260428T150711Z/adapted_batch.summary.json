@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "input_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_rollouts\\gridnet_100k_stoch_ab",
+  "input_batch_kind": "unknown",
+  "output_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z",
+  "converted_episode_files": [
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\episode_00000.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\episode_00001.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\episode_00002.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\episode_00003.adapted.npz"
+  ],
+  "conversion_report_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\conversion_report.json",
+  "conversion_debug_jsonl_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v1_20260428T150711Z\\conversion_debug.jsonl"
+}

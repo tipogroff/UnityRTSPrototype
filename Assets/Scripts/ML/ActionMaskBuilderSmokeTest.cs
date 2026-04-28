@@ -67,8 +67,9 @@ namespace RTS.ML
             RunIsolated(TestProduceMaskBuildingAndQueueGate, "Test 6");
             RunIsolated(TestProduceTypeMaskMatchesRuntimeSemantics, "Test 7");
             RunIsolated(TestAttackMaskMatchesRuntimeSemantics, "Test 8");
-            RunIsolated(TestPhaseGateNotRunning, "Test 9");
-            RunIsolated(TestMaskRuntimeConsistencyProbe, "Test 10");
+            RunIsolated(TestV2BranchLengthsAndCenterAttackMask, "Test 9");
+            RunIsolated(TestPhaseGateNotRunning, "Test 10");
+            RunIsolated(TestMaskRuntimeConsistencyProbe, "Test 11");
 
             Debug.Log("[ActionMaskBuilderSmokeTest] ===== Day 4 Masking Smoke Tests Completed =====");
         }
@@ -288,26 +289,38 @@ namespace RTS.ML
             if (baseBuilding != null)
             {
                 ActorActionMask baseMask = mask.GetActorMask(baseBuilding.GridPos);
-                bool baseMatches = baseMask != null && ProduceTypeMaskMatchesExpected(baseBuilding, baseMask.ProduceUnitTypeMask);
-                Debug.Log($"[ActionMaskBuilderSmokeTest] {(baseMatches ? "✓" : "✗")} Base produce type mask matches runtime semantics");
+                bool baseHasWorkerAt3 = baseMask != null && baseMask.ProduceUnitTypeMask.Length == 7 && baseMask.ProduceUnitTypeMask[3];
+                bool baseRejects0 = baseMask != null && !baseMask.ProduceUnitTypeMask[0];
+                bool baseRejects1 = baseMask != null && !baseMask.ProduceUnitTypeMask[1];
+
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(baseHasWorkerAt3 ? "✓" : "✗")} Base enables v2 Worker slot index 3");
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(baseRejects0 ? "✓" : "✗")} Base keeps Resource slot index 0 disabled");
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(baseRejects1 ? "✓" : "✗")} Base keeps Base slot index 1 disabled");
             }
 
             if (barracksBuilding != null)
             {
                 ActorActionMask barracksMask = mask.GetActorMask(barracksBuilding.GridPos);
-                bool barracksMatches = barracksMask != null && ProduceTypeMaskMatchesExpected(barracksBuilding, barracksMask.ProduceUnitTypeMask);
-                Debug.Log($"[ActionMaskBuilderSmokeTest] {(barracksMatches ? "✓" : "✗")} Barracks produce type mask matches runtime semantics");
+                bool barracksLight = barracksMask != null && barracksMask.ProduceUnitTypeMask.Length == 7 && barracksMask.ProduceUnitTypeMask[4];
+                bool barracksHeavy = barracksMask != null && barracksMask.ProduceUnitTypeMask.Length == 7 && barracksMask.ProduceUnitTypeMask[5];
+                bool barracksRanged = barracksMask != null && barracksMask.ProduceUnitTypeMask.Length == 7 && barracksMask.ProduceUnitTypeMask[6];
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(barracksLight ? "✓" : "✗")} Barracks enables v2 Light slot index 4");
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(barracksHeavy ? "✓" : "✗")} Barracks enables v2 Heavy slot index 5");
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(barracksRanged ? "✓" : "✗")} Barracks enables v2 Ranged slot index 6");
             }
 
-            if (baseBuilding != null && barracksBuilding != null)
+            UnitRuntime worker = FindFirstWorkerByOwner(_playerUnderTest);
+            if (worker != null)
             {
-                ActorActionMask baseMask = mask.GetActorMask(baseBuilding.GridPos);
-                ActorActionMask barracksMask = mask.GetActorMask(barracksBuilding.GridPos);
-
-                bool sameMask = baseMask != null && barracksMask != null &&
-                                BoolArrayEquals(baseMask.ProduceUnitTypeMask, barracksMask.ProduceUnitTypeMask);
-
-                Debug.Log($"[ActionMaskBuilderSmokeTest] {(sameMask ? "✓" : "✗")} Base/Barracks produce masks are equal (current runtime has no per-building produce-type split)");
+                ActorActionMask workerMask = mask.GetActorMask(worker.GridPos);
+                bool workerBarracksIndex2 = workerMask != null
+                                            && workerMask.ProduceUnitTypeMask.Length == 7
+                                            && workerMask.ProduceUnitTypeMask[2];
+                bool workerLegacyIndex0Off = workerMask != null
+                                             && workerMask.ProduceUnitTypeMask.Length == 7
+                                             && !workerMask.ProduceUnitTypeMask[0];
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(workerBarracksIndex2 ? "✓" : "✗")} Worker enables v2 Barracks slot index 2 when build conditions are valid");
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(workerLegacyIndex0Off ? "✓" : "✗")} Worker legacy slot index 0 is no longer used as build-barracks assumption");
             }
         }
 
@@ -346,6 +359,12 @@ namespace RTS.ML
 
             Debug.Log($"[ActionMaskBuilderSmokeTest] {(attackMatchesRuntime ? "✓" : "✗")} attack mask follows runtime attack definition (damage/range > 0)");
 
+            if (actorMask != null && actorMask.AttackTargetLocalMask.Length == ActionContract.SIZE_ATTACK_TARGET)
+            {
+                bool centerDisabled = !actorMask.AttackTargetLocalMask[24];
+                Debug.Log($"[ActionMaskBuilderSmokeTest] {(centerDisabled ? "✓" : "✗")} attack center index 24 is disabled");
+            }
+
             if (TrySpawnUnit(UnitType.Base, _playerUnderTest, new GridPosition(attackerPos.X + 2, attackerPos.Y), out UnitRuntime baseUnit) &&
                 TrySpawnUnit(UnitType.Worker, enemyOwner, new GridPosition(attackerPos.X + 3, attackerPos.Y), out UnitRuntime baseEnemy))
             {
@@ -362,6 +381,32 @@ namespace RTS.ML
                 bool baseMatchesRuntime = baseAttackEnabled == expectedBaseCanAttack;
                 Debug.Log($"[ActionMaskBuilderSmokeTest] {(baseMatchesRuntime ? "✓" : "✗")} base attack mask matches runtime attack definition");
             }
+        }
+
+        private void TestV2BranchLengthsAndCenterAttackMask()
+        {
+            ActionMaskSet mask = _maskBuilder.BuildTransferCompatibleMask(_playerUnderTest);
+            UnitRuntime actor = FindFirstUnitByOwner(_playerUnderTest);
+            if (actor == null)
+            {
+                Debug.LogWarning("[ActionMaskBuilderSmokeTest] Test 9: no actor for branch-length check");
+                return;
+            }
+
+            ActorActionMask actorMask = mask.GetActorMask(actor.GridPos);
+            if (actorMask == null)
+            {
+                Debug.LogWarning("[ActionMaskBuilderSmokeTest] Test 9: actor mask missing");
+                return;
+            }
+
+            bool produceLenOk = actorMask.ProduceUnitTypeMask.Length == 7;
+            bool attackLenOk = actorMask.AttackTargetLocalMask.Length == 49;
+            bool centerDisabled = !actorMask.AttackTargetLocalMask[24];
+
+            Debug.Log($"[ActionMaskBuilderSmokeTest] {(produceLenOk ? "✓" : "✗")} ProduceUnitTypeMask length == 7");
+            Debug.Log($"[ActionMaskBuilderSmokeTest] {(attackLenOk ? "✓" : "✗")} AttackTargetLocalMask length == 49");
+            Debug.Log($"[ActionMaskBuilderSmokeTest] {(centerDisabled ? "✓" : "✗")} center attack index 24 disabled");
         }
 
         private void TestPhaseGateNotRunning()
@@ -437,11 +482,24 @@ namespace RTS.ML
                 TryFirstTrue(actorMask.ProduceDirectionMask, out int produceDir) &&
                 TryFirstTrue(actorMask.ProduceUnitTypeMask, out int produceType))
             {
+                ProducibleUnit runtimeProduceType = ProducibleUnit.Worker;
+                if (ActionContractMappings.TryMapV2ProduceIndexToUnitType(produceType, out UnitType mappedUnitType))
+                {
+                    runtimeProduceType = mappedUnitType switch
+                    {
+                        UnitType.Worker => ProducibleUnit.Worker,
+                        UnitType.Light => ProducibleUnit.Light,
+                        UnitType.Heavy => ProducibleUnit.Heavy,
+                        UnitType.Ranged => ProducibleUnit.Ranged,
+                        _ => ProducibleUnit.Worker
+                    };
+                }
+
                 action = new AgentAction(
                     actorMask.ActorPosition,
                     UnitActionType.Produce,
                     (Direction)produceDir,
-                    (ProducibleUnit)produceType);
+                    runtimeProduceType);
                 return true;
             }
 
@@ -549,83 +607,23 @@ namespace RTS.ML
             return null;
         }
 
-        private bool ProduceTypeMaskMatchesExpected(UnitRuntime building, bool[] produceMask)
+        private UnitRuntime FindFirstWorkerByOwner(Owner owner)
         {
-            if (building == null)
-                return false;
-
-            for (int i = 0; i < ActionContract.SIZE_PRODUCE_UNIT_TYPE; i++)
+            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            for (int i = 0; i < units.Count; i++)
             {
-                ProducibleUnit produceType = (ProducibleUnit)i;
-                bool expected = IsProduceTypeExpectedByRuntime(building, produceType);
-                if (produceMask[i] != expected)
-                    return false;
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive && unit.Type == UnitType.Worker)
+                    return unit;
             }
 
-            return true;
-        }
-
-        private bool IsProduceTypeExpectedByRuntime(UnitRuntime building, ProducibleUnit produceType)
-        {
-            // Current runtime uses shared BuildingRuntime.StartProducingUnit() path for Base/Barracks.
-            // A produce type is expected when mapped UnitDefinition exists and is affordable.
-            UnitType buildingType = building.Type;
-            if (buildingType != UnitType.Base && buildingType != UnitType.Barracks)
-                return false;
-
-            BuildingRuntime buildingRuntime = building.GetComponent<BuildingRuntime>();
-            if (buildingRuntime == null)
-                return false;
-
-            ProductionQueue queue = buildingRuntime.GetProductionQueue();
-            if (queue != null && queue.IsProducing)
-                return false;
-
-            if (!TryMapProducibleUnitType(produceType, out UnitType producedType))
-                return false;
-
-            UnitDefinition definition = GetDefinition(producedType);
-            if (definition == null)
-                return false;
-
-            return _matchManager.GetResources(_playerUnderTest) >= definition.productionCost;
-        }
-
-        private static bool TryMapProducibleUnitType(ProducibleUnit produceType, out UnitType unitType)
-        {
-            unitType = produceType switch
-            {
-                ProducibleUnit.Worker => UnitType.Worker,
-                ProducibleUnit.Light => UnitType.Light,
-                ProducibleUnit.Heavy => UnitType.Heavy,
-                ProducibleUnit.Ranged => UnitType.Ranged,
-                _ => UnitType.Worker
-            };
-
-            return produceType == ProducibleUnit.Worker ||
-                   produceType == ProducibleUnit.Light ||
-                   produceType == ProducibleUnit.Heavy ||
-                   produceType == ProducibleUnit.Ranged;
+            return null;
         }
 
         private UnitDefinition GetDefinition(UnitType unitType)
         {
             GameConfig config = _matchBootstrap != null ? _matchBootstrap.GetConfig() : null;
             return config != null ? config.GetDefinition(unitType) : null;
-        }
-
-        private static bool BoolArrayEquals(bool[] left, bool[] right)
-        {
-            if (left == null || right == null || left.Length != right.Length)
-                return false;
-
-            for (int i = 0; i < left.Length; i++)
-            {
-                if (left[i] != right[i])
-                    return false;
-            }
-
-            return true;
         }
 
         private static Direction DirectionFromTo(GridPosition from, GridPosition to)

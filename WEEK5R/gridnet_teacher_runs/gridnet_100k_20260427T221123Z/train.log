@@ -1,0 +1,79 @@
+2026-04-27 22:11:30,496 | INFO | Opponent setup: num_bot_envs=6, first-six=[2 randomBiasedAI, 2 lightRushAI, 2 workerRushAI], extra=coacAI
+2026-04-27 22:11:30,496 | INFO | Observation shape: (24, 24, 27)
+2026-04-27 22:11:30,496 | INFO | Action nvec: [576, 6, 4, 4, 4, 4, 7, 49]
+2026-04-27 22:11:30,496 | INFO | Actor branch sizes: [6, 4, 4, 4, 4, 7, 49] (sum=78)
+2026-04-27 22:11:43,361 | INFO | update=1/66 global_step=1536 lr=0.00025 sps=126
+2026-04-27 22:11:55,418 | INFO | update=2/66 global_step=3072 lr=0.000246212 sps=127
+2026-04-27 22:12:06,859 | INFO | update=3/66 global_step=4608 lr=0.000242424 sps=129
+2026-04-27 22:12:18,319 | INFO | update=4/66 global_step=6144 lr=0.000238636 sps=130
+2026-04-27 22:12:29,577 | INFO | update=5/66 global_step=7680 lr=0.000234848 sps=131
+2026-04-27 22:12:41,343 | INFO | update=6/66 global_step=9216 lr=0.000231061 sps=131
+2026-04-27 22:12:53,382 | INFO | update=7/66 global_step=10752 lr=0.000227273 sps=130
+2026-04-27 22:13:04,799 | INFO | update=8/66 global_step=12288 lr=0.000223485 sps=131
+2026-04-27 22:13:16,296 | INFO | update=9/66 global_step=13824 lr=0.000219697 sps=131
+2026-04-27 22:13:27,897 | INFO | update=10/66 global_step=15360 lr=0.000215909 sps=131
+2026-04-27 22:13:39,787 | INFO | update=11/66 global_step=16896 lr=0.000212121 sps=131
+2026-04-27 22:13:51,915 | INFO | update=12/66 global_step=18432 lr=0.000208333 sps=131
+2026-04-27 22:14:03,580 | INFO | update=13/66 global_step=19968 lr=0.000204545 sps=131
+2026-04-27 22:14:03,674 | INFO | Saved checkpoint: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000020000.pt
+2026-04-27 22:14:03,675 | INFO | Running gridnet actor-level evaluator: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\.venv_day2_py39\Scripts\python.exe C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_gridnet\evaluate_gridnet_actor_level.py --checkpoint C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000020000.pt --model-metadata C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000020000.json --output-md C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000020000.md --device cpu
+2026-04-27 22:14:20,469 | INFO | update=14/66 global_step=21504 lr=0.000200758 sps=127
+2026-04-27 22:14:31,832 | INFO | update=15/66 global_step=23040 lr=0.00019697 sps=127
+2026-04-27 22:14:43,423 | INFO | update=16/66 global_step=24576 lr=0.000193182 sps=127
+2026-04-27 22:14:55,105 | INFO | update=17/66 global_step=26112 lr=0.000189394 sps=128
+2026-04-27 22:15:06,010 | INFO | update=18/66 global_step=27648 lr=0.000185606 sps=128
+2026-04-27 22:15:17,154 | INFO | update=19/66 global_step=29184 lr=0.000181818 sps=129
+2026-04-27 22:15:28,231 | INFO | update=20/66 global_step=30720 lr=0.00017803 sps=129
+2026-04-27 22:15:39,621 | INFO | update=21/66 global_step=32256 lr=0.000174242 sps=129
+2026-04-27 22:15:51,565 | INFO | update=22/66 global_step=33792 lr=0.000170455 sps=129
+2026-04-27 22:16:02,881 | INFO | update=23/66 global_step=35328 lr=0.000166667 sps=130
+2026-04-27 22:16:14,103 | INFO | update=24/66 global_step=36864 lr=0.000162879 sps=130
+2026-04-27 22:16:25,772 | INFO | update=25/66 global_step=38400 lr=0.000159091 sps=130
+2026-04-27 22:16:37,194 | INFO | update=26/66 global_step=39936 lr=0.000155303 sps=130
+2026-04-27 22:16:49,166 | INFO | update=27/66 global_step=41472 lr=0.000151515 sps=130
+2026-04-27 22:17:01,136 | INFO | update=28/66 global_step=43008 lr=0.000147727 sps=130
+2026-04-27 22:17:12,759 | INFO | update=29/66 global_step=44544 lr=0.000143939 sps=130
+2026-04-27 22:17:24,120 | INFO | update=30/66 global_step=46080 lr=0.000140152 sps=130
+2026-04-27 22:17:35,769 | INFO | update=31/66 global_step=47616 lr=0.000136364 sps=130
+2026-04-27 22:17:47,748 | INFO | update=32/66 global_step=49152 lr=0.000132576 sps=130
+2026-04-27 22:17:49,983 | INFO | Saved checkpoint: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000050000.pt
+2026-04-27 22:17:49,984 | INFO | Running gridnet actor-level evaluator: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\.venv_day2_py39\Scripts\python.exe C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_gridnet\evaluate_gridnet_actor_level.py --checkpoint C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000050000.pt --model-metadata C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000050000.json --output-md C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000050000.md --device cpu
+2026-04-27 22:18:05,399 | INFO | update=33/66 global_step=50688 lr=0.000128788 sps=128
+2026-04-27 22:18:16,566 | INFO | update=34/66 global_step=52224 lr=0.000125 sps=128
+2026-04-27 22:18:27,941 | INFO | update=35/66 global_step=53760 lr=0.000121212 sps=129
+2026-04-27 22:18:38,882 | INFO | update=36/66 global_step=55296 lr=0.000117424 sps=129
+2026-04-27 22:18:50,446 | INFO | update=37/66 global_step=56832 lr=0.000113636 sps=129
+2026-04-27 22:19:01,979 | INFO | update=38/66 global_step=58368 lr=0.000109848 sps=129
+2026-04-27 22:19:13,265 | INFO | update=39/66 global_step=59904 lr=0.000106061 sps=129
+2026-04-27 22:19:24,361 | INFO | update=40/66 global_step=61440 lr=0.000102273 sps=129
+2026-04-27 22:19:36,361 | INFO | update=41/66 global_step=62976 lr=9.84848e-05 sps=129
+2026-04-27 22:19:47,985 | INFO | update=42/66 global_step=64512 lr=9.4697e-05 sps=129
+2026-04-27 22:20:00,059 | INFO | update=43/66 global_step=66048 lr=9.09091e-05 sps=129
+2026-04-27 22:20:11,244 | INFO | update=44/66 global_step=67584 lr=8.71212e-05 sps=129
+2026-04-27 22:20:22,667 | INFO | update=45/66 global_step=69120 lr=8.33333e-05 sps=130
+2026-04-27 22:20:34,220 | INFO | update=46/66 global_step=70656 lr=7.95455e-05 sps=130
+2026-04-27 22:20:45,713 | INFO | update=47/66 global_step=72192 lr=7.57576e-05 sps=130
+2026-04-27 22:20:57,206 | INFO | update=48/66 global_step=73728 lr=7.19697e-05 sps=130
+2026-04-27 22:21:09,100 | INFO | update=49/66 global_step=75264 lr=6.81818e-05 sps=130
+2026-04-27 22:21:19,988 | INFO | update=50/66 global_step=76800 lr=6.43939e-05 sps=130
+2026-04-27 22:21:31,344 | INFO | update=51/66 global_step=78336 lr=6.06061e-05 sps=130
+2026-04-27 22:21:43,164 | INFO | update=52/66 global_step=79872 lr=5.68182e-05 sps=130
+2026-04-27 22:21:54,656 | INFO | update=53/66 global_step=81408 lr=5.30303e-05 sps=130
+2026-04-27 22:22:06,277 | INFO | update=54/66 global_step=82944 lr=4.92424e-05 sps=130
+2026-04-27 22:22:17,947 | INFO | update=55/66 global_step=84480 lr=4.54545e-05 sps=130
+2026-04-27 22:22:29,802 | INFO | update=56/66 global_step=86016 lr=4.16667e-05 sps=130
+2026-04-27 22:22:41,776 | INFO | update=57/66 global_step=87552 lr=3.78788e-05 sps=130
+2026-04-27 22:22:53,714 | INFO | update=58/66 global_step=89088 lr=3.40909e-05 sps=130
+2026-04-27 22:23:05,007 | INFO | update=59/66 global_step=90624 lr=3.0303e-05 sps=130
+2026-04-27 22:23:16,511 | INFO | update=60/66 global_step=92160 lr=2.65152e-05 sps=130
+2026-04-27 22:23:28,079 | INFO | update=61/66 global_step=93696 lr=2.27273e-05 sps=130
+2026-04-27 22:23:40,165 | INFO | update=62/66 global_step=95232 lr=1.89394e-05 sps=130
+2026-04-27 22:23:51,719 | INFO | update=63/66 global_step=96768 lr=1.51515e-05 sps=130
+2026-04-27 22:24:03,406 | INFO | update=64/66 global_step=98304 lr=1.13636e-05 sps=130
+2026-04-27 22:24:14,763 | INFO | update=65/66 global_step=99840 lr=7.57576e-06 sps=130
+2026-04-27 22:24:15,155 | INFO | Saved checkpoint: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000100000.pt
+2026-04-27 22:24:15,155 | INFO | Running gridnet actor-level evaluator: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\.venv_day2_py39\Scripts\python.exe C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_gridnet\evaluate_gridnet_actor_level.py --checkpoint C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\checkpoints\agent_step_000100000.pt --model-metadata C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000100000.json --output-md C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_step_000100000.md --device cpu
+2026-04-27 22:24:31,435 | INFO | update=66/66 global_step=101376 lr=3.78788e-06 sps=129
+2026-04-27 22:24:31,438 | INFO | Running gridnet actor-level evaluator: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher\.venv_day2_py39\Scripts\python.exe C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_gridnet\evaluate_gridnet_actor_level.py --checkpoint C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\agent_final.pt --model-metadata C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_final.json --output-md C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\gate_or_eval_reports\eval_agent_final.md --device cpu
+2026-04-27 22:24:36,793 | INFO | Training finished. Final model: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\agent_final.pt
+2026-04-27 22:24:36,793 | INFO | Run summary: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\WEEK5R\gridnet_teacher_runs\gridnet_100k_20260427T221123Z\summary.md

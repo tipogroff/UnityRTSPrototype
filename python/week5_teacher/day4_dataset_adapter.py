@@ -14,7 +14,8 @@ UNITY_H = 24
 UNITY_W = 24
 UNITY_C = 27
 UNITY_TOTAL_CELLS = UNITY_H * UNITY_W
-UNITY_BRANCH_SIZES = (6, 4, 4, 4, 4, 4, 9)
+V1_MVP_BRANCH_SIZES = (6, 4, 4, 4, 4, 4, 9)
+V2_GRIDNET_COMPATIBLE_BRANCH_SIZES = (6, 4, 4, 4, 4, 7, 49)
 DEFAULT_SOURCE_BRANCH_SIZES = (6, 4, 4, 4, 4, 7, 49)
 
 
@@ -58,6 +59,13 @@ class AdaptationConfig:
     write_debug_jsonl: bool
     hp_divisor: Optional[float]
     resource_divisor: Optional[float]
+    target_action_contract: str = "v1_mvp"
+
+
+def resolve_target_branch_sizes(target_action_contract: str) -> Tuple[int, ...]:
+    if target_action_contract == "v2_gridnet_compatible":
+        return V2_GRIDNET_COMPATIBLE_BRANCH_SIZES
+    return V1_MVP_BRANCH_SIZES
 
 
 @dataclass
@@ -66,6 +74,8 @@ class ConversionReportBuilder:
     output_batch_dir: Path
     batch_summary: Dict[str, Any]
     source_branch_sizes: Tuple[int, ...]
+    target_action_contract: str
+    target_branch_sizes: Tuple[int, ...]
     hp_divisor: float
     resource_divisor: float
 
@@ -86,6 +96,9 @@ class ConversionReportBuilder:
     remapped_to_noop_count: int = 0
     semantically_weak_action_count: int = 0
     noop_remap_reason_counts: Counter = field(default_factory=Counter)
+    attack_target_remap_count: int = 0
+    produce_type_remap_count: int = 0
+    requires_unity_v2_validation_count: int = 0
     observation_signal_loss_events: int = 0
 
     drop_reasons: Counter = field(default_factory=Counter)
@@ -160,6 +173,13 @@ class ConversionReportBuilder:
                 self.noop_remap_reason_counts[key] += value
                 self.remapped_to_noop_count += value
 
+        self.attack_target_remap_count += int(result.action_cell_stats.get("attack_target_outside_local_3x3_to_noop", 0))
+        self.produce_type_remap_count += int(
+            result.action_cell_stats.get("invalid_produce_type_to_noop", 0)
+            + result.action_cell_stats.get("unsupported_produce_type_to_noop", 0)
+        )
+        self.requires_unity_v2_validation_count += int(result.action_cell_stats.get("requires_unity_v2_validation", 0))
+
     def build(self, episode_results: List[EpisodeAdaptResult], npz_outputs: List[str], debug_jsonl: Optional[str]) -> Dict[str, Any]:
         top_drop_reasons = [
             {"reason": reason, "count": int(count)}
@@ -185,9 +205,12 @@ class ConversionReportBuilder:
                 "conversion_debug_jsonl": debug_jsonl,
             },
             "contract": {
+                "target_action_contract": self.target_action_contract,
                 "target_observation_shape": [UNITY_H, UNITY_W, UNITY_C],
                 "target_action_shape_per_step": [UNITY_TOTAL_CELLS, 7],
-                "target_action_branch_sizes": list(UNITY_BRANCH_SIZES),
+                "target_branch_sizes": list(self.target_branch_sizes),
+                "target_action_branch_sizes": list(self.target_branch_sizes),
+                "source_branch_sizes": list(self.source_branch_sizes),
                 "source_action_branch_sizes": list(self.source_branch_sizes),
                 "supported_raw_action_layouts": [
                     "matrix_576x7 (supported_exact)",
@@ -240,6 +263,12 @@ class ConversionReportBuilder:
                 },
                 "semantic_weakening": {
                     "remapped_to_noop_count": int(self.remapped_to_noop_count),
+                    "attack_target_remap_count": int(self.attack_target_remap_count),
+                    "produce_type_remap_count": int(self.produce_type_remap_count),
+                    "semantic_weakening_share": (
+                        float(self.remapped_to_noop_count) / float(self.action_cell_stats_total.get("cells_processed", 1))
+                    ),
+                    "requires_unity_v2_validation_count": int(self.requires_unity_v2_validation_count),
                     "semantically_weak_action_count": int(self.semantically_weak_action_count),
                     "noop_reason_counts": {str(k): int(v) for k, v in sorted(self.noop_remap_reason_counts.items())},
                 },
@@ -521,6 +550,7 @@ def map_attack_target_to_local_3x3(source_target: int, source_size: int) -> Opti
 def convert_action(
     raw_action: Any,
     source_branch_sizes: Tuple[int, ...],
+    target_action_contract: str,
     report: ConversionReportBuilder,
 ) -> Tuple[str, Optional[np.ndarray], List[str], Dict[str, int], str, str, List[str], str]:
     reasons: List[str] = []
@@ -532,6 +562,7 @@ def convert_action(
         return "dropped", None, reasons, {}, layout_info.layout, layout_info.support, observed_events, "dropped"
 
     source_sizes = source_branch_sizes if len(source_branch_sizes) == 7 else DEFAULT_SOURCE_BRANCH_SIZES
+    target_branch_sizes = resolve_target_branch_sizes(target_action_contract)
     output = np.zeros((UNITY_TOTAL_CELLS, 7), dtype=np.int16)
 
     cell_stats: Counter = Counter()
@@ -540,9 +571,10 @@ def convert_action(
     for cell_idx in range(UNITY_TOTAL_CELLS):
         src = action[cell_idx]
         src_type = int(src[0])
+        cell_stats["cells_processed"] += 1
         report.action_type_counter_input[src_type] += 1
 
-        if src_type < 0 or src_type >= source_sizes[0] or src_type >= UNITY_BRANCH_SIZES[0]:
+        if src_type < 0 or src_type >= source_sizes[0] or src_type >= target_branch_sizes[0]:
             output[cell_idx, 0] = 0
             action_was_adapted = True
             cell_stats["unsupported_action_type_to_noop"] += 1
@@ -593,27 +625,51 @@ def convert_action(
                 action_was_adapted = True
                 cell_stats["invalid_produce_type_to_noop"] += 1
                 observed_events.append("action.produce_type_invalid_filtered")
-            elif src_produce >= UNITY_BRANCH_SIZES[5]:
-                output[cell_idx, 0] = 0
-                action_was_adapted = True
-                cell_stats["unsupported_produce_type_to_noop"] += 1
-                observed_events.append("action.produce_type_outside_subset_filtered")
             else:
-                output[cell_idx, 5] = int(src_produce)
+                if src_produce >= target_branch_sizes[5]:
+                    output[cell_idx, 0] = 0
+                    action_was_adapted = True
+                    cell_stats["unsupported_produce_type_to_noop"] += 1
+                    observed_events.append("action.produce_type_outside_subset_filtered")
+                else:
+                    output[cell_idx, 5] = int(src_produce)
+                    if target_action_contract == "v2_gridnet_compatible" and src_produce >= 4:
+                        cell_stats["requires_unity_v2_validation"] += 1
+                        observed_events.append("action.requires_unity_v2_validation")
+                        observed_events.append("action.produce_type_requires_unity_v2_validation")
 
         elif src_type == 5:
-            mapped = map_attack_target_to_local_3x3(int(src[6]), source_sizes[6])
-            if mapped is None:
-                output[cell_idx, 0] = 0
-                action_was_adapted = True
-                cell_stats["attack_target_outside_local_3x3_to_noop"] += 1
-                observed_events.append("action.attack_target_outside_local_3x3_filtered")
-            else:
-                output[cell_idx, 6] = int(mapped)
-                if source_sizes[6] != 9:
+            source_attack_target = int(src[6])
+            if target_action_contract == "v2_gridnet_compatible":
+                if source_attack_target < 0 or source_attack_target >= source_sizes[6]:
+                    output[cell_idx, 0] = 0
                     action_was_adapted = True
-                    cell_stats["attack_target_reduced_49_to_9"] += 1
-                    observed_events.append("action.attack_target_reduced")
+                    cell_stats["invalid_attack_target_to_noop"] += 1
+                    observed_events.append("action.attack_target_invalid_filtered")
+                elif source_attack_target >= target_branch_sizes[6]:
+                    output[cell_idx, 0] = 0
+                    action_was_adapted = True
+                    cell_stats["unsupported_attack_target_to_noop"] += 1
+                    observed_events.append("action.attack_target_outside_target_contract_filtered")
+                else:
+                    output[cell_idx, 6] = int(source_attack_target)
+                    if source_attack_target >= 9:
+                        cell_stats["requires_unity_v2_validation"] += 1
+                        observed_events.append("action.requires_unity_v2_validation")
+                        observed_events.append("action.attack_target_requires_unity_v2_validation")
+            else:
+                mapped = map_attack_target_to_local_3x3(source_attack_target, source_sizes[6])
+                if mapped is None:
+                    output[cell_idx, 0] = 0
+                    action_was_adapted = True
+                    cell_stats["attack_target_outside_local_3x3_to_noop"] += 1
+                    observed_events.append("action.attack_target_outside_local_3x3_filtered")
+                else:
+                    output[cell_idx, 6] = int(mapped)
+                    if source_sizes[6] != 9:
+                        action_was_adapted = True
+                        cell_stats["attack_target_reduced_49_to_9"] += 1
+                        observed_events.append("action.attack_target_reduced")
 
         report.action_type_counter_output[int(output[cell_idx, 0])] += 1
 
@@ -626,6 +682,8 @@ def convert_action(
             reasons.append("action:attack_target_outside_local_3x3_filtered")
         if cell_stats.get("attack_target_reduced_49_to_9", 0) > 0:
             reasons.append("action:attack_target_reduced_49_to_9")
+        if cell_stats.get("requires_unity_v2_validation", 0) > 0:
+            reasons.append("action:requires_unity_v2_validation")
 
     status = "adapted" if action_was_adapted else "exact"
 
@@ -638,6 +696,8 @@ def convert_action(
         + cell_stats.get("invalid_harvest_dir_to_noop", 0)
         + cell_stats.get("invalid_return_dir_to_noop", 0)
         + cell_stats.get("invalid_produce_dir_to_noop", 0)
+        + cell_stats.get("invalid_attack_target_to_noop", 0)
+        + cell_stats.get("unsupported_attack_target_to_noop", 0)
     )
     if remapped_to_noop_total > 0:
         semantic_quality = "weakened"
@@ -706,6 +766,7 @@ def adapt_episode(
             ) = convert_action(
                 actions[idx],
                 source_branch_sizes=report.source_branch_sizes,
+                target_action_contract=config.target_action_contract,
                 report=report,
             )
 
@@ -824,6 +885,8 @@ def run_adaptation(
         output_batch_dir=output_batch_dir,
         batch_summary=batch_summary,
         source_branch_sizes=source_branch_sizes,
+        target_action_contract=config.target_action_contract,
+        target_branch_sizes=resolve_target_branch_sizes(config.target_action_contract),
         hp_divisor=hp_divisor,
         resource_divisor=res_divisor,
     )

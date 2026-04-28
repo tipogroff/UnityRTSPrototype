@@ -30,6 +30,13 @@ namespace RTS.ML
         public string RejectionReason { get; }
     }
 
+    internal static class HeuristicV2ActionDefaults
+    {
+        public const int AttackCenterIndex = 24;
+        public const int WorkerProduceIndex = 3;
+        public const int BarracksBuildProduceIndex = 2;
+    }
+
     public enum HeuristicControlMode
     {
         Idle = 0,
@@ -57,8 +64,8 @@ namespace RTS.ML
             actorIndexFlat: ActionContract.TotalCells,
             actionType: ActionContract.ACTION_NOOP,
             direction: ActionContract.DIR_NORTH,
-            produceUnitType: (int)ProducibleUnit.Worker,
-            attackTargetLocal: 4);
+            produceUnitType: HeuristicV2ActionDefaults.WorkerProduceIndex,
+            attackTargetLocal: HeuristicV2ActionDefaults.AttackCenterIndex);
 
         public override string ToString()
         {
@@ -538,8 +545,8 @@ namespace RTS.ML
                             actorIndexFlat: actorIndex,
                             actionType: ActionContract.ACTION_NOOP,
                             direction: ActionContract.DIR_NORTH,
-                            produceUnitType: (int)ProducibleUnit.Worker,
-                            attackTargetLocal: 4);
+                            produceUnitType: HeuristicV2ActionDefaults.WorkerProduceIndex,
+                            attackTargetLocal: HeuristicV2ActionDefaults.AttackCenterIndex);
                         return true;
                     }
                 }
@@ -629,8 +636,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_NOOP,
                     ActionContract.DIR_NORTH,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 return true;
             }
 
@@ -661,8 +668,8 @@ namespace RTS.ML
                         actorIndex,
                         ActionContract.ACTION_RETURN,
                         (int)returnDirection,
-                        (int)ProducibleUnit.Worker,
-                        4);
+                        HeuristicV2ActionDefaults.WorkerProduceIndex,
+                        HeuristicV2ActionDefaults.AttackCenterIndex);
                     reason = $"worker:return cargo={worker.CarriedResources}";
                     return true;
                 }
@@ -674,8 +681,8 @@ namespace RTS.ML
                         actorIndex,
                         ActionContract.ACTION_MOVE,
                         (int)moveToBase,
-                        (int)ProducibleUnit.Worker,
-                        4);
+                        HeuristicV2ActionDefaults.WorkerProduceIndex,
+                        HeuristicV2ActionDefaults.AttackCenterIndex);
                     reason = "worker:move-to-base";
                     return true;
                 }
@@ -692,8 +699,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_PRODUCE,
                     (int)buildBarracksDir,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.BarracksBuildProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "worker:build-barracks";
                 return true;
             }
@@ -705,8 +712,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_HARVEST,
                     (int)harvestDir,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "worker:harvest-adjacent";
                 return true;
             }
@@ -718,8 +725,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_MOVE,
                     (int)moveToResource,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "worker:move-to-resource";
                 return true;
             }
@@ -762,14 +769,16 @@ namespace RTS.ML
                 ActionContract.ACTION_PRODUCE,
                 (int)produceDirection,
                 produceTypeIndex,
-                4);
-            reason = $"building:produce type={(ProducibleUnit)produceTypeIndex}";
+                HeuristicV2ActionDefaults.AttackCenterIndex);
+            reason = ActionContractMappings.TryMapV2ProduceIndexToUnitType(produceTypeIndex, out UnitType mappedType)
+                ? $"building:produce type={mappedType}"
+                : $"building:produce index={produceTypeIndex}";
             return true;
         }
 
         private bool TryChooseAffordableProduceType(Owner owner, bool[] produceTypeMask, out int produceTypeIndex)
         {
-            produceTypeIndex = (int)ProducibleUnit.Worker;
+            produceTypeIndex = HeuristicV2ActionDefaults.WorkerProduceIndex;
             GameConfig config = _matchBootstrap != null ? _matchBootstrap.GetConfig() : null;
             if (produceTypeMask == null || produceTypeMask.Length == 0 || _matchManager == null || config == null)
             {
@@ -797,19 +806,19 @@ namespace RTS.ML
             }
 
             // Prevent infinite worker-only loops that often lead to timeout-only traces.
-            ProducibleUnit[] preference = workerCount < _maxWorkerLimit
-                ? new[] { ProducibleUnit.Worker, ProducibleUnit.Light, ProducibleUnit.Heavy, ProducibleUnit.Ranged }
-                : new[] { ProducibleUnit.Light, ProducibleUnit.Heavy, ProducibleUnit.Ranged, ProducibleUnit.Worker };
+            int[] preference = workerCount < _maxWorkerLimit
+                ? new[] { 3, 4, 5, 6 }
+                : new[] { 4, 5, 6, 3 };
 
             for (int i = 0; i < preference.Length; i++)
             {
-                int idx = (int)preference[i];
+                int idx = preference[i];
                 if (idx < 0 || idx >= produceTypeMask.Length || !produceTypeMask[idx])
                 {
                     continue;
                 }
 
-                if (!ActionContractMappings.TryMapProducibleUnitType(preference[i], out UnitType unitType))
+                if (!ActionContractMappings.TryMapV2ProduceIndexToUnitType(idx, out UnitType unitType))
                 {
                     continue;
                 }
@@ -857,7 +866,7 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_ATTACK,
                     ActionContract.DIR_NORTH,
-                    (int)ProducibleUnit.Worker,
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
                     attackLocal);
                 reason = $"combat:attack local={attackLocal}";
                 return true;
@@ -870,8 +879,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_MOVE,
                     (int)moveToEnemy,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "combat:move-to-enemy";
                 return true;
             }
@@ -883,8 +892,8 @@ namespace RTS.ML
                     actorIndex,
                     ActionContract.ACTION_MOVE,
                     (int)scoutDirection,
-                    (int)ProducibleUnit.Worker,
-                    4);
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "combat:scout-enemy-base";
                 return true;
             }

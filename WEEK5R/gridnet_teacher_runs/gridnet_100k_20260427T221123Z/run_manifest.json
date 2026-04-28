@@ -1,0 +1,796 @@
+{
+  "schema": "week5_gridnet_manifest.v1",
+  "run_id": "gridnet_100k_20260427T221123Z",
+  "created_utc": "2026-04-27T15:24:36.792484+00:00",
+  "command": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\train_teacher_gridnet_project.py --run-id gridnet_100k_20260427T221123Z --total-timesteps 100000 --checkpoint-steps 20000,50000,100000 --num-bot-envs 6 --num-selfplay-envs 0 --seed 1 --device cpu --eval-after-checkpoint --render-window --no-render-during-final-eval",
+  "artifacts": {
+    "command_txt": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\command.txt",
+    "train_log": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\train.log",
+    "run_manifest_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\run_manifest.json",
+    "checkpoints_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints",
+    "model_metadata_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\model_metadata.json",
+    "gate_or_eval_reports_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports",
+    "summary_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\summary.md",
+    "final_model": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\agent_final.pt"
+  },
+  "checkpoint_reports": [
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000020000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.993910\n[gate] effective_position_delta_count=20\n[gate] no_effect_action_share=1.000000\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000020000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000020000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-27T15:14:09Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000020000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\model_metadata.json",
+        "status": "FAIL_COLLAPSED_NOOP",
+        "gate_status": "FAIL_COLLAPSED_NOOP",
+        "verdict": "Collapsed to NoOp on ready actors.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/24x24/basesWorkers24x24.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.0,
+        "actor_noop_share": 0.9939098660170523,
+        "effective_position_delta_count": 20,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 3044,
+        "ready_nonnoop_steps": 16,
+        "no_effect_ready_nonnoop_steps": 16,
+        "full_action_counts": {
+          "NoOp": 589804,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 3264,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "Harvest": 1,
+              "Produce": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          }
+        ]
+      }
+    },
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000050000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.993910\n[gate] effective_position_delta_count=20\n[gate] no_effect_action_share=1.000000\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000050000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000050000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-27T15:17:55Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000050000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\model_metadata.json",
+        "status": "FAIL_COLLAPSED_NOOP",
+        "gate_status": "FAIL_COLLAPSED_NOOP",
+        "verdict": "Collapsed to NoOp on ready actors.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/24x24/basesWorkers24x24.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.0,
+        "actor_noop_share": 0.9939098660170523,
+        "effective_position_delta_count": 20,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 3044,
+        "ready_nonnoop_steps": 16,
+        "no_effect_ready_nonnoop_steps": 16,
+        "full_action_counts": {
+          "NoOp": 589804,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 3264,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "Harvest": 1,
+              "Produce": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          }
+        ]
+      }
+    },
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000100000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=PASS\n[gate] verdict=Actor-level effective movement detected.\n[gate] actor_level_move_share=0.013196\n[gate] actor_noop_share=0.932551\n[gate] effective_position_delta_count=52\n[gate] no_effect_action_share=0.976744\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000100000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_step_000100000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-27T15:24:20Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\checkpoints\\agent_step_000100000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\model_metadata.json",
+        "status": "PASS",
+        "gate_status": "PASS",
+        "verdict": "Actor-level effective movement detected.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/24x24/basesWorkers24x24.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.013196480938416423,
+        "actor_noop_share": 0.9325513196480938,
+        "effective_position_delta_count": 52,
+        "no_effect_action_share": 0.9767441860465116,
+        "ready_movable_actor_choice_count": 2500,
+        "ready_nonnoop_steps": 172,
+        "no_effect_ready_nonnoop_steps": 168,
+        "full_action_counts": {
+          "NoOp": 589640,
+          "Move": 36,
+          "Harvest": 8,
+          "Produce": 140
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 2544,
+          "Move": 36,
+          "Harvest": 8,
+          "Produce": 140
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "Harvest": 1,
+              "Produce": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          }
+        ]
+      }
+    }
+  ],
+  "final_eval_report": {
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\agent_final.pt",
+    "exit_code": 0,
+    "stdout_tail": "[gate] status=PASS\n[gate] verdict=Actor-level effective movement detected.\n[gate] actor_level_move_share=0.013196\n[gate] actor_noop_share=0.932551\n[gate] effective_position_delta_count=52\n[gate] no_effect_action_share=0.976744\n",
+    "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_final.json",
+    "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\gate_or_eval_reports\\eval_agent_final.md",
+    "report": {
+      "schema": "gridnet_actor_level_eval.v1",
+      "timestamp_utc": "2026-04-27T15:24:36Z",
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\agent_final.pt",
+      "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_teacher_runs\\gridnet_100k_20260427T221123Z\\model_metadata.json",
+      "status": "PASS",
+      "gate_status": "PASS",
+      "verdict": "Actor-level effective movement detected.",
+      "episodes": 4,
+      "max_steps": 256,
+      "effective_steps": 100,
+      "map_path": "maps/24x24/basesWorkers24x24.xml",
+      "opponents_used": [
+        "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+        "randomBiasedAI",
+        "randomBiasedAI",
+        "randomBiasedAI",
+        "randomBiasedAI"
+      ],
+      "actor_level_move_share": 0.013196480938416423,
+      "actor_noop_share": 0.9325513196480938,
+      "effective_position_delta_count": 52,
+      "no_effect_action_share": 0.9767441860465116,
+      "ready_movable_actor_choice_count": 2500,
+      "ready_nonnoop_steps": 172,
+      "no_effect_ready_nonnoop_steps": 168,
+      "full_action_counts": {
+        "NoOp": 589640,
+        "Move": 36,
+        "Harvest": 8,
+        "Produce": 140
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 2544,
+        "Move": 36,
+        "Harvest": 8,
+        "Produce": 140
+      },
+      "trace": [
+        {
+          "step": 0,
+          "ready_count": 2,
+          "movable_ready_count": 1,
+          "chosen_ready_actions": {
+            "Harvest": 1,
+            "Produce": 1
+          },
+          "position_delta": false
+        },
+        {
+          "step": 1,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 2,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 3,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 4,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 5,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 6,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 7,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 8,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 9,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 10,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 11,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 12,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 13,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 14,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 15,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 16,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 17,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 18,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 19,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        }
+      ]
+    }
+  },
+  "final_eval_status": "PASS",
+  "final_eval_effective_position_delta_count": 52,
+  "final_eval_actor_level_move_share": 0.013196480938416423,
+  "final_eval_no_effect_action_share": 0.9767441860465116,
+  "global_step_reached": 101376,
+  "overshoot_steps": 1376,
+  "render_window_enabled": true,
+  "visual_eval_attempted": false,
+  "visual_eval_status": "unavailable",
+  "visual_eval_steps": 0,
+  "visual_eval_opponent": "randomBiasedAI",
+  "visual_eval_checkpoint_or_final_model": "final_model",
+  "visual_eval_note": "visual sanity layer only; not a replacement for actor-level evaluator",
+  "save_visual_notes": true
+}

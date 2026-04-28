@@ -18,10 +18,10 @@ namespace RTS.ML
     /// <summary>
     /// Контракт пространства действий.
     ///
-    /// Важно для Week 3 v1:
+    /// Важно для Week 5R v2 migration step 1:
     /// - это transfer-compatible MVP surface, а не claim о полной Gym parity;
-    /// - attack targeting намеренно ограничен локальной 3×3 окрестностью;
-    /// - более широкие action semantics и richer production spaces остаются за пределами текущего контракта.
+    /// - action contract расширен до Gridnet-compatible branch sizes [6,4,4,4,4,7,49];
+    /// - authoritative runtime validation остаётся в ActionApplier.
     ///
     /// Ветвь                       Размер  Значения
     /// ──────────────────────────────────────────────────────────────────────
@@ -31,10 +31,10 @@ namespace RTS.ML
     /// BRANCH_HARVEST_DIR          4       0=N, 1=E, 2=S, 3=W
     /// BRANCH_RETURN_DIR           4       0=N, 1=E, 2=S, 3=W
     /// BRANCH_PRODUCE_DIR          4       0=N, 1=E, 2=S, 3=W
-    /// BRANCH_PRODUCE_UNIT_TYPE    4       0=Worker, 1=Light, 2=Heavy, 3=Ranged
-    /// BRANCH_ATTACK_TARGET        9       индекс клетки в зоне 3×3 (0..8, 4=центр)
+    /// BRANCH_PRODUCE_UNIT_TYPE    7       contract-level UnitType index (Gym/Gridnet order)
+    /// BRANCH_ATTACK_TARGET        49      local 7x7 index (0..48, 24=центр)
     /// ──────────────────────────────────────────────────────────────────────
-    /// ActionBranchCount = 7 ветвей, ActionFlatSize = 6+4+4+4+4+4+9 = 35.
+    /// ActionBranchCount = 7 ветвей, ActionFlatSize = 6+4+4+4+4+7+49 = 78.
     ///
     /// Примечание: в Gym-µRTS действие кодируется как flat int по формуле
     ///   flat = sum(branch_sizes[0..i-1]) + branch_value[i]
@@ -57,8 +57,8 @@ namespace RTS.ML
         // ── Размеры ветвей ────────────────────────────────────────────────────
         public const int SIZE_ACTION_TYPE       = 6;   // NoOp..Attack
         public const int SIZE_DIRECTION         = 4;   // N, E, S, W
-        public const int SIZE_PRODUCE_UNIT_TYPE = 4;   // Worker..Ranged
-        public const int SIZE_ATTACK_TARGET     = 9;   // 3×3 neighbourhood
+        public const int SIZE_PRODUCE_UNIT_TYPE = 7;   // UnitType order: Resource..Ranged
+        public const int SIZE_ATTACK_TARGET     = 49;  // 7x7 neighbourhood
 
         // ── Flat суммарный размер одного «действия на клетку» ────────────────
         public const int ActionFlatSize =
@@ -67,12 +67,12 @@ namespace RTS.ML
             SIZE_DIRECTION   +                      // 4 (harvest)
             SIZE_DIRECTION   +                      // 4 (return)
             SIZE_DIRECTION   +                      // 4 (produce dir)
-            SIZE_PRODUCE_UNIT_TYPE +                // 4
-            SIZE_ATTACK_TARGET;                     // 9  → итого 35
+            SIZE_PRODUCE_UNIT_TYPE +                // 7
+            SIZE_ATTACK_TARGET;                     // 49  → итого 78
 
         // ── Общий размер action tensor за шаг ────────────────────────────────
         public const int TotalCells = ObservationContract.GridH * ObservationContract.GridW; // 576
-        public const int TotalActionFlatSize = TotalCells * ActionFlatSize;                  // 20160
+        public const int TotalActionFlatSize = TotalCells * ActionFlatSize;                  // 44928
 
         // ── Значения ActionType ───────────────────────────────────────────────
         public const int ACTION_NOOP    = 0;
@@ -88,24 +88,22 @@ namespace RTS.ML
         public const int DIR_SOUTH = 2;
         public const int DIR_WEST  = 3;
 
-        // ── AttackTarget: соответствие indeks → (dRow, dCol) в 3×3 ──────────
-        // Карта относительных смещений, центр = индекс 4
-        //   0 1 2
-        //   3 4 5
-        //   6 7 8
+        // ── AttackTarget: соответствие index → (dx, dy) в local 7x7 ─────────
+        // Gridnet-compatible local target window (row-major):
+        //   idx 0  -> (-3, -3)
+        //   idx 24 -> ( 0,  0) center
+        //   idx 48 -> ( 3,  3)
         //
-        // LIMITATION (tech-debt): все 9 смещений имеют Chebyshev ≤ 1. Commanded attack
-        // range для любого юнита ограничен Chebyshev 1 на уровне action contract, независимо
-        // от UnitDefinition.attackRange. Следствие: Ranged (attackRange=3) не получает
-        // преимущества в commanded attack space — advantage работает ТОЛЬКО через
-        // CombatResolver opportunistic auto-combat. Расширение commanded range требует
-        // изменения BRANCH_ATTACK_TARGET за пределы 3×3 (вне текущего MVP scope;
-        // актуально для главы 3 диссертации при обсуждении transfer gaps).
-        public static readonly (int dRow, int dCol)[] AttackOffsets = new (int, int)[]
+        // NOTE: center index 24 should normally be mask-disabled for attack.
+        public static readonly (int dX, int dY)[] AttackOffsets = new (int, int)[]
         {
-            (-1, -1), (-1, 0), (-1, 1),
-            ( 0, -1), ( 0, 0), ( 0, 1),
-            ( 1, -1), ( 1, 0), ( 1, 1)
+            (-3, -3), (-2, -3), (-1, -3), ( 0, -3), ( 1, -3), ( 2, -3), ( 3, -3),
+            (-3, -2), (-2, -2), (-1, -2), ( 0, -2), ( 1, -2), ( 2, -2), ( 3, -2),
+            (-3, -1), (-2, -1), (-1, -1), ( 0, -1), ( 1, -1), ( 2, -1), ( 3, -1),
+            (-3,  0), (-2,  0), (-1,  0), ( 0,  0), ( 1,  0), ( 2,  0), ( 3,  0),
+            (-3,  1), (-2,  1), (-1,  1), ( 0,  1), ( 1,  1), ( 2,  1), ( 3,  1),
+            (-3,  2), (-2,  2), (-1,  2), ( 0,  2), ( 1,  2), ( 2,  2), ( 3,  2),
+            (-3,  3), (-2,  3), (-1,  3), ( 0,  3), ( 1,  3), ( 2,  3), ( 3,  3)
         };
 
         // ── Вспомогательные методы ────────────────────────────────────────────

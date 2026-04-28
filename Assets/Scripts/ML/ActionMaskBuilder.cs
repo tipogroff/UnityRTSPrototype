@@ -189,7 +189,9 @@ namespace RTS.ML
         {
             return ActionContractMappings.FormatEnabledValues(
                 ProduceUnitTypeMask,
-                i => ((ProducibleUnit)i).ToString(),
+                i => ActionContractMappings.TryMapV2ProduceIndexToUnitType(i, out UnitType mapped)
+                    ? mapped.ToString()
+                    : $"idx{i}",
                 "-");
         }
 
@@ -481,11 +483,9 @@ namespace RTS.ML
 
             bool anyUnitType = false;
             int playerResources = _matchManager.GetResources(unit.Owner);
-            for (int i = 0; i < ActionContract.SIZE_PRODUCE_UNIT_TYPE; i++)
+            for (int v2ProduceIndex = 0; v2ProduceIndex < ActionContract.SIZE_PRODUCE_UNIT_TYPE; v2ProduceIndex++)
             {
-                ProducibleUnit produceType = (ProducibleUnit)i;
-
-                if (!ActionContractMappings.TryMapProducibleUnitType(produceType, out UnitType producedUnitType))
+                if (!ActionContractMappings.TryMapV2ProduceIndexToUnitType(v2ProduceIndex, out UnitType producedUnitType))
                     continue;
 
                 // Runtime-aligned gate: BuildingRuntime.StartProducingUnit() fails when definition is missing.
@@ -495,9 +495,9 @@ namespace RTS.ML
 
                 // Current runtime has no explicit Base/Barracks produce-type split;
                 // both rely on the same BuildingRuntime.StartProducingUnit path.
-                if (!CanBuildingProduceUnitType(unit.Type, produceType))
+                if (!CanBuildingProduceUnitType(unit.Type, producedUnitType))
                 {
-                    if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} building@{unit.GridPos} ({unit.Type}): produce {produceType} blocked by production rule");
+                    if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} building@{unit.GridPos} ({unit.Type}): produce {producedUnitType} blocked by production rule");
                     continue;
                 }
 
@@ -506,7 +506,7 @@ namespace RTS.ML
                 if (playerResources < cost)
                     continue;
 
-                actorMask.ProduceUnitTypeMask[i] = true;
+                actorMask.ProduceUnitTypeMask[v2ProduceIndex] = true;
                 anyUnitType = true;
             }
 
@@ -519,8 +519,8 @@ namespace RTS.ML
         private void BuildWorkerBuildMask(UnitRuntime unit, ActorActionMask actorMask)
         {
             // Worker builds Barracks on an adjacent free cell.
-            // The ProducibleUnit contract has no "build structure" slot, so slot 0 (Worker)
-            // is used as a placeholder. MatchManager routes Worker-Produce to TryWorkerBuildBarracks.
+            // v2 produce branch uses UnitType order, so Barracks build intent is slot 2.
+            // MatchManager routes Worker-Produce to TryWorkerBuildBarracks.
             UnitDefinition barracksDefinition = GetUnitDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
             {
@@ -555,10 +555,10 @@ namespace RTS.ML
                 return;
             }
 
-            // ProduceUnitType slot 0 (Worker) is a structurally valid placeholder only.
-            // Runtime ignores this value for Worker actors — command means "build Barracks".
+            // v2 produce branch uses Gym/Gridnet UnitType order: Barracks is index 2.
+            // Runtime ignores ProduceUnitType value for Worker actors — command means "build Barracks".
             // See ActionContractMappings.IsWorkerBuildBarracksAction for the canonical rule.
-            actorMask.ProduceUnitTypeMask[0] = true;
+            actorMask.ProduceUnitTypeMask[2] = true;
             actorMask.ActionTypeMask[(int)UnitActionType.Produce] = true;
         }
 
@@ -579,6 +579,10 @@ namespace RTS.ML
             int attackRange = actorDef != null ? actorDef.attackRange : 1;
             for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
             {
+                // v2 center slot (idx=24) is a self-target placeholder and must remain masked out.
+                if (i == 24)
+                    continue;
+
                 if (!TryGetAttackTargetPosition(unit.GridPos, i, out GridPosition target))
                     continue;
 
@@ -676,17 +680,17 @@ namespace RTS.ML
             return definition.attackDamage > 0 && definition.attackRange > 0;
         }
 
-        private bool CanBuildingProduceUnitType(UnitType buildingType, ProducibleUnit produceType)
+        private bool CanBuildingProduceUnitType(UnitType buildingType, UnitType producedUnitType)
         {
             // Production rules aligned with Gym-µRTS / microRTS:
             //   Base     → Worker only
             //   Barracks → Light, Heavy, Ranged only
             return buildingType switch
             {
-                UnitType.Base     => produceType == ProducibleUnit.Worker,
-                UnitType.Barracks => produceType == ProducibleUnit.Light
-                                  || produceType == ProducibleUnit.Heavy
-                                  || produceType == ProducibleUnit.Ranged,
+                UnitType.Base     => producedUnitType == UnitType.Worker,
+                UnitType.Barracks => producedUnitType == UnitType.Light
+                                  || producedUnitType == UnitType.Heavy
+                                  || producedUnitType == UnitType.Ranged,
                 _                 => false
             };
         }
