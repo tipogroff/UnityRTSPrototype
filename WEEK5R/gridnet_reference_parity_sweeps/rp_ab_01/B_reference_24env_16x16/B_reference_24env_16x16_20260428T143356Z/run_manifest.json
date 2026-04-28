@@ -1,0 +1,837 @@
+{
+  "schema": "week5_gridnet_manifest.v1",
+  "run_id": "B_reference_24env_16x16_20260428T143356Z",
+  "created_utc": "2026-04-28T14:39:11.071675+00:00",
+  "command": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\train_teacher_gridnet_project.py --run-id B_reference_24env_16x16_20260428T143356Z --total-timesteps 100000 --checkpoint-steps 20000,50000,100000 --initial-global-step 0 --num-bot-envs 24 --num-selfplay-envs 0 --seed 1 --device cpu --eval-after-checkpoint --map-path maps/16x16/basesWorkers16x16.xml --output-root C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16",
+  "artifacts": {
+    "command_txt": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\command.txt",
+    "train_log": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\train.log",
+    "run_manifest_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\run_manifest.json",
+    "checkpoints_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints",
+    "model_metadata_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\model_metadata.json",
+    "gate_or_eval_reports_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports",
+    "summary_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\summary.md",
+    "final_model": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\agent_final.pt"
+  },
+  "checkpoint_reports": [
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000020000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] deterministic_mode=True\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.997972\n[gate] effective_position_delta_count=0\n[gate] no_effect_action_share=1.000000\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000020000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000020000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-28T14:34:57Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000020000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\model_metadata.json",
+        "status": "FAIL_COLLAPSED_NOOP",
+        "gate_status": "FAIL_COLLAPSED_NOOP",
+        "verdict": "Collapsed to NoOp on ready actors.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/16x16/basesWorkers16x16.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.0,
+        "actor_noop_share": 0.9979716024340771,
+        "effective_position_delta_count": 0,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 948,
+        "ready_nonnoop_steps": 4,
+        "no_effect_ready_nonnoop_steps": 4,
+        "deterministic_mode": true,
+        "full_action_counts": {
+          "NoOp": 262140,
+          "Harvest": 4
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 1968,
+          "Harvest": 4
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "NoOp": 1,
+              "Harvest": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 1,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {
+              "NoOp": 1
+            },
+            "position_delta": false
+          }
+        ]
+      }
+    },
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000050000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] deterministic_mode=True\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.993910\n[gate] effective_position_delta_count=20\n[gate] no_effect_action_share=1.000000\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000050000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000050000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-28T14:36:26Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000050000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\model_metadata.json",
+        "status": "FAIL_COLLAPSED_NOOP",
+        "gate_status": "FAIL_COLLAPSED_NOOP",
+        "verdict": "Collapsed to NoOp on ready actors.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/16x16/basesWorkers16x16.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.0,
+        "actor_noop_share": 0.9939098660170523,
+        "effective_position_delta_count": 20,
+        "no_effect_action_share": 1.0,
+        "ready_movable_actor_choice_count": 3044,
+        "ready_nonnoop_steps": 16,
+        "no_effect_ready_nonnoop_steps": 16,
+        "deterministic_mode": true,
+        "full_action_counts": {
+          "NoOp": 262124,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 3264,
+          "Harvest": 4,
+          "Produce": 16
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "Harvest": 1,
+              "Produce": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          }
+        ]
+      }
+    },
+    {
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000100000.pt",
+      "exit_code": 0,
+      "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] deterministic_mode=True\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.963155\n[gate] effective_position_delta_count=20\n[gate] no_effect_action_share=0.965812\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000100000.json",
+      "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_step_000100000.md",
+      "report": {
+        "schema": "gridnet_actor_level_eval.v1",
+        "timestamp_utc": "2026-04-28T14:38:50Z",
+        "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\checkpoints\\agent_step_000100000.pt",
+        "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\model_metadata.json",
+        "status": "FAIL_COLLAPSED_NOOP",
+        "gate_status": "FAIL_COLLAPSED_NOOP",
+        "verdict": "Collapsed to NoOp on ready actors.",
+        "episodes": 4,
+        "max_steps": 256,
+        "effective_steps": 100,
+        "map_path": "maps/16x16/basesWorkers16x16.xml",
+        "opponents_used": [
+          "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI",
+          "randomBiasedAI"
+        ],
+        "actor_level_move_share": 0.0,
+        "actor_noop_share": 0.9631546894031668,
+        "effective_position_delta_count": 20,
+        "no_effect_action_share": 0.9658119658119658,
+        "ready_movable_actor_choice_count": 3044,
+        "ready_nonnoop_steps": 117,
+        "no_effect_ready_nonnoop_steps": 113,
+        "deterministic_mode": true,
+        "full_action_counts": {
+          "NoOp": 262023,
+          "Harvest": 4,
+          "Produce": 117
+        },
+        "ready_actor_action_counts": {
+          "NoOp": 3163,
+          "Harvest": 4,
+          "Produce": 117
+        },
+        "trace": [
+          {
+            "step": 0,
+            "ready_count": 2,
+            "movable_ready_count": 1,
+            "chosen_ready_actions": {
+              "Harvest": 1,
+              "Produce": 1
+            },
+            "position_delta": false
+          },
+          {
+            "step": 1,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 2,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 3,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 4,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 5,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 6,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 7,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 8,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 9,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 10,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 11,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 12,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 13,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 14,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 15,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 16,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 17,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 18,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          },
+          {
+            "step": 19,
+            "ready_count": 0,
+            "movable_ready_count": 0,
+            "chosen_ready_actions": {},
+            "position_delta": false
+          }
+        ]
+      }
+    }
+  ],
+  "final_eval_report": {
+    "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\agent_final.pt",
+    "exit_code": 0,
+    "stdout_tail": "[gate] status=FAIL_COLLAPSED_NOOP\n[gate] verdict=Collapsed to NoOp on ready actors.\n[gate] deterministic_mode=True\n[gate] actor_level_move_share=0.000000\n[gate] actor_noop_share=0.957369\n[gate] effective_position_delta_count=20\n[gate] no_effect_action_share=0.970588\n",
+    "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_final.json",
+    "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\gate_or_eval_reports\\eval_agent_final.md",
+    "report": {
+      "schema": "gridnet_actor_level_eval.v1",
+      "timestamp_utc": "2026-04-28T14:39:10Z",
+      "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\agent_final.pt",
+      "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\model_metadata.json",
+      "status": "FAIL_COLLAPSED_NOOP",
+      "gate_status": "FAIL_COLLAPSED_NOOP",
+      "verdict": "Collapsed to NoOp on ready actors.",
+      "episodes": 4,
+      "max_steps": 256,
+      "effective_steps": 100,
+      "map_path": "maps/16x16/basesWorkers16x16.xml",
+      "opponents_used": [
+        "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+        "randomBiasedAI",
+        "randomBiasedAI",
+        "randomBiasedAI",
+        "randomBiasedAI"
+      ],
+      "actor_level_move_share": 0.0,
+      "actor_noop_share": 0.9573690621193667,
+      "effective_position_delta_count": 20,
+      "no_effect_action_share": 0.9705882352941176,
+      "ready_movable_actor_choice_count": 3044,
+      "ready_nonnoop_steps": 136,
+      "no_effect_ready_nonnoop_steps": 132,
+      "deterministic_mode": true,
+      "full_action_counts": {
+        "NoOp": 262004,
+        "Harvest": 4,
+        "Produce": 136
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 3144,
+        "Harvest": 4,
+        "Produce": 136
+      },
+      "trace": [
+        {
+          "step": 0,
+          "ready_count": 2,
+          "movable_ready_count": 1,
+          "chosen_ready_actions": {
+            "Harvest": 1,
+            "Produce": 1
+          },
+          "position_delta": false
+        },
+        {
+          "step": 1,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 2,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 3,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 4,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 5,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 6,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 7,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 8,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 9,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 10,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 11,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 12,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 13,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 14,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 15,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 16,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 17,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 18,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        },
+        {
+          "step": 19,
+          "ready_count": 0,
+          "movable_ready_count": 0,
+          "chosen_ready_actions": {},
+          "position_delta": false
+        }
+      ]
+    }
+  },
+  "final_eval_status": "FAIL_COLLAPSED_NOOP",
+  "final_eval_effective_position_delta_count": 20,
+  "final_eval_actor_level_move_share": 0.0,
+  "final_eval_no_effect_action_share": 0.9705882352941176,
+  "global_step_reached": 104448,
+  "initial_global_step": 0,
+  "remaining_timesteps_planned": 100000,
+  "resume_from_checkpoint": null,
+  "resume_model_metadata": null,
+  "resume_metadata_schema": null,
+  "overshoot_steps": 4448,
+  "render_window_enabled": false,
+  "visual_eval_attempted": false,
+  "visual_eval_status": "unavailable",
+  "visual_eval_steps": 0,
+  "visual_eval_opponent": "randomBiasedAI",
+  "visual_eval_checkpoint_or_final_model": "final_model",
+  "visual_eval_note": "visual sanity layer only; not a replacement for actor-level evaluator",
+  "save_visual_notes": true
+}

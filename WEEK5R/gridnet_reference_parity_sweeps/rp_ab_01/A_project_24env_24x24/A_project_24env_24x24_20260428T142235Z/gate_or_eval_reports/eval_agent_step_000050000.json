@@ -1,0 +1,219 @@
+{
+  "schema": "gridnet_actor_level_eval.v1",
+  "timestamp_utc": "2026-04-28T14:27:34Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\A_project_24env_24x24_20260428T142235Z\\checkpoints\\agent_step_000050000.pt",
+  "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\A_project_24env_24x24_20260428T142235Z\\model_metadata.json",
+  "status": "FAIL_COLLAPSED_NOOP",
+  "gate_status": "FAIL_COLLAPSED_NOOP",
+  "verdict": "Collapsed to NoOp on ready actors.",
+  "episodes": 4,
+  "max_steps": 256,
+  "effective_steps": 100,
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "opponents_used": [
+    "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+    "randomBiasedAI",
+    "randomBiasedAI",
+    "randomBiasedAI",
+    "randomBiasedAI"
+  ],
+  "actor_level_move_share": 0.0,
+  "actor_noop_share": 0.9979716024340771,
+  "effective_position_delta_count": 0,
+  "no_effect_action_share": 1.0,
+  "ready_movable_actor_choice_count": 948,
+  "ready_nonnoop_steps": 4,
+  "no_effect_ready_nonnoop_steps": 4,
+  "deterministic_mode": true,
+  "full_action_counts": {
+    "NoOp": 589820,
+    "Harvest": 4
+  },
+  "ready_actor_action_counts": {
+    "NoOp": 1968,
+    "Harvest": 4
+  },
+  "trace": [
+    {
+      "step": 0,
+      "ready_count": 2,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "NoOp": 1,
+        "Harvest": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 1,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 2,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 3,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 4,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 5,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 6,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 7,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 8,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 9,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 10,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 11,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 12,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 13,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 14,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 15,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 16,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 17,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 18,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 19,
+      "ready_count": 1,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {
+        "NoOp": 1
+      },
+      "position_delta": false
+    }
+  ]
+}

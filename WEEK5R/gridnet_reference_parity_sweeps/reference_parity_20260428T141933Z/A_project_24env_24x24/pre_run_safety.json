@@ -1,0 +1,11 @@
+{
+  "created_utc": "2026-04-28T14:19:33.066104+00:00",
+  "num_envs": 24,
+  "batch_size": 6144,
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "observation_shape": null,
+  "action_nvec": null,
+  "branch_sizes": null,
+  "project_compatible_24x24": true,
+  "diagnostic_only": false
+}

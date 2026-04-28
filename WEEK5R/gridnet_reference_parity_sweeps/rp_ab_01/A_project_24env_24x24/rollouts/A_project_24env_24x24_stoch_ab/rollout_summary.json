@@ -1,0 +1,83 @@
+{
+  "schema": "gridnet_rollout_export.v1",
+  "timestamp_utc": "2026-04-28T14:33:37Z",
+  "batch_name": "A_project_24env_24x24_stoch_ab",
+  "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\rollouts\\A_project_24env_24x24_stoch_ab",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\A_project_24env_24x24_20260428T142235Z\\agent_final.pt",
+  "opponent": "randomBiasedAI",
+  "deterministic_mode": false,
+  "episodes": 4,
+  "total_steps": 2048,
+  "action_type_distribution": {
+    "Attack": 195939,
+    "Harvest": 196166,
+    "Move": 196092,
+    "NoOp": 198025,
+    "Produce": 196803,
+    "Return": 196623
+  },
+  "move_share": 0.166229248046875,
+  "noop_share_full_grid": 0.1678678724500868,
+  "per_episode": [
+    {
+      "episode_id": 0,
+      "steps": 512,
+      "episode_return": 9.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49633,
+        "Move": 48750,
+        "Harvest": 49078,
+        "Return": 49337,
+        "Produce": 49284,
+        "Attack": 48830
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\rollouts\\A_project_24env_24x24_stoch_ab\\episode_00000.npz"
+    },
+    {
+      "episode_id": 1,
+      "steps": 512,
+      "episode_return": 21.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49423,
+        "Move": 49095,
+        "Harvest": 48899,
+        "Return": 49265,
+        "Produce": 49117,
+        "Attack": 49113
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\rollouts\\A_project_24env_24x24_stoch_ab\\episode_00001.npz"
+    },
+    {
+      "episode_id": 2,
+      "steps": 512,
+      "episode_return": 7.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49495,
+        "Move": 48956,
+        "Harvest": 49008,
+        "Return": 49164,
+        "Produce": 49246,
+        "Attack": 49043
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\rollouts\\A_project_24env_24x24_stoch_ab\\episode_00002.npz"
+    },
+    {
+      "episode_id": 3,
+      "steps": 512,
+      "episode_return": 7.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49474,
+        "Move": 49291,
+        "Harvest": 49181,
+        "Return": 48857,
+        "Produce": 49156,
+        "Attack": 48953
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\A_project_24env_24x24\\rollouts\\A_project_24env_24x24_stoch_ab\\episode_00003.npz"
+    }
+  ]
+}

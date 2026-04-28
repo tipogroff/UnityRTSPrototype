@@ -1,0 +1,68 @@
+{
+  "schema": "gridnet_rollout_export.v1",
+  "timestamp_utc": "2026-04-28T14:39:49Z",
+  "batch_name": "B_reference_24env_16x16_det_ab",
+  "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\rollouts\\B_reference_24env_16x16_det_ab",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\B_reference_24env_16x16_20260428T143356Z\\agent_final.pt",
+  "opponent": "randomBiasedAI",
+  "deterministic_mode": true,
+  "episodes": 4,
+  "total_steps": 2048,
+  "action_type_distribution": {
+    "Harvest": 4,
+    "NoOp": 524148,
+    "Produce": 136
+  },
+  "move_share": 0.0,
+  "noop_share_full_grid": 0.9997329711914062,
+  "per_episode": [
+    {
+      "episode_id": 0,
+      "steps": 512,
+      "episode_return": 1.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 131037,
+        "Harvest": 1,
+        "Produce": 34
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\rollouts\\B_reference_24env_16x16_det_ab\\episode_00000.npz"
+    },
+    {
+      "episode_id": 1,
+      "steps": 512,
+      "episode_return": 1.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 131037,
+        "Harvest": 1,
+        "Produce": 34
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\rollouts\\B_reference_24env_16x16_det_ab\\episode_00001.npz"
+    },
+    {
+      "episode_id": 2,
+      "steps": 512,
+      "episode_return": 1.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 131037,
+        "Harvest": 1,
+        "Produce": 34
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\rollouts\\B_reference_24env_16x16_det_ab\\episode_00002.npz"
+    },
+    {
+      "episode_id": 3,
+      "steps": 512,
+      "episode_return": 1.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 131037,
+        "Harvest": 1,
+        "Produce": 34
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\rp_ab_01\\B_reference_24env_16x16\\rollouts\\B_reference_24env_16x16_det_ab\\episode_00003.npz"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "gridnet_reference_parity_sweep.v1",
+  "sweep_id": "reference_parity_20260428T141933Z",
+  "created_utc": "2026-04-28T14:19:33.033972+00:00",
+  "workspace_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+  "python_exe": "C:\\Users\\grozo\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+  "device": "cpu",
+  "configs": [
+    {
+      "name": "A_project_24env_24x24",
+      "total_timesteps": 100000,
+      "num_bot_envs": 24,
+      "num_selfplay_envs": 0,
+      "map_path": "maps/24x24/basesWorkers24x24.xml",
+      "checkpoint_steps": "20000,50000,100000",
+      "seed": 1,
+      "diagnostic_only": false,
+      "project_compatible_24x24": true
+    },
+    {
+      "name": "B_reference_24env_16x16",
+      "total_timesteps": 100000,
+      "num_bot_envs": 24,
+      "num_selfplay_envs": 0,
+      "map_path": "maps/16x16/basesWorkers16x16.xml",
+      "checkpoint_steps": "20000,50000,100000",
+      "seed": 1,
+      "diagnostic_only": true,
+      "project_compatible_24x24": false
+    }
+  ],
+  "results_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\reference_parity_20260428T141933Z\\GRIDNET_REFERENCE_PARITY_SWEEP_RESULTS.json",
+  "results_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_reference_parity_sweeps\\reference_parity_20260428T141933Z\\GRIDNET_REFERENCE_PARITY_SWEEP_RESULTS.md",
+  "config_status": {
+    "A_project_24env_24x24": "skipped",
+    "B_reference_24env_16x16": "skipped"
+  }
+}
