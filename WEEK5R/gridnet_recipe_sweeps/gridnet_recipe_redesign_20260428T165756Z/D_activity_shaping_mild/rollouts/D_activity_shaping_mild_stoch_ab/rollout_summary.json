@@ -1,0 +1,83 @@
+{
+  "schema": "gridnet_rollout_export.v1",
+  "timestamp_utc": "2026-04-28T17:32:55Z",
+  "batch_name": "D_activity_shaping_mild_stoch_ab",
+  "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+  "opponent": "randomBiasedAI",
+  "deterministic_mode": false,
+  "episodes": 4,
+  "total_steps": 2048,
+  "action_type_distribution": {
+    "Attack": 195886,
+    "Harvest": 196158,
+    "Move": 196261,
+    "NoOp": 197809,
+    "Produce": 196897,
+    "Return": 196637
+  },
+  "move_share": 0.1663725111219618,
+  "noop_share_full_grid": 0.1676847669813368,
+  "per_episode": [
+    {
+      "episode_id": 0,
+      "steps": 512,
+      "episode_return": 8.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49432,
+        "Move": 48951,
+        "Harvest": 49096,
+        "Return": 49377,
+        "Produce": 49214,
+        "Attack": 48842
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\episode_00000.npz"
+    },
+    {
+      "episode_id": 1,
+      "steps": 512,
+      "episode_return": 18.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49411,
+        "Move": 49059,
+        "Harvest": 48880,
+        "Return": 49246,
+        "Produce": 49241,
+        "Attack": 49075
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\episode_00001.npz"
+    },
+    {
+      "episode_id": 2,
+      "steps": 512,
+      "episode_return": 6.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49488,
+        "Move": 48951,
+        "Harvest": 49004,
+        "Return": 49171,
+        "Produce": 49274,
+        "Attack": 49024
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\episode_00002.npz"
+    },
+    {
+      "episode_id": 3,
+      "steps": 512,
+      "episode_return": 4.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49478,
+        "Move": 49300,
+        "Harvest": 49178,
+        "Return": 48843,
+        "Produce": 49168,
+        "Attack": 48945
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\episode_00003.npz"
+    }
+  ]
+}

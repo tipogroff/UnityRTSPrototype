@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import math
@@ -70,6 +71,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--gamma", type=float, default=0.99)
     p.add_argument("--gae-lambda", type=float, default=0.95)
     p.add_argument("--ent-coef", type=float, default=0.01)
+    p.add_argument("--ent-schedule", choices=["none", "linear"], default="none")
+    p.add_argument("--ent-coef-start", type=float, default=0.01)
+    p.add_argument("--ent-coef-end", type=float, default=0.01)
     p.add_argument("--vf-coef", type=float, default=0.5)
     p.add_argument("--max-grad-norm", type=float, default=0.5)
     p.add_argument("--clip-coef", type=float, default=0.1)
@@ -94,6 +98,16 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--eval-effective-steps", type=int, default=100)
 
     p.add_argument("--capture-video", action=argparse.BooleanOptionalAction, default=False)
+    p.add_argument("--tensorboard-root", type=Path, default=None)
+    p.add_argument("--disable-tensorboard", action=argparse.BooleanOptionalAction, default=False)
+
+    p.add_argument("--curriculum-mode", choices=["none", "passive_warmup", "economy_warmup"], default="none")
+
+    p.add_argument("--activity-shaping", action=argparse.BooleanOptionalAction, default=False)
+    p.add_argument("--shape-move-reward", type=float, default=0.005)
+    p.add_argument("--shape-produce-reward", type=float, default=0.003)
+    p.add_argument("--shape-noop-penalty", type=float, default=0.0005)
+    p.add_argument("--shape-no-effect-penalty", type=float, default=0.001)
 
     p.add_argument("--render-window", action=argparse.BooleanOptionalAction, default=False)
     p.add_argument("--render-during-train", action=argparse.BooleanOptionalAction, default=False)
@@ -138,6 +152,21 @@ class ArtifactPaths:
     run_manifest: Path
     model_metadata: Path
     summary_md: Path
+
+
+class NullSummaryWriter:
+    def add_scalar(self, *args: Any, **kwargs: Any) -> None:
+        return
+
+    def close(self) -> None:
+        return
+
+
+def build_short_tb_run_name(run_name: str, max_len: int = 48) -> str:
+    digest = hashlib.sha1(run_name.encode("utf-8")).hexdigest()[:8]
+    max_base_len = max(1, max_len - 9)
+    base = run_name[:max_base_len]
+    return f"{base}_{digest}"
 
 
 def prepare_artifacts(args: argparse.Namespace) -> ArtifactPaths:
@@ -210,6 +239,22 @@ def build_model_metadata(
         "action_branch_sizes": branch_sizes,
         "actor_output_channels": actor_output_channels,
         "action_tensor_shape": [num_envs, mapsize, len(branch_sizes)],
+        "entropy_schedule": {
+            "mode": args.ent_schedule,
+            "ent_coef_base": float(args.ent_coef),
+            "ent_coef_start": float(args.ent_coef_start),
+            "ent_coef_end": float(args.ent_coef_end),
+        },
+        "curriculum": {
+            "mode": args.curriculum_mode,
+        },
+        "activity_shaping": {
+            "enabled": bool(args.activity_shaping),
+            "shape_move_reward": float(args.shape_move_reward),
+            "shape_produce_reward": float(args.shape_produce_reward),
+            "shape_noop_penalty": float(args.shape_noop_penalty),
+            "shape_no_effect_penalty": float(args.shape_no_effect_penalty),
+        },
         "training_surface_claim": "project-compatible-shape-only",
         "unity_checkpoint_compatible": False,
     }
@@ -247,10 +292,61 @@ def build_ai2s(num_bot_envs: int) -> List[Any]:
     return ai2s
 
 
-def build_env(args: argparse.Namespace, logger: FileAndConsoleLogger):
+def build_ai2s_from_names(num_bot_envs: int, opponent_names: Sequence[str]) -> List[Any]:
+    from gym_microrts import microrts_ai
+
+    resolved: List[Any] = []
+    fallback = microrts_ai.randomBiasedAI
+    for name in opponent_names:
+        resolved.append(getattr(microrts_ai, name, fallback))
+    if not resolved:
+        return build_ai2s(num_bot_envs)
+
+    ai2s: List[Any] = []
+    for idx in range(num_bot_envs):
+        ai2s.append(resolved[idx % len(resolved)])
+    return ai2s
+
+
+def curriculum_phase_for_step(args: argparse.Namespace, global_step: int) -> str:
+    if args.curriculum_mode == "none":
+        return "single"
+    if global_step < 50000:
+        return "warmup"
+    return "diverse"
+
+
+def curriculum_opponents_by_phase(args: argparse.Namespace) -> Dict[str, List[str]]:
+    if args.curriculum_mode == "passive_warmup":
+        return {
+            "warmup": ["passiveAI", "randomBiasedAI"],
+            "diverse": ["randomBiasedAI", "lightRushAI", "workerRushAI", "coacAI"],
+        }
+    if args.curriculum_mode == "economy_warmup":
+        return {
+            "warmup": ["passiveAI", "randomBiasedAI", "workerRushAI"],
+            "diverse": ["randomBiasedAI", "lightRushAI", "workerRushAI", "coacAI"],
+        }
+    return {
+        "single": ["randomBiasedAI", "randomBiasedAI", "lightRushAI", "lightRushAI", "workerRushAI", "workerRushAI", "coacAI"],
+    }
+
+
+def get_current_ent_coef(args: argparse.Namespace, update: int, num_updates: int) -> float:
+    if args.ent_schedule == "none":
+        return float(args.ent_coef)
+    if num_updates <= 1:
+        return float(args.ent_coef_end)
+    t = (float(update) - 1.0) / float(max(1, num_updates - 1))
+    return float(args.ent_coef_start + t * (args.ent_coef_end - args.ent_coef_start))
+
+
+def build_env(args: argparse.Namespace, logger: FileAndConsoleLogger, curriculum_phase: str):
     from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
 
-    ai2s = build_ai2s(args.num_bot_envs)
+    opponents_by_phase = curriculum_opponents_by_phase(args)
+    opponent_names = opponents_by_phase.get(curriculum_phase, opponents_by_phase.get("single", []))
+    ai2s = build_ai2s_from_names(args.num_bot_envs, opponent_names)
     common_kwargs = dict(
         num_selfplay_envs=args.num_selfplay_envs,
         num_bot_envs=args.num_bot_envs,
@@ -272,10 +368,7 @@ def build_env(args: argparse.Namespace, logger: FileAndConsoleLogger):
             **common_kwargs,
         )
 
-    logger.info(
-        "Opponent setup: num_bot_envs=%s, first-six=[2 randomBiasedAI, 2 lightRushAI, 2 workerRushAI], extra=coacAI",
-        args.num_bot_envs,
-    )
+    logger.info("Opponent setup: curriculum_mode=%s phase=%s num_bot_envs=%s pool=%s", args.curriculum_mode, curriculum_phase, args.num_bot_envs, opponent_names)
     return envs
 
 
@@ -490,6 +583,12 @@ def main() -> None:
         raise ValueError("initial-global-step must be >= 0.")
     if args.total_timesteps <= args.initial_global_step:
         raise ValueError("total-timesteps must be greater than initial-global-step.")
+    if args.ent_schedule == "linear" and args.ent_coef_start < 0.0:
+        raise ValueError("ent-coef-start must be >= 0 for linear schedule.")
+    if args.ent_schedule == "linear" and args.ent_coef_end < 0.0:
+        raise ValueError("ent-coef-end must be >= 0 for linear schedule.")
+    if args.ent_coef < 0.0:
+        raise ValueError("ent-coef must be >= 0.")
     if args.resume_from_checkpoint is not None and not args.resume_from_checkpoint.is_file():
         raise FileNotFoundError(f"resume checkpoint not found: {args.resume_from_checkpoint}")
     if args.resume_model_metadata is not None and not args.resume_model_metadata.is_file():
@@ -511,7 +610,8 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() and args.device.lower() == "cuda" else "cpu")
 
-    envs = build_env(args, logger)
+    current_curriculum_phase = curriculum_phase_for_step(args, args.initial_global_step)
+    envs = build_env(args, logger, current_curriculum_phase)
     if not isinstance(envs.action_space, MultiDiscrete):
         raise RuntimeError("Only MultiDiscrete action spaces are supported.")
 
@@ -551,7 +651,53 @@ def main() -> None:
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     run_name = f"gridnet_project__{args.seed}__{utc_stamp()}"
-    writer = SummaryWriter(log_dir=str(paths.run_dir / "tensorboard" / run_name))
+    short_tb_run_name = build_short_tb_run_name(run_name)
+    if args.tensorboard_root is not None:
+        tb_root = args.tensorboard_root.resolve()
+    else:
+        tb_root = paths.run_dir / "tb"
+    tb_log_dir = tb_root / short_tb_run_name
+
+    writer: Any = NullSummaryWriter()
+    tensorboard_status = "disabled_by_flag" if args.disable_tensorboard else "enabled"
+    tensorboard_error: Optional[str] = None
+    if args.disable_tensorboard:
+        logger.info("TensorBoard disabled by flag; tb_log_dir=%s", tb_log_dir)
+    else:
+        try:
+            tb_log_dir.mkdir(parents=True, exist_ok=True)
+            writer = SummaryWriter(log_dir=str(tb_log_dir))
+            logger.info("TensorBoard log dir: %s", tb_log_dir)
+        except Exception as exc:
+            tensorboard_status = "disabled_after_error"
+            tensorboard_error = f"{type(exc).__name__}: {exc}"
+            writer = NullSummaryWriter()
+            logger.warning("TensorBoard init failed; fallback to NullSummaryWriter: %s", tensorboard_error)
+
+    opponent_pool_by_phase = curriculum_opponents_by_phase(args)
+    phase_boundaries: List[Dict[str, Any]] = []
+    if args.curriculum_mode == "none":
+        phase_boundaries = [
+            {"phase": "single", "start_global_step": int(args.initial_global_step), "end_global_step": int(args.total_timesteps)}
+        ]
+    else:
+        warmup_end = int(min(50000, args.total_timesteps))
+        phase_boundaries = [
+            {"phase": "warmup", "start_global_step": int(args.initial_global_step), "end_global_step": warmup_end},
+            {"phase": "diverse", "start_global_step": warmup_end, "end_global_step": int(args.total_timesteps)},
+        ]
+
+    activity_shaping_counters: Dict[str, Any] = {
+        "enabled": bool(args.activity_shaping),
+        "shaping_applied": False,
+        "attribution_reliable": False,
+        "diagnostics_only_reason": "reliable per-step causal attribution is unavailable in current training env interface",
+        "move_reward_events": 0,
+        "produce_reward_events": 0,
+        "repeated_noop_penalty_events": 0,
+        "no_effect_penalty_events": 0,
+        "shaping_total_reward_delta": 0.0,
+    }
 
     action_shape = (mapsize, len(branch_sizes))
     invalid_mask_shape = (mapsize, actor_output_channels + 1)
@@ -610,6 +756,15 @@ def main() -> None:
                 checkpoint_reports.append(report)
 
     for update in range(1, num_updates + 1):
+        desired_phase = curriculum_phase_for_step(args, global_step)
+        if desired_phase != current_curriculum_phase:
+            logger.info("Curriculum phase switch: %s -> %s at global_step=%s", current_curriculum_phase, desired_phase, global_step)
+            envs.close()
+            current_curriculum_phase = desired_phase
+            envs = build_env(args, logger, current_curriculum_phase)
+            next_obs = torch.as_tensor(envs.reset(), device=device, dtype=torch.float32)
+            next_done = torch.zeros(envs.num_envs, device=device)
+
         should_render_update = (
             args.render_window
             and args.render_during_train
@@ -619,6 +774,8 @@ def main() -> None:
         if args.anneal_lr:
             frac = 1.0 - (update - 1.0) / num_updates
             optimizer.param_groups[0]["lr"] = frac * args.learning_rate
+
+        current_ent_coef = get_current_ent_coef(args, update, num_updates)
 
         for step in range(args.num_steps):
             global_step += envs.num_envs
@@ -642,7 +799,10 @@ def main() -> None:
             action_np = action.detach().cpu().numpy().astype(np.int32)
             next_obs_np, reward_np, done_np, infos = envs.step(action_np)
             next_obs = torch.as_tensor(next_obs_np, device=device, dtype=torch.float32)
-            rewards[step] = torch.as_tensor(reward_np, device=device, dtype=torch.float32)
+            reward_tensor = torch.as_tensor(reward_np, device=device, dtype=torch.float32)
+            if args.activity_shaping and activity_shaping_counters["shaping_applied"]:
+                reward_tensor = reward_tensor + float(activity_shaping_counters["shaping_total_reward_delta"])
+            rewards[step] = reward_tensor
             next_done = torch.as_tensor(done_np, device=device, dtype=torch.float32)
 
             if should_render_update:
@@ -723,7 +883,7 @@ def main() -> None:
                 else:
                     last_v_loss = 0.5 * ((new_values - b_returns[mb_inds]) ** 2).mean()
 
-                loss = last_pg_loss - args.ent_coef * last_entropy + args.vf_coef * last_v_loss
+                loss = last_pg_loss - current_ent_coef * last_entropy + args.vf_coef * last_v_loss
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -736,14 +896,19 @@ def main() -> None:
         writer.add_scalar("losses/policy_loss", float(last_pg_loss.item()), global_step)
         writer.add_scalar("losses/entropy", float(last_entropy.item()), global_step)
         writer.add_scalar("losses/approx_kl", float(last_approx_kl.item()), global_step)
+        writer.add_scalar("charts/current_ent_coef", float(current_ent_coef), global_step)
+        writer.add_scalar("charts/curriculum_phase_id", 0.0 if current_curriculum_phase == "warmup" else (1.0 if current_curriculum_phase == "diverse" else 2.0), global_step)
+        writer.add_scalar("shaping/shaping_total_reward_delta", float(activity_shaping_counters["shaping_total_reward_delta"]), global_step)
         writer.add_scalar("charts/sps", int(global_step / max(time.time() - start_time, 1e-6)), global_step)
 
         logger.info(
-            "update=%s/%s global_step=%s lr=%.6g sps=%s",
+            "update=%s/%s global_step=%s lr=%.6g ent_coef=%.6g curriculum_phase=%s sps=%s",
             update,
             num_updates,
             global_step,
             optimizer.param_groups[0]["lr"],
+            current_ent_coef,
+            current_curriculum_phase,
             int(global_step / max(time.time() - start_time, 1e-6)),
         )
 
@@ -820,6 +985,26 @@ def main() -> None:
         "final_eval_effective_position_delta_count": final_eval_effective_position_delta_count,
         "final_eval_actor_level_move_share": final_eval_actor_level_move_share,
         "final_eval_no_effect_action_share": final_eval_no_effect_action_share,
+        "entropy_schedule": {
+            "mode": args.ent_schedule,
+            "ent_coef_base": float(args.ent_coef),
+            "ent_coef_start": float(args.ent_coef_start),
+            "ent_coef_end": float(args.ent_coef_end),
+        },
+        "curriculum_mode": args.curriculum_mode,
+        "phase_boundaries": phase_boundaries,
+        "opponent_pool_by_phase": opponent_pool_by_phase,
+        "activity_shaping": {
+            "enabled": bool(args.activity_shaping),
+            "shape_move_reward": float(args.shape_move_reward),
+            "shape_produce_reward": float(args.shape_produce_reward),
+            "shape_noop_penalty": float(args.shape_noop_penalty),
+            "shape_no_effect_penalty": float(args.shape_no_effect_penalty),
+            "counters": activity_shaping_counters,
+        },
+        "tensorboard_status": tensorboard_status,
+        "tensorboard_error": tensorboard_error,
+        "tb_log_dir": str(tb_log_dir),
         "global_step_reached": int(global_step),
         "initial_global_step": int(args.initial_global_step),
         "remaining_timesteps_planned": int(remaining_timesteps),
@@ -868,6 +1053,19 @@ def main() -> None:
         f"- final_eval_effective_position_delta_count: {final_eval_effective_position_delta_count}",
         f"- final_eval_actor_level_move_share: {final_eval_actor_level_move_share}",
         f"- final_eval_no_effect_action_share: {final_eval_no_effect_action_share}",
+        f"- ent_schedule: {args.ent_schedule}",
+        f"- ent_coef_base: {args.ent_coef}",
+        f"- ent_coef_start: {args.ent_coef_start}",
+        f"- ent_coef_end: {args.ent_coef_end}",
+        f"- curriculum_mode: {args.curriculum_mode}",
+        f"- phase_boundaries: {phase_boundaries}",
+        f"- opponent_pool_by_phase: {opponent_pool_by_phase}",
+        f"- activity_shaping_enabled: {bool(args.activity_shaping)}",
+        f"- activity_shaping_applied: {bool(activity_shaping_counters.get('shaping_applied', False))}",
+        f"- shaping_counters: {activity_shaping_counters}",
+        f"- tensorboard_status: {tensorboard_status}",
+        f"- tensorboard_error: {tensorboard_error}",
+        f"- tb_log_dir: {tb_log_dir}",
         f"- render_window_enabled: {bool(args.render_window)}",
         f"- visual_eval_attempted: {bool(visual_eval.get('visual_eval_attempted', False))}",
         f"- visual_eval_status: {visual_eval.get('visual_eval_status', 'unavailable')}",

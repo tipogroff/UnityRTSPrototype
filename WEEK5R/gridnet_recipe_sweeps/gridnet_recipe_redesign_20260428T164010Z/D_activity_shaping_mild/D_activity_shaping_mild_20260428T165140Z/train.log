@@ -1,0 +1,4 @@
+2026-04-28 23:51:42,070 | INFO | Opponent setup: curriculum_mode=none phase=single num_bot_envs=24 pool=['randomBiasedAI', 'randomBiasedAI', 'lightRushAI', 'lightRushAI', 'workerRushAI', 'workerRushAI', 'coacAI']
+2026-04-28 23:51:42,070 | INFO | Observation shape: (24, 24, 27)
+2026-04-28 23:51:42,070 | INFO | Action nvec: [576, 6, 4, 4, 4, 4, 7, 49]
+2026-04-28 23:51:42,070 | INFO | Actor branch sizes: [6, 4, 4, 4, 4, 7, 49] (sum=78)

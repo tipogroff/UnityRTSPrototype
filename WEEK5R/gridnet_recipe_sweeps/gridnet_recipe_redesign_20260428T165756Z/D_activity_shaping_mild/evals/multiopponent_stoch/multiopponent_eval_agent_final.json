@@ -1,0 +1,139 @@
+{
+  "schema": "gridnet_multiopponent_eval.v1",
+  "timestamp_utc": "2026-04-28T17:32:43Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+  "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "episodes_per_opponent": 4,
+  "max_steps": 256,
+  "effective_steps": 100,
+  "deterministic_mode": false,
+  "opponents_evaluated": [
+    "randomBiasedAI",
+    "lightRushAI",
+    "workerRushAI",
+    "coacAI"
+  ],
+  "aggregate": {
+    "pass_count": 4,
+    "total_opponents": 4,
+    "any_positive_position_delta": true,
+    "all_passing_have_no_effect_lt_1": true,
+    "aggregate_verdict": "CANDIDATE_VIABLE",
+    "aggregate_note": "PASS on 4/4 opponents. Consider continuation training or BC export."
+  },
+  "per_opponent": [
+    {
+      "opponent": "randomBiasedAI",
+      "status": "PASS",
+      "gate_status": "PASS",
+      "verdict": "Actor-level effective movement detected.",
+      "actor_level_move_share": 0.25487944890929964,
+      "actor_noop_share": 0.5499425947187141,
+      "effective_position_delta_count": 170,
+      "no_effect_action_share": 0.84,
+      "ready_movable_actor_choice_count": 531,
+      "subprocess_returncode": 0,
+      "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "full_action_counts": {
+        "NoOp": 97960,
+        "Move": 98363,
+        "Harvest": 98215,
+        "Return": 98238,
+        "Produce": 98573,
+        "Attack": 98475
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 479,
+        "Move": 222,
+        "Harvest": 12,
+        "Return": 5,
+        "Produce": 153
+      }
+    },
+    {
+      "opponent": "lightRushAI",
+      "status": "PASS",
+      "gate_status": "PASS",
+      "verdict": "Actor-level effective movement detected.",
+      "actor_level_move_share": 0.2024070021881838,
+      "actor_noop_share": 0.5021881838074398,
+      "effective_position_delta_count": 142,
+      "no_effect_action_share": 0.8721804511278195,
+      "ready_movable_actor_choice_count": 512,
+      "subprocess_returncode": 0,
+      "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "full_action_counts": {
+        "NoOp": 98847,
+        "Move": 98499,
+        "Harvest": 97738,
+        "Return": 98175,
+        "Produce": 98256,
+        "Attack": 98309
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 459,
+        "Move": 185,
+        "Harvest": 14,
+        "Return": 9,
+        "Produce": 247
+      }
+    },
+    {
+      "opponent": "workerRushAI",
+      "status": "PASS",
+      "gate_status": "PASS",
+      "verdict": "Actor-level effective movement detected.",
+      "actor_level_move_share": 0.07765151515151515,
+      "actor_noop_share": 0.5321969696969697,
+      "effective_position_delta_count": 74,
+      "no_effect_action_share": 0.9498910675381264,
+      "ready_movable_actor_choice_count": 268,
+      "subprocess_returncode": 0,
+      "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "full_action_counts": {
+        "NoOp": 98133,
+        "Move": 98440,
+        "Harvest": 97847,
+        "Return": 98452,
+        "Produce": 98624,
+        "Attack": 98328
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 562,
+        "Move": 82,
+        "Harvest": 10,
+        "Return": 5,
+        "Produce": 397
+      }
+    },
+    {
+      "opponent": "coacAI",
+      "status": "PASS",
+      "gate_status": "PASS",
+      "verdict": "Actor-level effective movement detected.",
+      "actor_level_move_share": 0.23980222496909764,
+      "actor_noop_share": 0.5426452410383189,
+      "effective_position_delta_count": 172,
+      "no_effect_action_share": 0.8597014925373134,
+      "ready_movable_actor_choice_count": 460,
+      "subprocess_returncode": 0,
+      "subprocess_stderr": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n",
+      "full_action_counts": {
+        "NoOp": 98530,
+        "Move": 98643,
+        "Harvest": 98572,
+        "Return": 98278,
+        "Produce": 98046,
+        "Attack": 97755
+      },
+      "ready_actor_action_counts": {
+        "NoOp": 439,
+        "Move": 194,
+        "Harvest": 13,
+        "Return": 9,
+        "Produce": 154
+      }
+    }
+  ]
+}

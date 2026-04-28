@@ -1,0 +1,478 @@
+{
+  "config": {
+    "name": "D_activity_shaping_mild",
+    "total_timesteps": 100000,
+    "num_bot_envs": 24,
+    "num_selfplay_envs": 0,
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "checkpoint_steps": "20000,50000,100000",
+    "seed": 1,
+    "diagnostic_only": false,
+    "project_compatible_24x24": true,
+    "ent_schedule": "linear",
+    "ent_coef": 0.01,
+    "ent_coef_start": 0.01,
+    "ent_coef_end": 0.0005,
+    "curriculum_mode": "none",
+    "staged_curriculum": false,
+    "activity_shaping": true,
+    "shape_move_reward": 0.005,
+    "shape_produce_reward": 0.003,
+    "shape_noop_penalty": 0.0005,
+    "shape_no_effect_penalty": 0.001
+  },
+  "status": "completed",
+  "events": [],
+  "probe": {
+    "status": "ok",
+    "probe_payload": {
+      "status": "ok",
+      "observation_shape": [
+        24,
+        24,
+        27
+      ],
+      "action_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "num_envs": 24
+    },
+    "result": {
+      "command": [
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+        "-c",
+        "\nimport json\nimport numpy as np\n\nfrom gym_microrts import microrts_ai\nfrom gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv\n\nmap_path = 'maps/24x24/basesWorkers24x24.xml'\nnum_bot_envs = 24\nnum_selfplay_envs = 0\n\nai2s = [microrts_ai.randomBiasedAI for _ in range(num_bot_envs)]\nkwargs = dict(\n    num_selfplay_envs=num_selfplay_envs,\n    num_bot_envs=num_bot_envs,\n    ai2s=ai2s,\n    max_steps=64,\n    autobuild=False,\n)\n\nenv = None\ntry:\n    try:\n        env = MicroRTSGridModeVecEnv(map_paths=[map_path], **kwargs)\n    except TypeError:\n        env = MicroRTSGridModeVecEnv(map_path=map_path, **kwargs)\n\n    obs_shape = tuple(int(v) for v in env.observation_space.shape)\n    mapsize = int(obs_shape[0] * obs_shape[1])\n\n    if hasattr(env, \"action_plane_space\") and hasattr(env.action_plane_space, \"nvec\"):\n        branch_sizes = [int(v) for v in env.action_plane_space.nvec.tolist()]\n    else:\n        flat_nvec = [int(v) for v in env.action_space.nvec.tolist()]\n        if mapsize <= 0 or len(flat_nvec) % mapsize != 0:\n            raise RuntimeError(\"Cannot derive branch sizes from action space\")\n        branch_sizes = flat_nvec[: len(flat_nvec) // mapsize]\n\n    action_nvec = [mapsize] + branch_sizes\n    payload = {\n        \"status\": \"ok\",\n        \"observation_shape\": list(obs_shape),\n        \"action_nvec\": action_nvec,\n        \"branch_sizes\": branch_sizes,\n        \"num_envs\": int(getattr(env, \"num_envs\", num_bot_envs + num_selfplay_envs)),\n    }\n    print(json.dumps(payload, ensure_ascii=True))\nexcept Exception as exc:\n    print(json.dumps({\"status\": \"error\", \"error\": f\"{type(exc).__name__}: {exc}\"}, ensure_ascii=True))\nfinally:\n    if env is not None:\n        try:\n            env.close()\n        except Exception:\n            pass\n"
+      ],
+      "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+      "started_utc": "2026-04-28T17:21:53.788979+00:00",
+      "ended_utc": "2026-04-28T17:21:54.464776+00:00",
+      "exit_code": 0,
+      "stdout_tail": "{\"status\": \"ok\", \"observation_shape\": [24, 24, 27], \"action_nvec\": [576, 6, 4, 4, 4, 4, 7, 49], \"branch_sizes\": [6, 4, 4, 4, 4, 7, 49], \"num_envs\": 24}\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n"
+    }
+  },
+  "pre_run_safety": {
+    "created_utc": "2026-04-28T17:21:54.464776+00:00",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "num_envs": 24,
+    "observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "project_compatible_24x24": true,
+    "diagnostic_only": false,
+    "curriculum_mode": "none",
+    "staged_curriculum": false,
+    "ent_schedule": "linear",
+    "ent_coef": 0.01,
+    "ent_coef_start": 0.01,
+    "ent_coef_end": 0.0005,
+    "activity_shaping": true
+  },
+  "train": {
+    "result": {
+      "command": [
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\train_teacher_gridnet_project.py",
+        "--run-id",
+        "D_activity_shaping_mild_20260428T172154Z",
+        "--total-timesteps",
+        "100000",
+        "--checkpoint-steps",
+        "20000,50000,100000",
+        "--initial-global-step",
+        "0",
+        "--num-bot-envs",
+        "24",
+        "--num-selfplay-envs",
+        "0",
+        "--seed",
+        "1",
+        "--device",
+        "cpu",
+        "--eval-after-checkpoint",
+        "--map-path",
+        "maps/24x24/basesWorkers24x24.xml",
+        "--output-root",
+        "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild",
+        "--ent-schedule",
+        "linear",
+        "--ent-coef",
+        "0.01",
+        "--ent-coef-start",
+        "0.01",
+        "--ent-coef-end",
+        "0.0005",
+        "--curriculum-mode",
+        "none",
+        "--activity-shaping",
+        "--shape-move-reward",
+        "0.005",
+        "--shape-produce-reward",
+        "0.003",
+        "--shape-noop-penalty",
+        "0.0005",
+        "--shape-no-effect-penalty",
+        "0.001",
+        "--disable-tensorboard"
+      ],
+      "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+      "started_utc": "2026-04-28T17:21:54.464776+00:00",
+      "ended_utc": "2026-04-28T17:31:54.224826+00:00",
+      "exit_code": 0,
+      "stdout_tail": "ent_coef=0.002875 curriculum_phase=single sps=176\n2026-04-29 00:30:04,655 | INFO | update=14/17 global_step=86016 lr=5.88235e-05 ent_coef=0.00228125 curriculum_phase=single sps=176\n2026-04-29 00:30:36,861 | INFO | update=15/17 global_step=92160 lr=4.41176e-05 ent_coef=0.0016875 curriculum_phase=single sps=177\n2026-04-29 00:31:09,062 | INFO | update=16/17 global_step=98304 lr=2.94118e-05 ent_coef=0.00109375 curriculum_phase=single sps=178\n2026-04-29 00:31:12,309 | INFO | Saved checkpoint: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\checkpoints\\agent_step_000100000.pt\n2026-04-29 00:31:12,309 | INFO | Running gridnet actor-level evaluator: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py --checkpoint C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\checkpoints\\agent_step_000100000.pt --model-metadata C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\gate_or_eval_reports\\eval_agent_step_000100000.json --output-md C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\gate_or_eval_reports\\eval_agent_step_000100000.md --device cpu\n2026-04-29 00:31:47,987 | INFO | update=17/17 global_step=104448 lr=1.47059e-05 ent_coef=0.0005 curriculum_phase=single sps=176\n2026-04-29 00:31:47,991 | INFO | Running gridnet actor-level evaluator: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_actor_level.py --checkpoint C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt --model-metadata C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json --episodes 4 --max-steps 256 --effective-steps 100 --seed 1 --map-path maps/24x24/basesWorkers24x24.xml --output-json C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\gate_or_eval_reports\\eval_agent_final.json --output-md C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\gate_or_eval_reports\\eval_agent_final.md --device cpu\n2026-04-29 00:31:53,743 | INFO | Training finished. Final model: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt\n2026-04-29 00:31:53,743 | INFO | Run summary: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\summary.md\n",
+      "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n"
+    },
+    "artifacts": {
+      "mode": "single",
+      "run_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z",
+      "final_model": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+      "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+      "run_manifest": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\run_manifest.json",
+      "gate_or_eval_reports_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\gate_or_eval_reports"
+    },
+    "ok": true
+  },
+  "multiopponent": {
+    "det": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_multiopponent.py",
+          "--checkpoint",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+          "--model-metadata",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+          "--map-path",
+          "maps/24x24/basesWorkers24x24.xml",
+          "--episodes",
+          "4",
+          "--max-steps",
+          "256",
+          "--effective-steps",
+          "100",
+          "--deterministic",
+          "true",
+          "--device",
+          "cpu",
+          "--output-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det",
+          "--python",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "--seed",
+          "1"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:31:54.224826+00:00",
+        "ended_utc": "2026-04-28T17:32:17.338018+00:00",
+        "exit_code": 0,
+        "stdout_tail": "[multiopp] Checkpoint  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt\n[multiopp] Opponents   : ['randomBiasedAI', 'lightRushAI', 'workerRushAI', 'coacAI']\n[multiopp] Episodes    : 4\n[multiopp] Deterministic: true\n[multiopp] Output dir  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det\n[multiopp] Starting subprocess for opponent=randomBiasedAI ...\n[multiopp]   opponent=randomBiasedAI status=PASS actor_move=0.0132 pos_delta=52\n[multiopp] Starting subprocess for opponent=lightRushAI ...\n[multiopp]   opponent=lightRushAI status=PASS actor_move=0.0132 pos_delta=52\n[multiopp] Starting subprocess for opponent=workerRushAI ...\n[multiopp]   opponent=workerRushAI status=PASS actor_move=0.0132 pos_delta=52\n[multiopp] Starting subprocess for opponent=coacAI ...\n[multiopp]   opponent=coacAI status=PASS actor_move=0.0132 pos_delta=52\n\n[multiopp] Aggregate verdict : CANDIDATE_VIABLE\n[multiopp] PASS count        : 4 / 4\n[multiopp] Written           : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det\\multiopponent_eval_agent_final.json\n[multiopp] Written           : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det\\multiopponent_eval_agent_final.md\n",
+        "stderr_tail": ""
+      },
+      "output_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det\\multiopponent_eval_agent_final.json",
+      "ok": true
+    },
+    "stoch": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\evaluate_gridnet_multiopponent.py",
+          "--checkpoint",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+          "--model-metadata",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+          "--map-path",
+          "maps/24x24/basesWorkers24x24.xml",
+          "--episodes",
+          "4",
+          "--max-steps",
+          "256",
+          "--effective-steps",
+          "100",
+          "--deterministic",
+          "false",
+          "--device",
+          "cpu",
+          "--output-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch",
+          "--python",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "--seed",
+          "1"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:32:17.338018+00:00",
+        "ended_utc": "2026-04-28T17:32:43.972827+00:00",
+        "exit_code": 0,
+        "stdout_tail": "[multiopp] Checkpoint  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt\n[multiopp] Opponents   : ['randomBiasedAI', 'lightRushAI', 'workerRushAI', 'coacAI']\n[multiopp] Episodes    : 4\n[multiopp] Deterministic: false\n[multiopp] Output dir  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch\n[multiopp] Starting subprocess for opponent=randomBiasedAI ...\n[multiopp]   opponent=randomBiasedAI status=PASS actor_move=0.2549 pos_delta=170\n[multiopp] Starting subprocess for opponent=lightRushAI ...\n[multiopp]   opponent=lightRushAI status=PASS actor_move=0.2024 pos_delta=142\n[multiopp] Starting subprocess for opponent=workerRushAI ...\n[multiopp]   opponent=workerRushAI status=PASS actor_move=0.0777 pos_delta=74\n[multiopp] Starting subprocess for opponent=coacAI ...\n[multiopp]   opponent=coacAI status=PASS actor_move=0.2398 pos_delta=172\n\n[multiopp] Aggregate verdict : CANDIDATE_VIABLE\n[multiopp] PASS count        : 4 / 4\n[multiopp] Written           : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch\\multiopponent_eval_agent_final.json\n[multiopp] Written           : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch\\multiopponent_eval_agent_final.md\n",
+        "stderr_tail": ""
+      },
+      "output_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch\\multiopponent_eval_agent_final.json",
+      "ok": true
+    }
+  },
+  "rollout": {
+    "det": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\export_gridnet_teacher_rollout.py",
+          "--checkpoint",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+          "--model-metadata",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+          "--episodes",
+          "4",
+          "--max-steps",
+          "512",
+          "--seed",
+          "1",
+          "--map-path",
+          "maps/24x24/basesWorkers24x24.xml",
+          "--deterministic",
+          "true",
+          "--device",
+          "cpu",
+          "--output-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts",
+          "--batch-label",
+          "D_activity_shaping_mild_det_ab"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:32:43.972827+00:00",
+        "ended_utc": "2026-04-28T17:32:54.447820+00:00",
+        "exit_code": 0,
+        "stdout_tail": "[export] Checkpoint  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt\n[export] Batch dir   : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\n[export] Episodes    : 4, max_steps=512\n[export] Deterministic: True\n[export]   episode 1/4 ... steps=512, return=2.00, done=True\n[export]   episode 2/4 ... steps=512, return=2.00, done=True\n[export]   episode 3/4 ... steps=512, return=2.00, done=True\n[export]   episode 4/4 ... steps=512, return=2.00, done=True\n[export] Done. Total steps: 2048\n[export] Batch dir: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\n[export] batch.summary.json: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\\batch.summary.json\n[export] rollout_summary.json: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\\rollout_summary.json\n",
+        "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n"
+      },
+      "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab",
+      "rollout_summary": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\\rollout_summary.json",
+      "ok": true
+    },
+    "stoch": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_gridnet\\export_gridnet_teacher_rollout.py",
+          "--checkpoint",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt",
+          "--model-metadata",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\model_metadata.json",
+          "--episodes",
+          "4",
+          "--max-steps",
+          "512",
+          "--seed",
+          "1",
+          "--map-path",
+          "maps/24x24/basesWorkers24x24.xml",
+          "--deterministic",
+          "false",
+          "--device",
+          "cpu",
+          "--output-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts",
+          "--batch-label",
+          "D_activity_shaping_mild_stoch_ab"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:32:54.447820+00:00",
+        "ended_utc": "2026-04-28T17:33:07.982013+00:00",
+        "exit_code": 0,
+        "stdout_tail": "[export] Checkpoint  : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\D_activity_shaping_mild_20260428T172154Z\\agent_final.pt\n[export] Batch dir   : C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\n[export] Episodes    : 4, max_steps=512\n[export] Deterministic: False\n[export]   episode 1/4 ... steps=512, return=8.00, done=True\n[export]   episode 2/4 ... steps=512, return=18.00, done=True\n[export]   episode 3/4 ... steps=512, return=6.00, done=True\n[export]   episode 4/4 ... steps=512, return=4.00, done=True\n[export] Done. Total steps: 2048\n[export] Batch dir: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\n[export] batch.summary.json: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\batch.summary.json\n[export] rollout_summary.json: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\rollout_summary.json\n",
+        "stderr_tail": "Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.\nPlease upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.\nSee the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.\n"
+      },
+      "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab",
+      "rollout_summary": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\rollout_summary.json",
+      "ok": true
+    }
+  },
+  "adapter": {
+    "det": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\adapt_teacher_dataset.py",
+          "--input-batch-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab",
+          "--output-root",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2",
+          "--output-batch-name",
+          "teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z",
+          "--target-action-contract",
+          "v2_gridnet_compatible"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:33:07.983191+00:00",
+        "ended_utc": "2026-04-28T17:33:10.236993+00:00",
+        "exit_code": 0,
+        "stdout_tail": "Day 4 adaptation completed.\nInput batch: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\nOutput batch: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z\nReport: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z\\conversion_report.json\n",
+        "stderr_tail": ""
+      },
+      "output_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z",
+      "conversion_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z\\conversion_report.json",
+      "ok": true
+    },
+    "stoch": {
+      "result": {
+        "command": [
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\.venv_day2_py39\\Scripts\\python.exe",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher\\adapt_teacher_dataset.py",
+          "--input-batch-dir",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab",
+          "--output-root",
+          "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2",
+          "--output-batch-name",
+          "teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z",
+          "--target-action-contract",
+          "v2_gridnet_compatible"
+        ],
+        "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+        "started_utc": "2026-04-28T17:33:10.236993+00:00",
+        "ended_utc": "2026-04-28T17:33:15.080934+00:00",
+        "exit_code": 0,
+        "stdout_tail": "Day 4 adaptation completed.\nInput batch: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\nOutput batch: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z\nReport: C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z\\conversion_report.json\n",
+        "stderr_tail": ""
+      },
+      "output_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z",
+      "conversion_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z\\conversion_report.json",
+      "ok": true
+    }
+  },
+  "metrics": {
+    "det_roll": {
+      "status": "ok",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_det_ab\\rollout_summary.json",
+      "mean_return": 2.0,
+      "std_return": 0.0,
+      "move_share": 0.00011867947048611111,
+      "noop_share": 0.999755859375,
+      "episodes": 4,
+      "total_steps": 2048,
+      "entropy": 0.0024703290341855436,
+      "entropy_norm": 0.0017819657234917532,
+      "top_action": "NoOp",
+      "top_share": 0.999755859375,
+      "distribution": {
+        "Harvest": 8,
+        "Move": 140,
+        "NoOp": 1179360,
+        "Produce": 140
+      }
+    },
+    "stoch_roll": {
+      "status": "ok",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\rollouts\\D_activity_shaping_mild_stoch_ab\\rollout_summary.json",
+      "mean_return": 9.0,
+      "std_return": 5.385164807134504,
+      "move_share": 0.1663725111219618,
+      "noop_share": 0.1676847669813368,
+      "episodes": 4,
+      "total_steps": 2048,
+      "entropy": 1.7917543623641938,
+      "entropy_norm": 0.9999971498050108,
+      "top_action": "NoOp",
+      "top_share": 0.1676847669813368,
+      "distribution": {
+        "Attack": 195886,
+        "Harvest": 196158,
+        "Move": 196261,
+        "NoOp": 197809,
+        "Produce": 196897,
+        "Return": 196637
+      }
+    },
+    "det_multi": {
+      "status": "ok",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_det\\multiopponent_eval_agent_final.json",
+      "aggregate_verdict": "CANDIDATE_VIABLE",
+      "pass_count": 4,
+      "total_opponents": 4,
+      "actor_move_mean": 0.013196480938416423,
+      "actor_noop_mean": 0.9325513196480938
+    },
+    "stoch_multi": {
+      "status": "ok",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\evals\\multiopponent_stoch\\multiopponent_eval_agent_final.json",
+      "aggregate_verdict": "CANDIDATE_VIABLE",
+      "pass_count": 4,
+      "total_opponents": 4,
+      "actor_move_mean": 0.19368504780452406,
+      "actor_noop_mean": 0.5317432473153606
+    },
+    "adapter": {
+      "det": {
+        "status": "ok",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_det_ab_v2_20260428T173307Z\\conversion_report.json",
+        "usable_samples": 2048,
+        "dropped_samples": 0,
+        "remap_to_noop_count": 0,
+        "remap_to_noop_share": 0.0,
+        "semantic_weakening_share": 0.0,
+        "requires_unity_v2_validation_count": 0
+      },
+      "stoch": {
+        "status": "ok",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\D_activity_shaping_mild\\adapter_v2\\teacher_adapted_D_activity_shaping_mild_stoch_ab_v2_20260428T173310Z\\conversion_report.json",
+        "usable_samples": 2048,
+        "dropped_samples": 0,
+        "remap_to_noop_count": 0,
+        "remap_to_noop_share": 0.0,
+        "semantic_weakening_share": 0.0,
+        "requires_unity_v2_validation_count": 244287
+      }
+    },
+    "activity_shaping": {
+      "status": "ok",
+      "enabled": true,
+      "shape_move_reward": 0.005,
+      "shape_produce_reward": 0.003,
+      "shape_noop_penalty": 0.0005,
+      "shape_no_effect_penalty": 0.001,
+      "shaping_applied": false,
+      "attribution_reliable": false,
+      "diagnostics_only_reason": "reliable per-step causal attribution is unavailable in current training env interface",
+      "move_reward_events": 0,
+      "produce_reward_events": 0,
+      "repeated_noop_penalty_events": 0,
+      "no_effect_penalty_events": 0,
+      "shaping_total_reward_delta": 0.0
+    }
+  }
+}

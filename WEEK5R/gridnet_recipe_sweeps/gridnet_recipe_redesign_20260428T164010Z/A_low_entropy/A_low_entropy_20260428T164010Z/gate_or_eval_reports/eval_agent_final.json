@@ -1,0 +1,185 @@
+{
+  "schema": "gridnet_actor_level_eval.v1",
+  "timestamp_utc": "2026-04-28T16:50:11Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\A_low_entropy_20260428T164010Z\\agent_final.pt",
+  "model_metadata": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\A_low_entropy_20260428T164010Z\\model_metadata.json",
+  "status": "SUSPICIOUS",
+  "gate_status": "SUSPICIOUS",
+  "verdict": "Non-collapsed action mix detected, but effective movement evidence is weak.",
+  "episodes": 4,
+  "max_steps": 256,
+  "effective_steps": 100,
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "opponents_used": [
+    "NOTE: per_episode requested; using single fixed opponent due JVM restart limitation",
+    "randomBiasedAI",
+    "randomBiasedAI",
+    "randomBiasedAI",
+    "randomBiasedAI"
+  ],
+  "actor_level_move_share": 0.001303780964797914,
+  "actor_noop_share": 0.9908735332464146,
+  "effective_position_delta_count": 24,
+  "no_effect_action_share": 1.0,
+  "ready_movable_actor_choice_count": 3008,
+  "ready_nonnoop_steps": 24,
+  "no_effect_ready_nonnoop_steps": 24,
+  "deterministic_mode": true,
+  "full_action_counts": {
+    "NoOp": 589796,
+    "Move": 4,
+    "Harvest": 4,
+    "Produce": 20
+  },
+  "ready_actor_action_counts": {
+    "NoOp": 3040,
+    "Move": 4,
+    "Harvest": 4,
+    "Produce": 20
+  },
+  "trace": [
+    {
+      "step": 0,
+      "ready_count": 2,
+      "movable_ready_count": 1,
+      "chosen_ready_actions": {
+        "Harvest": 1,
+        "Produce": 1
+      },
+      "position_delta": false
+    },
+    {
+      "step": 1,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 2,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 3,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 4,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 5,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 6,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 7,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 8,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 9,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 10,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 11,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 12,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 13,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 14,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 15,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 16,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 17,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 18,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    },
+    {
+      "step": 19,
+      "ready_count": 0,
+      "movable_ready_count": 0,
+      "chosen_ready_actions": {},
+      "position_delta": false
+    }
+  ]
+}

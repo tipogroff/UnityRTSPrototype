@@ -1,0 +1,83 @@
+{
+  "schema": "gridnet_rollout_export.v1",
+  "timestamp_utc": "2026-04-28T17:09:13Z",
+  "batch_name": "B_entropy_decay_stoch_ab",
+  "batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\rollouts\\B_entropy_decay_stoch_ab",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\B_entropy_decay_20260428T165757Z\\agent_final.pt",
+  "opponent": "randomBiasedAI",
+  "deterministic_mode": false,
+  "episodes": 4,
+  "total_steps": 2048,
+  "action_type_distribution": {
+    "Attack": 195860,
+    "Harvest": 196100,
+    "Move": 196095,
+    "NoOp": 198245,
+    "Produce": 196811,
+    "Return": 196537
+  },
+  "move_share": 0.1662317911783854,
+  "noop_share_full_grid": 0.1680543687608507,
+  "per_episode": [
+    {
+      "episode_id": 0,
+      "steps": 512,
+      "episode_return": 9.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49596,
+        "Move": 48765,
+        "Harvest": 49083,
+        "Return": 49334,
+        "Produce": 49298,
+        "Attack": 48836
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\rollouts\\B_entropy_decay_stoch_ab\\episode_00000.npz"
+    },
+    {
+      "episode_id": 1,
+      "steps": 512,
+      "episode_return": 14.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49502,
+        "Move": 49105,
+        "Harvest": 48872,
+        "Return": 49223,
+        "Produce": 49133,
+        "Attack": 49077
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\rollouts\\B_entropy_decay_stoch_ab\\episode_00001.npz"
+    },
+    {
+      "episode_id": 2,
+      "steps": 512,
+      "episode_return": 2.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49614,
+        "Move": 48932,
+        "Harvest": 48979,
+        "Return": 49150,
+        "Produce": 49230,
+        "Attack": 49007
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\rollouts\\B_entropy_decay_stoch_ab\\episode_00002.npz"
+    },
+    {
+      "episode_id": 3,
+      "steps": 512,
+      "episode_return": 3.0,
+      "done": true,
+      "action_type_counts": {
+        "NoOp": 49533,
+        "Move": 49293,
+        "Harvest": 49166,
+        "Return": 48830,
+        "Produce": 49150,
+        "Attack": 48940
+      },
+      "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T165756Z\\B_entropy_decay\\rollouts\\B_entropy_decay_stoch_ab\\episode_00003.npz"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "input_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\rollouts\\A_low_entropy_stoch_ab",
+  "input_batch_kind": "unknown",
+  "output_batch_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z",
+  "converted_episode_files": [
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z\\episode_00000.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z\\episode_00001.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z\\episode_00002.adapted.npz",
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z\\episode_00003.adapted.npz"
+  ],
+  "conversion_report_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\gridnet_recipe_sweeps\\gridnet_recipe_redesign_20260428T164010Z\\A_low_entropy\\adapter_v2\\teacher_adapted_A_low_entropy_stoch_ab_v2_20260428T165127Z\\conversion_report.json",
+  "conversion_debug_jsonl_path": null
+}
