@@ -10,6 +10,13 @@
 - Legacy Gym teacher (включая `gym_microrts==0.3.2` reference path) может использоваться как teacher-source при подтвержденной стабильности среды и воспроизводимости.
 - Даже при структурном сближении branch layout прямой перенос весов не считается автоматически доказанным; semantic/runtime parity требует отдельной валидации.
 
+### Legacy gym_microrts==0.3.2 teacher workspace
+
+- path: `python/week5_teacher_legacy032/`
+- purpose: isolated teacher-source lineage for Unity v2 action contract `[6,4,4,4,4,7,49]`
+- status: Stage 0 scaffold — no training yet
+- note: do not mix v0.6.1 artifacts and legacy032 artifacts in the same output directory
+
 ## 1. Цель
 
 Собрать исследовательский RTS-прототип в Unity с управлением противником через перенос знаний из Gym-μRTS.
