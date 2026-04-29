@@ -97,8 +97,13 @@ from mask_audit_utils import (  # noqa: E402
     step_compat,
 )
 from reward_audit_utils import (  # noqa: E402
+    ALL_POLICY_MODES,
+    TARGETED_POLICY_MODES,
+    build_policy_action,
     build_scripted_probe_action,
     flatten_obs,
+    init_probe_diagnostics,
+    merge_probe_diagnostics,
     to_env_action_shape,
     validate_action_against_mask,
 )
@@ -194,15 +199,20 @@ def choose_dataset_decision(validation: Dict[str, Any]) -> str:
         return "FAIL_DATASET_SHAPE"
     if int(validation.get("invalid_action_count", 0)) > 0:
         return "FAIL_DATASET_INVALID_ACTIONS"
+
     class_presence = validation.get("class_presence", {})
     has_move = bool(class_presence.get("move", False))
+    extra_present = sum(
+        1 for k in ["harvest", "return", "produce", "attack"] if bool(class_presence.get(k, False))
+    )
     nonnoop_share = float(validation.get("non_noop_share", 0.0))
-    if has_move and nonnoop_share > 0.0:
-        required = ["move", "harvest", "return", "produce", "attack"]
-        missing = [k for k in required if not bool(class_presence.get(k, False))]
-        if missing:
-            return "PARTIAL_PASS_DATASET_LIMITED_CLASSES"
+
+    if has_move and nonnoop_share > 0.0 and extra_present >= 2:
         return "PASS_DATASET_READY"
+
+    if has_move or nonnoop_share > 0.0:
+        return "PARTIAL_PASS_DATASET_LIMITED_CLASSES"
+
     return "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
 
 

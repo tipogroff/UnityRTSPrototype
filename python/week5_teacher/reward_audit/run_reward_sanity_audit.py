@@ -8,16 +8,18 @@ from typing import Any, Dict, List
 import numpy as np
 
 from reward_audit_utils import (
+    ALL_POLICY_MODES,
     ACTION_TYPE_NAMES,
     DEFAULT_ENV_ID,
     DEFAULT_MAP_PATH,
     DEFAULT_OUTPUT_DIR,
     build_noop_action,
+    build_policy_action,
     build_random_valid_action,
-    build_scripted_probe_action,
     collect_action_histograms,
     flatten_mask,
     flatten_obs,
+    init_probe_diagnostics,
     info_invalid_action_count,
     info_terminal_flag,
     info_timeout_flag,
@@ -43,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--opponent-pool", default="passiveAI")
     p.add_argument("--opponent-sampling", choices=("static", "per_reset", "per_episode"), default="static")
     p.add_argument("--num-bot-envs", type=int, default=1)
-    p.add_argument("--policy-mode", choices=("random_valid", "scripted_probe", "noop"), required=True)
+    p.add_argument("--policy-mode", choices=ALL_POLICY_MODES, required=True)
     p.add_argument("--owner-mode", choices=("player1", "relative", "mask_only"), default="mask_only")
     p.add_argument("--device", default="cpu")
     p.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -67,6 +69,7 @@ def _new_episode(policy_mode: str, idx: int) -> Dict[str, Any]:
         "action_type_histogram": {},
         "produce_unit_type_histogram": {},
         "attack_target_histogram": {},
+        "probe_diagnostics": init_probe_diagnostics(),
     }
 
 
@@ -95,6 +98,7 @@ def run_mode(args: argparse.Namespace) -> Dict[str, Any]:
             "produce_unit_type": {},
             "attack_target": {},
         }
+        mode_probe_diag = init_probe_diagnostics()
 
         done_count = 0
         terminal_count = 0
@@ -119,7 +123,14 @@ def run_mode(args: argparse.Namespace) -> Dict[str, Any]:
                 elif args.policy_mode == "random_valid":
                     action = build_random_valid_action(mask_flat, rng)
                 else:
-                    action = build_scripted_probe_action(obs_flat, mask_flat, warnings, owner_mode=args.owner_mode)
+                    action = build_policy_action(
+                        args.policy_mode,
+                        obs_flat,
+                        mask_flat,
+                        warnings,
+                        owner_mode=args.owner_mode,
+                        diagnostics=ep_stats["probe_diagnostics"],
+                    )
 
                 invalid_local = validate_action_against_mask(action, mask_flat)
                 ep_stats["invalid_action_attempts"] += int(invalid_local)
@@ -173,7 +184,14 @@ def run_mode(args: argparse.Namespace) -> Dict[str, Any]:
                 if done_flag:
                     break
 
+            for k, v in ep_stats["probe_diagnostics"].items():
+                mode_probe_diag[k] = int(mode_probe_diag.get(k, 0)) + int(v)
             episodes.append(ep_stats)
+
+        if args.policy_mode == "combat_probe" and int(mode_probe_diag.get("attack_chosen_count", 0)) <= 0:
+            mode_probe_diag["no_attack_window_reached_count"] = int(
+                mode_probe_diag.get("no_attack_window_reached_count", 0)
+            ) + 1
 
         reward_nonzero_total = int(sum(int(x.get("reward_nonzero_steps", 0)) for x in episodes))
         reward_total = float(sum(float(x.get("reward_sum", 0.0)) for x in episodes))
@@ -211,6 +229,7 @@ def run_mode(args: argparse.Namespace) -> Dict[str, Any]:
                 "timeout_count": int(timeout_count),
                 "invalid_action_attempts": invalid_total,
                 "action_histogram": mode_hist,
+                "probe_diagnostics": mode_probe_diag,
             },
             "runtime_versions": {
                 "python_version": getattr(ctx.versions, "python_version", None),
@@ -324,8 +343,18 @@ def main() -> int:
     }
 
     noop_run = runs_by_mode.get("noop", {}) if isinstance(runs_by_mode.get("noop", {}), dict) else {}
-    scripted_run = runs_by_mode.get("scripted_probe", {}) if isinstance(runs_by_mode.get("scripted_probe", {}), dict) else {}
     random_run = runs_by_mode.get("random_valid", {}) if isinstance(runs_by_mode.get("random_valid", {}), dict) else {}
+
+    probe_mode_names = [
+        "scripted_probe",
+        "economy_probe",
+        "production_probe",
+        "combat_probe",
+        "mixed_probe",
+    ]
+    probe_runs = {
+        m: runs_by_mode.get(m, {}) for m in probe_mode_names if isinstance(runs_by_mode.get(m, {}), dict)
+    }
 
     def _sum_reward(run: Dict[str, Any]) -> float:
         return float((run.get("summary") or {}).get("reward_total", 0.0))
@@ -336,17 +365,20 @@ def main() -> int:
     def _status(run: Dict[str, Any]) -> str:
         return str(run.get("status", "missing"))
 
+    scripted_run = probe_runs.get("scripted_probe", {})
     scripted_better_than_noop = _sum_reward(scripted_run) != _sum_reward(noop_run)
     random_better_than_noop = _sum_reward(random_run) != _sum_reward(noop_run)
-    nonnoop_any_nonzero = (_nonzero_steps(scripted_run) > 0) or (_nonzero_steps(random_run) > 0)
-    env_error_any = any(_status(r) == "env_error" for r in [noop_run, scripted_run, random_run] if r)
-    missing_modes = [m for m in ["noop", "scripted_probe", "random_valid"] if m not in runs_by_mode]
+    probe_nonzero = sum(_nonzero_steps(r) for r in probe_runs.values())
+    probe_differ_from_noop = any(_sum_reward(r) != _sum_reward(noop_run) for r in probe_runs.values())
+    nonnoop_any_nonzero = probe_nonzero > 0 or (_nonzero_steps(random_run) > 0)
+    env_error_any = any(_status(r) == "env_error" for r in [noop_run, random_run, *probe_runs.values()] if r)
+    missing_modes = [m for m in ["noop", "random_valid"] if m not in runs_by_mode]
 
     if env_error_any:
         final_decision = "FAIL_REWARD_ENV_ERROR"
-    elif nonnoop_any_nonzero or scripted_better_than_noop or random_better_than_noop:
+    elif nonnoop_any_nonzero or scripted_better_than_noop or random_better_than_noop or probe_differ_from_noop:
         invalid_total = 0
-        for run in [noop_run, scripted_run, random_run]:
+        for run in [noop_run, random_run, *probe_runs.values()]:
             if not run:
                 continue
             invalid_total += int((run.get("summary") or {}).get("invalid_action_attempts", 0))
@@ -373,7 +405,8 @@ def main() -> int:
             "noop_reward_total": _sum_reward(noop_run),
             "scripted_vs_noop_differs": bool(scripted_better_than_noop),
             "random_vs_noop_differs": bool(random_better_than_noop),
-            "nonnoop_reward_nonzero_steps": int(_nonzero_steps(scripted_run) + _nonzero_steps(random_run)),
+            "probe_vs_noop_differs": bool(probe_differ_from_noop),
+            "nonnoop_reward_nonzero_steps": int(probe_nonzero + _nonzero_steps(random_run)),
         },
         "runs_by_mode_summary": {
             mode: {
@@ -385,6 +418,10 @@ def main() -> int:
                 "timeout_count": int(((payload.get("summary") or {}).get("timeout_count", 0)) if isinstance(payload, dict) else 0),
                 "invalid_action_attempts": int(((payload.get("summary") or {}).get("invalid_action_attempts", 0)) if isinstance(payload, dict) else 0),
             }
+            for mode, payload in sorted(runs_by_mode.items())
+        },
+        "probe_diagnostics_by_mode": {
+            mode: dict((payload.get("summary") or {}).get("probe_diagnostics", {}))
             for mode, payload in sorted(runs_by_mode.items())
         },
         "warnings": sorted(
@@ -436,6 +473,7 @@ def main() -> int:
             "## Key Comparisons",
             f"- scripted_vs_noop_differs: {report['comparisons']['scripted_vs_noop_differs']}",
             f"- random_vs_noop_differs: {report['comparisons']['random_vs_noop_differs']}",
+            f"- probe_vs_noop_differs: {report['comparisons']['probe_vs_noop_differs']}",
             f"- nonnoop_reward_nonzero_steps: {report['comparisons']['nonnoop_reward_nonzero_steps']}",
             "",
             "## Caveats",

@@ -1,6 +1,6 @@
 {
   "schema": "week5_gridnet_overfit_train_history.v1",
-  "generated_at_utc": "2026-04-29T08:10:27Z",
+  "generated_at_utc": "2026-04-29T09:51:18Z",
   "dataset": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset.npz",
   "checkpoint": "python\\week5_teacher\\scripted_bc_overfit\\overfit_checkpoint.pt",
   "epochs": 100,

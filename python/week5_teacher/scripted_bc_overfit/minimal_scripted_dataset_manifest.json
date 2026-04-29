@@ -1,6 +1,6 @@
 {
   "schema": "week5_minimal_scripted_dataset_manifest.v1",
-  "generated_at_utc": "2026-04-29T08:08:10Z",
+  "generated_at_utc": "2026-04-29T09:47:58Z",
   "dataset_path": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset.npz",
   "samples_requested": 1024,
   "samples_collected": 1024,
@@ -38,6 +38,7 @@
     7,
     49
   ],
+  "generation_mode": "balanced_probes",
   "action_type_histogram": {
     "attack": 0,
     "harvest": 0,
@@ -53,6 +54,134 @@
     "return": false,
     "produce": false,
     "attack": false
+  },
+  "per_mode_sample_count": {
+    "combat_probe": 256,
+    "economy_probe": 256,
+    "mixed_probe": 256,
+    "production_probe": 256
+  },
+  "per_mode_action_histogram": {
+    "combat_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "economy_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "mixed_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "production_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    }
+  },
+  "per_mode_missing_classes": {
+    "economy_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "production_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "combat_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "mixed_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ]
+  },
+  "probe_diagnostics_summary": {
+    "combat_probe": {
+      "attack_chosen_count": 0,
+      "fallback_noop_count": 512,
+      "fallback_valid_move_count": 0,
+      "harvest_chosen_count": 0,
+      "missing_barracks_or_build_path": 0,
+      "move_towards_base_count": 0,
+      "move_towards_enemy_count": 0,
+      "move_towards_resource_count": 0,
+      "no_attack_window_reached_count": 256,
+      "no_target_found_count": 0,
+      "produce_chosen_count": 0,
+      "return_chosen_count": 0
+    },
+    "economy_probe": {
+      "attack_chosen_count": 0,
+      "fallback_noop_count": 512,
+      "fallback_valid_move_count": 0,
+      "harvest_chosen_count": 0,
+      "missing_barracks_or_build_path": 0,
+      "move_towards_base_count": 0,
+      "move_towards_enemy_count": 0,
+      "move_towards_resource_count": 0,
+      "no_attack_window_reached_count": 0,
+      "no_target_found_count": 0,
+      "produce_chosen_count": 0,
+      "return_chosen_count": 0
+    },
+    "mixed_probe": {
+      "attack_chosen_count": 0,
+      "fallback_noop_count": 512,
+      "fallback_valid_move_count": 0,
+      "harvest_chosen_count": 0,
+      "missing_barracks_or_build_path": 0,
+      "move_towards_base_count": 0,
+      "move_towards_enemy_count": 0,
+      "move_towards_resource_count": 0,
+      "no_attack_window_reached_count": 0,
+      "no_target_found_count": 0,
+      "produce_chosen_count": 0,
+      "return_chosen_count": 0
+    },
+    "production_probe": {
+      "attack_chosen_count": 0,
+      "fallback_noop_count": 512,
+      "fallback_valid_move_count": 0,
+      "harvest_chosen_count": 0,
+      "missing_barracks_or_build_path": 256,
+      "move_towards_base_count": 0,
+      "move_towards_enemy_count": 0,
+      "move_towards_resource_count": 0,
+      "no_attack_window_reached_count": 0,
+      "no_target_found_count": 0,
+      "produce_chosen_count": 0,
+      "return_chosen_count": 0
+    }
   },
   "fallback_counters": {
     "fallback_to_valid_count": 3072,
@@ -4183,7 +4312,11 @@
     "class_missing:produce",
     "class_missing:return",
     "env.action_masks returned 78 channels; source_unit_mask missing, actor/source reconstructed from action_type validity",
-    "scripted_probe encountered unknown/non-agent unit kind; falling back to noop"
+    "mixed_probe encountered unknown/non-agent unit kind; falling back to noop",
+    "mode_combat_probe_no_nonnoop_classes",
+    "mode_economy_probe_no_nonnoop_classes",
+    "mode_mixed_probe_no_nonnoop_classes",
+    "mode_production_probe_no_nonnoop_classes"
   ],
   "errors": []
 }

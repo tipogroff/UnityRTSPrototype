@@ -49,7 +49,7 @@ def decide(mask: Dict[str, Any], reward: Dict[str, Any], dataset: Dict[str, Any]
     overfit_dec = str(overfit.get("decision", "INCONCLUSIVE_NEEDS_MANUAL_CHECK"))
     mask_dec = str(mask.get("decision", mask.get("summary_decision", "INCONCLUSIVE_NEEDS_MANUAL_CHECK")))
 
-    if reward_dec == "FAIL_REWARD_ALL_ZERO" or reward_dec == "FAIL_REWARD_ENV_ERROR":
+    if reward_dec in {"FAIL_REWARD_ALL_ZERO", "FAIL_REWARD_ENV_ERROR"}:
         return "BLOCKED_REWARD_SANITY"
     if dataset_dec.startswith("FAIL"):
         return "BLOCKED_DATASET"
@@ -61,12 +61,15 @@ def decide(mask: Dict[str, Any], reward: Dict[str, Any], dataset: Dict[str, Any]
     overfit_ok = overfit_dec in {"PASS_SUPERVISED_OVERFIT", "PARTIAL_PASS_OVERFIT_LIMITED_CLASSES"}
     mask_ok = mask_dec in {"PASS_MASK_BUT_POLICY_COLLAPSE", "PASS", "PARTIAL_PASS"}
 
-    if reward_ok and dataset_ok and overfit_ok and mask_ok:
-        if "PARTIAL" in reward_dec or "PARTIAL" in dataset_dec or "PARTIAL" in overfit_dec:
-            return "PARTIAL_READY_WITH_CAVEATS"
+    if reward_ok and overfit_ok and mask_ok and dataset_dec == "PASS_DATASET_READY":
         return "PASS_READY_FOR_SCRIPTED_BC"
 
-    if reward_ok and dataset_ok and overfit_ok:
+    if (
+        reward_ok
+        and overfit_ok
+        and dataset_dec == "PARTIAL_PASS_DATASET_LIMITED_CLASSES"
+        and reward_dec != "FAIL_REWARD_ALL_ZERO"
+    ):
         return "PARTIAL_READY_WITH_CAVEATS"
 
     return "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
@@ -83,7 +86,10 @@ def main() -> int:
     decision = decide(mask, reward, dataset, overfit)
 
     can_start_scripted_bc = decision in {"PASS_READY_FOR_SCRIPTED_BC", "PARTIAL_READY_WITH_CAVEATS"}
-    can_run_full_scripted_bc_training_now = decision in {"PASS_READY_FOR_SCRIPTED_BC", "PARTIAL_READY_WITH_CAVEATS"}
+    dataset_dec = str(dataset.get("decision", "INCONCLUSIVE_NEEDS_MANUAL_CHECK"))
+    can_run_full_scripted_bc_training_now = (
+        can_start_scripted_bc and dataset_dec in {"PASS_DATASET_READY", "PARTIAL_PASS_DATASET_LIMITED_CLASSES"}
+    )
     can_run_ppo_finetune = False
 
     caveats: List[str] = []

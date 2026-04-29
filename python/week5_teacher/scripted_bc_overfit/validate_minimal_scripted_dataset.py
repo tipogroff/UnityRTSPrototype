@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -33,6 +34,13 @@ def main() -> int:
 
     warnings: List[str] = []
     errors: List[str] = []
+    manifest_payload: Dict[str, Any] = {}
+
+    if args.manifest.is_file():
+        try:
+            manifest_payload = json.loads(args.manifest.read_text(encoding="utf-8"))
+        except Exception as exc:
+            warnings.append(f"manifest_read_error:{type(exc).__name__}")
 
     try:
         data = load_dataset_npz(args.dataset)
@@ -156,6 +164,9 @@ def main() -> int:
         "active_actor_sample_count": int(active_actor_samples),
         "class_presence": class_presence,
         "missing_classes": missing_classes,
+        "per_mode_sample_count": manifest_payload.get("per_mode_sample_count", {}),
+        "per_mode_action_histogram": manifest_payload.get("per_mode_action_histogram", {}),
+        "per_mode_missing_classes": manifest_payload.get("per_mode_missing_classes", {}),
         "inactive_branch_policy_note": "Inactive branches may be zero and should be ignored by downstream gated loss.",
         "warnings": warnings,
         "errors": errors,

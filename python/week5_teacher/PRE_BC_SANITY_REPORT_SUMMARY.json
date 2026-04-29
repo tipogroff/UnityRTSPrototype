@@ -1,6 +1,6 @@
 {
   "schema": "week5_pre_bc_sanity_summary.v1",
-  "generated_at_utc": "2026-04-29T08:10:31Z",
+  "generated_at_utc": "2026-04-29T09:51:22Z",
   "decision": "INCONCLUSIVE_NEEDS_MANUAL_CHECK",
   "inputs": {
     "mask_summary": "python\\week5_teacher\\mask_audit\\MASK_AUDIT_REPORT_SUMMARY.json",

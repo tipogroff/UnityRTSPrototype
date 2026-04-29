@@ -1,6 +1,6 @@
 {
   "schema": "week5_minimal_scripted_dataset_validation.v1",
-  "generated_at_utc": "2026-04-29T08:08:12Z",
+  "generated_at_utc": "2026-04-29T09:48:00Z",
   "dataset_path": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset.npz",
   "manifest_path": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset_manifest.json",
   "shapes": {
@@ -59,6 +59,76 @@
     "produce",
     "attack"
   ],
+  "per_mode_sample_count": {
+    "combat_probe": 256,
+    "economy_probe": 256,
+    "mixed_probe": 256,
+    "production_probe": 256
+  },
+  "per_mode_action_histogram": {
+    "combat_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "economy_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "mixed_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    },
+    "production_probe": {
+      "attack": 0,
+      "harvest": 0,
+      "move": 0,
+      "noop": 512,
+      "produce": 0,
+      "return": 0
+    }
+  },
+  "per_mode_missing_classes": {
+    "economy_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "production_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "combat_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ],
+    "mixed_probe": [
+      "move",
+      "harvest",
+      "return",
+      "produce",
+      "attack"
+    ]
+  },
   "inactive_branch_policy_note": "Inactive branches may be zero and should be ignored by downstream gated loss.",
   "warnings": [
     "class_missing:move,harvest,return,produce,attack"

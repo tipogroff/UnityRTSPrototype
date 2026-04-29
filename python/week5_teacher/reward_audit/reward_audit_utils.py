@@ -44,6 +44,43 @@ ACTION_TYPE_NAMES: Dict[int, str] = {
     4: "produce",
     5: "attack",
 }
+TARGETED_POLICY_MODES: Tuple[str, ...] = (
+    "economy_probe",
+    "production_probe",
+    "combat_probe",
+    "mixed_probe",
+)
+ALL_POLICY_MODES: Tuple[str, ...] = ("noop", "random_valid", "scripted_probe") + TARGETED_POLICY_MODES
+_MOVE_DELTAS: Dict[int, Tuple[int, int]] = {
+    0: (0, -1),
+    1: (1, 0),
+    2: (0, 1),
+    3: (-1, 0),
+}
+
+
+def init_probe_diagnostics() -> Dict[str, int]:
+    return {
+        "move_towards_resource_count": 0,
+        "move_towards_base_count": 0,
+        "move_towards_enemy_count": 0,
+        "harvest_chosen_count": 0,
+        "return_chosen_count": 0,
+        "produce_chosen_count": 0,
+        "attack_chosen_count": 0,
+        "fallback_valid_move_count": 0,
+        "fallback_noop_count": 0,
+        "no_target_found_count": 0,
+        "no_attack_window_reached_count": 0,
+        "missing_barracks_or_build_path": 0,
+    }
+
+
+def merge_probe_diagnostics(dst: Dict[str, int], src: Dict[str, int]) -> Dict[str, int]:
+    out = dict(dst)
+    for k, v in src.items():
+        out[k] = int(out.get(k, 0)) + int(v)
+    return out
 PRODUCE_TYPE_NAMES: Dict[int, str] = {
     0: "worker",
     1: "light",
@@ -222,6 +259,136 @@ def build_random_valid_action(mask_flat: np.ndarray, rng: np.random.Generator) -
     return action
 
 
+def get_cell_xy(cell_index: int, width: int) -> Tuple[int, int]:
+    return int(cell_index % width), int(cell_index // width)
+
+
+def manhattan_distance(a: Tuple[int, int], b: Tuple[int, int]) -> int:
+    return int(abs(int(a[0]) - int(b[0])) + abs(int(a[1]) - int(b[1])))
+
+
+def _owner_value(obs_cell: np.ndarray) -> int:
+    vals = [
+        float(obs_cell[OWNER_NEUTRAL_CH]) if obs_cell.shape[0] > OWNER_NEUTRAL_CH else 0.0,
+        float(obs_cell[OWNER_PLAYER1_CH]) if obs_cell.shape[0] > OWNER_PLAYER1_CH else 0.0,
+        float(obs_cell[OWNER_PLAYER2_CH]) if obs_cell.shape[0] > OWNER_PLAYER2_CH else 0.0,
+    ]
+    idx = int(np.argmax(np.asarray(vals, dtype=np.float32)))
+    return idx
+
+
+def find_nearest_cell_by_unit_kind(
+    obs_flat: np.ndarray,
+    env_i: int,
+    source_cell: int,
+    target_kinds: Sequence[str],
+    owner_filter: Optional[str] = None,
+    owner_mode: str = "mask_only",
+) -> Optional[int]:
+    width = int(round(np.sqrt(obs_flat.shape[1])))
+    if width <= 0:
+        return None
+    source_xy = get_cell_xy(source_cell, width)
+    source_owner = _owner_value(obs_flat[env_i, source_cell])
+    best_cell = None
+    best_dist = None
+    wanted = set(str(x) for x in target_kinds)
+    for cell in range(obs_flat.shape[1]):
+        kind = infer_unit_kind(obs_flat[env_i, cell])
+        if kind not in wanted:
+            continue
+        owner = _owner_value(obs_flat[env_i, cell])
+        if owner_filter == "ally":
+            if owner_mode in {"player1", "relative"} and owner != 1:
+                continue
+            if owner_mode == "mask_only" and owner != source_owner:
+                continue
+        elif owner_filter == "enemy":
+            if owner_mode in {"player1", "relative"} and owner != 2:
+                continue
+            if owner_mode == "mask_only" and owner == source_owner:
+                continue
+            if owner == 0:
+                continue
+        target_xy = get_cell_xy(cell, width)
+        dist = manhattan_distance(source_xy, target_xy)
+        if best_cell is None or dist < int(best_dist):
+            best_cell = cell
+            best_dist = dist
+    return best_cell
+
+
+def find_nearest_resource(obs_flat: np.ndarray, env_i: int, source_cell: int) -> Optional[int]:
+    return find_nearest_cell_by_unit_kind(obs_flat, env_i, source_cell, ["resource"])
+
+
+def find_nearest_base(obs_flat: np.ndarray, env_i: int, source_cell: int) -> Optional[int]:
+    return find_nearest_cell_by_unit_kind(obs_flat, env_i, source_cell, ["base"], owner_filter="ally")
+
+
+def find_nearest_enemy(obs_flat: np.ndarray, env_i: int, source_cell: int, owner_mode: str) -> Optional[int]:
+    return find_nearest_cell_by_unit_kind(
+        obs_flat,
+        env_i,
+        source_cell,
+        ["worker", "light", "heavy", "ranged", "base", "barracks"],
+        owner_filter="enemy",
+        owner_mode=owner_mode,
+    )
+
+
+def choose_move_towards_target(mask_vec: np.ndarray, source_cell: int, target_cell: int, width: int) -> Optional[int]:
+    slices = branch_slices()
+    move_s, move_e = slices[1]
+    valid_move_dirs = get_valid_indices(mask_vec, move_s, move_e)
+    if valid_move_dirs.size <= 0:
+        return None
+
+    src_x, src_y = get_cell_xy(source_cell, width)
+    tgt_x, tgt_y = get_cell_xy(target_cell, width)
+    dx = int(tgt_x - src_x)
+    dy = int(tgt_y - src_y)
+
+    pri_dirs: List[int] = []
+    x_dir = 1 if dx > 0 else (3 if dx < 0 else None)
+    y_dir = 2 if dy > 0 else (0 if dy < 0 else None)
+    if abs(dx) >= abs(dy):
+        if x_dir is not None:
+            pri_dirs.append(x_dir)
+        if y_dir is not None:
+            pri_dirs.append(y_dir)
+    else:
+        if y_dir is not None:
+            pri_dirs.append(y_dir)
+        if x_dir is not None:
+            pri_dirs.append(x_dir)
+    for d in [0, 1, 2, 3]:
+        if d not in pri_dirs:
+            pri_dirs.append(d)
+
+    valid_set = set(int(v) for v in valid_move_dirs.tolist())
+    for d in pri_dirs:
+        if d in valid_set:
+            return int(d)
+    return int(valid_move_dirs[0])
+
+
+def choose_attack_target(mask_vec: np.ndarray) -> Optional[int]:
+    slices = branch_slices()
+    attack_s, attack_e = slices[6]
+    valid = get_valid_indices(mask_vec, attack_s, attack_e)
+    if valid.size <= 0:
+        return None
+    ranked = []
+    for idx in valid.tolist():
+        y = int(idx // 7)
+        x = int(idx % 7)
+        dist = manhattan_distance((x, y), (3, 3))
+        ranked.append((dist, int(idx)))
+    ranked.sort(key=lambda x: (x[0], x[1]))
+    return int(ranked[0][1])
+
+
 def actor_owner_flags(obs_flat: np.ndarray, owner_mode: str = "mask_only") -> np.ndarray:
     if obs_flat.shape[-1] <= UNIT_RANGED_CH:
         return np.zeros(obs_flat.shape[:2], dtype=bool)
@@ -367,6 +534,250 @@ def build_scripted_probe_action(
             if owner_mode != "mask_only" and not owned[env_i, cell]:
                 continue
             action[env_i, cell] = scripted_action_for_cell(obs_flat[env_i, cell], mask_flat[env_i, cell], warnings)
+    return action
+
+
+def _set_noop(out: np.ndarray, diag: Dict[str, int]) -> np.ndarray:
+    out[0] = 0
+    diag["fallback_noop_count"] += 1
+    return out
+
+
+def _can_action(mask_vec: np.ndarray, action_type: int) -> bool:
+    action_type_s, action_type_e = branch_slices()[0]
+    valid_action_types = get_valid_indices(mask_vec, action_type_s, action_type_e)
+    return bool(np.any(valid_action_types == int(action_type)))
+
+
+def _choose_any_valid_move(mask_vec: np.ndarray) -> Optional[int]:
+    move_s, move_e = branch_slices()[1]
+    valid = get_valid_indices(mask_vec, move_s, move_e)
+    if valid.size <= 0:
+        return None
+    return int(valid[0])
+
+
+def _choose_worker_economy_action(
+    obs_flat: np.ndarray,
+    env_i: int,
+    cell: int,
+    mask_vec: np.ndarray,
+    owner_mode: str,
+    diag: Dict[str, int],
+) -> np.ndarray:
+    out = np.zeros((7,), dtype=np.int32)
+    slices = branch_slices()
+    move_s, move_e = slices[1]
+    harvest_s, harvest_e = slices[2]
+    return_s, return_e = slices[3]
+    width = int(round(np.sqrt(obs_flat.shape[1])))
+
+    if _can_action(mask_vec, 3):
+        out[0] = 3
+        out[3] = choose_from_valid(mask_vec, return_s, return_e, fallback=0)
+        diag["return_chosen_count"] += 1
+        return out
+    if _can_action(mask_vec, 2):
+        out[0] = 2
+        out[2] = choose_from_valid(mask_vec, harvest_s, harvest_e, fallback=0)
+        diag["harvest_chosen_count"] += 1
+        return out
+    if _can_action(mask_vec, 1):
+        target_resource = find_nearest_resource(obs_flat, env_i, cell)
+        target_base = find_nearest_base(obs_flat, env_i, cell)
+        target_cell = None
+        if target_resource is not None and target_base is not None:
+            src_xy = get_cell_xy(cell, width)
+            d_res = manhattan_distance(src_xy, get_cell_xy(target_resource, width))
+            d_base = manhattan_distance(src_xy, get_cell_xy(target_base, width))
+            target_cell = target_resource if d_res <= d_base else target_base
+        else:
+            target_cell = target_resource if target_resource is not None else target_base
+
+        if target_cell is not None:
+            chosen = choose_move_towards_target(mask_vec, cell, target_cell, width)
+            if chosen is not None:
+                out[0] = 1
+                out[1] = int(chosen)
+                tx = infer_unit_kind(obs_flat[env_i, target_cell])
+                if tx == "resource":
+                    diag["move_towards_resource_count"] += 1
+                elif tx == "base":
+                    diag["move_towards_base_count"] += 1
+                else:
+                    diag["fallback_valid_move_count"] += 1
+                return out
+        diag["no_target_found_count"] += 1
+        fallback_move = _choose_any_valid_move(mask_vec)
+        if fallback_move is not None:
+            out[0] = 1
+            out[1] = int(fallback_move)
+            diag["fallback_valid_move_count"] += 1
+            return out
+    return _set_noop(out, diag)
+
+
+def _choose_produce_action(
+    unit_kind: str,
+    mask_vec: np.ndarray,
+    diag: Dict[str, int],
+) -> Optional[np.ndarray]:
+    if not _can_action(mask_vec, 4):
+        return None
+    out = np.zeros((7,), dtype=np.int32)
+    slices = branch_slices()
+    produce_dir_s, produce_dir_e = slices[4]
+    produce_type_s, produce_type_e = slices[5]
+    out[0] = 4
+    out[4] = choose_from_valid(mask_vec, produce_dir_s, produce_dir_e, fallback=0)
+    produce_valid = get_valid_indices(mask_vec, produce_type_s, produce_type_e)
+    pref = [0] if unit_kind == "base" else [1, 2, 3]
+    chosen = None
+    for p in pref:
+        if np.any(produce_valid == p):
+            chosen = int(p)
+            break
+    if chosen is None:
+        chosen = int(produce_valid[0]) if produce_valid.size > 0 else 0
+    out[5] = int(chosen)
+    diag["produce_chosen_count"] += 1
+    return out
+
+
+def _choose_combat_action(
+    obs_flat: np.ndarray,
+    env_i: int,
+    cell: int,
+    mask_vec: np.ndarray,
+    owner_mode: str,
+    diag: Dict[str, int],
+) -> np.ndarray:
+    out = np.zeros((7,), dtype=np.int32)
+    width = int(round(np.sqrt(obs_flat.shape[1])))
+    if _can_action(mask_vec, 5):
+        attack_idx = choose_attack_target(mask_vec)
+        if attack_idx is not None:
+            out[0] = 5
+            out[6] = int(attack_idx)
+            diag["attack_chosen_count"] += 1
+            return out
+    if _can_action(mask_vec, 1):
+        nearest_enemy = find_nearest_enemy(obs_flat, env_i, cell, owner_mode)
+        if nearest_enemy is not None:
+            move_idx = choose_move_towards_target(mask_vec, cell, nearest_enemy, width)
+            if move_idx is not None:
+                out[0] = 1
+                out[1] = int(move_idx)
+                diag["move_towards_enemy_count"] += 1
+                return out
+        diag["no_target_found_count"] += 1
+        fallback_move = _choose_any_valid_move(mask_vec)
+        if fallback_move is not None:
+            out[0] = 1
+            out[1] = int(fallback_move)
+            diag["fallback_valid_move_count"] += 1
+            return out
+    return _set_noop(out, diag)
+
+
+def targeted_action_for_cell(
+    policy_mode: str,
+    obs_flat: np.ndarray,
+    env_i: int,
+    cell: int,
+    mask_vec: np.ndarray,
+    owner_mode: str,
+    warnings: List[str],
+    diag: Dict[str, int],
+) -> np.ndarray:
+    unit_kind = infer_unit_kind(obs_flat[env_i, cell])
+
+    if policy_mode == "economy_probe":
+        if unit_kind == "worker":
+            return _choose_worker_economy_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+        return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+
+    if policy_mode == "production_probe":
+        if unit_kind in {"base", "barracks"}:
+            produced = _choose_produce_action(unit_kind, mask_vec, diag)
+            if produced is not None:
+                return produced
+            if unit_kind == "barracks":
+                diag["missing_barracks_or_build_path"] += 1
+            return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+        if unit_kind == "worker":
+            return _choose_worker_economy_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+        return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+
+    if policy_mode == "combat_probe":
+        if unit_kind in {"light", "heavy", "ranged", "worker"}:
+            return _choose_combat_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+        return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+
+    # mixed_probe
+    if unit_kind == "worker":
+        if _can_action(mask_vec, 5):
+            return _choose_combat_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+        return _choose_worker_economy_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+    if unit_kind in {"base", "barracks"}:
+        produced = _choose_produce_action(unit_kind, mask_vec, diag)
+        if produced is not None:
+            return produced
+        if unit_kind == "barracks":
+            diag["missing_barracks_or_build_path"] += 1
+        return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+    if unit_kind in {"light", "heavy", "ranged"}:
+        return _choose_combat_action(obs_flat, env_i, cell, mask_vec, owner_mode, diag)
+    if unit_kind in {"resource", "unknown"}:
+        warnings.append(f"{policy_mode} encountered unknown/non-agent unit kind; falling back to noop")
+    return _set_noop(np.zeros((7,), dtype=np.int32), diag)
+
+
+def build_policy_action(
+    policy_mode: str,
+    obs_flat: np.ndarray,
+    mask_flat: np.ndarray,
+    warnings: List[str],
+    owner_mode: str = "mask_only",
+    diagnostics: Optional[Dict[str, int]] = None,
+) -> np.ndarray:
+    if policy_mode == "noop":
+        return build_noop_action(mask_flat)
+    if policy_mode == "random_valid":
+        raise RuntimeError("build_policy_action does not support random_valid because RNG is required")
+    if policy_mode == "scripted_probe":
+        return build_scripted_probe_action(obs_flat, mask_flat, warnings, owner_mode=owner_mode)
+
+    if diagnostics is None:
+        diagnostics = init_probe_diagnostics()
+
+    n, cells, _ = mask_flat.shape
+    action = np.zeros((n, cells, 7), dtype=np.int32)
+    owned = actor_owner_flags(obs_flat, owner_mode=owner_mode)
+    for env_i in range(n):
+        has_barracks = False
+        for cell in range(cells):
+            if mask_flat[env_i, cell, 0] <= 0:
+                continue
+            if owner_mode != "mask_only" and not owned[env_i, cell]:
+                continue
+            if infer_unit_kind(obs_flat[env_i, cell]) == "barracks":
+                has_barracks = True
+            action[env_i, cell] = targeted_action_for_cell(
+                policy_mode,
+                obs_flat,
+                env_i,
+                cell,
+                mask_flat[env_i, cell],
+                owner_mode,
+                warnings,
+                diagnostics,
+            )
+        if policy_mode == "production_probe" and not has_barracks:
+            diagnostics["missing_barracks_or_build_path"] += 1
+
+    if policy_mode == "combat_probe" and diagnostics.get("attack_chosen_count", 0) <= 0:
+        diagnostics["no_attack_window_reached_count"] += 1
     return action
 
 

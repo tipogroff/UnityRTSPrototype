@@ -8,14 +8,17 @@ from typing import Any, Dict, List
 import numpy as np
 
 from scripted_bc_utils import (
+    TARGETED_POLICY_MODES,
     ACTION_TYPE_NAMES,
+    build_policy_action,
     DEFAULT_DATASET,
     DEFAULT_MANIFEST,
     DEFAULT_OUT_DIR,
     build_full_mask_from_candidates,
     branch_slices,
-    build_scripted_probe_action,
     class_presence_from_hist,
+        init_probe_diagnostics,
+        merge_probe_diagnostics,
     ensure_full_mask,
     fallback_fill_invalid_actions,
     flatten_mask,
@@ -38,6 +41,18 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--map-path", default="maps/24x24/basesWorkers24x24.xml")
     p.add_argument("--seed", type=int, default=170)
     p.add_argument("--owner-mode", choices=("player1", "relative", "mask_only"), default="mask_only")
+    p.add_argument(
+        "--generation-mode",
+        choices=(
+            "scripted_probe",
+            "economy_probe",
+            "production_probe",
+            "combat_probe",
+            "mixed_probe",
+            "balanced_probes",
+        ),
+        default="scripted_probe",
+    )
     p.add_argument("--step-limit", type=int, default=2000)
     p.add_argument("--episodes", type=int, default=16)
     p.add_argument("--opponent-pool", default="passiveAI")
@@ -62,6 +77,9 @@ def main() -> int:
     warnings: List[str] = []
     errors: List[str] = []
     class_hist: Dict[str, int] = {name: 0 for name in ACTION_TYPE_NAMES.values()}
+    per_mode_sample_count: Dict[str, int] = {}
+    per_mode_action_histogram: Dict[str, Dict[str, int]] = {}
+    per_mode_probe_diagnostics: Dict[str, Dict[str, int]] = {}
 
     fallback_to_valid_count = 0
     fallback_to_noop_count = 0
@@ -76,6 +94,8 @@ def main() -> int:
 
         samples_collected = 0
         episode_idx = 0
+
+        balanced_modes = ["economy_probe", "production_probe", "combat_probe", "mixed_probe"]
 
         while samples_collected < int(args.samples) and episode_idx < int(args.episodes):
             if episode_idx > 0:
@@ -92,7 +112,21 @@ def main() -> int:
 
                 obs_flat = flatten_obs(np.asarray(obs))
                 mask_flat = flatten_mask(mask_nhwk)
-                actions = build_scripted_probe_action(obs_flat, mask_flat, warnings, owner_mode=args.owner_mode)
+
+                if args.generation_mode == "balanced_probes":
+                    active_mode = balanced_modes[samples_collected % len(balanced_modes)]
+                else:
+                    active_mode = str(args.generation_mode)
+
+                step_diag = init_probe_diagnostics()
+                actions = build_policy_action(
+                    active_mode,
+                    obs_flat,
+                    mask_flat,
+                    warnings,
+                    owner_mode=args.owner_mode,
+                    diagnostics=step_diag,
+                )
                 actions, fb = fallback_fill_invalid_actions(actions, mask_flat)
 
                 fallback_to_valid_count += int(fb["fallback_to_valid_count"])
@@ -102,6 +136,14 @@ def main() -> int:
                 actor_valid = mask_nhwk[:, :, :, 0] > 0
                 n, h, w, _ = mask_nhwk.shape
                 actions_spatial = to_spatial_action(actions, h, w)
+
+                per_mode_sample_count[active_mode] = int(per_mode_sample_count.get(active_mode, 0))
+                per_mode_action_hist = per_mode_action_histogram.setdefault(
+                    active_mode, {name: 0 for name in ACTION_TYPE_NAMES.values()}
+                )
+                per_mode_probe_diagnostics[active_mode] = merge_probe_diagnostics(
+                    per_mode_probe_diagnostics.get(active_mode, init_probe_diagnostics()), step_diag
+                )
 
                 for n_i in range(n):
                     obs_rows.append(np.asarray(obs[n_i], dtype=np.float32))
@@ -116,8 +158,10 @@ def main() -> int:
                             at = int(actions_spatial[n_i, y, x, 0])
                             key = ACTION_TYPE_NAMES.get(at, f"unknown_{at}")
                             class_hist[key] = int(class_hist.get(key, 0)) + 1
+                            per_mode_action_hist[key] = int(per_mode_action_hist.get(key, 0)) + 1
 
                     samples_collected += 1
+                    per_mode_sample_count[active_mode] = int(per_mode_sample_count.get(active_mode, 0)) + 1
                     if samples_collected >= int(args.samples):
                         break
 
@@ -145,9 +189,17 @@ def main() -> int:
         invalid_after_generation_count += invalid_final
 
         class_presence = class_presence_from_hist(class_hist)
+        per_mode_missing_classes: Dict[str, List[str]] = {}
         for name, present in class_presence.items():
             if (not present) and name != "noop":
                 warnings.append(f"class_missing:{name}")
+
+        for mode_name, hist in per_mode_action_histogram.items():
+            mode_presence = class_presence_from_hist(hist)
+            missing = [k for k in ["move", "harvest", "return", "produce", "attack"] if not mode_presence.get(k, False)]
+            per_mode_missing_classes[mode_name] = missing
+            if len(missing) >= 5:
+                warnings.append(f"mode_{mode_name}_no_nonnoop_classes")
 
         args.output_dataset.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(
@@ -171,8 +223,19 @@ def main() -> int:
                 "actor_valid": [int(v) for v in actor_np.shape],
             },
             "branch_layout": [6, 4, 4, 4, 4, 7, 49],
+            "generation_mode": args.generation_mode,
             "action_type_histogram": {k: int(v) for k, v in sorted(class_hist.items())},
             "class_presence": class_presence,
+            "per_mode_sample_count": {k: int(v) for k, v in sorted(per_mode_sample_count.items())},
+            "per_mode_action_histogram": {
+                mode_name: {k: int(v) for k, v in sorted(hist.items())}
+                for mode_name, hist in sorted(per_mode_action_histogram.items())
+            },
+            "per_mode_missing_classes": per_mode_missing_classes,
+            "probe_diagnostics_summary": {
+                mode_name: {k: int(v) for k, v in sorted(diag.items())}
+                for mode_name, diag in sorted(per_mode_probe_diagnostics.items())
+            },
             "fallback_counters": {
                 "fallback_to_valid_count": int(fallback_to_valid_count),
                 "fallback_to_noop_count": int(fallback_to_noop_count),

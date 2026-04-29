@@ -55,29 +55,32 @@ def decide(runs_by_mode: Dict[str, Any]) -> str:
             return 0
         return int((payload.get("summary") or {}).get("invalid_action_attempts", 0))
 
-    mode_names = ["noop", "scripted_probe", "random_valid"]
-    for mode in mode_names:
+    mode_names = ["noop", "random_valid"]
+    probe_names = ["scripted_probe", "economy_probe", "production_probe", "combat_probe", "mixed_probe"]
+    for mode in [*mode_names, *probe_names]:
         if _status(mode) == "env_error":
             return "FAIL_REWARD_ENV_ERROR"
 
     missing_modes = [m for m in mode_names if m not in runs_by_mode]
     scripted_diff = _reward("scripted_probe") != _reward("noop")
     random_diff = _reward("random_valid") != _reward("noop")
-    nonzero = (_nonzero("scripted_probe") > 0) or (_nonzero("random_valid") > 0)
+    probe_nonzero = sum(_nonzero(name) for name in probe_names)
+    probe_diff = any(_reward(name) != _reward("noop") for name in probe_names if name in runs_by_mode)
+    nonzero = (probe_nonzero > 0) or (_nonzero("random_valid") > 0)
 
-    if not missing_modes and (not nonzero) and (not scripted_diff) and (not random_diff):
+    if not missing_modes and (not nonzero) and (not scripted_diff) and (not random_diff) and (not probe_diff):
         return "FAIL_REWARD_ALL_ZERO"
 
     if missing_modes:
-        if nonzero or scripted_diff or random_diff:
+        if nonzero or scripted_diff or random_diff or probe_diff:
             return "PARTIAL_PASS_REWARD_SANITY"
         return "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
 
-    invalid_sum = sum(_invalid(mode) for mode in mode_names)
+    invalid_sum = sum(_invalid(mode) for mode in [*mode_names, *probe_names] if mode in runs_by_mode)
     if invalid_sum > 0:
         return "PARTIAL_PASS_REWARD_SANITY"
 
-    if nonzero or scripted_diff or random_diff:
+    if nonzero or scripted_diff or random_diff or probe_diff:
         return "PASS_REWARD_SANITY"
 
     return "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
@@ -104,6 +107,7 @@ def main() -> int:
             "terminal_count": int(sm.get("terminal_count", 0)),
             "timeout_count": int(sm.get("timeout_count", 0)),
             "invalid_action_attempts": int(sm.get("invalid_action_attempts", 0)),
+            "probe_diagnostics": dict(sm.get("probe_diagnostics", {})),
         }
 
     report = {
@@ -131,6 +135,9 @@ def main() -> int:
             f"terminal={sm['terminal_count']}, timeout={sm['timeout_count']}, "
             f"invalid_action_attempts={sm['invalid_action_attempts']}"
         )
+        diag = sm.get("probe_diagnostics", {})
+        if isinstance(diag, dict) and diag:
+            lines.append(f"  probe_diagnostics={diag}")
 
     lines.extend(
         [
