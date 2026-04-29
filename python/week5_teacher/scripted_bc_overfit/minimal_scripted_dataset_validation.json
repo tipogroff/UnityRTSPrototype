@@ -1,0 +1,68 @@
+{
+  "schema": "week5_minimal_scripted_dataset_validation.v1",
+  "generated_at_utc": "2026-04-29T08:08:12Z",
+  "dataset_path": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset.npz",
+  "manifest_path": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset_manifest.json",
+  "shapes": {
+    "obs": [
+      1024,
+      24,
+      24,
+      27
+    ],
+    "actions": [
+      1024,
+      24,
+      24,
+      7
+    ],
+    "masks": [
+      1024,
+      24,
+      24,
+      79
+    ],
+    "actor_valid": [
+      1024,
+      24,
+      24
+    ]
+  },
+  "branch_layout": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "fatal_shape_error": false,
+  "invalid_action_count": 0,
+  "action_type_histogram": {
+    "noop": 2048
+  },
+  "non_noop_share": 0.0,
+  "active_actor_sample_count": 2048,
+  "class_presence": {
+    "noop": true,
+    "move": false,
+    "harvest": false,
+    "return": false,
+    "produce": false,
+    "attack": false
+  },
+  "missing_classes": [
+    "move",
+    "harvest",
+    "return",
+    "produce",
+    "attack"
+  ],
+  "inactive_branch_policy_note": "Inactive branches may be zero and should be ignored by downstream gated loss.",
+  "warnings": [
+    "class_missing:move,harvest,return,produce,attack"
+  ],
+  "errors": [],
+  "decision": "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
+}

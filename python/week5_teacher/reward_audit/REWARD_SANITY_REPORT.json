@@ -1,0 +1,44 @@
+{
+  "schema": "week5_reward_sanity_report.v1",
+  "generated_at_utc": "2026-04-29T08:07:56Z",
+  "decision": "PARTIAL_PASS_REWARD_SANITY",
+  "modes_present": [
+    "noop",
+    "random_valid",
+    "scripted_probe"
+  ],
+  "runs_by_mode_summary": {
+    "noop": {
+      "status": "ok",
+      "reward_total": 0.0,
+      "reward_nonzero_steps": 0,
+      "done_count": 4,
+      "terminal_count": 0,
+      "timeout_count": 0,
+      "invalid_action_attempts": 18000
+    },
+    "random_valid": {
+      "status": "ok",
+      "reward_total": 12.0,
+      "reward_nonzero_steps": 12,
+      "done_count": 4,
+      "terminal_count": 0,
+      "timeout_count": 0,
+      "invalid_action_attempts": 15606
+    },
+    "scripted_probe": {
+      "status": "ok",
+      "reward_total": 0.0,
+      "reward_nonzero_steps": 0,
+      "done_count": 4,
+      "terminal_count": 0,
+      "timeout_count": 0,
+      "invalid_action_attempts": 18000
+    }
+  },
+  "warnings": [
+    "env.action_masks returned 78 channels; source_unit_mask missing, actor/source reconstructed from action_type validity",
+    "scripted_probe encountered unknown/non-agent unit kind; falling back to noop"
+  ],
+  "errors": []
+}

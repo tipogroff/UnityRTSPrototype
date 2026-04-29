@@ -1,0 +1,28 @@
+{
+  "generated_at_utc": "2026-04-28T20:02:23Z",
+  "decision": "PASS_MASK_BUT_POLICY_COLLAPSE",
+  "report_statuses": {
+    "surface": "pass",
+    "semantics": "pass",
+    "sampling": "pass",
+    "logprob": "pass",
+    "argmax": "pass",
+    "coverage": "pass",
+    "comparison": "inconclusive"
+  },
+  "environment": {
+    "gym_version": "0.29.1",
+    "gym_api_name": "gymnasium",
+    "microrts_version": "0.0.0",
+    "microrts_module_name": "gym_microrts",
+    "env_id": "MicrortsSelfPlayShapedReward-v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "backend_route": "gym_microrts.envs.vec_env.MicroRTSGridModeVecEnv",
+    "opponent_pool": "passiveAI",
+    "python_executable": null,
+    "torch_version": "2.8.0+cu128",
+    "sb3_version": "2.7.1"
+  },
+  "input_dir": "python\\week5_teacher\\mask_audit",
+  "output_md": "python\\week5_teacher\\mask_audit\\MASK_AUDIT_REPORT.md"
+}

@@ -1,0 +1,55 @@
+{
+  "schema": "week5_gridnet_overfit_report_summary.v1",
+  "generated_at_utc": "2026-04-29T08:10:31Z",
+  "decision": "PARTIAL_PASS_OVERFIT_LIMITED_CLASSES",
+  "dataset_validation_decision": "INCONCLUSIVE_NEEDS_MANUAL_CHECK",
+  "train_final": {
+    "epoch": 100,
+    "total_loss": 0.0,
+    "branch_losses": {
+      "action_type": 0.0,
+      "move_dir": 0.0,
+      "harvest_dir": 0.0,
+      "return_dir": 0.0,
+      "produce_dir": 0.0,
+      "produce_type": 0.0,
+      "attack_target": 0.0
+    },
+    "action_type_acc_active": 1.0,
+    "non_noop_recall": 1.0,
+    "move_dir_acc_given_move": null,
+    "harvest_dir_acc_given_harvest": null,
+    "return_dir_acc_given_return": null,
+    "produce_dir_acc_given_produce": null,
+    "produce_type_acc_given_produce": null,
+    "attack_target_acc_given_attack": null,
+    "invalid_after_argmax": 0,
+    "deterministic_noop_share_on_actor_cells": 1.0,
+    "active_actor_cells": 2048
+  },
+  "eval_metrics": {
+    "action_type_acc_active": 1.0,
+    "non_noop_recall": 1.0,
+    "move_dir_acc_given_move": null,
+    "harvest_dir_acc_given_harvest": null,
+    "return_dir_acc_given_return": null,
+    "produce_dir_acc_given_produce": null,
+    "produce_type_acc_given_produce": null,
+    "attack_target_acc_given_attack": null,
+    "invalid_after_argmax": 0,
+    "deterministic_noop_share_on_actor_cells": 1.0,
+    "active_actor_cells": 2048
+  },
+  "inputs": {
+    "dataset_validation": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset_validation.json",
+    "train_history": "python\\week5_teacher\\scripted_bc_overfit\\OVERFIT_TRAIN_HISTORY.json",
+    "eval_report": "python\\week5_teacher\\scripted_bc_overfit\\OVERFIT_EVAL_REPORT.json"
+  },
+  "decision_vocab": [
+    "PASS_SUPERVISED_OVERFIT",
+    "PARTIAL_PASS_OVERFIT_LIMITED_CLASSES",
+    "FAIL_OVERFIT_LAYOUT_OR_LOSS",
+    "FAIL_DATASET_INVALID",
+    "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
+  ]
+}

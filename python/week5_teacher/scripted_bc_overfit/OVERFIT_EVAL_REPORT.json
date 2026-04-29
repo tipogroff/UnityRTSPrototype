@@ -1,0 +1,19 @@
+{
+  "schema": "week5_gridnet_overfit_eval.v1",
+  "generated_at_utc": "2026-04-29T08:10:30Z",
+  "dataset": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset.npz",
+  "checkpoint": "python\\week5_teacher\\scripted_bc_overfit\\overfit_checkpoint.pt",
+  "metrics": {
+    "action_type_acc_active": 1.0,
+    "non_noop_recall": 1.0,
+    "move_dir_acc_given_move": null,
+    "harvest_dir_acc_given_harvest": null,
+    "return_dir_acc_given_return": null,
+    "produce_dir_acc_given_produce": null,
+    "produce_type_acc_given_produce": null,
+    "attack_target_acc_given_attack": null,
+    "invalid_after_argmax": 0,
+    "deterministic_noop_share_on_actor_cells": 1.0,
+    "active_actor_cells": 2048
+  }
+}

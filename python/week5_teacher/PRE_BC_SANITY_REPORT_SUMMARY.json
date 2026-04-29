@@ -1,0 +1,36 @@
+{
+  "schema": "week5_pre_bc_sanity_summary.v1",
+  "generated_at_utc": "2026-04-29T08:10:31Z",
+  "decision": "INCONCLUSIVE_NEEDS_MANUAL_CHECK",
+  "inputs": {
+    "mask_summary": "python\\week5_teacher\\mask_audit\\MASK_AUDIT_REPORT_SUMMARY.json",
+    "reward_report": "python\\week5_teacher\\reward_audit\\REWARD_SANITY_REPORT.json",
+    "dataset_validation": "python\\week5_teacher\\scripted_bc_overfit\\minimal_scripted_dataset_validation.json",
+    "overfit_summary": "python\\week5_teacher\\scripted_bc_overfit\\OVERFIT_REPORT_SUMMARY.json"
+  },
+  "sub_decisions": {
+    "mask_audit": "PASS_MASK_BUT_POLICY_COLLAPSE",
+    "reward_sanity": "PARTIAL_PASS_REWARD_SANITY",
+    "dataset_validation": "INCONCLUSIVE_NEEDS_MANUAL_CHECK",
+    "overfit": "PARTIAL_PASS_OVERFIT_LIMITED_CLASSES"
+  },
+  "recommendations": {
+    "can_proceed_to_full_scripted_bc_dataset_exporter": false,
+    "can_run_full_scripted_bc_training_now": false,
+    "can_run_ppo_fine_tune_now": false
+  },
+  "caveats": [
+    "Reward sanity is partial: verify scripted vs random policy reward behavior before large scripted export.",
+    "Overfit gate is partial due to limited class support in minimal dataset.",
+    "PASS/PARTIAL here means only readiness for teacher-side scripted BC warm-start, not teacher-ready and not Unity-ready.",
+    "PPO fine-tune is blocked until scripted BC checkpoint passes deterministic behavior gate."
+  ],
+  "decision_vocab": [
+    "PASS_READY_FOR_SCRIPTED_BC",
+    "PARTIAL_READY_WITH_CAVEATS",
+    "BLOCKED_REWARD_SANITY",
+    "BLOCKED_OVERFIT",
+    "BLOCKED_DATASET",
+    "INCONCLUSIVE_NEEDS_MANUAL_CHECK"
+  ]
+}

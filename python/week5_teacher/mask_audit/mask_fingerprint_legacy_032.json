@@ -1,0 +1,10 @@
+{
+  "status": "skipped",
+  "errors": [],
+  "warnings": [
+    "Legacy run did not produce output file.",
+    "exit_code=1",
+    "stderr_tail=Traceback (most recent call last):\n  File \"<string>\", line 34, in <module>\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\lib\\site-packages\\gym_microrts\\envs\\vec_env.py\", line 174, in __init__\n    super().__init__(**kwargs)\nTypeError: __init__() got an unexpected keyword argument 'map_paths'\n"
+  ],
+  "skip_reason": "legacy_execution_failed"
+}
