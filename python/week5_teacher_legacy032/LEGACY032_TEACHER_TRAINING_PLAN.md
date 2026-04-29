@@ -280,7 +280,35 @@ Stage gate status:
 Primary trainer/runtime path:
 
 - `scripts/ppo_gridnet_legacy032_24x24_local_save.py`
+- `scripts/run_24x24_staged_teacher_training_legacy032.py`
 - architecture_name: `legacy032_resolution_aware_gridnet_v1`
+
+Stage 5A result (2026-04-29):
+
+- status: `PASS`
+- decision: `READY_FOR_500K`
+- run_id: `legacy032_24x24_teacher_main_20260429T162331Z`
+- preflight report: `reports/stage5a_24x24_contract_probe.json` (`PASS`)
+- training report: `reports/stage5_24x24_training_20260429T162331Z.json`
+- checkpoint path: `teacher_models/legacy032_24x24_teacher_main_20260429T162331Z/stage_000100000/agent_final.pt`
+- metadata path: `teacher_models/legacy032_24x24_teacher_main_20260429T162331Z/stage_000100000/model_metadata.json`
+- gate report: `reports/stage5_gate_000100000_20260429T164521Z.json` (`PASS`)
+- gate checks: `env_matches_target_24x24=true`, `mask_used_during_eval=true`, `inference_ok=true`, action distribution recorded, `effective_activity_share=0.8336504744224422`
+
+Stage 5A acceptance checklist:
+
+- [x] stage5a_24x24_contract_probe.json exists and PASS
+- [x] run_24x24_staged_teacher_training_legacy032.py exists
+- [x] 100k training run executed
+- [x] checkpoint + metadata saved
+- [x] behavior gate executed in `target_24x24_gridmode`
+- [x] STAGE5A_100K_TRAINING_REPORT.md exists
+- [x] STAGE5A_COMPLETION_REPORT.md exists
+
+Recommendation:
+
+- Stage 5B 500k is allowed after explicit approval, using the same corrected 24x24 pipeline only.
+- Future checkpoints (500k/1M/3M/5M) remain planned and are not marked complete.
 
 Planned checkpoints:
 

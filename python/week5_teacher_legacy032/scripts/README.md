@@ -13,6 +13,7 @@ This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pip
 | `train_teacher_legacy032.py` | Stage 2 | ✅ DONE (smoke) | Stage 2 smoke wrapper around reference training script; saves isolated legacy032 artifacts and summary reports |
 | `evaluate_teacher_legacy032.py` | Stage 3-4R | ✅ UPDATED | Evaluate checkpoint, run behavior gate, includes corrected `target_24x24_gridmode` compatibility (`[...,49]`) |
 | `run_staged_teacher_training_legacy032.py` | Stage 3 (historical line) | ✅ DONE | Run staged main training and evaluate after checkpoints |
+| `run_24x24_staged_teacher_training_legacy032.py` | Stage 5 | ✅ NEW | Corrected 24x24 staged orchestrator (preflight -> train -> gate) under legacy032-only artifact roots |
 | `ppo_gridnet_legacy032_24x24_local_save.py` | Stage 4R | ✅ UPDATED | Patched trainer with corrected GridMode contract (`[...,49]`) and resolution-aware actor head |
 | `verify_legacy032_24x24_training_contract.py` | Stage 4R | ✅ UPDATED | Contract+architecture probe for 24x24 GridMode with explicit mode separation (global-single vs gridmode) |
 | `train_teacher_legacy032_24x24.py` | Stage 4R | ✅ UPDATED | Thin 24x24 smoke wrapper: runs Stage 4R probe first, then training only on PASS |
@@ -158,6 +159,74 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 - `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/...`
 - `python/week5_teacher_legacy032/reports/stage3_training_<timestamp>.json`
 - `python/week5_teacher_legacy032/reports/stage3_training_<timestamp>.md`
+
+Important note:
+
+- `run_staged_teacher_training_legacy032.py` is historical/reference-internal (Stage 3 lineage).
+- Do not use it for Stage 5 24x24 transfer-readiness decisions.
+
+---
+
+## `run_24x24_staged_teacher_training_legacy032.py` — Stage 5 corrected path
+
+### Purpose
+
+- runs mandatory 24x24 contract preflight (`stage5a_24x24_contract_probe.json`)
+- runs corrected 24x24 GridMode trainer `ppo_gridnet_legacy032_24x24_local_save.py`
+- stores per-stage outputs under `python/week5_teacher_legacy032/teacher_models` and `python/week5_teacher_legacy032/teacher_logs`
+- runs post-stage gate in `target_24x24_gridmode`
+- writes machine + markdown reports (`stage5_24x24_training_<timestamp>.json/.md`)
+
+### Example command (Stage 5A 100k)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_main `
+	--stages 100000 `
+	--seed 17 `
+	--device cpu `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--episodes-per-gate 8 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true
+```
+
+### Core flags
+
+- `--run-label`
+- `--stages` (default `100000,500000,1000000,3000000,5000000`)
+- `--seed`
+- `--device`
+- `--map-path`
+- `--output-root`
+- `--evaluate-after-each`
+- `--episodes-per-gate`
+- `--no-wandb`
+- `--dry-run`
+- `--continue-on-gate-warning`
+- `--stop-on-gate-fail`
+- `--require-contract-check`
+
+### Outputs
+
+- `python/week5_teacher_legacy032/teacher_models/<run_id>/stage_000100000/agent_final.pt`
+- `python/week5_teacher_legacy032/teacher_models/<run_id>/stage_000100000/model_metadata.json`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/training_stdout.log`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/training_stderr.log`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/training_metrics.jsonl`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/evaluation_stdout.log`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/stage_000100000/evaluation_stderr.log`
+- `python/week5_teacher_legacy032/reports/stage5a_24x24_contract_probe.json`
+- `python/week5_teacher_legacy032/reports/stage5_24x24_training_<timestamp>.json`
+- `python/week5_teacher_legacy032/reports/stage5_24x24_training_<timestamp>.md`
+- `python/week5_teacher_legacy032/reports/stage5_gate_000100000_<timestamp>.json`
+- `python/week5_teacher_legacy032/reports/stage5_gate_000100000_<timestamp>.md`
+- `python/week5_teacher_legacy032/reports/STAGE5A_100K_TRAINING_REPORT.md`
+- `python/week5_teacher_legacy032/reports/STAGE5A_COMPLETION_REPORT.md`
 
 ---
 
