@@ -195,6 +195,31 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 	--require-contract-check true
 ```
 
+### Example command (Stage 5B 500k)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_main `
+	--stages 500000 `
+	--seed 17 `
+	--device cpu `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--episodes-per-gate 8 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true
+```
+
+Stage 5B comparison rule:
+
+- Stage 5B (500k) must be compared against Stage 5A 100k baseline gate report:
+	`python/week5_teacher_legacy032/reports/stage5_gate_000100000_20260429T164521Z.json`.
+- If resume is not explicitly implemented/validated, treat 500k as from-scratch with larger `--total-timesteps`, not as resumed continuation from 100k.
+- Use corrected 24x24 GridMode path only for transfer-readiness decisions.
+
 ### Core flags
 
 - `--run-label`

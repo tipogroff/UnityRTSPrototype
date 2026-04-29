@@ -310,6 +310,36 @@ Recommendation:
 - Stage 5B 500k is allowed after explicit approval, using the same corrected 24x24 pipeline only.
 - Future checkpoints (500k/1M/3M/5M) remain planned and are not marked complete.
 
+Stage 5B result (2026-04-29):
+
+- status: `PASS_WITH_WARNINGS`
+- decision: `READY_FOR_1M_WITH_WARNINGS`
+- run_id: `legacy032_24x24_teacher_main_20260429T171506Z`
+- preflight report: `reports/stage5b_24x24_contract_probe.json` (`PASS`)
+- machine report: `reports/stage5_24x24_training_20260429T171506Z.json`
+- checkpoint path: `teacher_models/legacy032_24x24_teacher_main_20260429T171506Z/stage_000500000/agent_final.pt`
+- metadata path: `teacher_models/legacy032_24x24_teacher_main_20260429T171506Z/stage_000500000/model_metadata.json`
+- gate report: `reports/stage5_gate_000500000_20260429T190313Z.json` (`PASS`)
+- comparison report: `reports/STAGE5_100K_VS_500K_COMPARISON.md`
+- baseline used: `legacy032_24x24_teacher_main_20260429T162331Z / stage_000100000`
+- run interpretation: `500k is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 100k.`
+
+Stage 5B acceptance checklist:
+
+- [x] stage5b_24x24_contract_probe.json exists and PASS
+- [x] 500k training run executed
+- [x] checkpoint + metadata saved
+- [x] behavior gate executed in `target_24x24_gridmode`
+- [x] STAGE5B_500K_TRAINING_REPORT.md exists
+- [x] STAGE5B_COMPLETION_REPORT.md exists
+- [x] STAGE5_100K_VS_500K_COMPARISON.md exists
+
+Stage 5B recommendation:
+
+- Technical compatibility remains stable (`env_matches_target_24x24=true`, `mask_used_during_eval=true`, inference/load checks true).
+- Behavior quality did not materially improve versus 100k (stochastic and deterministic mean returns unchanged; deterministic noop share remains very high).
+- Proceed to 1M only with warnings and mandatory follow-up diagnostics if signs of deterministic collapse persist.
+
 Planned checkpoints:
 
 - `100000`, `500000`, `1000000`, `3000000`, `5000000`
