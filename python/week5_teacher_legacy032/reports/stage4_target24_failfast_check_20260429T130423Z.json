@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-04-29T13:04:23.954947+00:00",
+  "run_label": "stage4_target24_failfast_check",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z\\model_metadata.json",
+  "checkpoint_load_ok": true,
+  "policy_architecture_load_ok": true,
+  "inference_ok": false,
+  "eval_env_id": null,
+  "eval_map_path": null,
+  "eval_observation_shape": null,
+  "eval_action_space": null,
+  "eval_action_representation": null,
+  "mask_available": null,
+  "mask_source": null,
+  "mask_used_during_eval": false,
+  "env_matches_training_metadata": false,
+  "env_matches_target_24x24": false,
+  "warnings": [
+    "Checkpoint is evaluable only on reference internal env/action space, not target 24x24 preflight env."
+  ],
+  "errors": [
+    "Evaluation failed: target_24x24_gridmode requested but checkpoint metadata is 16x16 reference-internal. Checkpoint architecture/training metadata correspond to reference internal 16x16 grid mode (MultiDiscrete [256,6,4,4,4,4,7,49]), not preflight 24x24 global-single-action mode (MultiDiscrete [576,6,4,4,4,4,7,576])."
+  ],
+  "eval_results": {},
+  "eval_result": null,
+  "compatibility": {
+    "training_metadata_env_id": "MicrortsDefeatCoacAIShaped-v3",
+    "training_metadata_observation_shape": [
+      16,
+      16,
+      27
+    ],
+    "training_metadata_action_space": "MultiDiscrete([256   6   4   4   4   4   7  49])",
+    "preflight_24x24_expected_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ],
+    "reference_internal_expected_nvec": [
+      256,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "reference_internal_compatible": true,
+    "preflight_24x24_compatible": false,
+    "preflight_24x24_reason": "Checkpoint architecture/training metadata correspond to reference internal 16x16 grid mode (MultiDiscrete [256,6,4,4,4,4,7,49]), not preflight 24x24 global-single-action mode (MultiDiscrete [576,6,4,4,4,4,7,576]).",
+    "metadata_nvec_parsed": [
+      256,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ]
+  },
+  "gate_decision": "FAIL",
+  "gate_reasons": [
+    "policy inference failed",
+    "action distribution not recorded"
+  ]
+}

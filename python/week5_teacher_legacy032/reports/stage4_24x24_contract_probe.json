@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-04-29T13:03:33.222097+00:00",
+  "status": "BLOCKED_CONTRACT_MISMATCH",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "expected_observation_space": [
+    24,
+    24,
+    27
+  ],
+  "expected_action_space_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    576
+  ],
+  "observation_space": [
+    24,
+    24,
+    27
+  ],
+  "action_space_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "mapsize": 576,
+  "mask_available": true,
+  "mask_source": "env.vec_client.getMasks(0)",
+  "mask_shape": [
+    6,
+    24,
+    24,
+    79
+  ],
+  "policy_forward_ok": false,
+  "masked_action_sample_ok": false,
+  "env_step_ok": false,
+  "policy_actor_output_shape": null,
+  "errors": [
+    "action_space.nvec mismatch: expected=[576, 6, 4, 4, 4, 4, 7, 576], actual=[576, 6, 4, 4, 4, 4, 7, 49]",
+    "Probe failed: The size of tensor a (3456) must match the size of tensor b (6144) at non-singleton dimension 0",
+    "Traceback (most recent call last):\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\verify_legacy032_24x24_training_contract.py\", line 227, in _main\n    action_t, logits_t = policy.sample_action(obs_t, raw_masks=raw_masks, device=device)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\verify_legacy032_24x24_training_contract.py\", line 108, in sample_action\n    cats = [CategoricalMasked(logits=sl, masks=sm) for sl, sm in zip(split_logits, split_masks)]\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\verify_legacy032_24x24_training_contract.py\", line 108, in <listcomp>\n    cats = [CategoricalMasked(logits=sl, masks=sm) for sl, sm in zip(split_logits, split_masks)]\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\verify_legacy032_24x24_training_contract.py\", line 28, in __init__\n    logits = torch.where(self.masks, logits, torch.tensor(-1e8, device=logits.device))\nRuntimeError: The size of tensor a (3456) must match the size of tensor b (6144) at non-singleton dimension 0\n"
+  ],
+  "warnings": []
+}

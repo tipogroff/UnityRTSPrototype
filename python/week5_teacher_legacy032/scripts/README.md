@@ -11,10 +11,13 @@ This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pip
 |--------|-------|--------|---------|
 | `legacy032_env_probe.py` | Stage 1 | ✅ DONE | Probe env contracts, smoke episode, JSON+MD report |
 | `train_teacher_legacy032.py` | Stage 2 | ✅ DONE (smoke) | Stage 2 smoke wrapper around reference training script; saves isolated legacy032 artifacts and summary reports |
-| `evaluate_teacher_legacy032.py` | Stage 3 | ✅ DONE | Evaluate checkpoint, run behavior gate, write JSON+MD reports |
-| `run_staged_teacher_training_legacy032.py` | Stage 3 | ✅ DONE | Run staged main training and evaluate after checkpoints |
-| `export_teacher_rollout_legacy032.py` | Stage 4 | planned | Export raw episode trajectories |
-| `adapt_legacy032_to_unity_v2.py` | Stage 5–6 | planned | Adapt rollout to Unity v2 `[6,4,4,4,4,7,49]` |
+| `evaluate_teacher_legacy032.py` | Stage 3-4R | ✅ UPDATED | Evaluate checkpoint, run behavior gate, includes corrected `target_24x24_gridmode` compatibility (`[...,49]`) |
+| `run_staged_teacher_training_legacy032.py` | Stage 3 (historical line) | ✅ DONE | Run staged main training and evaluate after checkpoints |
+| `ppo_gridnet_legacy032_24x24_local_save.py` | Stage 4R | ✅ UPDATED | Patched trainer with corrected GridMode contract (`[...,49]`) and resolution-aware actor head |
+| `verify_legacy032_24x24_training_contract.py` | Stage 4R | ✅ UPDATED | Contract+architecture probe for 24x24 GridMode with explicit mode separation (global-single vs gridmode) |
+| `train_teacher_legacy032_24x24.py` | Stage 4R | ✅ UPDATED | Thin 24x24 smoke wrapper: runs Stage 4R probe first, then training only on PASS |
+| `export_teacher_rollout_legacy032.py` | Stage 6 | planned | Export raw episode trajectories from corrected 24x24 GridMode path |
+| `adapt_legacy032_to_unity_v2.py` | Stage 7 | planned | Adapt rollout to Unity v2 `[6,4,4,4,4,7,49]` |
 
 ---
 
@@ -96,7 +99,7 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 - `--device` (default `cpu`)
 - `--output-dir` (default `python/week5_teacher_legacy032/reports`)
 - `--eval-mode deterministic|stochastic|both` (default `both`)
-- `--env-mode reference_internal|preflight_24x24|auto` (default `auto`)
+- `--env-mode reference_internal|preflight_24x24|target_24x24_gridmode|auto` (default `auto`)
 - `--require-mask true|false` (default `true`)
 - `--max-steps-per-episode` (default `2000`)
 - `--write-action-trace`
@@ -165,6 +168,91 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 - Stage 3 gate reports therefore include compatibility warning when checkpoint is only evaluable on internal reference action space.
 - Do not claim direct 24x24 target compatibility from these checkpoints without explicit pipeline changes.
 
+Stage 4 rule:
+
+- Do not continue 500k/1M/3M/5M on the legacy 16x16 reference path for Unity-transfer decisions.
+- Continue long training only after Stage 4 alignment is resolved for 24x24 target contract.
+- For Stage 5 transfer-readiness decisions, use corrected 24x24 GridMode path only.
+
+Stage 4R correction note:
+
+- Stage 4 original `BLOCKED_CONTRACT_MISMATCH` classification was superseded.
+- For `MicroRTSGridModeVecEnv` on 24x24, expected nvec is `[576,6,4,4,4,4,7,49]`.
+- Attack branch `49` is correct for GridMode (local 7x7 target).
+- Remaining blocker in Stage 4 was architecture shape mismatch, now fixed via resolution-aware actor head.
+
+Post-Stage-4R sequence:
+
+- Stage 5: 24x24 staged teacher training (corrected GridMode path)
+- Stage 6: raw rollout export
+- Stage 7: adapter to Unity v2
+- Stage 8: v2 validation and BC-ready packaging
+
+---
+
+## Stage 4 scripts
+
+### `verify_legacy032_24x24_training_contract.py`
+
+Purpose:
+
+- Creates `MicroRTSGridModeVecEnv` on requested map.
+- Verifies observation/action contract, mask availability through `env.vec_client.getMasks(0)`, policy forward and masked sampling.
+- Separates contracts explicitly:
+	- global single-action reference: `[576,6,4,4,4,4,7,576]`
+	- gridmode expected: `[576,6,4,4,4,4,7,49]`
+- Writes JSON report with PASS/BLOCKED decision.
+
+Example command:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/verify_legacy032_24x24_training_contract.py `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--num-bot-envs 6 --num-selfplay-envs 0 --seed 17 `
+	--output-json python/week5_teacher_legacy032/reports/stage4r_24x24_contract_probe.json
+```
+
+### `train_teacher_legacy032_24x24.py`
+
+Purpose:
+
+- Thin wrapper around `ppo_gridnet_legacy032_24x24_local_save.py`.
+- Writes outputs only under `python/week5_teacher_legacy032`.
+- Supports `--require-contract-check true` so training is skipped when probe fails.
+- This wrapper targets corrected 24x24 GridMode contract (`[...,49]`) only.
+
+Example command:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/train_teacher_legacy032_24x24.py `
+	--run-label legacy032_24x24_smoke `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--seed 17 --total-timesteps 10000 --device cpu --no-wandb `
+	--require-contract-check true
+```
+
+### `ppo_gridnet_legacy032_24x24_local_save.py`
+
+Purpose:
+
+- Stage 4R patched legacy032 training script derived from reference source.
+- Adds configurable `--map-path`, `--max-steps`, `--expected-map-size`, `--verify-contract`.
+- Uses corrected GridMode expectation (`[...,49]` for attack branch).
+- Uses `legacy032_resolution_aware_gridnet_v1` actor head to force actor logits spatial size == env HxW.
+- Emits contract/architecture failure report and exits when mismatch is detected.
+- This is the active Stage 4R trainer for Stage 5 24x24 staged training.
+
+### `evaluate_teacher_legacy032.py` in `target_24x24_gridmode`
+
+`--env-mode target_24x24_gridmode` validates target 24x24 GridMode behavior and mask usage.
+It does not evaluate gym.make/global single-action contract mode.
+
 ---
 
 ## `legacy032_env_probe.py` — Stage 1
@@ -204,7 +292,8 @@ $env:Path = "$env:JAVA_HOME\bin;$env:Path"
   one action per step: `[src_cell=576, action_type=6, move=4, harvest=4, return=4,
   produce_dir=4, produce_unit=7, attack_global=576]`
 - **Observation shape**: `(24, 24, 27)` — H × W × C
-- **Attack target**: global flat 576 (NOT local 7×7 49) — Stage 6 adapter required
+- **Attack target**: global flat 576 (NOT local 7×7 49) for gym.make/global-single mode only
+- Corrected Stage 4R GridMode training path already uses local 7×7 attack target 49
 
 ### Troubleshooting
 

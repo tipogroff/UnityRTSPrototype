@@ -1,6 +1,6 @@
 # Legacy032 Teacher Training Plan
 
-**Status**: Stage 3 PARTIAL — PASS_WITH_WARNINGS (Stage 3A 100k sanity completed)  
+**Status**: Stage 4R PASS — READY_FOR_24X24_100K_TRAINING  
 **Date created**: 2026-04-29  
 **Runtime target**: `gym_microrts==0.3.2`
 
@@ -43,16 +43,23 @@ the existing adapter pipeline (with confirmed v2 target mode).
 observation_shape = [1, 24, 24, 27]   # per-vectorized-env, 27-channel
 ```
 
-### Action (teacher side — gym_microrts 0.3.2 native)
+### Legacy gym.make / global single-action mode
 
 ```python
-teacher_branch_sizes = [6, 4, 4, 4, 4, 7, 576]   # last = global flat attack (24x24)
+global_single_action_24x24_nvec = [576, 6, 4, 4, 4, 4, 7, 576]
 ```
 
-### Action (Unity v2 target — adapter output)
+### Legacy MicroRTSGridModeVecEnv / teacher training mode
 
 ```python
-unity_v2_branch_sizes = [6, 4, 4, 4, 4, 7, 49]   # last = local 7x7 attack
+gridmode_24x24_nvec = [576, 6, 4, 4, 4, 4, 7, 49]
+gridmode_per_cell_branch_sizes = [6, 4, 4, 4, 4, 7, 49]
+```
+
+### Unity v2 target
+
+```python
+unity_v2_branch_sizes = [6, 4, 4, 4, 4, 7, 49]
 ```
 
 ### BC-ready sample shapes
@@ -74,7 +81,9 @@ Tasks:
 - Instantiate `gym_microrts==0.3.2` with 24×24 map
 - Print and record: `observation_space.shape`, `action_space.nvec`
 - Confirm observation channel count (27 expected)
-- Confirm branch sizes per cell: `[6, 4, 4, 4, 4, 7, 576]` or actual value
+- Confirm mode-specific nvec:
+  - global single-action reference: `[576,6,4,4,4,4,7,576]`
+  - GridMode teacher path: `[576,6,4,4,4,4,7,49]`
 - Record Java version and venv path
 - Write `reports/stage1_env_probe.json`
 
@@ -162,6 +171,11 @@ Known warnings:
 - Checkpoints are evaluable on reference internal 16x16 env/action space.
 - Direct compatibility with target preflight 24x24 env/action space remains unresolved.
 
+Important interpretation for Stage 3 artifacts:
+
+- Stage 3 16x16 checkpoints are reference-internal proof artifacts only.
+- They must not be treated as 24x24-aligned teacher checkpoints for Unity transfer decisions.
+
 Current staged plan:
 
 - completed: `100000`
@@ -183,25 +197,103 @@ Stage note:
 
 ---
 
-### Stage 4 — Long-horizon staged continuation
+### Stage 4 — 24x24 training/evaluation alignment (original)
 
-**Entry point**: `scripts/run_staged_teacher_training_legacy032.py`
+**Entry points**:
+
+- `scripts/ppo_gridnet_legacy032_24x24_local_save.py`
+- `scripts/verify_legacy032_24x24_training_contract.py`
+- `scripts/train_teacher_legacy032_24x24.py`
+- `scripts/evaluate_teacher_legacy032.py` (`--env-mode target_24x24_gridmode`)
 
 Tasks:
 
-- Continue staged checkpoints at 500k, 1M, 3M, and 5M.
-- Run behavior gates after each checkpoint.
-- Select best checkpoint by gate + behavior metrics.
+- Audit reference script for 16x16 hardcoded assumptions.
+- Patch training path in legacy032 workspace only.
+- Verify 24x24 contract/mask/policy-forward before training.
+- Run short 10k smoke training only if contract probe PASS.
+- Evaluate smoke checkpoint in target 24x24 gridmode.
+
+Current Stage 4 result (2026-04-29, superseded by Stage 4R):
+
+- Contract probe status: `BLOCKED_CONTRACT_MISMATCH` (superseded)
+- Confirmed observation in gridmode env: `[24,24,27]`
+- Confirmed action nvec in gridmode env: `[576,6,4,4,4,4,7,49]` (not `[576,6,4,4,4,4,7,576]`)
+- Mask path available via `env.vec_client.getMasks(0)`
+- Policy masked sampling failed under current reference encoder/decoder topology due shape mismatch
+- 10k smoke training not started (blocked by contract probe)
+
+Correction note:
+
+- Stage 4 original `BLOCKED_CONTRACT_MISMATCH` classification was superseded by Stage 4R.
+- Root cause of Stage 4 contract block was incorrect expected contract for GridMode.
+
+### Stage 4R — GridMode contract correction + architecture fix
+
+**Entry points**:
+
+- `scripts/verify_legacy032_24x24_training_contract.py`
+- `scripts/ppo_gridnet_legacy032_24x24_local_save.py`
+- `scripts/train_teacher_legacy032_24x24.py`
+- `scripts/evaluate_teacher_legacy032.py` (`--env-mode target_24x24_gridmode`)
+
+Stage 4R corrections:
+
+- Correct GridMode expected nvec for 24x24: `[576,6,4,4,4,4,7,49]`.
+- Preserve global single-action 24x24 contract `[576,6,4,4,4,4,7,576]` as separate reference mode only.
+- Implement resolution-aware actor head so actor output HxW matches env HxW on 24x24.
+
+Stage 4R result (2026-04-29):
+
+- contract probe: `PASS`
+- 10k smoke training: `PASS`
+- checkpoint saved: yes
+- behavior gate in `target_24x24_gridmode`: `PASS`
+- env_matches_target_24x24: true
+- mask_used_during_eval: true
+
+Stage 4R decision:
+
+- `READY_FOR_24X24_100K_TRAINING`
 
 Acceptance criteria:
 
-- [ ] 500k/1M/3M/5M checkpoints completed or explicitly failed with reports
-- [ ] Comparative checkpoint table updated with gate outcomes
-- [ ] Best candidate selected for downstream export stage
+- [x] Stage 4 audit created
+- [x] 24x24 patched script created in legacy032 workspace
+- [x] 24x24 contract probe script created and executed
+- [x] evaluator updated with `target_24x24_gridmode`
+- [x] contract probe PASS
+- [x] 10k smoke training completed
+- [x] 24x24 smoke checkpoint evaluated by behavior gate
+
+Stage gate status:
+
+- Historical gate was: do not run 500k/1M/3M/5M until Stage 4 24x24 alignment is resolved.
+- Current state: resolved in Stage 4R (`READY_FOR_24X24_100K_TRAINING`).
 
 ---
 
-### Stage 5 — Raw rollout export
+### Stage 5 — 24x24 staged teacher training
+
+**Entry point**: corrected 24x24 GridMode training path rooted in Stage 4R trainer artifacts
+
+Primary trainer/runtime path:
+
+- `scripts/ppo_gridnet_legacy032_24x24_local_save.py`
+- architecture_name: `legacy032_resolution_aware_gridnet_v1`
+
+Planned checkpoints:
+
+- `100000`, `500000`, `1000000`, `3000000`, `5000000`
+
+Rule:
+
+- Use corrected Stage 4R path only.
+- Do not use 16x16 reference-internal path for transfer-readiness decisions.
+
+---
+
+### Stage 6 — Raw rollout export
 
 **Entry point**: `scripts/export_teacher_rollout_legacy032.py` (to be created)
 
@@ -211,29 +303,33 @@ Tasks:
 - Save to `teacher_rollouts/` (namespaced by run timestamp)
 - Record rollout summary: episode count, mean return, action distribution
 
+Contract note for corrected GridMode exports:
+
+- For corrected 24x24 GridMode path, attack branch is already local 7×7 (`49`).
+
 Acceptance criteria:
 - [ ] Rollout export completes
 - [ ] `teacher_rollouts/{run_id}/rollout_summary.json` written
 - [ ] Observations are 27-channel, shape `[T, 24, 24, 27]`
-- [ ] Raw actions recorded as per-cell `[6,4,4,4,4,7,576]` or similar
+- [ ] Raw actions recorded with GridMode contract `[576,6,4,4,4,4,7,49]` for corrected Stage 4R path
 
 ---
 
-### Stage 6 — Adapter to Unity v2
+### Stage 7 — Adapter to Unity v2
 
 **Entry point**: `scripts/adapt_legacy032_to_unity_v2.py` (to be created)
 
 Tasks:
 - Call `adapt_teacher_dataset.py` with `--target-action-contract v2_gridnet_compatible`
   (or a dedicated 0.3.2-aware adapter if needed)
-- Handle **attack-target remap**: global flat index (576) → local 7×7 (49)
+- If trajectories are exported from corrected 24x24 GridMode path, keep local 7×7 attack branch (`49`) unchanged.
+- Global `576` → local `49` attack-target remap is needed only for trajectories exported from gym.make/global single-action mode.
+- Always verify actor-cell alignment, branch ranges, inactive branches, masks, and Unity v2 tensor layout.
 - Record conversion report in `teacher_exports/{run_id}/conversion_report.json`
 
 Known risk:
-- Attack-target semantic gap: `gym_microrts==0.3.2` encodes attack as a global
-  cell index across the 24×24 grid; Unity v2 expects a local 7×7 window centered
-  on the attacking unit.  This remap requires spatial coordinate translation and
-  must be validated explicitly.
+- For corrected GridMode exports, attack branch is already local 7×7 (`49`).
+- For gym.make/global single-action exports, attack is global flat `576` and requires explicit spatial remap to local 7×7 (`49`).
 
 Acceptance criteria:
 - [ ] Adapter runs to completion with zero dropped samples (or documented drop reason)
@@ -243,7 +339,7 @@ Acceptance criteria:
 
 ---
 
-### Stage 7 — v2 validation and BC-ready packaging
+### Stage 8 — v2 validation and BC-ready packaging
 
 **Entry point**: validate + package scripts (to be migrated from `python/week5_teacher/`)
 
@@ -254,18 +350,18 @@ Tasks:
 - Build BC-ready package:
   - `EXPECTED_BRANCH_SIZES = (6,4,4,4,4,7,49)` (migration item from v1)
   - Write to `teacher_exports_bc/{run_id}/`
-- Write `reports/stage7_bc_ready.json`
+- Write `reports/stage8_bc_ready.json`
 
 Known migration items (from LEGACY032_STAGE0_AUDIT.md):
 - `validate_adapted_dataset.py` — `EXPECTED_ACTION_BRANCH_SIZES` hardcoded to v1;
-  must be updated or replaced before Stage 7
+  must be updated or replaced before Stage 8
 - `build_bc_ready_dataset_day6.py` — `EXPECTED_BRANCH_SIZES` hardcoded to v1;
-  must be updated or replaced before Stage 7
+  must be updated or replaced before Stage 8
 
 Acceptance criteria:
 - [ ] Validation report: zero contract violations
 - [ ] BC package written with correct branch sizes `[6,4,4,4,4,7,49]`
-- [ ] `reports/stage7_bc_ready.json` written
+- [ ] `reports/stage8_bc_ready.json` written
 - [ ] Package is usable by student BC training loop
 
 ---
@@ -274,9 +370,15 @@ Acceptance criteria:
 
 | Risk | Severity | Mitigation |
 |------|----------|-----------|
-| Attack-target remap (global 576 → local 49) may drop most attack samples | High | Design adapter to handle spatial translation; accept partial drop with documentation |
+| Attack-target remap (global 576 → local 49) may drop attack samples for gym.make/global-single exports | High | Prefer corrected GridMode export path where attack branch is already local 49; remap only when source mode is global single-action |
 | numpy fallback (`1.25.2` instead of `1.21.6`) may affect obs reproducibility | Medium | Stage 1 probe records exact numpy version; compare with paper baseline |
 | v0.6.1 / 0.3.2 obs channel layout differences for some map configurations | Medium | Stage 1 probe confirms 27-channel layout explicitly |
-| `validate_adapted_dataset.py` and `build_bc_ready_dataset_day6.py` have hardcoded v1 contract | High | Do not use these scripts until migrated to v2 constant (Stage 7 migration item) |
+| `validate_adapted_dataset.py` and `build_bc_ready_dataset_day6.py` have hardcoded v1 contract | High | Do not use these scripts until migrated to v2 constant (Stage 8 migration item) |
 | Direct weight transfer assumption | High | Not a goal of this pipeline; explicitly excluded from scope |
 | Artifact mixing with v0.6.1 outputs | High | All outputs namespaced to `python/week5_teacher_legacy032/` subdirectories |
+
+## Long-run gating policy
+
+- Future long training must use the 24x24-aligned Stage 4 path once Stage 4 passes.
+- 16x16 reference-internal path can be used only for historical comparison/debug, not for transfer-readiness claims.
+- Stage 4 original remains historical/superseded; Stage 4R is the active baseline for Stage 5+.

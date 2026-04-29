@@ -29,6 +29,8 @@ ACTION_TYPE_NAMES = {
 
 PREFLIGHT_24_ENV_ID = "MicrortsRandomEnemyShapedReward1-v1"
 PREFLIGHT_24_MAP = "maps/24x24/basesWorkers24x24.xml"
+ARCH_OLD = "legacy032_reference_gridnet_v0"
+ARCH_RES_AWARE = "legacy032_resolution_aware_gridnet_v1"
 
 
 @dataclass
@@ -108,16 +110,50 @@ class Decoder(nn.Module):
         return self.deconv(x)
 
 
+class ResolutionAwareDecoder(nn.Module):
+    def __init__(self, output_channels: int, target_hw: Tuple[int, int]):
+        super().__init__()
+        self.target_hw = (int(target_hw[0]), int(target_hw[1]))
+        self.backbone = nn.Sequential(
+            layer_init(nn.ConvTranspose2d(256, 128, 3, stride=2, padding=1, output_padding=1)),
+            nn.ReLU(),
+            layer_init(nn.ConvTranspose2d(128, 64, 3, stride=2, padding=1, output_padding=1)),
+            nn.ReLU(),
+            layer_init(nn.ConvTranspose2d(64, 32, 3, stride=2, padding=1, output_padding=1)),
+            nn.ReLU(),
+        )
+        self.final_conv = layer_init(nn.Conv2d(32, output_channels, kernel_size=1), std=0.01)
+
+    def forward(self, x):
+        x = self.backbone(x)
+        if tuple(x.shape[-2:]) != self.target_hw:
+            x = torch.nn.functional.interpolate(x, size=self.target_hw, mode="bilinear", align_corners=False)
+        x = self.final_conv(x)
+        return x.permute(0, 2, 3, 1)
+
+
 class Legacy032Policy(nn.Module):
-    def __init__(self, obs_channels: int, nvec: List[int], mapsize: int):
+    def __init__(
+        self,
+        obs_channels: int,
+        nvec: List[int],
+        mapsize: int,
+        obs_hw: Tuple[int, int],
+        architecture_name: str = ARCH_OLD,
+    ):
         super().__init__()
         self.mapsize = mapsize
         self.nvec = nvec
         output_channels = int(sum(nvec[1:]))
+        self.architecture_name = architecture_name
 
         self.encoder = Encoder(obs_channels)
-        self.actor = Decoder(output_channels)
+        if architecture_name == ARCH_RES_AWARE:
+            self.actor = ResolutionAwareDecoder(output_channels, target_hw=obs_hw)
+        else:
+            self.actor = Decoder(output_channels)
         self.critic = nn.Sequential(
+            nn.AdaptiveAvgPool2d((1, 1)),
             nn.Flatten(),
             layer_init(nn.Linear(256, 128), std=1),
             nn.ReLU(),
@@ -257,6 +293,37 @@ def _create_reference_internal_env(metadata: Dict[str, Any]):
     return env
 
 
+def _create_target_24x24_gridmode_env(metadata: Dict[str, Any], max_steps: int):
+    from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
+
+    md_args = metadata.get("args", {}) if isinstance(metadata.get("args"), dict) else {}
+    num_selfplay = int(md_args.get("num_selfplay_envs", 0))
+    num_bot = int(md_args.get("num_bot_envs", 6))
+
+    env = MicroRTSGridModeVecEnv(
+        num_selfplay_envs=num_selfplay,
+        num_bot_envs=num_bot,
+        max_steps=max_steps,
+        render_theme=2,
+        ai2s=_build_ai2s(num_bot),
+        map_path=PREFLIGHT_24_MAP,
+        reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
+    )
+    return env
+
+
+def _metadata_contract(metadata: Dict[str, Any]) -> Tuple[Optional[List[int]], Optional[List[int]]]:
+    md_obs = metadata.get("observation_space")
+    md_nvec = None
+    try:
+        md_nvec = _parse_action_space_from_metadata(str(metadata.get("action_space")))
+    except Exception:
+        md_nvec = None
+    if not isinstance(md_obs, list):
+        md_obs = None
+    return md_obs, md_nvec
+
+
 def _decode_checkpoint_step(path: Path) -> Optional[int]:
     m = re.search(r"agent_step_(\d+)\.pt$", path.name)
     if not m:
@@ -276,11 +343,12 @@ def _compatibility_checks(metadata: Dict[str, Any]) -> Dict[str, Any]:
         "training_metadata_env_id": metadata.get("env_id"),
         "training_metadata_observation_shape": metadata.get("observation_space"),
         "training_metadata_action_space": metadata.get("action_space"),
-        "preflight_24x24_expected_nvec": [576, 6, 4, 4, 4, 4, 7, 576],
+        "preflight_24x24_global_single_expected_nvec": [576, 6, 4, 4, 4, 4, 7, 576],
+        "target_24x24_gridmode_expected_nvec": [576, 6, 4, 4, 4, 4, 7, 49],
         "reference_internal_expected_nvec": [256, 6, 4, 4, 4, 4, 7, 49],
         "reference_internal_compatible": False,
-        "preflight_24x24_compatible": False,
-        "preflight_24x24_reason": None,
+        "target_24x24_gridmode_compatible": False,
+        "target_24x24_gridmode_reason": None,
     }
 
     md_obs = metadata.get("observation_space")
@@ -293,13 +361,13 @@ def _compatibility_checks(metadata: Dict[str, Any]) -> Dict[str, Any]:
     if md_obs == [16, 16, 27] and md_nvec == checks["reference_internal_expected_nvec"]:
         checks["reference_internal_compatible"] = True
 
-    if md_obs == [24, 24, 27] and md_nvec == checks["preflight_24x24_expected_nvec"]:
-        checks["preflight_24x24_compatible"] = True
+    if md_obs == [24, 24, 27] and md_nvec == checks["target_24x24_gridmode_expected_nvec"]:
+        checks["target_24x24_gridmode_compatible"] = True
     else:
-        checks["preflight_24x24_reason"] = (
+        checks["target_24x24_gridmode_reason"] = (
             "Checkpoint architecture/training metadata correspond to reference internal 16x16 grid mode "
-            "(MultiDiscrete [256,6,4,4,4,4,7,49]), not preflight 24x24 global-single-action mode "
-            "(MultiDiscrete [576,6,4,4,4,4,7,576])."
+            "(MultiDiscrete [256,6,4,4,4,4,7,49]), or to a non-gridmode target, not target 24x24 gridmode "
+            "(MultiDiscrete [576,6,4,4,4,4,7,49])."
         )
 
     checks["metadata_nvec_parsed"] = md_nvec
@@ -582,7 +650,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--env-mode",
         default="auto",
-        choices=["reference_internal", "preflight_24x24", "auto"],
+        choices=["reference_internal", "preflight_24x24", "target_24x24_gridmode", "auto"],
     )
     parser.add_argument("--require-mask", type=_parse_bool, default=True)
     parser.add_argument("--max-steps-per-episode", type=int, default=2000)
@@ -655,9 +723,9 @@ def main() -> int:
             metadata = _load_metadata(metadata_path)
             compatibility = _compatibility_checks(metadata)
             run["compatibility"] = compatibility
-            run["env_matches_training_metadata"] = bool(compatibility.get("reference_internal_compatible"))
-            run["env_matches_target_24x24"] = bool(compatibility.get("preflight_24x24_compatible"))
-            if not compatibility.get("preflight_24x24_compatible", False):
+            run["env_matches_training_metadata"] = False
+            run["env_matches_target_24x24"] = False
+            if not compatibility.get("target_24x24_gridmode_compatible", False):
                 warn.add(
                     "Checkpoint is evaluable only on reference internal env/action space, not target 24x24 preflight env."
                 )
@@ -684,7 +752,14 @@ def main() -> int:
                 raise ValueError(f"Invalid metadata observation_space: {md_obs}")
 
             mapsize = int(md_obs[0] * md_obs[1])
-            policy = Legacy032Policy(obs_channels=int(md_obs[2]), nvec=md_nvec, mapsize=mapsize).to(device)
+            architecture_name = str(metadata.get("architecture_name") or ARCH_OLD)
+            policy = Legacy032Policy(
+                obs_channels=int(md_obs[2]),
+                nvec=md_nvec,
+                mapsize=mapsize,
+                obs_hw=(int(md_obs[0]), int(md_obs[1])),
+                architecture_name=architecture_name,
+            ).to(device)
             missing, unexpected = policy.load_state_dict(state_dict, strict=False)
             if missing or unexpected:
                 warn.add(f"State dict loaded with non-strict diffs; missing={len(missing)} unexpected={len(unexpected)}")
@@ -694,22 +769,39 @@ def main() -> int:
 
     if not run["errors"] and not args.dry_run:
         try:
-            if eval_env_mode == "preflight_24x24":
-                # Explicitly fail-fast because this checkpoint architecture is incompatible with preflight action contract.
-                if compatibility and not compatibility.get("preflight_24x24_compatible", False):
-                    raise RuntimeError(
-                        compatibility.get("preflight_24x24_reason")
-                        or "Checkpoint is incompatible with preflight_24x24 action/observation space."
-                    )
+            if eval_env_mode == "auto":
+                eval_env_mode = (
+                    "target_24x24_gridmode"
+                    if compatibility and compatibility.get("target_24x24_gridmode_compatible", False)
+                    else "reference_internal"
+                )
 
-            env = _create_reference_internal_env(metadata)
+            if eval_env_mode == "target_24x24_gridmode" or eval_env_mode == "preflight_24x24":
+                if compatibility and not compatibility.get("target_24x24_gridmode_compatible", False):
+                    raise RuntimeError(
+                        "target_24x24_gridmode requested but checkpoint metadata is 16x16 reference-internal. "
+                        + (
+                            compatibility.get("target_24x24_gridmode_reason")
+                            or "Checkpoint is incompatible with target 24x24 action/observation space."
+                        )
+                    )
+                env = _create_target_24x24_gridmode_env(metadata, args.max_steps_per_episode)
+                run["eval_env_id"] = PREFLIGHT_24_ENV_ID
+                run["eval_map_path"] = PREFLIGHT_24_MAP
+            else:
+                env = _create_reference_internal_env(metadata)
+                run["eval_env_id"] = metadata.get("env_id", "MicrortsDefeatCoacAIShaped-v3")
+                run["eval_map_path"] = "maps/16x16/basesWorkers16x16.xml"
+
             obs_shape = list(env.observation_space.shape)
             nvec = [int(x) for x in env.action_space.nvec.tolist()]
-            run["eval_env_id"] = metadata.get("env_id", "MicrortsDefeatCoacAIShaped-v3")
-            run["eval_map_path"] = "maps/16x16/basesWorkers16x16.xml"
             run["eval_observation_shape"] = obs_shape
             run["eval_action_space"] = nvec
             run["eval_action_representation"] = "GYM_MICRORTS_032_REFERENCE_GRIDMODE"
+
+            md_obs, md_nvec = _metadata_contract(metadata)
+            run["env_matches_training_metadata"] = bool(md_obs == obs_shape and md_nvec == nvec)
+            run["env_matches_target_24x24"] = bool(obs_shape == [24, 24, 27] and nvec == [576, 6, 4, 4, 4, 4, 7, 49])
 
             eval_modes: List[Tuple[str, bool]]
             if args.eval_mode == "both":
