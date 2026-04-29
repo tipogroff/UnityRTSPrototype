@@ -1,6 +1,6 @@
 # Legacy032 Teacher Training Plan
 
-**Status**: Stage 2 COMPLETE — PASS (smoke training checkpoint saved)  
+**Status**: Stage 3 PARTIAL — PASS_WITH_WARNINGS (Stage 3A 100k sanity completed)  
 **Date created**: 2026-04-29  
 **Runtime target**: `gym_microrts==0.3.2`
 
@@ -129,38 +129,75 @@ Stage 3 dependency note:
 
 ---
 
-### Stage 3 — Behavior-first gate
+### Stage 3 — Staged teacher training with behavior gates
 
-**Entry point**: `scripts/evaluate_teacher_legacy032.py` (to be created)
+**Entry points**:
 
-Tasks:
-- Evaluate smoke/short checkpoint
-- Record `action_type_distribution` (move_share, noop_share, etc.)
-- Apply behavior gate: require `move_share > 0.05` (teacher must demonstrate
-  intentional movement)
-- Write `reports/stage3_behavior_gate.json`
+- `scripts/evaluate_teacher_legacy032.py`
+- `scripts/run_staged_teacher_training_legacy032.py`
+
+**Stage 3 status**: PARTIAL — PASS_WITH_WARNINGS
+
+Stage 3 reports:
+
+- `reports/STAGE3_PRETRAINING_AUDIT.md`
+- `reports/stage3_smoke_checkpoint_behavior_gate_20260429T122219Z.json`
+- `reports/stage3_smoke_checkpoint_behavior_gate_20260429T122219Z.md`
+- `reports/stage3_training_20260429T120524Z.json`
+- `reports/stage3_training_20260429T120524Z.md`
+- `reports/stage3_gate_000100000_20260429T122246Z.json`
+- `reports/stage3_gate_000100000_20260429T122246Z.md`
+- `reports/STAGE3_STAGED_TRAINING_REPORT.md`
+- `reports/STAGE3_COMPLETION_REPORT.md`
+
+What was completed:
+
+- Stage 2 smoke checkpoint evaluator run completed and deferred inference warning closed.
+- Stage 3A 100k sanity training completed with checkpoint artifact.
+- Behavior gate completed for smoke checkpoint and 100k checkpoint.
+- Action distribution recorded; mask usage confirmed in evaluation.
+
+Known warnings:
+
+- Checkpoints are evaluable on reference internal 16x16 env/action space.
+- Direct compatibility with target preflight 24x24 env/action space remains unresolved.
+
+Current staged plan:
+
+- completed: `100000`
+- planned: `500000, 1000000, 3000000, 5000000`
+- optional: `10000000` (only if quality keeps improving)
 
 Acceptance criteria:
-- [ ] Evaluation runs without error
-- [ ] `action_type_distribution` recorded
-- [ ] Behavior gate decision written to report
+
+- [x] Evaluation runs without crash
+- [x] `action_type_distribution` recorded
+- [x] Behavior gate decision written
+- [x] At least one staged checkpoint created (100k)
+- [x] Stage 2 deferred inference warning closed
+- [ ] Stage 3 long stages (500k+) still pending
+
+Stage note:
+
+- Stage 3A 100k sanity completed; longer stages remain planned.
 
 ---
 
-### Stage 4 — Main teacher training
+### Stage 4 — Long-horizon staged continuation
 
-**Entry point**: `scripts/train_teacher_legacy032.py` (extended run)
+**Entry point**: `scripts/run_staged_teacher_training_legacy032.py`
 
 Tasks:
-- Full PPO run (target: 100k–500k steps, to be determined)
-- Checkpoints saved at regular intervals to `teacher_models/`
-- TensorBoard logs (optional) to `teacher_logs/`
-- Evaluate final checkpoint with behavior gate
+
+- Continue staged checkpoints at 500k, 1M, 3M, and 5M.
+- Run behavior gates after each checkpoint.
+- Select best checkpoint by gate + behavior metrics.
 
 Acceptance criteria:
-- [ ] Teacher demonstrates consistent movement and combat behavior
-- [ ] Behavior gate PASS at final checkpoint
-- [ ] Checkpoint selected for rollout export
+
+- [ ] 500k/1M/3M/5M checkpoints completed or explicitly failed with reports
+- [ ] Comparative checkpoint table updated with gate outcomes
+- [ ] Best candidate selected for downstream export stage
 
 ---
 

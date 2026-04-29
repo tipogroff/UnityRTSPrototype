@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-04-29T12:17:53.684737+00:00",
+  "run_id": "legacy032_teacher_main_20260429T120524Z",
+  "strategy": "single_stage_run",
+  "strategy_note": "Reference script supports local-save-every for intermediate checkpoints, but does not expose robust CLI resume from local checkpoints in non-wandb mode.",
+  "stages_planned": [
+    100000
+  ],
+  "stages_run": [
+    100000
+  ],
+  "training_command": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\patched_paper_scripts\\ppo_gridnet_diverse_encode_decode_local_save.py --total-timesteps 100000 --seed 17 --exp-name legacy032_teacher_main_20260429T120524Z --num-bot-envs 6 --num-selfplay-envs 0 --local-save-model true --local-save-dir C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_teacher_main_20260429T120524Z\\_combined_run --local-save-every 100000 --cuda false",
+  "training_exit_code": 0,
+  "model_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_teacher_main_20260429T120524Z",
+  "log_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_logs\\legacy032_teacher_main_20260429T120524Z",
+  "report_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports",
+  "stage_results": [
+    {
+      "stage": 100000,
+      "stage_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_teacher_main_20260429T120524Z\\stage_000100000",
+      "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_teacher_main_20260429T120524Z\\stage_000100000\\agent_final.pt",
+      "training_status": "PASS",
+      "eval_status": "PASS",
+      "gate_decision": "PASS_WITH_WARNINGS",
+      "eval_report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage3_gate_000100000_20260429T121732Z.json",
+      "eval_report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage3_gate_000100000_20260429T121732Z.md",
+      "mean_return": -7.5,
+      "non_noop_share": 0.8335040209412781,
+      "move_share": 0.16538482297063903,
+      "attack_share": 0.16553257232297064,
+      "produce_share": 0.16817654360967185,
+      "mask_used": true,
+      "env_mapping_warning": "Checkpoint is evaluable only on reference internal env/action space, not target 24x24 preflight env.",
+      "errors": []
+    }
+  ]
+}
