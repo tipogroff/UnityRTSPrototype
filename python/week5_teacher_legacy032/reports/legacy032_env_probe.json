@@ -1,0 +1,640 @@
+{
+  "schema_version": "1.0",
+  "probe_script": "legacy032_env_probe.py",
+  "timestamp": "2026-04-29T10:41:29.860905+00:00",
+  "args": {
+    "env_id": "MicrortsRandomEnemyShapedReward1-v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "steps": 128,
+    "seed": 17,
+    "allow_random_actions": true,
+    "allow_mask_random_actions": false
+  },
+  "system": {
+    "os": "Windows",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+    "executable": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe",
+    "virtual_env": "NOT_SET",
+    "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype"
+  },
+  "package_versions": {
+    "gym": "0.17.3",
+    "gym_microrts": "0.3.2",
+    "gym_microrts_alt": "0.3.2",
+    "torch": "1.8.0+cpu",
+    "numpy": "1.25.2",
+    "stable_baselines3": "1.0",
+    "stable_baselines": "NOT_INSTALLED",
+    "sb3_contrib": "NOT_INSTALLED",
+    "JPype1": "1.4.1",
+    "wandb": "NOT_INSTALLED"
+  },
+  "import_errors": {},
+  "java": {
+    "JAVA_HOME": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot",
+    "java_version_string": "openjdk version \"17.0.18\" 2026-01-20"
+  },
+  "gym_microrts_version": "0.3.2",
+  "env_creation": {
+    "status": "SUCCESS",
+    "env_id_used": "MicrortsRandomEnemyShapedReward1-v1",
+    "map_path_used": "maps/24x24/basesWorkers24x24.xml",
+    "attempts": [
+      {
+        "strategy": "gym.make(env_id, map_path=map_path)",
+        "status": "SUCCESS"
+      }
+    ]
+  },
+  "observation_space": {
+    "class": "Box",
+    "repr": "Box(0, 1, (24, 24, 27), int32)",
+    "shape": [
+      24,
+      24,
+      27
+    ],
+    "nvec": null,
+    "low": {
+      "__ndarray__": true,
+      "shape": [
+        24,
+        24,
+        27
+      ],
+      "dtype": "int32",
+      "preview": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "high": {
+      "__ndarray__": true,
+      "shape": [
+        24,
+        24,
+        27
+      ],
+      "dtype": "int32",
+      "preview": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "observation_probe": {
+    "type": "ndarray",
+    "shape": [
+      24,
+      24,
+      27
+    ],
+    "dtype": "int32",
+    "min": 0.0,
+    "max": 1.0,
+    "mean": 0.18518518518518517,
+    "has_nan": false,
+    "has_inf": false,
+    "sha256_first512": "65603c77e48f4def82bc81e3a0985fd71bf3b14cb1980686ae310745c3b5364b"
+  },
+  "action_space": {
+    "class": "MultiDiscrete",
+    "repr": "MultiDiscrete([576   6   4   4   4   4   7 576])",
+    "shape": [
+      8
+    ],
+    "nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ],
+    "low": null,
+    "high": null
+  },
+  "action_contract": {
+    "class": "MultiDiscrete",
+    "repr": "MultiDiscrete([576   6   4   4   4   4   7 576])",
+    "shape": [
+      8
+    ],
+    "nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ],
+    "low": null,
+    "high": null,
+    "nvec_length": 8,
+    "action_representation": "GYM_MICRORTS_032_GLOBAL_SINGLE_ACTION",
+    "cells_detected": 576,
+    "branches_per_cell_detected": null,
+    "action_branch_sizes": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ],
+    "action_branch_layout_uniform": null,
+    "action_branch_layout_matches_unity_v2": false,
+    "expected_unity_v2_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "global_action_src_cell_size": 576,
+    "global_action_per_step_branches": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7
+    ],
+    "global_action_attack_target_size": 576,
+    "action_representation_note": "gym_microrts 0.3.2 uses a GLOBAL single-action per step: one src cell + 6 action branches + one global attack target cell. This is structurally different from Unity v2's per-cell parallel MultiDiscrete (576 cells \u00d7 7 branches = 4032). Direct mapping is NOT possible without the adapter pipeline.",
+    "per_step_branch_names": [
+      "src_cell_selector",
+      "action_type",
+      "move_dir",
+      "harvest_dir",
+      "return_dir",
+      "produce_dir",
+      "produce_unit_type",
+      "attack_target_global"
+    ]
+  },
+  "mask_probe": {
+    "mask_available": false,
+    "mask_source": null,
+    "mask_shape": null,
+    "mask_dtype": null,
+    "mask_min": null,
+    "mask_max": null,
+    "mask_sum": null,
+    "mask_has_nan": null,
+    "mask_has_inf": null,
+    "mask_warning": "Action mask was not found through known APIs; later training scripts must confirm mask path before teacher training.",
+    "attempts": [
+      "env.get_action_mask() \u2192 AttributeError",
+      "env.action_masks() \u2192 AttributeError",
+      "env.get_action_masks() \u2192 AttributeError",
+      "env.unwrapped.get_action_mask() \u2192 AttributeError",
+      "env.unwrapped.action_masks() \u2192 AttributeError"
+    ]
+  },
+  "smoke_run": {
+    "smoke_steps_requested": 128,
+    "smoke_steps_executed": 128,
+    "smoke_done_reached": false,
+    "terminal_type": null,
+    "total_reward": 0.0,
+    "reward_mean": 0.0,
+    "action_method_used": "action_space.sample()",
+    "step_summaries": [
+      {
+        "step_id": 0,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 1,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 2,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 3,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 4,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 5,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 6,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 7,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 8,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 9,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 10,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 11,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 12,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 13,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 14,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 15,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 16,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 17,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 18,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      },
+      {
+        "step_id": 19,
+        "reward": 0.0,
+        "terminated": false,
+        "truncated": false,
+        "obs_shape": [
+          24,
+          24,
+          27
+        ],
+        "info_keys": [
+          "dones",
+          "rewards",
+          "raw_rewards",
+          "raw_dones"
+        ],
+        "mask_available_on_step": false
+      }
+    ],
+    "error": null,
+    "step_summaries_truncated": true
+  },
+  "attack_target_semantics_probe": {
+    "note": "gym_microrts==0.3.2 encodes attack_target as a GLOBAL flat index across all grid cells (e.g., 576 for a 24x24 map), NOT as a local 7x7 window. The Unity v2 contract uses a local 7x7 attack target (49 values). These representations are NOT directly compatible.",
+    "expected_unity_v2_attack_branch": 49,
+    "observed_attack_branch_size": 576,
+    "observed_branch_matches_unity_v2_size": false,
+    "semantic_parity_proven": false,
+    "semantic_parity_note": "Stage 1 env probe does not attempt to prove or disprove local/global target semantics. This requires Stage 6 adapter verification using actual action trajectories and spatial decoding.",
+    "target_encoding_hint": "BRANCH_SIZE_576_GLOBAL_FLAT",
+    "target_encoding_source": null,
+    "conclusion": "gym_microrts 0.3.2 uses a GLOBAL single-action format. The attack_target at nvec index 7 has size 576 (global flat index over all 576 grid cells). This is STRUCTURALLY INCOMPATIBLE with Unity v2 local 7x7 (49). The Stage 6 adapter must: (1) remap global flat index \u2192 local 7x7 relative position, and (2) convert the entire single-action-per-step representation to per-cell parallel actions. This is a non-trivial transformation.",
+    "action_format": "GYM_MICRORTS_032_GLOBAL_SINGLE_ACTION",
+    "attack_branch_index": 7
+  },
+  "warnings": [
+    "Action branch layout [576, 6, 4, 4, 4, 4, 7, 576] does not match Unity v2 contract [6, 4, 4, 4, 4, 7, 49]. Adapter will be required.",
+    "Action mask was not found through known APIs; later training scripts must confirm mask path before teacher training."
+  ],
+  "errors": [],
+  "overall_status": "PASS_WITH_WARNINGS",
+  "registered_microrts_envs": [
+    "Microrts-v0",
+    "MicrortsMining-v1",
+    "MicrortsProduceWorker-v1",
+    "MicrortsAttackSparseReward-v1",
+    "MicrortsAttackShapedReward-v1",
+    "MicrortsAttackHRL-v1",
+    "MicrortsProduceCombatUnitsSparseReward-v1",
+    "MicrortsProduceCombatUnitsShapedReward-v1",
+    "MicrortsProduceCombatUnitHRL-v1",
+    "MicrortsRandomEnemySparseReward-v1",
+    "MicrortsRandomEnemyShapedReward1-v1",
+    "MicrortsRandomEnemyShapedReward2-v1",
+    "MicrortsRandomEnemyShapedReward3-v1",
+    "MicrortsRandomEnemyHRL1-v1",
+    "MicrortsRandomEnemyHRL2-v1",
+    "MicrortsRandomEnemyHRL3-v1",
+    "MicrortsWorkerRush-v1",
+    "MicrortsSelfPlayShapedReward-v1",
+    "MicrortsMining-v2",
+    "MicrortsProduceWorker-v2",
+    "MicrortsAttackPassiveEnemySparseReward-v2",
+    "MicrortsProduceCombatUnitsSparseReward-v2",
+    "MicrortsDefeatRandomEnemySparseReward-v2",
+    "MicrortsDefeatRandomEnemyShapedReward-v2",
+    "MicrortsDefeatWorkerRushEnemyShaped-v2",
+    "MicrortsDefeatLightRushEnemyShaped-v2",
+    "MicrortsDefeatCoacAIShaped-v2",
+    "MicrortsDefeatNaiveMCTSAIShaped-v2",
+    "MicrortsDefeatWorkerRushEnemyHRL-v2",
+    "MicrortsMining-v3"
+  ]
+}

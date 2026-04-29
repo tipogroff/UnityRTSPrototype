@@ -1,26 +1,122 @@
 # scripts/ — Planned Entrypoints for Legacy032 Teacher Pipeline
+This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pipeline.
 
-This directory will contain scripts developed specifically for the
-`gym_microrts==0.3.2` teacher workflow.
-
-**Stage 0 status**: No scripts have been created yet.  The files listed below
-are planned entrypoints for future stages.
+**Stage 1 status**: `legacy032_env_probe.py` created and verified — `PASS_WITH_WARNINGS`.
 
 ---
 
-## Planned scripts (to be created in subsequent stages)
+## Scripts
 
-| Script | Stage | Purpose |
-|--------|-------|---------|
-| `legacy032_env_probe.py` | Stage 1 | Instantiate a 0.3.2 environment, print observation shape, action nvec, and map info |
-| `train_teacher_legacy032.py` | Stage 2–3 | Run PPO training against `gym_microrts==0.3.2`; save checkpoints |
-| `evaluate_teacher_legacy032.py` | Stage 3 | Evaluate a checkpoint; record action_type_distribution and behavior metrics |
-| `export_teacher_rollout_legacy032.py` | Stage 4 | Export raw episode trajectories from a trained 0.3.2 checkpoint |
-| `adapt_legacy032_to_unity_v2.py` | Stage 5 | Adapt 0.3.2 rollout to Unity v2 contract `[6,4,4,4,4,7,49]` |
+| Script | Stage | Status | Purpose |
+|--------|-------|--------|---------|
+| `legacy032_env_probe.py` | Stage 1 | ✅ DONE | Probe env contracts, smoke episode, JSON+MD report |
+| `train_teacher_legacy032.py` | Stage 2 | ✅ DONE (smoke) | Stage 2 smoke wrapper around reference training script; saves isolated legacy032 artifacts and summary reports |
+| `evaluate_teacher_legacy032.py` | Stage 3 | planned | Evaluate checkpoint; behavior metrics |
+| `export_teacher_rollout_legacy032.py` | Stage 4 | planned | Export raw episode trajectories |
+| `adapt_legacy032_to_unity_v2.py` | Stage 5–6 | planned | Adapt rollout to Unity v2 `[6,4,4,4,4,7,49]` |
+
+---
+
+## `train_teacher_legacy032.py` — Stage 2 smoke wrapper
+
+### Purpose
+
+Runs short legacy032 smoke training using the reference patched paper script, but writes
+all outputs only into `python/week5_teacher_legacy032/`.
+
+### Example command
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+.\python\week5_teacher_reference\.venv_microrts032_reference\Scripts\python.exe `
+		python/week5_teacher_legacy032/scripts/train_teacher_legacy032.py `
+		--run-label legacy032_smoke `
+		--env-id MicrortsRandomEnemyShapedReward1-v1 `
+		--map-path maps/24x24/basesWorkers24x24.xml `
+		--seed 17 `
+		--total-timesteps 10000 `
+		--device cpu `
+		--no-wandb `
+		--allow-unmasked-smoke
+```
+
+### Outputs
+
+- `python/week5_teacher_legacy032/teacher_models/<run_id>/`
+	- `agent_final.pt`
+	- `model_metadata.json`
+- `python/week5_teacher_legacy032/teacher_logs/<run_id>/`
+	- `training_stdout.log`
+	- `training_stderr.log`
+	- `training_metrics.jsonl`
+- `python/week5_teacher_legacy032/reports/`
+	- `stage2_smoke_training_<timestamp>.json`
+	- `stage2_smoke_training_<timestamp>.md`
+
+### Stage 2 warning
+
+The Stage 2 checkpoint is a smoke-validation artifact only and must not be treated
+as a final teacher checkpoint.
+
+---
+
+## `legacy032_env_probe.py` — Stage 1
+
+### Purpose
+
+Instantiates a `gym_microrts==0.3.2` env on the 24×24 training map, probes obs shape,
+action space nvec, mask availability, attack target semantics, and runs a 128-step
+smoke episode.  Writes JSON + Markdown reports to `reports/`.
+
+### Example command
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+.\python\week5_teacher_reference\.venv_microrts032_reference\Scripts\python.exe `
+	python/week5_teacher_legacy032/scripts/legacy032_env_probe.py `
+	--env-id MicrortsRandomEnemyShapedReward1-v1 `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--steps 128 --seed 17 `
+	--output-json python/week5_teacher_legacy032/reports/legacy032_env_probe.json `
+	--write-markdown-report
+```
+
+### Expected outputs
+
+| File | Description |
+|------|-------------|
+| `reports/legacy032_env_probe.json` | Machine-readable probe artifact |
+| `reports/legacy032_env_probe.md` | Auto-generated markdown companion |
+
+**Expected status**: `PASS_WITH_WARNINGS` (two known non-blocking warnings).
+
+### Key confirmed results
+
+- **Action representation**: `GYM_MICRORTS_032_GLOBAL_SINGLE_ACTION` — 8-element nvec,
+  one action per step: `[src_cell=576, action_type=6, move=4, harvest=4, return=4,
+  produce_dir=4, produce_unit=7, attack_global=576]`
+- **Observation shape**: `(24, 24, 27)` — H × W × C
+- **Attack target**: global flat 576 (NOT local 7×7 49) — Stage 6 adapter required
+
+### Troubleshooting
+
+**`AttributeError: ... 'GlobalAgentCombinedRewardSelfPlayEnv'`**  
+→ `MicrortsSelfPlayShapedReward-v1` is broken in this 0.3.2 build.  
+→ Fix: use `--env-id MicrortsRandomEnemyShapedReward1-v1`.
+
+**JVM errors**  
+→ Set `$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'`.
+
+**Wrong Python**  
+→ Use `.\python\week5_teacher_reference\.venv_microrts032_reference\Scripts\python.exe`.  
+→ Do NOT use `python/week5_teacher/.venv_day2_py39/`.
+
+---
 
 ## Note
 
-Do **not** call scripts from `python/week5_teacher/` directly from within this
-workspace without review.  Many of those scripts assume v0.6.1 runtime or may
-have hardcoded v1 contract (`[6,4,4,4,4,4,9]`).  See `LEGACY032_STAGE0_AUDIT.md`
-for the migration items that must be resolved before any script can be reused.
+Do **not** call scripts from `python/week5_teacher/` without review — those assume
+v0.6.1 runtime or have hardcoded v1 contract `[6,4,4,4,4,4,9]`.
+See `../LEGACY032_STAGE0_AUDIT.md` for migration items.

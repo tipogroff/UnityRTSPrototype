@@ -1,0 +1,153 @@
+{
+  "run_id": "legacy032_smoke_20260429T113844Z",
+  "timestamp": "2026-04-29T11:39:49.403329+00:00",
+  "env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "seed": 17,
+  "total_timesteps_requested": 10000,
+  "total_timesteps_completed": 8430,
+  "duration_seconds": 64.41203927993774,
+  "checkpoint_written": true,
+  "checkpoint_paths": [
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z\\agent_final.pt"
+  ],
+  "stdout_log_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_logs\\legacy032_smoke_20260429T113844Z\\training_stdout.log",
+  "stderr_log_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_logs\\legacy032_smoke_20260429T113844Z\\training_stderr.log",
+  "training_status": "PASS",
+  "final_reward_mean": 17.199999968210857,
+  "episode_count": 6,
+  "total_steps_observed": 8430,
+  "loss_metrics": {
+    "sps_last": 149.0
+  },
+  "mask_path_status": "CONFIRMED",
+  "mask_path_details": "Mask path confirmed in reference training script: masks are retrieved via envs.vec_client.getMasks(0), split by action branches, and applied in CategoricalMasked through torch.where(...) before sampling/log-prob.This explains why probe APIs did not expose mask directly.",
+  "mask_path_evidence": [
+    {
+      "signal": "CategoricalMasked",
+      "line": 246,
+      "snippet": "class CategoricalMasked(Categorical):"
+    },
+    {
+      "signal": "vec_client.getMasks",
+      "line": 355,
+      "snippet": "invalid_action_masks = torch.tensor(np.array(envs.vec_client.getMasks(0))).to(device)"
+    },
+    {
+      "signal": "invalid_action_masks_tensor",
+      "line": 355,
+      "snippet": "invalid_action_masks = torch.tensor(np.array(envs.vec_client.getMasks(0))).to(device)"
+    },
+    {
+      "signal": "mask_logits_where",
+      "line": 253,
+      "snippet": "logits = torch.where(self.masks, logits, torch.tensor(-1e+8, device=device))"
+    },
+    {
+      "signal": "mask_logits_where",
+      "line": 260,
+      "snippet": "p_log_p = torch.where(self.masks, p_log_p, torch.tensor(0.).to(device))"
+    },
+    {
+      "signal": "split_invalid_masks",
+      "line": 357,
+      "snippet": "split_invalid_action_masks = torch.split(invalid_action_masks[:, 1:], envs.action_space.nvec[1:].tolist(),"
+    },
+    {
+      "signal": "split_invalid_masks",
+      "line": 365,
+      "snippet": "split_invalid_action_masks = torch.split(invalid_action_masks[:, 1:], envs.action_space.nvec[1:].tolist(),"
+    }
+  ],
+  "warnings": [
+    "Reference script uses internal MicroRTSGridModeVecEnv configuration and may ignore --env-id/--map-path passed to wrapper.",
+    "Checkpoint inference-step test was not completed in Stage 2; deferred to Stage 3 as non-blocking warning."
+  ],
+  "errors": [],
+  "stage3_readiness_decision": "READY_FOR_STAGE3_BEHAVIOR_GATE",
+  "command_used": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Scripts\\python.exe C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\patched_paper_scripts\\ppo_gridnet_diverse_encode_decode_local_save.py --total-timesteps 10000 --seed 17 --exp-name legacy032_smoke_20260429T113844Z --num-bot-envs 6 --num-selfplay-envs 0 --local-save-model true --local-save-dir C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z --local-save-every 0 --cuda false",
+  "reference_script_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\patched_paper_scripts\\ppo_gridnet_diverse_encode_decode_local_save.py",
+  "env_preflight": {
+    "status": "PASS",
+    "error": null,
+    "observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ]
+  },
+  "dry_run": false,
+  "allow_unmasked_smoke": true,
+  "require_mask_for_main_training": false,
+  "load_test": {
+    "checkpoint_load_ok": true,
+    "inference_steps_ok": false,
+    "random_env_steps_ok": true,
+    "steps": 3,
+    "error": "model inference with loaded policy is deferred to Stage 3 (non-blocking in Stage 2)"
+  },
+  "metadata": {
+    "args": {
+      "exp_name": "legacy032_smoke_20260429T113844Z",
+      "gym_id": "MicrortsDefeatCoacAIShaped-v3",
+      "learning_rate": 0.00025,
+      "seed": 17,
+      "total_timesteps": 10000,
+      "torch_deterministic": true,
+      "cuda": false,
+      "prod_mode": false,
+      "capture_video": false,
+      "wandb_project_name": "cleanRL",
+      "wandb_entity": null,
+      "local_save_model": true,
+      "local_save_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z",
+      "local_save_every": 0,
+      "n_minibatch": 4,
+      "num_bot_envs": 6,
+      "num_selfplay_envs": 0,
+      "num_steps": 256,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "ent_coef": 0.01,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5,
+      "clip_coef": 0.1,
+      "update_epochs": 4,
+      "kle_stop": false,
+      "kle_rollback": false,
+      "target_kl": 0.03,
+      "gae": true,
+      "norm_adv": true,
+      "anneal_lr": true,
+      "clip_vloss": true,
+      "num_envs": 6,
+      "batch_size": 1536,
+      "minibatch_size": 384
+    },
+    "global_step": 9216,
+    "env_id": "MicrortsDefeatCoacAIShaped-v3",
+    "observation_space": [
+      16,
+      16,
+      27
+    ],
+    "action_space": "MultiDiscrete([256   6   4   4   4   4   7  49])",
+    "script_name": "ppo_gridnet_diverse_encode_decode_local_save.py",
+    "source_note": "Local patched copy for reference reproduction only; not Unity-compatible.",
+    "experiment_name": "MicrortsDefeatCoacAIShaped-v3__legacy032_smoke_20260429T113844Z__17__1777462726",
+    "checkpoint_paths": [],
+    "final_model_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_smoke_20260429T113844Z\\agent_final.pt"
+  },
+  "no_wandb": true,
+  "device": "cpu"
+}

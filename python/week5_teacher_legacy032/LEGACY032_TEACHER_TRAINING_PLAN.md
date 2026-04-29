@@ -1,6 +1,6 @@
 # Legacy032 Teacher Training Plan
 
-**Status**: Stage 0 skeleton — no training has been run  
+**Status**: Stage 2 COMPLETE — PASS (smoke training checkpoint saved)  
 **Date created**: 2026-04-29  
 **Runtime target**: `gym_microrts==0.3.2`
 
@@ -88,17 +88,44 @@ Acceptance criteria:
 
 ### Stage 2 — Smoke training
 
-**Entry point**: `scripts/train_teacher_legacy032.py` (to be created)
+**Entry point**: `scripts/train_teacher_legacy032.py`
+
+**Stage 2 result**: COMPLETE — PASS
+
+Stage 2 reports:
+
+- `reports/STAGE2_REFERENCE_SCRIPT_AUDIT.md`
+- `reports/stage2_smoke_training_20260429T113844Z.json`
+- `reports/stage2_smoke_training_20260429T113844Z.md`
+- `reports/STAGE2_SMOKE_TRAINING_REPORT.md`
+- `reports/STAGE2_COMPLETION_REPORT.md`
 
 Tasks:
 - Short PPO run (≤10k steps) to confirm training loop works
 - Checkpoint saved to `teacher_models/smoke/`
 - Training log saved to `teacher_logs/smoke/`
 
+Observed Stage 2 artifacts:
+
+- run_id: `legacy032_smoke_20260429T113844Z`
+- checkpoint: `teacher_models/legacy032_smoke_20260429T113844Z/agent_final.pt`
+- logs: `teacher_logs/legacy032_smoke_20260429T113844Z/`
+
+Mask path details (Stage 2 finding):
+
+- mask path confirmed in reference training code via `envs.vec_client.getMasks(0)`;
+- masks are applied in `CategoricalMasked` using `torch.where(...)` before sampling;
+- this explains why Stage 1 probe APIs did not expose mask directly.
+
 Acceptance criteria:
-- [ ] Training completes without crash
-- [ ] At least one checkpoint written
-- [ ] Loss / reward metrics logged
+- [x] Training completes without crash
+- [x] At least one checkpoint written
+- [x] Loss / reward metrics logged
+
+Stage 3 dependency note:
+
+- Stage 3 can start from the Stage 2 smoke checkpoint;
+- Stage 3 decision status from Stage 2 run: `READY_FOR_STAGE3_BEHAVIOR_GATE`.
 
 ---
 

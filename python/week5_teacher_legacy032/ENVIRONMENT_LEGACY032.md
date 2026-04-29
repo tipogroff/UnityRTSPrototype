@@ -1,10 +1,8 @@
 # Environment Specification: Legacy gym_microrts==0.3.2
 
-**Status**: Stage 0 — partially confirmed from reference env probe (2026-04-27).  
-Fields marked `[CONFIRMED]` have been validated by
-`python/week5_teacher_reference/artifacts/reference_env_verify.json`.  
-Fields marked `[TBD]` must be confirmed in Stage 1 env probe using the
-24×24 training map.
+**Status**: Stage 1 COMPLETE — confirmed by `legacy032_env_probe.py` on 24×24 map.  
+Fields marked `[CONFIRMED]` have been validated.  
+See `python/week5_teacher_legacy032/reports/legacy032_env_probe.json` for the raw probe artifact.
 
 ---
 
@@ -33,9 +31,15 @@ Fields marked `[TBD]` must be confirmed in Stage 1 env probe using the
 
 | Item | Value | Status |
 |------|-------|--------|
-| Training map | `maps/24x24/basesWorkers24x24.xml` | `[TBD — confirmed for reference training; must verify env_id for legacy032 teacher]` |
-| Environment id | `MicrortsRandomEnemy*` family or custom | `[TBD — to be selected in Stage 1]` |
-| Opponent | Random / self-play | `[TBD]` |
+| Training map | `maps/24x24/basesWorkers24x24.xml` | `[CONFIRMED — Stage 1 probe]` |
+| Environment id | `MicrortsRandomEnemyShapedReward1-v1` | `[CONFIRMED — Stage 1 probe; used for teacher training]` |
+| Opponent | Random enemy (random policy) | `[CONFIRMED — env name indicates random opponent]` |
+| Working venv | `python/week5_teacher_reference/.venv_microrts032_reference/` | `[CONFIRMED — Stage 1 probe]` |
+
+> **Note on env_id**: `MicrortsSelfPlayShapedReward-v1` is registered in the gym registry but
+> fails with `AttributeError: module 'gym_microrts.envs' has no attribute
+> 'GlobalAgentCombinedRewardSelfPlayEnv'` in this 0.3.2 build.  Use
+> `MicrortsRandomEnemyShapedReward1-v1` instead.
 
 ---
 
@@ -43,34 +47,39 @@ Fields marked `[TBD]` must be confirmed in Stage 1 env probe using the
 
 | Item | Value | Status |
 |------|-------|--------|
-| Shape (training map 24×24) | `[1, 24, 24, 27]` (per-env) or `[24, 24, 27]` (single) | `[TBD — probe confirmed 27 channels on 10×10; 24×24 follows same pattern]` |
-| Channels | 27 feature channels | `[CONFIRMED — obs_surface_check: FULL_OBS_27_CHANNEL]` |
+| Shape (training map 24×24) | `(24, 24, 27)` — H × W × C, no batch dim | `[CONFIRMED — Stage 1 probe direct measurement]` |
+| Channels | 27 feature channels | `[CONFIRMED — Stage 1 probe + reference verify]` |
 
 ---
 
 ## Action space (expected for 24×24 map)
 
-The reference env probe was run on a 10×10 map and returned:
+**CONFIRMED by Stage 1 probe on 24×24 map:**
 
 ```
-action_space: MultiDiscrete([100   6   4   4   4   4   7 100])
-```
-
-(100 = 10×10 cells, last 100 = attack target over full grid)
-
-For a **24×24 map** the expected shape is:
-
-```
-action_space: MultiDiscrete([576   6   4   4   4   4   7  576])
+action_space: MultiDiscrete([576   6   4   4   4   4   7  576])   # nvec length = 8
                               ^^^                          ^^^
-                           24*24=576 cells            all-cell attack
+                         src cell (24×24=576)     attack target (global flat, 576)
 ```
 
-> **Important**: `gym_microrts==0.3.2` uses a **global flat attack target** (all 576 cells),
-> not a local 7×7 attack target.  The Unity v2 contract uses a **local 7×7 attack
-> target (49 values)**.  The adapter must remap this correctly.  See the
-> "Contract delta" section below.
 
+> **Critical finding**: `gym_microrts==0.3.2` uses a **GLOBAL SINGLE-ACTION-PER-STEP**
+> representation.  The 8-element nvec encodes ONE action per game step for ONE unit:
+>
+> | nvec index | Meaning | Size |
+> |---|---|---|
+> | 0 | src_cell — which cell (unit) acts this step | 576 |
+> | 1 | action_type | 6 |
+> | 2 | move_dir | 4 |
+> | 3 | harvest_dir | 4 |
+> | 4 | return_dir | 4 |
+> | 5 | produce_dir | 4 |
+> | 6 | produce_unit_type | 7 |
+> | 7 | attack_target_global — global flat cell index | 576 |
+>
+> This is **structurally different** from Unity v2's per-cell parallel actions
+> (576 cells × 7 branches = 4032 total).  The adapter must handle both the
+> single→parallel conversion AND the global→local 7×7 attack remap.
 ---
 
 ## Expected per-cell branch sizes (teacher side)
@@ -115,14 +124,18 @@ action_shape = [576, 7]    # per-cell, 7 branches (Unity v2)
 
 ## To be verified by Stage 1 env probe
 
-- [ ] Confirm env_id for 24×24 multi-opponent teacher training
-- [ ] Confirm actual observation tensor shape `[1, 24, 24, 27]`
-- [ ] Confirm `action_space.nvec` for 24×24 map resolves to `[576, 6, 4, 4, 4, 4, 7, 576]`
-- [ ] Confirm exact numpy version does not affect rollout trajectories
-- [ ] Confirm Java 17 is compatible with MicroRTS-Py 0.3.2 JAR (already passing in verify artifact, but should be re-confirmed under teacher training load)
-- [ ] Confirm opponent policy / env variant for primary teacher training run
-- [ ] Record whether `exact_reference_pins: false` (numpy fallback) causes any observable diff in obs values
-- [ ] Confirm VENV path and activation method for legacy032 runs
+## Stage 1 verification status
+
+- [x] Env_id confirmed: `MicrortsRandomEnemyShapedReward1-v1` with 24×24 map
+- [x] Observation shape confirmed: `(24, 24, 27)` (no batch dim at single-env reset)
+- [x] `action_space.nvec` confirmed: `[576, 6, 4, 4, 4, 4, 7, 576]` (global single-action format)
+- [x] Action representation identified: `GYM_MICRORTS_032_GLOBAL_SINGLE_ACTION` (8-element)
+- [x] Attack target confirmed: global flat 576 (NOT local 7×7 49)
+- [x] Smoke episode: 128 steps PASS, no exception, reward=0.0
+- [x] Java 17 compatibility: PASS (env created and stepped without JVM error)
+- [x] VENV path confirmed: `python/week5_teacher_reference/.venv_microrts032_reference/`
+- [ ] Action mask API: NOT FOUND via known APIs — must be confirmed by training script before teacher training (WARNING logged in probe)
+- [ ] numpy fallback impact: not assessed in probe; `1.25.2` accepted; trajectory reproducibility TBD
 
 ---
 
