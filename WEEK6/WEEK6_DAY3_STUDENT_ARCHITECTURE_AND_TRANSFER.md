@@ -71,7 +71,7 @@ Source of truth in code:
 | return_dir_head | partial_transfer_candidate | Candidate only when directional class ordering and branch intent are verified equivalent. |
 | produce_dir_head | partial_transfer_candidate | Candidate only when produce-direction semantics and class order are proven aligned. |
 | produce_unit_type_head | partial_transfer_candidate | Likely subset-only transfer because teacher may encode broader producible class space; clean subset mapping is required. |
-| attack_target_local_head | no_direct_transfer | Treat as non-canonical for direct init unless target parameterization is proven equivalent. At most experimental_partial_only under explicit experiments. |
+| attack_target_local_head | partial_transfer_candidate | Branch-size alignment is now structural (`49`), but direct initialization still requires explicit semantic/runtime equivalence checks. |
 | value_or_critic_head | no_direct_transfer | PPO/value-specific tensors are not canonical student BC policy initialization targets. |
 | mask_related_logic | no_direct_transfer | Mask logic is execution/training logic, not policy-weight transfer target. |
 | global_feature_path | no_direct_transfer | Global feature path is optional auxiliary/diagnostic only in Day 3 and must not be mandatory. |
@@ -96,9 +96,9 @@ Transfer is allowed only under explicit compatibility evidence.
 - canonical full-head direct transfer is not assumed.
 
 4. `attack_target_local_head` has strict caution:
-- if target parameterization differs materially, direct transfer is disallowed;
+- shape alignment alone is insufficient for transfer claims;
 - only explicit experiments may attempt partial init;
-- default Day 3 classification stays `no_direct_transfer`.
+- semantic/runtime equivalence must be validated separately.
 
 5. PPO/value/critic/trainer internals are excluded from canonical student policy transfer.
 
@@ -108,7 +108,7 @@ Transfer is allowed only under explicit compatibility evidence.
 
 ## 5) Week 5 BC target -> student head mapping (explicit)
 
-Current BC-ready target tensor per sample is `[576,7]`, branch sizes `[6,4,4,4,4,4,9]`.
+Current BC-ready target tensor per sample is `[576,7]`, branch sizes `[6,4,4,4,4,7,49]`.
 
 1:1 supervision mapping:
 
@@ -185,12 +185,12 @@ To avoid ambiguity, keep these two shape categories separate:
 - **Output logits layout (forward outputs):**
   - `action_type_logits`: `[B, 576, 6]`
   - direction/produce logits: `[B, 576, 4]`
-  - `attack_target_local_logits`: `[B, 576, 9]`
+  - `attack_target_local_logits`: `[B, 576, 49]`
 
 - **Head parameter tensor shapes (state_dict / Conv2d 1x1 weights):**
   - `branch_heads.action_type_head.weight`: `[6, 96, 1, 1]`
   - direction/produce head weights: `[4, 96, 1, 1]`
-  - `branch_heads.attack_target_local_head.weight`: `[9, 96, 1, 1]`
+  - `branch_heads.attack_target_local_head.weight`: `[49, 96, 1, 1]`
 
 Therefore, values such as `576`, `384`, and `864` are parameter counts for selected
 head tensors, not tensor shapes themselves.

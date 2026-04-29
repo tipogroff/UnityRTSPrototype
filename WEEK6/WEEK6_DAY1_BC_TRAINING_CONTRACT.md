@@ -38,7 +38,7 @@ Day 1 does not modify Week 5 schema or file naming.
 
 - Supervised target key is `target_action_branches` from BC-ready splits.
 - Day 1 uses stored canonical branch targets and does not invent a new action schema.
-- Current per-sample target shape is `[576, 7]`, dtype `int16`, branch sizes `[6, 4, 4, 4, 4, 4, 9]`.
+- Current per-sample target shape is `[576, 7]`, dtype `int16`, branch sizes `[6, 4, 4, 4, 4, 7, 49]`.
 - Branch names are fixed to transfer-compatible semantics:
   - `action_type`
   - `move_dir`

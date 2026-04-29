@@ -3,6 +3,14 @@
 Date: 2026-03-29  
 Purpose: Finalized Day 7 artifact for tracking real compatibility bottlenecks between the two-layer Week 3 contract and the current Unity runtime.
 
+## Current Status Update (2026-04-29)
+
+This Week 3 artifact is preserved for historical traceability.
+
+- Current Unity action contract in code is v2 branch layout `[6,4,4,4,4,7,49]` with local 7x7 attack targeting.
+- The former Week 3 gaps about local 3x3 attack target reduction and 4-type produce reduction are now resolved/superseded by later implementation.
+- Remaining compatibility work is semantic/runtime parity validation, not branch-size parity claims.
+
 ## See Also
 
 For complete Week 3 documentation including observation contract, action contract, heuristic policy, and Week 4 readiness:
@@ -46,15 +54,12 @@ Important interpretation rules:
 - Residual risk: false compatibility claims if only tensor size/order are checked.
 - Transfer consequence: affects direct reuse and diagnostics; requires explicit mode-aware dataset or evaluation logic.
 
-### Gap 3: Attack Target Parameterization Reduced to Local 3x3
+### Gap 3: Attack Target Parameterization Reduced to Local 3x3 (Superseded)
 - Category: Action-space reduction
-- Reference-compatible status: No
-- Why exists: Week 3 MVP deliberately constrains attack targeting to the local 3x3 neighborhood to avoid premature expansion of the action surface before the core pipeline is stable.
-- Concrete gap: `BRANCH_ATTACK_TARGET` is `0..8` only, centered on the acting unit.
-- Impact on transfer: broader attack semantics cannot be transferred directly into the current output head.
-- Mitigation strategy: teacher/dataset adapters must remap or drop unsupported targets before training or inference.
-- Residual risk: policies trained on wider targeting semantics lose information during projection into the MVP surface.
-- Transfer consequence: blocks direct weight transfer; requires dataset adapter or output-head adaptation.
+- Reference-compatible status (current): Resolved/superseded
+- Historical context: Week 3 MVP constrained attack targeting to local 3x3 (`0..8`).
+- Current status: Unity code now uses `BRANCH_ATTACK_TARGET = 49` with local 7x7 indexing (`0..48`, center `24`).
+- Transfer consequence now: structural mismatch is substantially reduced versus legacy Gym layout, but semantic parity is still not automatically proven.
 
 ### Gap 4: Explicit Attack Command vs Runtime Combat Resolution
 - Category: Runtime semantic mismatch
@@ -66,15 +71,12 @@ Important interpretation rules:
 - Residual risk: policy debugging may attribute combat outcome differences to policy quality when the remaining mismatch is actually runtime-side.
 - Transfer consequence: does not block integration, but weakens strict semantic equivalence claims and matters for dissertation analysis.
 
-### Gap 5: Reduced Produce Semantics and Missing Broader Action Types
+### Gap 5: Reduced Produce Semantics and Missing Broader Action Types (Superseded)
 - Category: Action-space reduction
-- Reference-compatible status: No
-- Why exists: Week 3 scope keeps only `NoOp`, `Move`, `Harvest`, `Return`, `Produce`, `Attack` and only the MVP producible unit subset.
-- Concrete gap: the current surface omits broader Gym-style action semantics and richer production ecosystems.
-- Impact on transfer: datasets or policies with unsupported action heads cannot be consumed directly.
-- Mitigation strategy: filter unsupported actions, remap supported produce types, and treat missing action families as out-of-scope for v1.
-- Residual risk: training data loss or semantic compression when projecting a richer teacher into the MVP student surface.
-- Transfer consequence: blocks direct weight transfer for broader heads; requires dataset adapter.
+- Reference-compatible status (current): Resolved/superseded
+- Historical context: Week 3 MVP used reduced produce branch size (`4`) and narrower producible subset assumptions in transfer docs.
+- Current status: Unity contract branch now allocates `produce_unit_type = 7` and runtime supports the full 7 object/unit categories at contract level.
+- Transfer consequence now: structural mismatch is substantially reduced, but runtime rule equivalence and semantics still require explicit validation.
 
 ### Gap 6: Runtime-only Constraints Beyond Mask Semantics
 - Category: Runtime validation gap
@@ -108,6 +110,11 @@ Important interpretation rules:
 
 ## Resolved During Days 2-6 and Not Counted as Current Gaps
 
+### Resolved Finding D: Week 3 Action-Space Reductions Superseded in Current Contract
+- Previous issue: attack target and produce branch reductions (`3x3`, `4-type`) were active Week 3 bottlenecks.
+- Current status: superseded by v2 action contract (`[6,4,4,4,4,7,49]`) implemented in Unity code.
+- Why it is not listed as active gap: current blocker profile is now semantic/runtime parity, not branch-size reduction.
+
 ### Resolved Finding A: Move Capability Drift
 - Previous issue: building movement permissiveness was misaligned across layers.
 - Day 6 resolution: `ActionApplier` coarse capability gating now rejects `Move` for `Base`, `Barracks`, and `Resource`.
@@ -126,13 +133,12 @@ Important interpretation rules:
 ## Impact Classification Summary
 
 ### Blocks direct weight transfer
-- Gap 3: Attack target parameterization reduced to local 3x3.
-- Gap 5: Reduced produce semantics and missing broader action types.
+- None by branch-size shape alone in the current v2 contract.
 
 ### Requires dataset adapter or explicit projection logic
 - Gap 1: Unity-only global feature vector.
 - Gap 2: Observation-side semantic split for `attack_target`.
-- Gap 5: Reduced produce semantics and missing broader action types.
+- Semantic/runtime mismatches still require adapter discipline and validation policy.
 
 ### Affects runtime diagnostics or evaluation protocol more than model topology
 - Gap 6: Runtime-only constraints beyond mask semantics.

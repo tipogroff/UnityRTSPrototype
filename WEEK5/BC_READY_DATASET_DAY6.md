@@ -3,6 +3,12 @@
 Date (UTC): 2026-04-21
 Status: complete
 
+## Current Status Update (2026-04-29)
+
+- This report documents a historical v1 BC-ready packaging run.
+- The branch layout recorded here (`[6,4,4,4,4,4,9]`) should be treated as historical baseline, not current Unity contract.
+- Current Unity/runtime contract is v2 `[6,4,4,4,4,7,49]`; v2-comparable metrics require rerun with v2 target contract artifacts.
+
 ## 1) Input source
 
 - Canonical adapted source batch:
@@ -54,7 +60,7 @@ Required fields per sample:
 - `target_action_branches`
   - dtype: `int16`
   - shape: `[576, 7]`
-  - branch sizes: `[6, 4, 4, 4, 4, 4, 9]`
+  - branch sizes (historical v1 run): `[6, 4, 4, 4, 4, 4, 9]`
 - `metadata`
   - `sample_id: string` (`ep{episode_id}_step{step_id}`)
   - `episode_id: int32`

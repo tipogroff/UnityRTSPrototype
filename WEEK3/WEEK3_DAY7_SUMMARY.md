@@ -3,6 +3,11 @@
 Date: 2026-03-29  
 Status: ✅ Finalization pass complete
 
+## Historical Note (2026-04-29)
+
+This summary is retained as Week 3 closure history.
+Any explicit v1-only action contract assumptions (for example local 3x3 attack target) are superseded by the current v2 contract in code.
+
 ## See Also
 
 For complete Week 3 documentation including observation contract, action contract, compatibility gaps, and Week 4 readiness:

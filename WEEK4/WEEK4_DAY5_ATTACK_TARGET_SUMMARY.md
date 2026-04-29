@@ -1,5 +1,12 @@
 # Week 4 Day 5: attack_target[26] semantics and focused integration
 
+## Historical Note (2026-04-29)
+
+This Day 5 summary describes the then-current Week 4/Week 3 v1 contract context (local 3x3 attack target).
+
+- Current Unity action contract is v2 with 7x7 attack target indexing (`49` branch size).
+- The engineering conclusions here remain useful historically, but the 3x3-specific contract statements are superseded.
+
 ## Статус
 Реализовано (31 March 2026). Finishing pass выполнен (31 March 2026).
 

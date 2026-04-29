@@ -3,6 +3,12 @@
 Date (UTC): 2026-04-22
 Status: canonical Day 3 -> Day 6 rerun completed for new teacher candidate
 
+## Historical Baseline Note (2026-04-29)
+
+- This summary is preserved as historical Week 5 comparison context built under the older v1 target contract lineage.
+- Current Unity contract is v2 `[6,4,4,4,4,7,49]`.
+- Reported v1 conversion-pressure metrics (for example `remap_to_noop_share`, `production_actions_survived_share`, `semantic_weakening_share`) are not directly comparable to v2 contract results without rerun.
+
 ## 1. Candidate used
 
 Checkpoint lineage:

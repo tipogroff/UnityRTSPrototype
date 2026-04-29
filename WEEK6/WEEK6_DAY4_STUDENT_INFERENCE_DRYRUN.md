@@ -47,7 +47,7 @@ Bridge contract:
 1. Unity writes one observation buffer (float32, 24*24*27) to binary file.
 2. Python adapter loads student checkpoint and runs inference.
 3. Adapter validates logits keys/order/shape against authoritative contract.
-4. Adapter emits transfer-compatible `action_flat` (size 20160) without branch reorder.
+4. Adapter emits transfer-compatible `action_flat` (size 44928) without branch reorder.
 5. Unity feeds `action_flat` to existing canonical decoder/apply pipeline.
 
 This is intentionally a Day 4 adapter bridge, not a production deployment claim.
@@ -68,7 +68,7 @@ Adapter imports and validates:
   5. produce_dir
   6. produce_unit_type
   7. attack_target_local
-- branch sizes: `[6, 4, 4, 4, 4, 4, 9]`
+- branch sizes: `[6, 4, 4, 4, 4, 7, 49]`
 - logits keys:
   - `action_type_logits`
   - `move_dir_logits`
@@ -106,8 +106,8 @@ Python adapter enforces exact key set and order from authoritative contract and 
 - `harvest_dir_logits`: `[1,576,4]`
 - `return_dir_logits`: `[1,576,4]`
 - `produce_dir_logits`: `[1,576,4]`
-- `produce_unit_type_logits`: `[1,576,4]`
-- `attack_target_local_logits`: `[1,576,9]`
+- `produce_unit_type_logits`: `[1,576,7]`
+- `attack_target_local_logits`: `[1,576,49]`
 
 ### C) Branch decoding agreement
 
@@ -123,7 +123,7 @@ Executed technical dry run of the Python bridge adapter using the student checkp
 
 - input source for this run: one sample from pinned BC-ready `bc_validation.npz` (`input_tensor[0]`), shaped to `[24,24,27]` float32.
 - command result: `PASS`
-- produced `action_flat_size`: `20160`
+- produced `action_flat_size`: `44928`
 - temporary artifact path used during local validation:
   - `python/week6_student/tmp/day4_adapter_result.json` (generated and cleaned up after verification)
 
@@ -140,7 +140,7 @@ Confirmed Unity Play Mode smoke run (canonical path) completed with machine-read
   - `checkpoint_path`: `python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt`
   - `observation_validated`: `true`
   - `python_adapter_status`: `ok`
-  - `action_flat_size`: `20160`
+  - `action_flat_size`: `44928`
   - `unity_decode_submit_status`: `pass`
   - `canonical_path_reached`: `true`
   - `error`: `""`

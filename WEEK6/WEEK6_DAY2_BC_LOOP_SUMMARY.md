@@ -35,8 +35,11 @@ No raw or adapted artifacts are consumed directly by the Day 2 training loop.
   - `harvest_dir` (size 4)
   - `return_dir` (size 4)
   - `produce_dir` (size 4)
-  - `produce_unit_type` (size 4)
-  - `attack_target_local` (size 9)
+  - `produce_unit_type` (size 7)
+  - `attack_target_local` (size 49)
+
+Historical note:
+- Earlier Week 5/early Week 6 BC batches with `[6,4,4,4,4,4,9]` are retained as historical v1 baselines and should not be treated as current contract evidence.
 
 ## 4. Always-active losses
 

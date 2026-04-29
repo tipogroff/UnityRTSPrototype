@@ -1,12 +1,19 @@
 # Unity Action Contract v2 Migration Plan (Gridnet-compatible)
 
-Status: Step 1 completed, Step 2 (decoder/mask compatibility) implemented.
+Status: historical migration plan (core v2 contract now implemented in Unity code).
+
+## Current Status Update (2026-04-29)
+
+- This document is preserved as migration history.
+- The statement "Unity-side v2 runtime is not implemented yet" is superseded.
+- Current Unity action contract in code is v2 `[6,4,4,4,4,7,49]`.
+- Keep plan details for traceability of migration decisions and rollout.
 
 Scope note:
 - Python-side v2 adapter path is implemented.
-- Unity-side v2 runtime is not implemented yet.
+- Unity-side v2 runtime is implemented (superseded line kept here for historical context in this plan).
 - No Unity parity claim is valid at this stage.
-- BC-ready packaging is blocked until Unity-side v2 runtime migration is complete.
+- BC-ready packaging was blocked at planning time; this line is historical context only.
 
 ## 1) Motivation
 

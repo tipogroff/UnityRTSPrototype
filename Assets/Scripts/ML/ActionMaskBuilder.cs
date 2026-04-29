@@ -590,11 +590,9 @@ namespace RTS.ML
                 if (target == unit.GridPos)
                     continue;
 
-                // Per-definition range gate. Semantically correct, but note: all
-                // ActionContract.AttackOffsets are Chebyshev ≤ 1, so this check is trivially
-                // satisfied for any unit with attackRange ≥ 1 on the current MVP attack surface.
-                // Ranged (attackRange=3) gains no commanded-attack benefit over this surface.
-                // See limitation note in ActionContract.cs.
+                // Per-definition range gate for v2 local 7x7 attack offsets.
+                // This is not a no-op check: depending on attackRange, part of the 7x7 window
+                // can be masked out as runtime-invalid for the current actor.
                 int distance = unit.GridPos.ChebyshevDistance(target);
                 if (distance > attackRange)
                     continue;

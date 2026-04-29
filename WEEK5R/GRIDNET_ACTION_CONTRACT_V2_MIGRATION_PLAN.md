@@ -1,11 +1,17 @@
 # Gridnet Action Contract v2 Migration Plan
 
 Date: 2026-04-28
-Status: planned (Python-side v2 adapter path implemented; Unity-side pending)
+Status: historical migration plan (v2 contract is now active in Unity code)
+
+## Current Status Update (2026-04-29)
+
+- This plan is kept as migration history.
+- Current Unity contract is v2 `[6,4,4,4,4,7,49]`.
+- References below to "current v1 target" reflect plan-time state and should be read as historical baseline.
 
 ## Current and Target Contracts
 
-- Current v1 target contract: [6,4,4,4,4,4,9]
+- Historical v1 target contract (plan-time): [6,4,4,4,4,4,9]
 - New v2 target contract: [6,4,4,4,4,7,49]
 - Gym/Gridnet source branch: [6,4,4,4,4,7,49]
 

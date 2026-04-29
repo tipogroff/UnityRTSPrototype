@@ -2,6 +2,14 @@
 
 Дата фиксации: 2026-03-16
 
+## Актуализация статуса (2026-04-29)
+
+- Этот план сохраняет исходную по-недельную структуру как исторический roadmap.
+- Текущий action contract в Unity-коде: per-cell MultiDiscrete, 7 ветвей, branch sizes `[6,4,4,4,4,7,49]`.
+- Текущий transfer pipeline: teacher trajectories -> adapter -> BC-ready dataset -> student policy -> Unity inference/fine-tune.
+- Legacy Gym teacher (включая `gym_microrts==0.3.2` reference path) может использоваться как teacher-source при подтвержденной стабильности среды и воспроизводимости.
+- Даже при структурном сближении branch layout прямой перенос весов не считается автоматически доказанным; semantic/runtime parity требует отдельной валидации.
+
 ## 1. Цель
 
 Собрать исследовательский RTS-прототип в Unity с управлением противником через перенос знаний из Gym-μRTS.
@@ -367,7 +375,7 @@
 Задачи дня:
 - Реализовать вычисление канала `attack_target[26]` в observation.
 - Зафиксировать точную семантику: что именно означает "нормализованный индекс целей в зоне атаки", как он вычисляется, для каких клеток meaningful, что пишется при отсутствии target.
-- Согласовать реализацию с ограничениями Week 3: local 3x3 attack target parameterization и residual gap между explicit attack command и runtime combat semantics.
+- Согласовать реализацию с актуальным action contract и residual gap между explicit attack command и runtime combat semantics.
 - Обновить документацию/spec, чтобы не возникло ложного впечатления, что канал стал полностью reference-identical во всех режимах.
 - Добавить focused observation tests/smoke checks именно на этот канал.
 

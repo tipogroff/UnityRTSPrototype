@@ -1,5 +1,13 @@
 # Week 5 Runtime and Day 3 Raw Export
 
+## Current Status Update (2026-04-29)
+
+- This folder contains both historical v1 artifacts and current migration work.
+- Current Unity action contract is v2 `[6,4,4,4,4,7,49]` (7x7 attack target, 7 produce-unit slots).
+- Legacy `gym_microrts==0.3.2` reference path may be used as a primary teacher-source when it shows stable and reproducible behavior.
+- Transfer remains safety-first: teacher trajectories -> adapter -> BC dataset -> student policy -> Unity inference/fine-tune.
+- Direct weight transfer is not considered automatically proven by branch-size alignment alone.
+
 This folder keeps the validated runtime path and extends it for Day 3 raw teacher export.
 
 Canonical baseline remains fixed:

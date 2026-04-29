@@ -697,12 +697,9 @@ namespace RTS.ML
             }
 
             // Validate target within unit's definition-driven attack range.
-            // LIMITATION (tech-debt): ActionContract.AttackOffsets are all Chebyshev ≤ 1, so any
-            // commanded attack target decoded from the transfer-compatible action space is always
-            // within Chebyshev 1. The chebyshev > maxRange guard is semantically correct but
-            // never triggers in practice for the current MVP attack surface.
-            // Ranged’s attackRange=3 advantage applies only in CombatResolver auto-combat
-            // (opportunistic, not policy-commanded). See limitation note in ActionContract.cs.
+            // NOTE: with v2 action contract, commanded targets come from local 7x7 offsets.
+            // This guard is therefore active and can reject out-of-range targets depending on
+            // actor definition (attackRange) and selected local index.
             var unitDef = _matchBootstrap?.GetConfig()?.GetDefinition(unit.Type);
             int maxRange = unitDef != null ? unitDef.attackRange : 1;
             int chebyshev = unit.GridPos.ChebyshevDistance(action.AttackTargetPosition);

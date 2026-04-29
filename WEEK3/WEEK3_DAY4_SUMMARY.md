@@ -1,5 +1,10 @@
 # Week 3 Day 4: Invalid Action Masking
 
+## Historical Note (2026-04-29)
+
+This Day 4 summary reflects the Week 3 implementation stage.
+Contract details here should be interpreted as historical unless explicitly aligned to current v2 contract documentation.
+
 ## Status
 Implemented.
 

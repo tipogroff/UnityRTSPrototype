@@ -4,6 +4,15 @@ Date: 2026-03-23
 Status: ✅ Approved and implemented (Finalized 2026-03-29)  
 Scope: MVP_24x24_Symmetric, transfer-compatible with Gym-microRTS v0.6.1 reference semantics
 
+## Current Status Update (2026-04-29)
+
+This document is a Week 3 historical baseline spec.
+
+- Historical Week 3 action contract in this file uses v1 MVP branch layout `[6,4,4,4,4,4,9]`.
+- Current Unity code contract is v2 layout `[6,4,4,4,4,7,49]` (local 7x7 attack target, 7 produce-unit slots).
+- For current implementation truth, use Unity code sources (`ActionContract`, `ActionDecoder`, `ActionApplier`, `ActionMaskBuilder`) and newer Week 5R/Week 6 artifacts.
+- Keep this file for historical rationale only; do not use it as current runtime contract.
+
 ## See Also
 
 For complete Week 3 context including action masking, heuristic policy, compatibility gaps, and Week 4 readiness:
@@ -113,11 +122,13 @@ Two spaces are fixed on Day 1:
 
 ### 4.1 v1_transfer_compatible_action_space (primary)
 
+Historical Week 3 contract (superseded by current v2 runtime contract).
+
 Per-cell multi-discrete action (one action vector for each grid cell).
 
 - Number of cells per step: H * W = 576
 - Branches per cell: 7
-- Branch sizes: [6, 4, 4, 4, 4, 4, 9]
+- Branch sizes (historical v1): [6, 4, 4, 4, 4, 4, 9]
 
 Branch semantics:
 - b0 action_type: 0=NoOp, 1=Move, 2=Harvest, 3=Return, 4=Produce, 5=Attack
@@ -131,9 +142,9 @@ Branch semantics:
 Unity runtime mapping target:
 - policy output -> AgentAction -> ActionDecoder -> ActionApplier -> MatchManager.ApplyCommand().
 
-Compatibility note:
+Compatibility note (historical Week 3):
 - This is transfer-compatible and Gym-inspired, but intentionally adapted for MVP.
-- Most important adaptation: local 3x3 attack target parameterization.
+- Most important adaptation at that time: local 3x3 attack target parameterization.
 
 ### 4.2 v1_debug_action_space (secondary)
 
@@ -213,6 +224,8 @@ Operational rule:
 - Any Gym-side transform must use the same row-major cell order.
 
 ## 7) Compatibility Gap List
+
+Current note: the original Week 3 gaps for 3x3 attack target and reduced produce slots are now superseded in current Unity code; this section remains as historical Week 3 context.
 
 The authoritative compatibility gap list is maintained in a separate document: [WEEK3_COMPATIBILITY_GAP_LIST.md](WEEK3_COMPATIBILITY_GAP_LIST.md).
 

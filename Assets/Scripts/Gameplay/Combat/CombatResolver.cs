@@ -81,8 +81,8 @@ namespace RTS.Gameplay
         /// <summary>
         /// Chebyshev-дистанция между клетками.
         ///
-        /// Важно: должна совпадать с attack_target локальной 3x3 семантикой
-        /// в ActionContract/ActionDecoder/ActionApplier (диагонали тоже валидны).
+        /// Важно: должна совпадать с локальной target-семантикой в
+        /// ActionContract/ActionDecoder/ActionApplier (диагонали валидны).
         /// </summary>
         public int GetDistance(GridPosition from, GridPosition to)
             => from.ChebyshevDistance(to);

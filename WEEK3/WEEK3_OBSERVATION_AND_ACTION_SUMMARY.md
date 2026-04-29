@@ -1,5 +1,13 @@
 # Week 3: Observation и Action Contract — Итоговый Summary
 
+## Current Status Update (2026-04-29)
+
+This Week 3 summary is historical.
+
+- The Week 3 action numbers below (`local 3x3`, flat `20160`) describe the historical v1 contract.
+- Current Unity contract in code is v2 `[6,4,4,4,4,7,49]` with flat action size `44928`.
+- Keep this summary for chronology; use newer v2-aligned artifacts for current runbooks/spec.
+
 **Дата:** 29 марта 2026 (Финализация 2 апреля)  
 **Статус:** ✅ ЗАВЕРШЕНА как documented engineering layer  
 **Область:** ML Agent Interface — observation contract, action contract, invalid action masking, pipeline validation  

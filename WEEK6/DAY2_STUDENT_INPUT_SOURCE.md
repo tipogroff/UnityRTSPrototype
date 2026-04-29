@@ -3,6 +3,12 @@
 Date pinned (UTC): 2026-04-22
 Purpose: Prevent lineage confusion for student BC training inputs.
 
+## Current Status Update (2026-04-29)
+
+- This file records a historical Day 2 pin.
+- Current Unity/Python branch contract used by active student wiring is v2: `[6,4,4,4,4,7,49]`.
+- The lineage pinned below remains useful as a historical v1 baseline, but it is not the current target contract.
+
 ## Current canonical BC-ready source for Day 2
 
 Run directory:
@@ -17,7 +23,7 @@ Required files present:
 Dry run status:
 - pass
 
-Schema expectations:
+Schema expectations (historical v1 lineage):
 - schema_version: day6.bc_ready.v1
 - input_tensor per sample: [24, 24, 27], float32
 - target_action_branches per sample: [576, 7], int16
@@ -38,3 +44,6 @@ Switch to another lineage only via an explicit baseline-switch note and rerun of
 1. inspect_bc_dataset.py
 2. dry_run_bc_loader.py report check
 3. Week 5 handoff completeness check
+
+Current contract note:
+- When selecting a new canonical Week 6 training/eval source, prefer v2-compatible branch sizes `[6,4,4,4,4,7,49]` and record migration status explicitly.

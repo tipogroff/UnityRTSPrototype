@@ -7,6 +7,16 @@
 **Upstream:** WEEK3_CONTRACT_SPEC.md, WEEK3_COMPATIBILITY_GAP_LIST.md, WEEK4_REWARD_CONTRACT.md, WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md  
 **Downstream:** Week 6 BC/distillation path (student не реализуется в Week 5)
 
+## Current Status Update (2026-04-29)
+
+This Day 1 spec is preserved as a historical planning artifact.
+
+- Current Unity action contract in code is v2 `[6,4,4,4,4,7,49]`.
+- Historical v1 branch layout `[6,4,4,4,4,4,9]` in older Week 5 runs remains valid only as baseline lineage.
+- Current adapter/BC objective is to preserve teacher layout as closely as possible (prefer v2-compatible path), not to force legacy v1 compression.
+- Legacy `gym_microrts==0.3.2` reference stack can be used as primary teacher-source when stability/reproducibility checks pass.
+- Structural alignment does not imply proven semantic parity or proven direct weight transfer.
+
 ---
 
 ## 0. Что этот документ фиксирует и чего не делает
@@ -68,7 +78,7 @@ Week 5 **не достигает** и **не утверждает**:
 | Слой | Документ | Что фиксирует |
 |------|----------|----------------|
 | Unity target observation | `WEEK3_CONTRACT_SPEC.md` §3.1 | LegacyGymCompatibleSpec: [24,24,27], channels 0–26 |
-| Unity target action | `WEEK3_CONTRACT_SPEC.md` §4.1 | 7 branches, 35 flat per cell, attack_target 0–8 |
+| Unity target action (current) | Unity code (`Assets/Scripts/ML/ActionContract.cs`) | 7 branches, 78 flat per cell, branch sizes [6,4,4,4,4,7,49] |
 | Compatibility gaps | `WEEK3_COMPATIBILITY_GAP_LIST.md` | 8 активных gap, 2 resolved |
 | Reward semantics | `WEEK4_REWARD_CONTRACT.md` | 4 категории, event classification matrix |
 | RL loop assumptions | `WEEK4_REWARD_AND_RL_LOOP_SUMMARY.md` | Phase order, canon path, known limitations |
@@ -325,7 +335,7 @@ Rationale: Day 5 contract-level validation теряет значительную
 | Blocks | Teacher produce actions с unit types вне Unity MVP subset |
 | Mitigation class | Adapter: filter unsupported produce types; log dropped production actions |
 | Adapter required | ✅ Да |
-| Status | Unity MVP subset: Worker, Light, Heavy, Ranged (из Base/Barracks) |
+| Status | Historical v1 subset assumption: Worker, Light, Heavy, Ranged (из Base/Barracks) |
 
 **Explicit assumption:** Unity MVP producible subset соответствует Week 4 `ProducibleUnit` enum. Если Gym-μRTS teacher производит юниты вне этого subset — они отбрасываются с логом.
 

@@ -2,6 +2,13 @@
 
 This document defines the Day 4 adapter entrypoint and artifacts.
 
+## Current Status Update (2026-04-29)
+
+- The adapter supports both target contracts: `v1_mvp` and `v2_gridnet_compatible`.
+- Current Unity runtime contract is v2 `[6,4,4,4,4,7,49]`.
+- Historical Week 5 artifacts built with `[6,4,4,4,4,4,9]` are retained as baseline and must be labeled `historical v1`.
+- Metrics derived from v1 contraction pressure (`remap_to_noop_share`, `semantic_weakening_share`, `production_actions_survived_share`) are not directly comparable to v2 runs without rerun.
+
 ## Scope
 
 Day 4 adapter performs only contract conversion of Day 3 raw rollout exports:
@@ -62,7 +69,13 @@ Signal-loss policy:
 
 ## Action conversion policy
 
-Target action shape per step is `[576,7]` with branch sizes `[6,4,4,4,4,4,9]`.
+Target action shape per step is `[576,7]` and depends on selected `target_action_contract`:
+
+- `v1_mvp` (historical): branch sizes `[6,4,4,4,4,4,9]`
+- `v2_gridnet_compatible` (current Unity-aligned target): branch sizes `[6,4,4,4,4,7,49]`
+
+Implementation note:
+- CLI default in the current script is still `v1_mvp`; choose `--target-action-contract v2_gridnet_compatible` for current-contract datasets.
 
 Adapter first detects raw action layout, then normalizes payload only for explicitly supported layouts.
 
@@ -82,10 +95,10 @@ Unsupported layouts:
 After layout normalization, adapter applies explicit gap mitigations:
 
 - unsupported action types -> remap to NoOp and count reason;
-- produce unit types outside MVP subset -> remap to NoOp and count reason;
-- attack target reduced from source range (for example 49-way) to local 3x3 (9-way):
-  - in-window targets are mapped;
-  - out-of-window targets are remapped to NoOp and counted.
+- produce unit types outside selected target contract -> remap to NoOp and count reason;
+- attack target remapping depends on selected target contract:
+  - v1 target: reduce 49-way source to local 3x3 (9-way), out-of-window remapped to NoOp;
+  - v2 target: preserve 49-way local 7x7 indexing whenever source layout is compatible.
 
 No silent filtering is used.
 

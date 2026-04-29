@@ -3,6 +3,12 @@
 Date (UTC): 2026-04-22  
 Status: Post-correction baseline switch — canonical references updated
 
+## Historical Baseline Note (2026-04-29)
+
+- This document captures a Week 5 baseline switch performed under the v1 target contract era.
+- Entries that reference target branch sizes `[6,4,4,4,4,4,9]` describe historical baseline artifacts.
+- Current Unity runtime contract is v2 `[6,4,4,4,4,7,49]`; contract-pressure metrics from this document must not be reused as v2 evidence without rerun.
+
 ---
 
 ## Baseline switch summary

@@ -29,7 +29,7 @@ Canonical branch order is fixed as:
 
 Canonical sizes:
 
-- [6, 4, 4, 4, 4, 4, 9]
+- [6, 4, 4, 4, 4, 7, 49]
 
 The module exposes:
 
@@ -61,7 +61,7 @@ These files now consume branch metadata from `student_branch_contract.py`.
 
 - duplicate branch names;
 - non-contiguous target indices (must be 0..6);
-- branch size mismatch against expected BC contract [6,4,4,4,4,4,9];
+- branch size mismatch against expected BC contract [6,4,4,4,4,7,49];
 - duplicate logits keys;
 - duplicate head names;
 - mismatched target->head mapping;
