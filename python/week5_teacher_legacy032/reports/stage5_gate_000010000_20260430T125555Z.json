@@ -1,0 +1,261 @@
+{
+  "timestamp": "2026-04-30T12:55:55.002485+00:00",
+  "run_label": "stage5_gate_000010000",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\stage5d_cpu_smoke_compare_20260430T125352Z\\stage_000010000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\stage5d_cpu_smoke_compare_20260430T125352Z\\stage_000010000\\model_metadata.json",
+  "checkpoint_load_ok": true,
+  "policy_architecture_load_ok": true,
+  "inference_ok": true,
+  "eval_env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "eval_map_path": "maps/24x24/basesWorkers24x24.xml",
+  "eval_observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "eval_action_space": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "eval_action_representation": "GYM_MICRORTS_032_REFERENCE_GRIDMODE",
+  "mask_available": true,
+  "mask_source": "env.vec_client.getMasks(0)",
+  "mask_used_during_eval": true,
+  "max_steps_per_episode": 6000,
+  "env_max_steps": 6000,
+  "env_matches_training_metadata": true,
+  "env_matches_target_24x24": true,
+  "warnings": [
+    "selected_action_mask_valid_share and masked_invalid_prevented_count are set to null because mask bit semantics are ambiguous in this legacy runtime.",
+    "Observed max episode length is <= 2000 while max_steps_per_episode=6000; this suggests an additional internal cap."
+  ],
+  "errors": [],
+  "eval_results": {
+    "deterministic": {
+      "episodes_requested": 2,
+      "episodes_completed": 2,
+      "episode_lengths": [
+        505,
+        505
+      ],
+      "episode_end_reason_counts": {
+        "env_done": 2,
+        "outer_loop_limit": 0,
+        "unknown": 0
+      },
+      "observed_max_episode_length": 505,
+      "episode_returns": [
+        -10.0,
+        -10.0
+      ],
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "terminal_types": null,
+      "win_count": 0,
+      "loss_count": 0,
+      "draw_count": 2,
+      "total_steps": 3030,
+      "action_type_counts": {
+        "noop": 1739270,
+        "move": 0,
+        "harvest": 3030,
+        "return": 0,
+        "produce": 2980,
+        "attack": 0
+      },
+      "action_type_share": {
+        "noop": 0.996556426475981,
+        "move": 0.0,
+        "harvest": 0.001736111111111111,
+        "return": 0.0,
+        "produce": 0.0017074624129079575,
+        "attack": 0.0
+      },
+      "src_cell_valid_share": 0.0034435735439125557,
+      "src_cell_unit_share": null,
+      "masked_invalid_prevented_count": null,
+      "selected_action_mask_valid_share": null,
+      "attack_action_count": 0,
+      "produce_action_count": 2980,
+      "harvest_return_balance": null,
+      "effective_activity_share": 0.003443573524019028,
+      "repeated_same_action_share": 0.9999988517783657,
+      "policy_entropy_proxy": 0.001390671946043794,
+      "move_share": 0.0,
+      "noop_share": 0.996556426475981,
+      "mask_seen_any_step": true,
+      "action_trace": null
+    },
+    "stochastic": {
+      "episodes_requested": 2,
+      "episodes_completed": 2,
+      "episode_lengths": [
+        505,
+        505
+      ],
+      "episode_end_reason_counts": {
+        "env_done": 2,
+        "outer_loop_limit": 0,
+        "unknown": 0
+      },
+      "observed_max_episode_length": 505,
+      "episode_returns": [
+        -10.0,
+        -10.0
+      ],
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "terminal_types": null,
+      "win_count": 0,
+      "loss_count": 0,
+      "draw_count": 2,
+      "total_steps": 3030,
+      "action_type_counts": {
+        "noop": 291474,
+        "move": 290849,
+        "harvest": 291148,
+        "return": 289935,
+        "produce": 292618,
+        "attack": 289256
+      },
+      "action_type_share": {
+        "noop": 0.16700701320132014,
+        "move": 0.16664890447378072,
+        "harvest": 0.16682022368903557,
+        "return": 0.16612520627062707,
+        "produce": 0.16766249541620828,
+        "attack": 0.16573615694902824
+      },
+      "src_cell_valid_share": 0.0034435735439125557,
+      "src_cell_unit_share": null,
+      "masked_invalid_prevented_count": null,
+      "selected_action_mask_valid_share": null,
+      "attack_action_count": 289256,
+      "produce_action_count": 292618,
+      "harvest_return_balance": 1.0041836963457327,
+      "effective_activity_share": 0.8329929867986798,
+      "repeated_same_action_share": 0.19068475673448393,
+      "policy_entropy_proxy": 0.0013906632716039029,
+      "move_share": 0.16664890447378072,
+      "noop_share": 0.16700701320132014,
+      "mask_seen_any_step": true,
+      "action_trace": null
+    }
+  },
+  "eval_result": {
+    "episodes_requested": 2,
+    "episodes_completed": 2,
+    "episode_lengths": [
+      505,
+      505
+    ],
+    "episode_end_reason_counts": {
+      "env_done": 2,
+      "outer_loop_limit": 0,
+      "unknown": 0
+    },
+    "observed_max_episode_length": 505,
+    "episode_returns": [
+      -10.0,
+      -10.0
+    ],
+    "mean_return": -10.0,
+    "std_return": 0.0,
+    "terminal_types": null,
+    "win_count": 0,
+    "loss_count": 0,
+    "draw_count": 2,
+    "total_steps": 3030,
+    "action_type_counts": {
+      "noop": 291474,
+      "move": 290849,
+      "harvest": 291148,
+      "return": 289935,
+      "produce": 292618,
+      "attack": 289256
+    },
+    "action_type_share": {
+      "noop": 0.16700701320132014,
+      "move": 0.16664890447378072,
+      "harvest": 0.16682022368903557,
+      "return": 0.16612520627062707,
+      "produce": 0.16766249541620828,
+      "attack": 0.16573615694902824
+    },
+    "src_cell_valid_share": 0.0034435735439125557,
+    "src_cell_unit_share": null,
+    "masked_invalid_prevented_count": null,
+    "selected_action_mask_valid_share": null,
+    "attack_action_count": 289256,
+    "produce_action_count": 292618,
+    "harvest_return_balance": 1.0041836963457327,
+    "effective_activity_share": 0.8329929867986798,
+    "repeated_same_action_share": 0.19068475673448393,
+    "policy_entropy_proxy": 0.0013906632716039029,
+    "move_share": 0.16664890447378072,
+    "noop_share": 0.16700701320132014,
+    "mask_seen_any_step": true,
+    "action_trace": null
+  },
+  "compatibility": {
+    "training_metadata_env_id": "MicrortsDefeatCoacAIShaped-v3",
+    "training_metadata_observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "training_metadata_action_space": "MultiDiscrete([576   6   4   4   4   4   7  49])",
+    "preflight_24x24_global_single_expected_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      576
+    ],
+    "target_24x24_gridmode_expected_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "reference_internal_expected_nvec": [
+      256,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "reference_internal_compatible": false,
+    "target_24x24_gridmode_compatible": true,
+    "target_24x24_gridmode_reason": null,
+    "metadata_nvec_parsed": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ]
+  },
+  "observed_max_episode_length": 505,
+  "gate_decision": "PASS",
+  "gate_reasons": []
+}

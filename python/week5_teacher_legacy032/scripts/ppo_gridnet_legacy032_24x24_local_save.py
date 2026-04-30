@@ -188,6 +188,8 @@ if args.prod_mode:
 
 # TRY NOT TO MODIFY: seeding
 device = torch.device('cuda' if torch.cuda.is_available() and args.cuda else 'cpu')
+requested_device = 'cuda' if args.cuda else 'cpu'
+effective_device = 'cuda' if device.type == 'cuda' else 'cpu'
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
@@ -263,10 +265,21 @@ def save_local_model(agent, global_step, save_dir, checkpoint_paths):
 
     metadata = {
         "args": vars(args),
+        "requested_device": requested_device,
+        "effective_device": effective_device,
+        "torch_version": torch.__version__,
+        "torch_cuda_version": torch.version.cuda,
+        "cuda_available": bool(torch.cuda.is_available()),
+        "cuda_device_count": int(torch.cuda.device_count()),
+        "cuda_device_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NO CUDA",
         "global_step": int(global_step),
         "env_id": args.gym_id,
         "gym_id": args.gym_id,
         "map_path": args.map_path,
+        "expected_map_size": int(args.expected_map_size),
+        "training_max_steps": int(args.max_steps),
+        "env_max_steps": int(args.max_steps),
+        "max_steps": int(args.max_steps),
         "observation_space": list(envs.observation_space.shape),
         "action_space": str(envs.action_space),
         "action_space_nvec": [int(x) for x in envs.action_space.nvec.tolist()],

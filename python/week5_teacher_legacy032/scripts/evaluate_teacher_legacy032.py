@@ -400,6 +400,7 @@ def _run_single_eval_mode(
     episodes_done = 0
     episode_returns: List[float] = []
     episode_lengths: List[int] = []
+    episode_end_reason_counts = {"env_done": 0, "outer_loop_limit": 0, "unknown": 0}
     terminal_types: List[Any] = []
     total_steps = 0
 
@@ -497,8 +498,16 @@ def _run_single_eval_mode(
             )
 
         for i in range(num_envs):
-            done = bool(dones[i]) or bool(truncs[i]) or int(ep_lengths[i]) >= max_steps_per_episode
+            env_done = bool(dones[i]) or bool(truncs[i])
+            outer_limit_done = int(ep_lengths[i]) >= max_steps_per_episode
+            done = env_done or outer_limit_done
             if done:
+                if env_done:
+                    episode_end_reason_counts["env_done"] += 1
+                elif outer_limit_done:
+                    episode_end_reason_counts["outer_loop_limit"] += 1
+                else:
+                    episode_end_reason_counts["unknown"] += 1
                 episode_returns.append(float(ep_returns[i]))
                 episode_lengths.append(int(ep_lengths[i]))
                 episodes_done += 1
@@ -556,6 +565,8 @@ def _run_single_eval_mode(
         "episodes_requested": episodes,
         "episodes_completed": len(episode_returns),
         "episode_lengths": episode_lengths,
+        "episode_end_reason_counts": episode_end_reason_counts,
+        "observed_max_episode_length": (max(episode_lengths) if episode_lengths else None),
         "episode_returns": episode_returns,
         "mean_return": float(np.mean(episode_returns)) if episode_returns else None,
         "std_return": _safe_std(episode_returns),
@@ -654,6 +665,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--require-mask", type=_parse_bool, default=True)
     parser.add_argument("--max-steps-per-episode", type=int, default=2000)
+    parser.add_argument(
+        "--env-max-steps",
+        type=int,
+        default=None,
+        help="Internal env max_steps passed to MicroRTSGridModeVecEnv. Default: match --max-steps-per-episode.",
+    )
     parser.add_argument("--write-action-trace", action="store_true", default=False)
     parser.add_argument("--dry-run", action="store_true", default=False)
     return parser.parse_args()
@@ -696,6 +713,8 @@ def main() -> int:
         "mask_available": None,
         "mask_source": None,
         "mask_used_during_eval": False,
+        "max_steps_per_episode": int(args.max_steps_per_episode),
+        "env_max_steps": None,
         "env_matches_training_metadata": False,
         "env_matches_target_24x24": False,
         "warnings": [],
@@ -708,6 +727,9 @@ def main() -> int:
 
     if args.dry_run:
         warn.add("Dry-run enabled; evaluation was not executed.")
+
+    env_max_steps = int(args.max_steps_per_episode) if args.env_max_steps is None else int(args.env_max_steps)
+    run["env_max_steps"] = env_max_steps
 
     if not checkpoint_path.exists():
         run["errors"].append("Checkpoint path does not exist.")
@@ -785,7 +807,7 @@ def main() -> int:
                             or "Checkpoint is incompatible with target 24x24 action/observation space."
                         )
                     )
-                env = _create_target_24x24_gridmode_env(metadata, args.max_steps_per_episode)
+                env = _create_target_24x24_gridmode_env(metadata, env_max_steps)
                 run["eval_env_id"] = PREFLIGHT_24_ENV_ID
                 run["eval_map_path"] = PREFLIGHT_24_MAP
             else:
@@ -825,6 +847,21 @@ def main() -> int:
                     warnings=warn,
                 )
                 run["eval_results"][mode_name] = result
+
+            observed_lengths = [
+                int(v.get("observed_max_episode_length"))
+                for v in run["eval_results"].values()
+                if isinstance(v, dict) and v.get("observed_max_episode_length") is not None
+            ]
+            run["observed_max_episode_length"] = max(observed_lengths) if observed_lengths else None
+            if (
+                int(args.max_steps_per_episode) >= 6000
+                and run["observed_max_episode_length"] is not None
+                and int(run["observed_max_episode_length"]) <= 2000
+            ):
+                warn.add(
+                    "Observed max episode length is <= 2000 while max_steps_per_episode=6000; this suggests an additional internal cap."
+                )
 
             primary_key = "stochastic" if "stochastic" in run["eval_results"] else next(iter(run["eval_results"].keys()), None)
             run["eval_result"] = run["eval_results"].get(primary_key) if primary_key else None
@@ -892,11 +929,16 @@ def main() -> int:
         f"- mask_available: {run['mask_available']}",
         f"- mask_source: {run['mask_source']}",
         f"- mask_used_during_eval: {run['mask_used_during_eval']}",
+        f"- max_steps_per_episode: {run['max_steps_per_episode']}",
+        f"- env_max_steps: {run['env_max_steps']}",
+        f"- observed_max_episode_length: {run.get('observed_max_episode_length')}",
         "",
         "## Behavior metrics (primary eval mode)",
         "",
         f"- episodes_requested: {summary_eval.get('episodes_requested')}",
         f"- episodes_completed: {summary_eval.get('episodes_completed')}",
+        f"- episode_end_reason_counts: {summary_eval.get('episode_end_reason_counts')}",
+        f"- observed_max_episode_length: {summary_eval.get('observed_max_episode_length')}",
         f"- mean_return: {summary_eval.get('mean_return')}",
         f"- std_return: {summary_eval.get('std_return')}",
         f"- noop_share: {summary_eval.get('noop_share')}",

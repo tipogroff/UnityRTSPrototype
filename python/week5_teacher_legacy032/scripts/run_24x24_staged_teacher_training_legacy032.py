@@ -140,6 +140,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-root", default="python/week5_teacher_legacy032")
     parser.add_argument("--evaluate-after-each", nargs="?", const="true", default="true", type=_parse_bool)
     parser.add_argument("--episodes-per-gate", type=int, default=8)
+    parser.add_argument("--max-steps-per-gate", type=int, default=6000)
+    parser.add_argument("--training-max-steps", type=int, default=6000)
     parser.add_argument("--no-wandb", action="store_true", default=False)
     parser.add_argument("--dry-run", action="store_true", default=False)
     parser.add_argument("--continue-on-gate-warning", action="store_true", default=False)
@@ -240,12 +242,24 @@ def main() -> int:
             "metadata_saved": False,
             "metadata_contract_ok": False,
             "metadata_contract": {},
+            "device_diagnostics": {},
             "gate_requested": bool(args.evaluate_after_each),
             "gate_exit_code": None,
             "gate_status": "SKIPPED",
             "gate_json_report": None,
             "gate_md_report": None,
             "gate_decision": None,
+            "gate_config": {
+                "episodes": int(args.episodes_per_gate),
+                "eval_mode": "both",
+                "env_mode": "target_24x24_gridmode",
+                "require_mask": True,
+                "max_steps_per_episode": int(args.max_steps_per_gate),
+                "env_max_steps": int(args.max_steps_per_gate),
+            },
+            "training_config": {
+                "max_steps": int(args.training_max_steps),
+            },
             "gate_checks": {},
             "warnings": [],
             "errors": [],
@@ -267,6 +281,8 @@ def main() -> int:
             args.map_path,
             "--expected-map-size",
             "24",
+            "--max-steps",
+            str(args.training_max_steps),
             "--verify-contract",
             "true",
             "--local-save-model",
@@ -329,10 +345,21 @@ def main() -> int:
                 "observation_space": md_obs,
                 "action_space_nvec": md_nvec,
             }
+            stage_row["device_diagnostics"] = {
+                "requested_device": metadata.get("requested_device"),
+                "effective_device": metadata.get("effective_device"),
+                "torch_version": metadata.get("torch_version"),
+                "torch_cuda_version": metadata.get("torch_cuda_version"),
+                "cuda_available": metadata.get("cuda_available"),
+                "cuda_device_count": metadata.get("cuda_device_count"),
+                "cuda_device_name": metadata.get("cuda_device_name"),
+            }
             md_ok = md_arch == EXPECTED_ARCH and md_obs == EXPECTED_OBS and md_nvec == EXPECTED_NVEC
             stage_row["metadata_contract_ok"] = bool(md_ok)
             if not md_ok:
                 stage_row["errors"].append("Metadata contract mismatch")
+            if args.device == "cuda" and metadata.get("effective_device") != "cuda":
+                stage_row["warnings"].append("Requested CUDA but trainer effective_device is not cuda")
         else:
             stage_row["errors"].append("Metadata unreadable")
 
@@ -362,7 +389,9 @@ def main() -> int:
                 "--require-mask",
                 "true",
                 "--max-steps-per-episode",
-                "2000",
+                str(args.max_steps_per_gate),
+                "--env-max-steps",
+                str(args.max_steps_per_gate),
             ]
             eval_stdout = stage_log_dir / "evaluation_stdout.log"
             eval_stderr = stage_log_dir / "evaluation_stderr.log"
@@ -491,9 +520,11 @@ def main() -> int:
             "seed": args.seed,
             "device": args.device,
             "map_path": args.map_path,
+            "training_max_steps": int(args.training_max_steps),
             "output_root": str(out_root),
             "evaluate_after_each": bool(args.evaluate_after_each),
             "episodes_per_gate": int(args.episodes_per_gate),
+            "max_steps_per_gate": int(args.max_steps_per_gate),
             "no_wandb": bool(args.no_wandb),
             "dry_run": bool(args.dry_run),
             "continue_on_gate_warning": bool(args.continue_on_gate_warning),

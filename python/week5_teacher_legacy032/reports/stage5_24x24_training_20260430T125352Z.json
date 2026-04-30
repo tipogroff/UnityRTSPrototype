@@ -1,0 +1,228 @@
+{
+  "timestamp": "2026-04-30T12:56:15.978631+00:00",
+  "run_id": "stage5d_cpu_smoke_compare_20260430T125352Z",
+  "run_label": "stage5d_cpu_smoke_compare",
+  "status": "PASS",
+  "decision": "READY_FOR_500K",
+  "decision_reasons": [],
+  "config": {
+    "stages": [
+      10000
+    ],
+    "seed": 17,
+    "device": "cpu",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "training_max_steps": 6000,
+    "output_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032",
+    "evaluate_after_each": true,
+    "episodes_per_gate": 2,
+    "max_steps_per_gate": 6000,
+    "no_wandb": true,
+    "dry_run": false,
+    "continue_on_gate_warning": false,
+    "stop_on_gate_fail": false,
+    "require_contract_check": true
+  },
+  "preflight": {
+    "status": "PASS",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5a_24x24_contract_probe.json",
+    "result": {
+      "timestamp": "2026-04-30T12:53:52.534774+00:00",
+      "status": "PASS",
+      "representation_mode": "MICRORTS_GRIDMODE_PER_CELL",
+      "map_path": "maps/24x24/basesWorkers24x24.xml",
+      "expected_observation_space": [
+        24,
+        24,
+        27
+      ],
+      "expected_gridmode_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "global_single_action_nvec_reference": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        576
+      ],
+      "unity_v2_branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "gridmode_attack_target_semantics": "local_7x7_49",
+      "contract_gridmode_matches_expected": true,
+      "observation_space": [
+        24,
+        24,
+        27
+      ],
+      "observed_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "action_space_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "mapsize": 576,
+      "mask_available": true,
+      "mask_source": "env.vec_client.getMasks(0)",
+      "mask_shape": [
+        6,
+        24,
+        24,
+        79
+      ],
+      "policy_forward_ok": true,
+      "masked_action_sample_ok": true,
+      "env_step_ok": true,
+      "policy_actor_output_shape": [
+        6,
+        24,
+        24,
+        78
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    "errors": []
+  },
+  "stages": [
+    {
+      "stage": 10000,
+      "stage_name": "stage_000010000",
+      "training_exit_code": 0,
+      "training_status": "PASS",
+      "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\stage5d_cpu_smoke_compare_20260430T125352Z\\stage_000010000\\agent_final.pt",
+      "metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\stage5d_cpu_smoke_compare_20260430T125352Z\\stage_000010000\\model_metadata.json",
+      "checkpoint_saved": true,
+      "metadata_saved": true,
+      "metadata_contract_ok": true,
+      "metadata_contract": {
+        "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+        "observation_space": [
+          24,
+          24,
+          27
+        ],
+        "action_space_nvec": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      },
+      "device_diagnostics": {
+        "requested_device": "cpu",
+        "effective_device": "cpu",
+        "torch_version": "1.8.0+cpu",
+        "torch_cuda_version": null,
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_device_name": "NO CUDA"
+      },
+      "gate_requested": true,
+      "gate_exit_code": 0,
+      "gate_status": "PASS",
+      "gate_json_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000010000_20260430T125555Z.json",
+      "gate_md_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000010000_20260430T125555Z.md",
+      "gate_decision": "PASS",
+      "gate_config": {
+        "episodes": 2,
+        "eval_mode": "both",
+        "env_mode": "target_24x24_gridmode",
+        "require_mask": true,
+        "max_steps_per_episode": 6000,
+        "env_max_steps": 6000
+      },
+      "training_config": {
+        "max_steps": 6000
+      },
+      "gate_checks": {
+        "checkpoint_load_ok": true,
+        "policy_architecture_load_ok": true,
+        "inference_ok": true,
+        "eval_observation_shape": [
+          24,
+          24,
+          27
+        ],
+        "eval_action_space": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "env_matches_target_24x24": true,
+        "mask_used_during_eval": true,
+        "action_type_counts": {
+          "noop": 291474,
+          "move": 290849,
+          "harvest": 291148,
+          "return": 289935,
+          "produce": 292618,
+          "attack": 289256
+        },
+        "action_type_share": {
+          "noop": 0.16700701320132014,
+          "move": 0.16664890447378072,
+          "harvest": 0.16682022368903557,
+          "return": 0.16612520627062707,
+          "produce": 0.16766249541620828,
+          "attack": 0.16573615694902824
+        },
+        "mean_return": -10.0,
+        "effective_activity_share": 0.8329929867986798,
+        "noop_share": 0.16700701320132014,
+        "move_share": 0.16664890447378072,
+        "attack_action_count": 289256,
+        "produce_action_count": 292618,
+        "policy_entropy_proxy": 0.0013906632716039029
+      },
+      "warnings": [],
+      "errors": [],
+      "training_duration_seconds": 121.20327138900757,
+      "training_metrics_summary": {
+        "episode_count": 6,
+        "last_global_step": 9150,
+        "mean_episode_reward": 11.899999936421713
+      }
+    }
+  ]
+}

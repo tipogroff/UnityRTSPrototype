@@ -340,9 +340,43 @@ Stage 5B recommendation:
 - Behavior quality did not materially improve versus 100k (stochastic and deterministic mean returns unchanged; deterministic noop share remains very high).
 - Proceed to 1M only with warnings and mandatory follow-up diagnostics if signs of deterministic collapse persist.
 
+Stage 5C result (2026-04-30):
+
+- status: `PASS_WITH_WARNINGS`
+- run_id: `legacy032_24x24_teacher_main_20260429T195603Z`
+- preflight report: `reports/stage5c_24x24_contract_probe.json` (`PASS`)
+- training report: `reports/stage5_24x24_training_20260429T195603Z.json` (`PASS`)
+- checkpoint path: `teacher_models/legacy032_24x24_teacher_main_20260429T195603Z/stage_001000000/agent_final.pt`
+- metadata path: `teacher_models/legacy032_24x24_teacher_main_20260429T195603Z/stage_001000000/model_metadata.json`
+- gate report: `reports/stage5_gate_001000000_20260429T232455Z.json` (`PASS`)
+- gate horizon config: `max_steps_per_episode=6000`, `env_max_steps=6000`
+- metadata max-step fields: `training_max_steps=6000`, `env_max_steps=6000`, `max_steps=6000`
+- run interpretation: `1M is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 500k.`
+
+Stage 5C status class:
+
+- `PASS_WITH_WARNINGS` (gate passed, but evaluator warns observed episode length stayed <=2000 despite configured 6000)
+
+Stage 5C closure reports:
+
+- comparison report: `reports/STAGE5_100K_500K_1M_COMPARISON.md`
+- 1M training + diagnostics report: `reports/STAGE5C_1M_TRAINING_AND_DIAGNOSTICS_REPORT.md`
+- completion report: `reports/STAGE5C_COMPLETION_REPORT.md`
+
+Stage 5C final decision:
+
+- `READY_FOR_3M_WITH_WARNINGS`
+
+Stage 5C exact next action:
+
+- Run Stage 5D 3M from-scratch on corrected 24x24 GridMode path with `training_max_steps=6000` and `max_steps_per_gate=6000`.
+- Require extended large-map diagnostics after 3M before any 5M decision.
+- Do not proceed to 5M unless 3M improves return/contact/behavior or diagnostics justify continuation.
+
 Planned checkpoints:
 
-- `100000`, `500000`, `1000000`, `3000000`, `5000000`
+- completed: `100000`, `500000`, `1000000`
+- planned: `3000000`, `5000000`
 
 Rule:
 

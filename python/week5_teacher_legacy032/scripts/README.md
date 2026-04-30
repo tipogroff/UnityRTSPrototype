@@ -12,6 +12,7 @@ This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pip
 | `legacy032_env_probe.py` | Stage 1 | ✅ DONE | Probe env contracts, smoke episode, JSON+MD report |
 | `train_teacher_legacy032.py` | Stage 2 | ✅ DONE (smoke) | Stage 2 smoke wrapper around reference training script; saves isolated legacy032 artifacts and summary reports |
 | `evaluate_teacher_legacy032.py` | Stage 3-4R | ✅ UPDATED | Evaluate checkpoint, run behavior gate, includes corrected `target_24x24_gridmode` compatibility (`[...,49]`) |
+| `evaluate_teacher_large_map_diagnostics.py` | Stage 5C diagnostics | ✅ NEW | Extended large-map diagnostics for 24x24 GridMode; reports all-cell vs source-cell limits, economy/production/combat proxies, and explicit limitations |
 | `run_staged_teacher_training_legacy032.py` | Stage 3 (historical line) | ✅ DONE | Run staged main training and evaluate after checkpoints |
 | `run_24x24_staged_teacher_training_legacy032.py` | Stage 5 | ✅ NEW | Corrected 24x24 staged orchestrator (preflight -> train -> gate) under legacy032-only artifact roots |
 | `ppo_gridnet_legacy032_24x24_local_save.py` | Stage 4R | ✅ UPDATED | Patched trainer with corrected GridMode contract (`[...,49]`) and resolution-aware actor head |
@@ -103,8 +104,16 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 - `--env-mode reference_internal|preflight_24x24|target_24x24_gridmode|auto` (default `auto`)
 - `--require-mask true|false` (default `true`)
 - `--max-steps-per-episode` (default `2000`)
+- `--env-max-steps` (default: mirrors `--max-steps-per-episode`; controls internal `MicroRTSGridModeVecEnv(max_steps=...)` cap)
 - `--write-action-trace`
 - `--dry-run`
+
+Horizon semantics:
+
+- `--max-steps-per-episode` controls the outer evaluation loop limit.
+- `--env-max-steps` controls the internal environment episode cap.
+- For Stage 5C large-map gate, pass both as `6000` to avoid hidden truncation at `T=2000`.
+- If visualizer reaches `T=2000` then immediately restarts episode, internal env cap is still `2000`.
 
 ### Outputs
 
@@ -112,6 +121,50 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 - `python/week5_teacher_legacy032/reports/stage3_smoke_checkpoint_behavior_gate_<timestamp>.md`
 - `python/week5_teacher_legacy032/reports/stage3_gate_<stage>_<timestamp>.json`
 - `python/week5_teacher_legacy032/reports/stage3_gate_<stage>_<timestamp>.md`
+
+---
+
+## `evaluate_teacher_large_map_diagnostics.py` — Stage 5C extended diagnostics
+
+### Purpose
+
+- evaluates Stage 5C checkpoint on target 24x24 GridMode with long horizon (`max_steps_per_episode=6000`)
+- records all-cell action metrics and explicit source-cell limitations when mask semantics are ambiguous
+- records economy/production/combat proxy metrics and writes machine + markdown diagnostic reports
+
+### Example command (Stage 5C 1M checkpoint)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py `
+	--checkpoint-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_main_20260429T195603Z/stage_001000000/agent_final.pt `
+	--model-metadata-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_main_20260429T195603Z/stage_001000000/model_metadata.json `
+	--run-label stage5c_large_map_diagnostics_001000000 `
+	--episodes 8 `
+	--seed 17 `
+	--device cpu `
+	--output-dir python/week5_teacher_legacy032/reports `
+	--env-mode target_24x24_gridmode `
+	--require-mask true `
+	--max-steps-per-episode 6000 `
+	--eval-mode both `
+	--write-action-trace `
+	--sample-frame-interval 25
+```
+
+### Why this exists
+
+- On large 24x24 GridMode maps, all-cell `noop_share` can be misleading because most cells are empty while meaningful actions may still happen on controllable unit cells.
+- Stage 5C diagnostic therefore fixes horizon to `max_steps_per_episode=6000` and reports explicit limitations whenever source-cell mask semantics cannot be validated safely.
+
+### Outputs
+
+- `python/week5_teacher_legacy032/reports/stage5c_large_map_diagnostics_<timestamp>.json`
+- `python/week5_teacher_legacy032/reports/stage5c_large_map_diagnostics_<timestamp>.md`
+- optional: `python/week5_teacher_legacy032/reports/stage5c_large_map_action_trace_<timestamp>.jsonl`
+- `python/week5_teacher_legacy032/reports/STAGE5C_LARGE_MAP_DIAGNOSTICS_REPORT.md`
 
 ---
 
@@ -213,12 +266,55 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 	--require-contract-check true
 ```
 
+### Example command (Stage 5C 1M with extended gate horizon)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_main `
+	--stages 1000000 `
+	--seed 17 `
+	--device cpu `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--training-max-steps 6000 `
+	--episodes-per-gate 8 `
+	--max-steps-per-gate 6000 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true
+```
+
+Why `6000` for Stage 5C gate on 24x24:
+
+- On large 24x24 maps, development often progresses through longer pre-contact phases (economy, barracks, production).
+- A short gate horizon can terminate episodes before meaningful combat contact and underreport behavior quality.
+- Stage 5C therefore uses extended gate horizon (`max_steps_per_episode=6000`) to capture late-phase interactions.
+
+Training vs gate horizon semantics:
+
+- `--training-max-steps` controls internal episode cap in training env creation (`MicroRTSGridModeVecEnv(max_steps=...)`).
+- `--max-steps-per-gate` controls evaluator outer loop and evaluator env cap (`--max-steps-per-episode` and `--env-max-steps`).
+- For Stage 5C large-map experiments, set both to `6000`.
+- If visualizer resets at `T=2000` during training, training env is still using `max_steps=2000`.
+
 Stage 5B comparison rule:
 
 - Stage 5B (500k) must be compared against Stage 5A 100k baseline gate report:
 	`python/week5_teacher_legacy032/reports/stage5_gate_000100000_20260429T164521Z.json`.
 - If resume is not explicitly implemented/validated, treat 500k as from-scratch with larger `--total-timesteps`, not as resumed continuation from 100k.
 - Use corrected 24x24 GridMode path only for transfer-readiness decisions.
+
+Stage 5C final decision flow:
+
+- Use all three together before deciding on 3M readiness:
+	- standard gate report: `python/week5_teacher_legacy032/reports/stage5_gate_001000000_20260429T232455Z.json`
+	- large-map diagnostics report: `python/week5_teacher_legacy032/reports/stage5c_large_map_diagnostics_20260430T123128Z.json`
+	- cross-checkpoint comparison: `python/week5_teacher_legacy032/reports/STAGE5_100K_500K_1M_COMPARISON.md`
+- Do not use naive raw count comparisons across 5A/5B vs 5C without horizon caveat (`2000` vs `6000`).
+- Treat orchestrator `decision` labels as generic pipeline labels only.
+- For Stage 5C closure, the final human-reviewed class is `READY_FOR_3M_WITH_WARNINGS`.
 
 ### Core flags
 
@@ -229,12 +325,20 @@ Stage 5B comparison rule:
 - `--map-path`
 - `--output-root`
 - `--evaluate-after-each`
+- `--training-max-steps` (default `6000`; passed to trainer as `--max-steps`)
 - `--episodes-per-gate`
+- `--max-steps-per-gate` (default `6000`; passed to evaluator as both `--max-steps-per-episode` and `--env-max-steps`)
 - `--no-wandb`
 - `--dry-run`
 - `--continue-on-gate-warning`
 - `--stop-on-gate-fail`
 - `--require-contract-check`
+
+Evaluation-horizon comparability warning:
+
+- Stage 5A/5B gates were executed with the old horizon (`max_steps_per_episode=2000`).
+- Stage 5C gates use `6000` by design on 24x24 large-map settings.
+- When comparing Stage 5C 1M gate metrics against Stage 5A/5B, explicitly account for the horizon difference.
 
 ### Outputs
 
@@ -252,6 +356,44 @@ Stage 5B comparison rule:
 - `python/week5_teacher_legacy032/reports/stage5_gate_000100000_<timestamp>.md`
 - `python/week5_teacher_legacy032/reports/STAGE5A_100K_TRAINING_REPORT.md`
 - `python/week5_teacher_legacy032/reports/STAGE5A_COMPLETION_REPORT.md`
+
+### Stage 5D GPU prep (before 3M)
+
+Use this check before attempting any Stage 5D 3M GPU run.
+
+CUDA availability check in the active legacy032 venv:
+
+```powershell
+$PY="c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe"
+& $PY -c "import torch; print('torch_version=', torch.__version__); print('cuda_available=', torch.cuda.is_available()); print('torch_cuda=', torch.version.cuda); print('device_count=', torch.cuda.device_count()); print('device_name=', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NO CUDA')"
+```
+
+Important notes:
+
+- CUDA must be available inside `.venv_microrts032_reference`.
+- `--device cuda` in orchestrator is translated to trainer `--cuda true`; `--device cpu` maps to trainer `--cuda false`.
+- Trainer metadata (`model_metadata.json`) now records requested/effective device and torch CUDA diagnostics.
+- GPU may not materially accelerate MicroRTS training when Java/env stepping is the bottleneck.
+
+Example Stage 5D GPU command (reference only, do not run blindly):
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_main_gpu `
+	--stages 3000000 `
+	--seed 17 `
+	--device cuda `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--training-max-steps 6000 `
+	--episodes-per-gate 8 `
+	--max-steps-per-gate 6000 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true
+```
 
 ---
 

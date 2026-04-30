@@ -1,0 +1,223 @@
+{
+  "timestamp": "2026-04-30T12:29:31.699060+00:00",
+  "run_label": "stage5c_large_map_diagnostics_001000000",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260429T195603Z\\stage_001000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260429T195603Z\\stage_001000000\\model_metadata.json",
+  "eval_env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "eval_map_path": "maps/24x24/basesWorkers24x24.xml",
+  "max_steps_per_episode": 6000,
+  "eval_mode": "both",
+  "env_mode": "target_24x24_gridmode",
+  "require_mask": true,
+  "episodes": 8,
+  "sample_frame_interval": 25,
+  "warnings": [
+    "source-cell metrics unavailable because mask bit semantics are ambiguous."
+  ],
+  "errors": [],
+  "eval_results": {
+    "deterministic": {
+      "episodes_requested": 8,
+      "episodes_completed": 8,
+      "episode_lengths": [
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        712,
+        712
+      ],
+      "observed_max_episode_length": 712,
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "all_cell_metrics": {
+        "global_noop_share_all_cells": 0.9965651659384103,
+        "global_non_noop_share_all_cells": 0.003434834061589731,
+        "action_type_share_all_cells": {
+          "noop": 0.9965651659384103,
+          "move": 0.0,
+          "harvest": 0.0017279832501040366,
+          "return": 0.0,
+          "produce": 0.0016987229504785684,
+          "attack": 8.127861007074491e-06
+        },
+        "repeated_same_action_share": 0.9999970951525765,
+        "policy_entropy_proxy": 0.0005879673805660725,
+        "source_cell_valid_share_observed_mask_bit0": 0.003434834079659973
+      },
+      "source_cell_metrics": {
+        "source_cell_valid_share_mean": null,
+        "source_cell_count_mean": null,
+        "noop_share_on_source_cells": null,
+        "non_noop_share_on_source_cells": null,
+        "action_type_share_on_source_cells": null,
+        "move_share_on_source_cells": null,
+        "harvest_share_on_source_cells": null,
+        "return_share_on_source_cells": null,
+        "produce_share_on_source_cells": null,
+        "attack_share_on_source_cells": null,
+        "unavailable_reason": "source-cell metrics unavailable because mask bit semantics are ambiguous."
+      },
+      "economy_metrics": {
+        "harvest_action_count": 8504,
+        "return_action_count": 0,
+        "produce_action_count": 8360,
+        "first_produce_step": 6,
+        "economy_activity_present": true,
+        "worker_count_proxy": null,
+        "worker_count_proxy_reason": "not present in env info payload",
+        "base_count_proxy": null,
+        "base_count_proxy_reason": "not present in env info payload",
+        "barracks_count_proxy": null,
+        "barracks_count_proxy_reason": "not present in env info payload",
+        "resource_proxy": null,
+        "resource_proxy_reason": "not present in env info payload",
+        "first_barracks_or_unit_production_step": 6
+      },
+      "production_metrics": {
+        "produce_action_count": 8360,
+        "produce_action_share": 0.0016987229504785684,
+        "produce_unit_type_distribution": {
+          "3": 8360
+        },
+        "first_produce_step": 6,
+        "unit_production_diversity_proxy": 1,
+        "produce_unit_type_distribution_reason": "derived from produce_type branch index (legacy032 gridmode)"
+      },
+      "combat_contact_metrics": {
+        "attack_action_count": 40,
+        "attack_action_share": 8.127861007074491e-06,
+        "first_attack_step": 3006,
+        "episodes_with_attack_action": 8,
+        "combat_activity_present": true,
+        "contact_seen": null,
+        "first_contact_step": null,
+        "episodes_with_contact": null,
+        "timeout_or_no_contact_episode_count": 0,
+        "contact_limitation": "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      },
+      "limitations": [
+        "source-cell metrics unavailable because mask bit semantics are ambiguous.",
+        "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      ],
+      "action_trace_records_written": 56
+    },
+    "stochastic": {
+      "episodes_requested": 8,
+      "episodes_completed": 8,
+      "episode_lengths": [
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        712,
+        712
+      ],
+      "observed_max_episode_length": 712,
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "all_cell_metrics": {
+        "global_noop_share_all_cells": 0.16629786497347065,
+        "global_non_noop_share_all_cells": 0.8337021350265293,
+        "action_type_share_all_cells": {
+          "noop": 0.16629786497347065,
+          "move": 0.16624726903870163,
+          "harvest": 0.16782935718372868,
+          "return": 0.16604488529962547,
+          "produce": 0.16755808982261755,
+          "attack": 0.16602253368185602
+        },
+        "repeated_same_action_share": 0.1911697808954924,
+        "policy_entropy_proxy": 0.000587696784248365,
+        "source_cell_valid_share_observed_mask_bit0": 0.003434834079659973
+      },
+      "source_cell_metrics": {
+        "source_cell_valid_share_mean": null,
+        "source_cell_count_mean": null,
+        "noop_share_on_source_cells": null,
+        "non_noop_share_on_source_cells": null,
+        "action_type_share_on_source_cells": null,
+        "move_share_on_source_cells": null,
+        "harvest_share_on_source_cells": null,
+        "return_share_on_source_cells": null,
+        "produce_share_on_source_cells": null,
+        "attack_share_on_source_cells": null,
+        "unavailable_reason": "source-cell metrics unavailable because mask bit semantics are ambiguous."
+      },
+      "economy_metrics": {
+        "harvest_action_count": 825946,
+        "return_action_count": 817164,
+        "produce_action_count": 824611,
+        "first_produce_step": 6,
+        "economy_activity_present": true,
+        "worker_count_proxy": null,
+        "worker_count_proxy_reason": "not present in env info payload",
+        "base_count_proxy": null,
+        "base_count_proxy_reason": "not present in env info payload",
+        "barracks_count_proxy": null,
+        "barracks_count_proxy_reason": "not present in env info payload",
+        "resource_proxy": null,
+        "resource_proxy_reason": "not present in env info payload",
+        "first_barracks_or_unit_production_step": 6
+      },
+      "production_metrics": {
+        "produce_action_count": 824611,
+        "produce_action_share": 0.16755808982261755,
+        "produce_unit_type_distribution": {
+          "0": 116803,
+          "1": 116875,
+          "2": 116293,
+          "3": 124251,
+          "4": 116696,
+          "5": 116989,
+          "6": 116704
+        },
+        "first_produce_step": 6,
+        "unit_production_diversity_proxy": 7,
+        "produce_unit_type_distribution_reason": "derived from produce_type branch index (legacy032 gridmode)"
+      },
+      "combat_contact_metrics": {
+        "attack_action_count": 817054,
+        "attack_action_share": 0.16602253368185602,
+        "first_attack_step": 6,
+        "episodes_with_attack_action": 8,
+        "combat_activity_present": true,
+        "contact_seen": null,
+        "first_contact_step": null,
+        "episodes_with_contact": null,
+        "timeout_or_no_contact_episode_count": 0,
+        "contact_limitation": "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      },
+      "limitations": [
+        "source-cell metrics unavailable because mask bit semantics are ambiguous.",
+        "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      ],
+      "action_trace_records_written": 56
+    }
+  },
+  "interpretation": "agent has economy/production activity but sparse combat",
+  "recommendation_for_final_comparison": "For final comparison, prioritize economy/production progression and first-attack timing, not only all-cell noop_share or return.",
+  "action_trace_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5c_large_map_action_trace_20260430T122931Z.jsonl",
+  "metadata_contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec_parsed": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1"
+  }
+}

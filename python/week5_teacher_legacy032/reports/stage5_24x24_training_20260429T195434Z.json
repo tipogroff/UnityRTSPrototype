@@ -1,0 +1,77 @@
+{
+  "timestamp": "2026-04-29T19:54:34.527367+00:00",
+  "run_id": "stage5c_training_horizon_dryrun_20260429T195434Z",
+  "run_label": "stage5c_training_horizon_dryrun",
+  "status": "FAIL",
+  "decision": "BLOCKED",
+  "decision_reasons": [],
+  "config": {
+    "stages": [
+      1000
+    ],
+    "seed": 17,
+    "device": "cpu",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "training_max_steps": 6000,
+    "output_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032",
+    "evaluate_after_each": true,
+    "episodes_per_gate": 1,
+    "max_steps_per_gate": 6000,
+    "no_wandb": true,
+    "dry_run": true,
+    "continue_on_gate_warning": false,
+    "stop_on_gate_fail": false,
+    "require_contract_check": false
+  },
+  "preflight": {
+    "status": "SKIPPED",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5a_24x24_contract_probe.json",
+    "result": null,
+    "errors": []
+  },
+  "stages": [
+    {
+      "stage": 1000,
+      "stage_name": "stage_000001000",
+      "training_exit_code": 0,
+      "training_status": "PASS",
+      "checkpoint_path": null,
+      "metadata_path": null,
+      "checkpoint_saved": false,
+      "metadata_saved": false,
+      "metadata_contract_ok": false,
+      "metadata_contract": {},
+      "gate_requested": true,
+      "gate_exit_code": null,
+      "gate_status": "SKIPPED",
+      "gate_json_report": null,
+      "gate_md_report": null,
+      "gate_decision": null,
+      "gate_config": {
+        "episodes": 1,
+        "eval_mode": "both",
+        "env_mode": "target_24x24_gridmode",
+        "require_mask": true,
+        "max_steps_per_episode": 6000,
+        "env_max_steps": 6000
+      },
+      "training_config": {
+        "max_steps": 6000
+      },
+      "gate_checks": {},
+      "warnings": [],
+      "errors": [
+        "Checkpoint not found (agent_step or agent_final)",
+        "model_metadata.json not found",
+        "Metadata unreadable",
+        "Gate technical checks did not pass"
+      ],
+      "training_duration_seconds": 0.0010046958923339844,
+      "training_metrics_summary": {
+        "episode_count": 0,
+        "last_global_step": 0,
+        "mean_episode_reward": null
+      }
+    }
+  ]
+}
