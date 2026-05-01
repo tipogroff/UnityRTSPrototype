@@ -13,6 +13,7 @@ This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pip
 | `train_teacher_legacy032.py` | Stage 2 | ✅ DONE (smoke) | Stage 2 smoke wrapper around reference training script; saves isolated legacy032 artifacts and summary reports |
 | `evaluate_teacher_legacy032.py` | Stage 3-4R | ✅ UPDATED | Evaluate checkpoint, run behavior gate, includes corrected `target_24x24_gridmode` compatibility (`[...,49]`) |
 | `evaluate_teacher_large_map_diagnostics.py` | Stage 5C diagnostics | ✅ NEW | Extended large-map diagnostics for 24x24 GridMode; reports all-cell vs source-cell limits, economy/production/combat proxies, and explicit limitations |
+| `evaluate_teacher_large_map_win_diagnostics.py` | Stage 5D diagnostics | ✅ NEW | Extended large-map win/outcome diagnostics for 24x24 GridMode; adds outcome/base-destruction/contact/movement timing fields with explicit availability limits |
 | `run_staged_teacher_training_legacy032.py` | Stage 3 (historical line) | ✅ DONE | Run staged main training and evaluate after checkpoints |
 | `run_24x24_staged_teacher_training_legacy032.py` | Stage 5 | ✅ NEW | Corrected 24x24 staged orchestrator (preflight -> train -> gate) under legacy032-only artifact roots |
 | `ppo_gridnet_legacy032_24x24_local_save.py` | Stage 4R | ✅ UPDATED | Patched trainer with corrected GridMode contract (`[...,49]`) and resolution-aware actor head |
@@ -168,6 +169,50 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 
 ---
 
+## `evaluate_teacher_large_map_win_diagnostics.py` — Stage 5D extended win/outcome diagnostics
+
+### Purpose
+
+- evaluates Stage 5D 3M checkpoint on target 24x24 GridMode with long horizon (`max_steps_per_episode=6000`)
+- records technical compatibility and gate-parity metrics
+- adds outcome-focused sections:
+  - win/loss/draw when derivable from available terminal payloads
+  - base destruction and base-damage timing when detectable from env infos
+  - contact timing when detectable from env infos
+  - movement/aggression proxy section with explicit limitations
+- keeps explicit null/unavailable_reason fields instead of inventing metrics when runtime payloads are insufficient
+
+### Example command (Stage 5D 3M checkpoint)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_win_diagnostics.py `
+	--checkpoint-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_main_20260430T130208Z/stage_003000000/agent_final.pt `
+	--model-metadata-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_main_20260430T130208Z/stage_003000000/model_metadata.json `
+	--run-label stage5d_large_map_win_diagnostics_003000000 `
+	--episodes 16 `
+	--seed 17 `
+	--device cpu `
+	--output-dir python/week5_teacher_legacy032/reports `
+	--env-mode target_24x24_gridmode `
+	--require-mask true `
+	--max-steps-per-episode 6000 `
+	--eval-mode both `
+	--write-action-trace `
+	--sample-frame-interval 25
+```
+
+### Outputs
+
+- `python/week5_teacher_legacy032/reports/stage5d_large_map_win_diagnostics_<timestamp>.json`
+- `python/week5_teacher_legacy032/reports/stage5d_large_map_win_diagnostics_<timestamp>.md`
+- optional: `python/week5_teacher_legacy032/reports/stage5d_large_map_action_trace_<timestamp>.jsonl`
+- `python/week5_teacher_legacy032/reports/STAGE5D_LARGE_MAP_WIN_DIAGNOSTICS_REPORT.md`
+
+---
+
 ## `run_staged_teacher_training_legacy032.py` — Stage 3 staged main training
 
 ### Purpose
@@ -285,6 +330,31 @@ c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.
 	--no-wandb `
 	--require-contract-check true
 ```
+
+### Example command (Stage 5D 3M with extended gate horizon)
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_main `
+	--stages 3000000 `
+	--seed 17 `
+	--device cpu `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--training-max-steps 6000 `
+	--episodes-per-gate 8 `
+	--max-steps-per-gate 6000 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true
+```
+
+Stage 5D rule:
+
+- After Stage 5D 3M completes, run extended large-map diagnostics on the 3M checkpoint before any 5M decision.
+- Do not make `READY_FOR_5M` decisions from standard gate output alone.
 
 Why `6000` for Stage 5C gate on 24x24:
 

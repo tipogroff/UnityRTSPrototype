@@ -1,0 +1,386 @@
+{
+  "timestamp": "2026-05-01T08:30:49.501611+00:00",
+  "run_label": "stage5d_large_map_win_diagnostics_003000000",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\model_metadata.json",
+  "eval_env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "eval_map_path": "maps/24x24/basesWorkers24x24.xml",
+  "max_steps_per_episode": 6000,
+  "eval_mode": "both",
+  "env_mode": "target_24x24_gridmode",
+  "require_mask": true,
+  "episodes": 16,
+  "sample_frame_interval": 25,
+  "warnings": [
+    "source-cell metrics unavailable because mask bit semantics are ambiguous.",
+    "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy.",
+    "base destruction cannot be determined exactly from available info payload; fields are null when not detectable.",
+    "movement_toward_enemy_base_proxy cannot be determined safely because enemy-base direction semantics are unavailable."
+  ],
+  "errors": [],
+  "eval_results": {
+    "deterministic": {
+      "episodes_requested": 16,
+      "episodes_completed": 16,
+      "episode_lengths": [
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        505,
+        505,
+        712,
+        712,
+        505,
+        505
+      ],
+      "episode_end_reason_counts": {
+        "env_done": 16,
+        "outer_loop_limit": 0,
+        "unknown": 0
+      },
+      "observed_max_episode_length": 712,
+      "episode_returns": [
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0
+      ],
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "terminal_types": null,
+      "terminal_types_unavailable_reason": null,
+      "win_count": 0,
+      "loss_count": 0,
+      "draw_count": 16,
+      "total_steps": 15150,
+      "all_cell_metrics": {
+        "global_noop_share_all_cells": 0.9965708654198753,
+        "global_non_noop_share_all_cells": 0.0034291345801247264,
+        "action_type_share_all_cells": {
+          "noop": 0.9965708654198753,
+          "move": 0.0,
+          "harvest": 0.001726943527686102,
+          "return": 0.0,
+          "produce": 0.001693023469013568,
+          "attack": 9.167583425009168e-06
+        },
+        "repeated_same_action_share": 0.9999952178661569,
+        "policy_entropy_proxy": 0.0006511597396888872,
+        "source_cell_valid_share_observed_mask_bit0": 0.003429134597005968
+      },
+      "source_cell_metrics": {
+        "source_cell_valid_share_mean": null,
+        "source_cell_count_mean": null,
+        "noop_share_on_source_cells": null,
+        "non_noop_share_on_source_cells": null,
+        "action_type_share_on_source_cells": null,
+        "move_share_on_source_cells": null,
+        "harvest_share_on_source_cells": null,
+        "return_share_on_source_cells": null,
+        "produce_share_on_source_cells": null,
+        "attack_share_on_source_cells": null,
+        "unavailable_reason": "source-cell metrics unavailable because mask bit semantics are ambiguous."
+      },
+      "economy_metrics": {
+        "first_harvest_step": 6,
+        "first_return_step": null,
+        "first_produce_step": 6,
+        "first_barracks_or_unit_production_step": 6,
+        "harvest_action_count": 15070,
+        "return_action_count": 0,
+        "produce_action_count": 14774,
+        "economy_activity_present": true,
+        "worker_count_proxy": null,
+        "worker_count_proxy_reason": "not present in env info payload",
+        "base_count_proxy": null,
+        "base_count_proxy_reason": "not present in env info payload",
+        "barracks_count_proxy": null,
+        "barracks_count_proxy_reason": "not present in env info payload",
+        "resource_proxy": null,
+        "resource_proxy_reason": "not present in env info payload"
+      },
+      "production_metrics": {
+        "produce_action_count": 14774,
+        "produce_action_share": 0.001693023469013568,
+        "produce_unit_type_distribution": {
+          "3": 14774
+        },
+        "first_produce_step": 6,
+        "unit_production_diversity_proxy": 1,
+        "produce_unit_type_distribution_reason": "derived from produce_type branch index (legacy032 gridmode)"
+      },
+      "combat_contact_metrics": {
+        "attack_action_count": 80,
+        "attack_action_share": 9.167583425009168e-06,
+        "episodes_with_attack_action": 16,
+        "first_attack_step": 3006,
+        "contact_seen": null,
+        "first_contact_step": null,
+        "episodes_with_contact": null,
+        "timeout_or_no_contact_episode_count": 0,
+        "contact_limitation": "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      },
+      "base_destruction_metrics": {
+        "enemy_base_destroyed_count": null,
+        "own_base_destroyed_count": null,
+        "episodes_with_enemy_base_destroyed": null,
+        "episodes_with_own_base_destroyed": null,
+        "first_enemy_base_destroyed_step": null,
+        "mean_enemy_base_destroyed_step": null,
+        "first_enemy_base_damage_step": null,
+        "enemy_base_detection_available": false,
+        "own_base_detection_available": false,
+        "enemy_base_damage_detection_available": false,
+        "unavailable_reason": "base destruction cannot be determined exactly from available info payload; fields are null when not detectable."
+      },
+      "movement_aggression_metrics": {
+        "move_action_count": 0,
+        "move_share": 0.0,
+        "first_move_step": null,
+        "average_move_actions_before_first_attack": 0.0,
+        "movement_toward_enemy_base_proxy": null,
+        "movement_toward_enemy_base_proxy_reason": "movement_toward_enemy_base_proxy cannot be determined safely because enemy-base direction semantics are unavailable."
+      },
+      "limitations": [
+        "source-cell metrics unavailable because mask bit semantics are ambiguous.",
+        "movement_toward_enemy_base_proxy cannot be determined safely because enemy-base direction semantics are unavailable.",
+        "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy.",
+        "base destruction cannot be determined exactly from available info payload; fields are null when not detectable."
+      ],
+      "action_trace_records_written": 101
+    },
+    "stochastic": {
+      "episodes_requested": 16,
+      "episodes_completed": 16,
+      "episode_lengths": [
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        712,
+        712,
+        505,
+        505,
+        505,
+        505,
+        712,
+        712,
+        505,
+        505
+      ],
+      "episode_end_reason_counts": {
+        "env_done": 16,
+        "outer_loop_limit": 0,
+        "unknown": 0
+      },
+      "observed_max_episode_length": 712,
+      "episode_returns": [
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0,
+        -10.0
+      ],
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "terminal_types": null,
+      "terminal_types_unavailable_reason": null,
+      "win_count": 0,
+      "loss_count": 0,
+      "draw_count": 16,
+      "total_steps": 15150,
+      "all_cell_metrics": {
+        "global_noop_share_all_cells": 0.16628151356802348,
+        "global_non_noop_share_all_cells": 0.8337184864319765,
+        "action_type_share_all_cells": {
+          "noop": 0.16628151356802348,
+          "move": 0.16620290154015402,
+          "harvest": 0.16784057572423908,
+          "return": 0.1660236752841951,
+          "produce": 0.1675772368903557,
+          "attack": 0.16607409699303263
+        },
+        "repeated_same_action_share": 0.19113433983493908,
+        "policy_entropy_proxy": 0.0006555096716573923,
+        "source_cell_valid_share_observed_mask_bit0": 0.003429134597005968
+      },
+      "source_cell_metrics": {
+        "source_cell_valid_share_mean": null,
+        "source_cell_count_mean": null,
+        "noop_share_on_source_cells": null,
+        "non_noop_share_on_source_cells": null,
+        "action_type_share_on_source_cells": null,
+        "move_share_on_source_cells": null,
+        "harvest_share_on_source_cells": null,
+        "return_share_on_source_cells": null,
+        "produce_share_on_source_cells": null,
+        "attack_share_on_source_cells": null,
+        "unavailable_reason": "source-cell metrics unavailable because mask bit semantics are ambiguous."
+      },
+      "economy_metrics": {
+        "first_harvest_step": 6,
+        "first_return_step": 6,
+        "first_produce_step": 6,
+        "first_barracks_or_unit_production_step": 6,
+        "harvest_action_count": 1464644,
+        "return_action_count": 1448789,
+        "produce_action_count": 1462346,
+        "economy_activity_present": true,
+        "worker_count_proxy": null,
+        "worker_count_proxy_reason": "not present in env info payload",
+        "base_count_proxy": null,
+        "base_count_proxy_reason": "not present in env info payload",
+        "barracks_count_proxy": null,
+        "barracks_count_proxy_reason": "not present in env info payload",
+        "resource_proxy": null,
+        "resource_proxy_reason": "not present in env info payload"
+      },
+      "production_metrics": {
+        "produce_action_count": 1462346,
+        "produce_action_share": 0.1675772368903557,
+        "produce_unit_type_distribution": {
+          "0": 207006,
+          "1": 207898,
+          "2": 206418,
+          "3": 220355,
+          "4": 206937,
+          "5": 207127,
+          "6": 206605
+        },
+        "first_produce_step": 6,
+        "unit_production_diversity_proxy": 7,
+        "produce_unit_type_distribution_reason": "derived from produce_type branch index (legacy032 gridmode)"
+      },
+      "combat_contact_metrics": {
+        "attack_action_count": 1449229,
+        "attack_action_share": 0.16607409699303263,
+        "episodes_with_attack_action": 16,
+        "first_attack_step": 6,
+        "contact_seen": null,
+        "first_contact_step": null,
+        "episodes_with_contact": null,
+        "timeout_or_no_contact_episode_count": 0,
+        "contact_limitation": "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy."
+      },
+      "base_destruction_metrics": {
+        "enemy_base_destroyed_count": null,
+        "own_base_destroyed_count": null,
+        "episodes_with_enemy_base_destroyed": null,
+        "episodes_with_own_base_destroyed": null,
+        "first_enemy_base_destroyed_step": null,
+        "mean_enemy_base_destroyed_step": null,
+        "first_enemy_base_damage_step": null,
+        "enemy_base_detection_available": false,
+        "own_base_detection_available": false,
+        "enemy_base_damage_detection_available": false,
+        "unavailable_reason": "base destruction cannot be determined exactly from available info payload; fields are null when not detectable."
+      },
+      "movement_aggression_metrics": {
+        "move_action_count": 1450353,
+        "move_share": 0.16620290154015402,
+        "first_move_step": 6,
+        "average_move_actions_before_first_attack": 0.0,
+        "movement_toward_enemy_base_proxy": null,
+        "movement_toward_enemy_base_proxy_reason": "movement_toward_enemy_base_proxy cannot be determined safely because enemy-base direction semantics are unavailable."
+      },
+      "limitations": [
+        "source-cell metrics unavailable because mask bit semantics are ambiguous.",
+        "movement_toward_enemy_base_proxy cannot be determined safely because enemy-base direction semantics are unavailable.",
+        "contact cannot be determined exactly from available info; attack_action_count is used as weak proxy.",
+        "base destruction cannot be determined exactly from available info payload; fields are null when not detectable."
+      ],
+      "action_trace_records_written": 101
+    }
+  },
+  "interpretation": "agent has economy/production activity with attack activity; contact/outcome observability remains limited",
+  "recommendation_for_next_prompt": "Hold for reward or eval diagnostics: outcome/base-destruction instrumentation is insufficient for reliable 5M decision.",
+  "action_trace_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5d_large_map_action_trace_20260501T083049Z.jsonl",
+  "checkpoint_load_ok": true,
+  "policy_architecture_load_ok": true,
+  "inference_ok": true,
+  "observation_space": [
+    24,
+    24,
+    27
+  ],
+  "action_space_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "env_matches_target_24x24": true,
+  "mask_used_during_eval": true,
+  "manual_visual_observation_cross_check": {
+    "manual_observation_context": [
+      "manual observation indicates late-training improvement",
+      "agent eventually destroyed enemy base",
+      "later episodes appeared to destroy enemy base by T~2000 or earlier"
+    ],
+    "confirmed_by_metrics": "partial",
+    "matching_evidence": [
+      "economy/production timing detected"
+    ],
+    "contradictions": [
+      "stochastic mean_return remains -10.0"
+    ],
+    "unresolved": [
+      "exact enemy base destruction not confirmed by available metrics",
+      "exact contact timing unavailable; only attack proxy is available"
+    ]
+  },
+  "metadata_contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec_parsed": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1"
+  }
+}

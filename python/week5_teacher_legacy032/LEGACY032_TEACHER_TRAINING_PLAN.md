@@ -373,10 +373,73 @@ Stage 5C exact next action:
 - Require extended large-map diagnostics after 3M before any 5M decision.
 - Do not proceed to 5M unless 3M improves return/contact/behavior or diagnostics justify continuation.
 
+Stage 5D result (2026-05-01):
+
+- status: `PASS_WITH_WARNINGS`
+- decision for next prompt: `READY_FOR_3M_DIAGNOSTICS`
+- run_id: `legacy032_24x24_teacher_main_20260430T130208Z`
+- preflight report: `reports/stage5d_24x24_contract_probe.json` (`PASS`)
+- machine report: `reports/stage5_24x24_training_20260430T130208Z.json`
+- checkpoint path: `teacher_models/legacy032_24x24_teacher_main_20260430T130208Z/stage_003000000/agent_final.pt`
+- metadata path: `teacher_models/legacy032_24x24_teacher_main_20260430T130208Z/stage_003000000/model_metadata.json`
+- gate report: `reports/stage5_gate_003000000_20260430T225547Z.json` (`PASS`)
+- training report: `reports/STAGE5D_3M_TRAINING_REPORT.md`
+- completion report: `reports/STAGE5D_3M_TRAINING_COMPLETION_REPORT.md`
+- gate horizon config: `max_steps_per_episode=6000`, `env_max_steps=6000`
+- trainer config: `training_max_steps=6000`
+- run interpretation: `3M is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 1M.`
+
+Stage 5D key observations:
+
+- technical compatibility remained stable (`env_matches_target_24x24=true`, `mask_used_during_eval=true`, load/inference checks true)
+- deterministic mean return remained flat at `-10.0`
+- stochastic mean return remained flat at `-10.0`
+- deterministic all-cell `noop_share` remained high (`0.9965651659384103`)
+- stochastic entropy proxy did not collapse further (`0.0005863994307689476` -> `0.0006434021773641822`)
+- repeated_same_action_share did not worsen (`0.19117079759209063` -> `0.19113715945892684`)
+- attack/produce/move remained nonzero in stochastic mode
+- source-cell/contact diagnostics are still pending and require extended large-map diagnostics before any 5M decision
+
 Planned checkpoints:
 
-- completed: `100000`, `500000`, `1000000`
-- planned: `3000000`, `5000000`
+- completed: `100000`, `500000`, `1000000`, `3000000`
+- planned: `5000000`
+
+Stage 5 policy constraint after Stage 5D:
+
+- Do not launch 5M in Stage 5D closure prompt.
+- Do not make any final `READY_FOR_5M` decision before extended large-map diagnostics on the 3M checkpoint.
+- Exact next action: run extended large-map diagnostics on Stage 5D 3M checkpoint.
+
+Stage 5D diagnostics result (2026-05-01):
+
+- diagnostics script: `scripts/evaluate_teacher_large_map_win_diagnostics.py`
+- diagnostics report json: `reports/stage5d_large_map_win_diagnostics_20260501T083049Z.json`
+- diagnostics report md: `reports/stage5d_large_map_win_diagnostics_20260501T083049Z.md`
+- diagnostics action trace: `reports/stage5d_large_map_action_trace_20260501T083049Z.jsonl`
+- diagnostics summary: `reports/STAGE5D_LARGE_MAP_WIN_DIAGNOSTICS_REPORT.md`
+- comparison report: `reports/STAGE5C_1M_VS_STAGE5D_3M_DIAGNOSTICS_COMPARISON.md`
+
+Stage 5D diagnostics interpretation:
+
+- technical compatibility remained stable (`checkpoint_load_ok=true`, `policy_architecture_load_ok=true`, `inference_ok=true`, `env_matches_target_24x24=true`, `mask_used_during_eval=true`)
+- standard outcome metrics remained flat (`mean_return=-10.0`, `win/loss/draw = 0/0/16` on stochastic 16-episode diagnostic)
+- explicit base-destruction/contact confirmation was unavailable from current env info payload; corresponding fields are null with unavailable reasons
+- economy/production and attack proxies remained strongly nonzero in stochastic mode
+- deterministic all-cell `noop_share` remained near-total and stochastic all-cell `noop_share` remained low/stable
+
+Stage 5D diagnostics decision for next prompt:
+
+- `HOLD_FOR_REWARD_OR_EVAL_DIAGNOSTICS`
+
+Reason:
+
+- manual visual evidence suggests potential late-stage behavioral improvement, but current machine-readable instrumentation still cannot directly confirm base destruction/contact/time-to-kill.
+- because outcome/base-destruction observability is insufficient, a 5M decision is not yet justified from current diagnostics alone.
+
+Exact next action after Stage 5D diagnostics:
+
+- Strengthen evaluation instrumentation for terminal outcomes/base-destruction/contact in legacy032 large-map diagnostics, then re-run decision diagnostics before any 5M launch.
 
 Rule:
 
