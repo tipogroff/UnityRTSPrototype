@@ -439,6 +439,38 @@ def _hist_to_sorted_dict(counter: Counter) -> Dict[str, int]:
     return {str(k): int(counter[k]) for k in sorted(counter.keys())}
 
 
+def _apply_reproducibility_seed(seed: int, use_cuda: bool) -> None:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if use_cuda and torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+def _try_seed_env(env: Any, seed: int, warnings: List[str]) -> None:
+    # Legacy gym_microrts variants expose different seeding APIs;
+    # try common options without hard-failing unsupported paths.
+    if hasattr(env, "seed"):
+        try:
+            env.seed(seed)
+        except Exception as exc:
+            warnings.append(f"env.seed({seed}) failed: {exc}")
+
+    if hasattr(env, "action_space") and hasattr(env.action_space, "seed"):
+        try:
+            env.action_space.seed(seed)
+        except Exception as exc:
+            warnings.append(f"env.action_space.seed({seed}) failed: {exc}")
+
+
+def _safe_reset_env(env: Any, seed: int) -> Any:
+    try:
+        return env.reset(seed=seed)
+    except TypeError:
+        return env.reset()
+    except Exception:
+        return env.reset()
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description=(
@@ -495,6 +527,9 @@ def main() -> int:
     # Device selection.
     use_cuda = args.device == "cuda" and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
+
+    # Reproducibility controls (seed must be applied, not only accepted as CLI arg).
+    _apply_reproducibility_seed(seed=int(args.seed), use_cuda=bool(use_cuda))
 
     # Build policy and load checkpoint.
     state_dict = _load_checkpoint_state_dict(checkpoint_path, device)
@@ -553,6 +588,7 @@ def main() -> int:
     env = None
     try:
         env = _create_target_24x24_gridmode_env(metadata, int(args.max_steps_per_episode))
+        _try_seed_env(env=env, seed=int(args.seed), warnings=warnings)
 
         # Hard contract check on runtime env.
         env_obs_shape = [int(v) for v in env.observation_space.shape]
@@ -567,7 +603,7 @@ def main() -> int:
             )
 
         for ep in range(int(args.episodes)):
-            obs = env.reset()
+            obs = _safe_reset_env(env, seed=int(args.seed) + int(ep))
             if isinstance(obs, tuple):
                 obs = obs[0]
             obs = np.asarray(obs)

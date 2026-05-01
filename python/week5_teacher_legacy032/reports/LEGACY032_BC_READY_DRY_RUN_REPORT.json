@@ -1,0 +1,233 @@
+{
+  "generated_at_utc": "2026-05-01T16:47:58Z",
+  "status": "pass",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "batch_size_requested": 32,
+  "batch_size_train_actual": 32,
+  "batch_size_validation_actual": 32,
+  "manifest_checks": {
+    "target_action_contract": {
+      "pass": true,
+      "expected": "unity_v2_legacy032_gridnet",
+      "actual": "unity_v2_legacy032_gridnet"
+    },
+    "observation_shape_per_sample": {
+      "pass": true,
+      "expected": [
+        576,
+        27
+      ],
+      "actual": [
+        576,
+        27
+      ]
+    },
+    "action_shape_per_sample": {
+      "pass": true,
+      "expected": [
+        576,
+        7
+      ],
+      "actual": [
+        576,
+        7
+      ]
+    },
+    "branch_sizes": {
+      "pass": true,
+      "expected": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "actual": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ]
+    },
+    "direct_weight_transfer_claim": {
+      "pass": true,
+      "expected": false,
+      "actual": false
+    },
+    "semantic_parity_claim": {
+      "pass": true,
+      "expected": false,
+      "actual": false
+    }
+  },
+  "train_checks": {
+    "sample_count": 74940,
+    "observations_shape": [
+      74940,
+      576,
+      27
+    ],
+    "actions_shape": [
+      74940,
+      576,
+      7
+    ],
+    "observations_dtype": "float32",
+    "actions_dtype": "int16",
+    "observation_min": 0.0,
+    "observation_max": 1.0,
+    "branch_min_max": [
+      {
+        "branch": 0,
+        "size": 6,
+        "min": 0,
+        "max": 5,
+        "in_bounds": true
+      },
+      {
+        "branch": 1,
+        "size": 4,
+        "min": 0,
+        "max": 2,
+        "in_bounds": true
+      },
+      {
+        "branch": 2,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 3,
+        "size": 4,
+        "min": 0,
+        "max": 0,
+        "in_bounds": true
+      },
+      {
+        "branch": 4,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 5,
+        "size": 7,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 6,
+        "size": 49,
+        "min": 0,
+        "max": 31,
+        "in_bounds": true
+      }
+    ]
+  },
+  "validation_checks": {
+    "sample_count": 13225,
+    "observations_shape": [
+      13225,
+      576,
+      27
+    ],
+    "actions_shape": [
+      13225,
+      576,
+      7
+    ],
+    "observations_dtype": "float32",
+    "actions_dtype": "int16",
+    "observation_min": 0.0,
+    "observation_max": 1.0,
+    "branch_min_max": [
+      {
+        "branch": 0,
+        "size": 6,
+        "min": 0,
+        "max": 5,
+        "in_bounds": true
+      },
+      {
+        "branch": 1,
+        "size": 4,
+        "min": 0,
+        "max": 2,
+        "in_bounds": true
+      },
+      {
+        "branch": 2,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 3,
+        "size": 4,
+        "min": 0,
+        "max": 0,
+        "in_bounds": true
+      },
+      {
+        "branch": 4,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 5,
+        "size": 7,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 6,
+        "size": 49,
+        "min": 0,
+        "max": 31,
+        "in_bounds": true
+      }
+    ]
+  },
+  "batch_shapes": {
+    "train_observations": [
+      32,
+      576,
+      27
+    ],
+    "train_actions": [
+      32,
+      576,
+      7
+    ],
+    "validation_observations": [
+      32,
+      576,
+      27
+    ],
+    "validation_actions": [
+      32,
+      576,
+      7
+    ]
+  },
+  "hard_failures": [],
+  "scope_notes": {
+    "technical_compatibility_only": true,
+    "proves_behavior_quality": false,
+    "proves_unity_semantic_parity": false,
+    "implies_direct_weight_transfer": false
+  }
+}

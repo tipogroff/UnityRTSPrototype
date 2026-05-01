@@ -1,0 +1,162 @@
+{
+  "generated_at_utc": "2026-05-01T16:43:56Z",
+  "status": "success",
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "source_sample_count": 88165,
+  "train_count": 74940,
+  "validation_count": 13225,
+  "debug_count": 512,
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "train_action_type_histogram": {
+    "noop": 43017278,
+    "harvest": 73600,
+    "produce": 74480,
+    "attack": 82
+  },
+  "validation_action_type_histogram": {
+    "noop": 7591452,
+    "harvest": 12970,
+    "produce": 13165,
+    "attack": 13
+  },
+  "debug_action_type_histogram": {
+    "noop": 293897,
+    "harvest": 505,
+    "produce": 510
+  },
+  "train_branch_min_max": [
+    {
+      "branch": 0,
+      "size": 6,
+      "min": 0,
+      "max": 5,
+      "in_bounds": true
+    },
+    {
+      "branch": 1,
+      "size": 4,
+      "min": 0,
+      "max": 2,
+      "in_bounds": true
+    },
+    {
+      "branch": 2,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 3,
+      "size": 4,
+      "min": 0,
+      "max": 0,
+      "in_bounds": true
+    },
+    {
+      "branch": 4,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 5,
+      "size": 7,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 6,
+      "size": 49,
+      "min": 0,
+      "max": 31,
+      "in_bounds": true
+    }
+  ],
+  "validation_branch_min_max": [
+    {
+      "branch": 0,
+      "size": 6,
+      "min": 0,
+      "max": 5,
+      "in_bounds": true
+    },
+    {
+      "branch": 1,
+      "size": 4,
+      "min": 0,
+      "max": 2,
+      "in_bounds": true
+    },
+    {
+      "branch": 2,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 3,
+      "size": 4,
+      "min": 0,
+      "max": 0,
+      "in_bounds": true
+    },
+    {
+      "branch": 4,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 5,
+      "size": 7,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 6,
+      "size": 49,
+      "min": 0,
+      "max": 31,
+      "in_bounds": true
+    }
+  ],
+  "action_mask_available_share": {
+    "train": 1.0,
+    "validation": 1.0,
+    "debug": 1.0
+  },
+  "warnings": [
+    "high noop share in train: noop_share=0.996568",
+    "low produce diversity in train",
+    "low attack target diversity in train",
+    "high noop share in validation: noop_share=0.996567",
+    "low produce diversity in validation",
+    "low attack target diversity in validation",
+    "high noop share in debug: noop_share=0.996558",
+    "low produce diversity in debug"
+  ],
+  "hard_failures": [],
+  "decision": "GO_FOR_DRY_RUN_LOADER"
+}

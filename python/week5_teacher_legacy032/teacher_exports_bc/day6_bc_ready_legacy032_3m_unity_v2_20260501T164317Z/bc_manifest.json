@@ -1,0 +1,40 @@
+{
+  "generated_at_utc": "2026-05-01T16:43:56Z",
+  "dataset_type": "bc_ready_legacy032_unity_v2",
+  "teacher_lineage": "legacy032",
+  "source_pipeline": "gym_microrts==0.3.2",
+  "source_adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_adapted_20260501T161820Z",
+  "source_validation_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\LEGACY032_UNITY_V2_DATASET_VALIDATION_REPORT.json",
+  "target_action_contract": "unity_v2_legacy032_gridnet",
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "flatten_order": "row_major",
+  "flat_cell_index_formula": "row * 24 + col",
+  "global_vector_policy": "excluded_from_strict_bc_encoder_path",
+  "attack_target_semantics": "local_7x7_49",
+  "split": {
+    "seed": 17,
+    "validation_split": 0.15,
+    "train_count": 74940,
+    "validation_count": 13225,
+    "debug_count": 512
+  },
+  "direct_weight_transfer_claim": false,
+  "semantic_parity_claim": false,
+  "notes": "BC-ready dataset packaging only. No BC training or Unity runtime semantic parity claim."
+}
