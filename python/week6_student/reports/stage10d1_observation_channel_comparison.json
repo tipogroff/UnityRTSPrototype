@@ -1,0 +1,322 @@
+{
+  "stage": "10D.1",
+  "diagnostic": "observation_channel_comparison",
+  "dataset_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "unity_snapshot": "python\\week6_student\\reports\\stage10r_noop_collapse_snapshot_step0001.json",
+  "contract_check": {
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "unity_v2_compatible": true
+  },
+  "diagnostic_mask_policy": {
+    "note": "Population masks are diagnostic-derived from observation channels; runtime-authoritative logic remains Unity ActionApplier/MatchManager.",
+    "own_worker_population_mode": {
+      "train": "label_proxy_action_type_harvest",
+      "validation": "label_proxy_action_type_harvest"
+    },
+    "own_base_population_mode": {
+      "train": "label_proxy_action_type_produce",
+      "validation": "label_proxy_action_type_produce"
+    }
+  },
+  "focus_detection": {
+    "B2_detected_as_own_worker": true,
+    "C3_detected_as_own_base": true
+  },
+  "populations": {
+    "own_worker_count": 86570,
+    "own_base_count": 87645
+  },
+  "comparison": {
+    "B2_vs_bc_own_worker": {
+      "owner": {
+        "unity": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.0,
+        "max_abs_z": 1000000.0
+      },
+      "unit_type": {
+        "unity": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.7320508075688772,
+        "max_abs_z": 1000000.0
+      },
+      "current_action": {
+        "unity": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.4142135623730951,
+        "max_abs_z": 1000000.0
+      },
+      "direction": {
+        "unity": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.4142135623730951,
+        "max_abs_z": 1000000.0
+      },
+      "produce": {
+        "unity": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 0.0,
+        "max_abs_z": 0.0
+      },
+      "attack_target": {
+        "unity": [
+          0.0
+        ],
+        "bc_mean": [
+          0.0
+        ],
+        "bc_std": [
+          0.0
+        ],
+        "l2_from_mean": 0.0,
+        "max_abs_z": 0.0
+      }
+    },
+    "C3_vs_bc_own_base": {
+      "owner": {
+        "unity": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.011649266929088938,
+          0.004677962234012208,
+          0.9834788065491471
+        ],
+        "bc_std": [
+          0.10730126517949258,
+          0.0682354666089138,
+          0.1274685985559905
+        ],
+        "l2_from_mean": 1.3992970475256348,
+        "max_abs_z": 14.586579197451636
+      },
+      "unit_type": {
+        "unity": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.7320508075688772,
+        "max_abs_z": 1000000.0
+      },
+      "current_action": {
+        "unity": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.4142135623730951,
+        "max_abs_z": 1000000.0
+      },
+      "direction": {
+        "unity": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 1.4142135623730951,
+        "max_abs_z": 1000000.0
+      },
+      "produce": {
+        "unity": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_std": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "l2_from_mean": 0.0,
+        "max_abs_z": 0.0
+      },
+      "attack_target": {
+        "unity": [
+          0.0
+        ],
+        "bc_mean": [
+          0.0
+        ],
+        "bc_std": [
+          0.0
+        ],
+        "l2_from_mean": 0.0,
+        "max_abs_z": 0.0
+      }
+    }
+  },
+  "flags": {
+    "owner_relative_vs_absolute_encoding_mismatch_suspected": true,
+    "row_column_mismatch_suspicion": false,
+    "current_action_mismatch_suspected": true,
+    "abnormal_attack_target_value": {
+      "B2": false,
+      "C3": false
+    }
+  }
+}

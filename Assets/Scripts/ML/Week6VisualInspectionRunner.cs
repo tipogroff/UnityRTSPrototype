@@ -2251,8 +2251,8 @@ namespace RTS.ML
             // are shown at the top of the screen (A1/B1 in top-left area).
             if (_flipVerticalToMatchMicroRtsTopLeft)
             {
-                // Rotate the current top-down view 90 degrees to the left.
-                cameraRef.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.right);
+                // Rotate the current top-down view 90+180=270 degrees to the left (or 90 right).
+                cameraRef.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.left);
             }
             else
             {

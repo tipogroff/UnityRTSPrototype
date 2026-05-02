@@ -1,0 +1,45 @@
+{
+  "stage": "10D.1",
+  "diagnostic": "training_loss_audit",
+  "inputs": {
+    "train_script": "python\\week6_student\\train_student_bc_minimal.py",
+    "metrics_script": "python\\week6_student\\student_bc_metrics.py",
+    "run_metrics": "python\\week6_student\\runs\\legacy032_v2_bc_minimal_20260501T195501Z\\day2_minimal_metrics_history.json"
+  },
+  "audit": {
+    "loss_computed_on_all_576_cells_or_not": {
+      "value": "YES_FOR_ACTION_TYPE_BRANCH",
+      "evidence": "action_type branch uses all-ones active_mask in compute_branchwise_loss",
+      "bool": true
+    },
+    "actor_cell_mask_used": {
+      "bool": false,
+      "evidence": "No explicit actor-cell masking logic found in training objective path"
+    },
+    "class_weights_used": {
+      "bool": false,
+      "evidence": "No class weight tensor passed into cross_entropy"
+    },
+    "action_type_weighted_ce_used": {
+      "bool": false,
+      "evidence": "No weighted CE invocation found for action_type"
+    },
+    "non_noop_oversampling_used": {
+      "bool": false,
+      "evidence": "No oversampling sampler path found"
+    },
+    "actor_cell_accuracy_logged": {
+      "bool": false,
+      "evidence": "Branch-wise accuracies logged; no dedicated actor-cell aggregate accuracy metric"
+    },
+    "validation_metrics_could_be_dominated_by_empty_cell_noop": {
+      "bool": true,
+      "evidence": {
+        "val_action_type_active_count_epoch1": 7617600,
+        "val_produce_dir_active_count_epoch1": 13165,
+        "val_attack_target_local_active_count_epoch1": 13,
+        "dominance_ratio_actiontype_vs_produce_plus_attack": 578.0543329792077
+      }
+    }
+  }
+}
