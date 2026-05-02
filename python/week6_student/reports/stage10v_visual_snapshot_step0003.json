@@ -1,0 +1,161 @@
+﻿{
+    "generated_at_utc": "2026-05-02T12:59:10.2293778Z",
+    "step": 3,
+    "scene": "Week6_StudentVisualInspection",
+    "checkpoint": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+    "unit_positions": [
+        {
+            "owner": "Player1",
+            "unit_type": "Worker",
+            "x": 1,
+            "y": 1,
+            "logical_cell": "B2",
+            "flat_index": 25
+        },
+        {
+            "owner": "Player1",
+            "unit_type": "Base",
+            "x": 2,
+            "y": 2,
+            "logical_cell": "C3",
+            "flat_index": 50
+        },
+        {
+            "owner": "Player2",
+            "unit_type": "Worker",
+            "x": 22,
+            "y": 21,
+            "logical_cell": "W22",
+            "flat_index": 526
+        },
+        {
+            "owner": "Player2",
+            "unit_type": "Base",
+            "x": 21,
+            "y": 21,
+            "logical_cell": "V22",
+            "flat_index": 525
+        },
+        {
+            "owner": "Neutral",
+            "unit_type": "Resource",
+            "x": 0,
+            "y": 0,
+            "logical_cell": "A1",
+            "flat_index": 0
+        },
+        {
+            "owner": "Neutral",
+            "unit_type": "Resource",
+            "x": 23,
+            "y": 23,
+            "logical_cell": "X24",
+            "flat_index": 575
+        },
+        {
+            "owner": "Neutral",
+            "unit_type": "Resource",
+            "x": 1,
+            "y": 0,
+            "logical_cell": "B1",
+            "flat_index": 1
+        },
+        {
+            "owner": "Neutral",
+            "unit_type": "Resource",
+            "x": 22,
+            "y": 23,
+            "logical_cell": "W24",
+            "flat_index": 574
+        },
+        {
+            "owner": "Player2",
+            "unit_type": "Barracks",
+            "x": 23,
+            "y": 22,
+            "logical_cell": "X23",
+            "flat_index": 551
+        }
+    ],
+    "actor_cells": [
+        {
+            "unit_type": "Worker",
+            "grid_position": "(1,1)",
+            "logical_cell": "B2",
+            "flat_index": 25,
+            "eligible": true,
+            "predicted_action_type": "NoOp",
+            "top3_action_type": "n/a (logits values not exported by bridge payload)",
+            "move_dir": 3,
+            "harvest_dir": 3,
+            "return_dir": 0,
+            "produce_dir": 2,
+            "produce_unit_type": 3,
+            "attack_target_local": 0,
+            "command_built": false,
+            "command_not_built_reason": "predicted_noop",
+            "action_applier_reached": false,
+            "apply_command_reached": false
+        },
+        {
+            "unit_type": "Base",
+            "grid_position": "(2,2)",
+            "logical_cell": "C3",
+            "flat_index": 50,
+            "eligible": true,
+            "predicted_action_type": "NoOp",
+            "top3_action_type": "n/a (logits values not exported by bridge payload)",
+            "move_dir": 3,
+            "harvest_dir": 3,
+            "return_dir": 1,
+            "produce_dir": 2,
+            "produce_unit_type": 3,
+            "attack_target_local": 0,
+            "command_built": false,
+            "command_not_built_reason": "predicted_noop",
+            "action_applier_reached": false,
+            "apply_command_reached": false
+        }
+    ],
+    "observation_shape": [
+        24,
+        24,
+        27
+    ],
+    "observation_min": 0.0,
+    "observation_max": 1.0,
+    "observation_has_nan": false,
+    "observation_has_inf": false,
+    "model_input_shape": [
+        24,
+        24,
+        27
+    ],
+    "logits_shapes_captured": true,
+    "logits_shape_lines": [
+        "action_type_logits: [1,576,6]",
+        "move_dir_logits: [1,576,4]",
+        "harvest_dir_logits: [1,576,4]",
+        "return_dir_logits: [1,576,4]",
+        "produce_dir_logits: [1,576,4]",
+        "produce_unit_type_logits: [1,576,7]",
+        "attack_target_local_logits: [1,576,49]"
+    ],
+    "predicted_action_tensor_bounds": [
+        "action_type: min=0, max=0",
+        "move_dir: min=0, max=3",
+        "harvest_dir: min=3, max=3",
+        "return_dir: min=0, max=1",
+        "produce_dir: min=2, max=2",
+        "produce_unit_type: min=3, max=3",
+        "attack_target_local: min=0, max=0"
+    ],
+    "action_applier_reached": false,
+    "apply_command_reached": false,
+    "commands_built": 0,
+    "commands_submitted": 0,
+    "accepted": 0,
+    "rejected": 0,
+    "ignored": 0,
+    "rejection_histogram": []
+}

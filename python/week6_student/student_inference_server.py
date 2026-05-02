@@ -73,9 +73,16 @@ def main() -> int:
 
             observation_bin = Path(request["observation_bin"])
             output_json = Path(request["output_json"])
+            controlled_player = str(request.get("controlled_player", "Player1"))
 
             obs_hwc = _load_observation(observation_bin)
-            result = run_inference_with_loaded_model(model, checkpoint_meta, obs_hwc, device=args.device)
+            result = run_inference_with_loaded_model(
+                model,
+                checkpoint_meta,
+                obs_hwc,
+                device=args.device,
+                controlled_player=controlled_player,
+            )
             result["checkpoint_path"] = str(args.checkpoint.resolve())
             result["observation_bin"] = str(observation_bin.resolve())
             write_result(output_json, result)

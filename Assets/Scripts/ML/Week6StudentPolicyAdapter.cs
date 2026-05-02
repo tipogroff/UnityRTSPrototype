@@ -235,6 +235,7 @@ namespace RTS.ML
             public int request_id;
             public string observation_bin;
             public string output_json;
+            public string controlled_player;
         }
 
         [Serializable]
@@ -496,6 +497,7 @@ namespace RTS.ML
                     request_id = ++_requestId,
                     observation_bin = observationBinPath,
                     output_json = outputJsonPath,
+                    controlled_player = playerId.ToString(),
                 };
 
                 _bridgeStdIn.WriteLine(JsonUtility.ToJson(request));
