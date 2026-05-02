@@ -1,0 +1,447 @@
+{
+  "scope": {
+    "stage": "8.5_unity_side_checkpoint_binding_verification",
+    "unity_scene_run_performed": false,
+    "play_mode_run_performed": false,
+    "match_started": false,
+    "training_performed": false,
+    "dataset_modified": false,
+    "checkpoint_modified": false
+  },
+  "target_scene": {
+    "path": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "display_name": "Week 6_student Visual Inspection"
+  },
+  "target_checkpoint": {
+    "relative_path": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+    "exists": true
+  },
+  "binding_sources": {
+    "scene_serialized_field": {
+      "file": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+      "field": "_checkpointRelativePath",
+      "value": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+    },
+    "script_defaults": {
+      "Week6StudentPolicyAdapter": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+      "Week6Day4StudentInferenceDryRun": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+      "ActionContractV2GlobalSmokeRunner_fallback": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+    }
+  },
+  "checkpoint_metadata": {
+    "torch_available": true,
+    "load_ok": true,
+    "error": null,
+    "epoch": 15,
+    "model_variant": "transfer",
+    "checkpoint_config_keys": [
+      "batch_size",
+      "bc_ready_dir",
+      "device",
+      "epochs",
+      "lr",
+      "model_variant",
+      "output_dir",
+      "seed"
+    ],
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+    "manifest_path": "python/week5_teacher_legacy032/teacher_exports_bc/day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z/bc_manifest.json",
+    "manifest_target_action_contract": "unity_v2_legacy032_gridnet",
+    "manifest_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "manifest_direct_weight_transfer_claim": false,
+    "manifest_semantic_parity_claim": false
+  },
+  "stale_reference_scan": {
+    "day3_transfer_bc_main_20260423": [
+      {
+        "path": "Assets/Scenes/GameScene.unity",
+        "lines": [
+          529
+        ],
+        "classification": "inactive_other_scene"
+      },
+      {
+        "path": "Assets/Scenes/Week6_StudentSanity.unity",
+        "lines": [
+          835
+        ],
+        "classification": "inactive_other_scene"
+      },
+      {
+        "path": "Assets/_Recovery/0.unity",
+        "lines": [
+          835
+        ],
+        "classification": "historical_recovery"
+      },
+      {
+        "path": "python/week6_student/validate_unity_checkpoint_binding.py",
+        "lines": [
+          23,
+          315,
+          317
+        ],
+        "classification": "code_or_data"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_CHECKPOINT_INFERENCE_DRY_RUN_REPORT.md",
+        "lines": [
+          21
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_SCENE_PREP_REPORT.md",
+        "lines": [
+          60
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_SCENE_PREP_VALIDATION.json",
+        "lines": [
+          114
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_REMEDIATION_REPORT.md",
+        "lines": [
+          130
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_STAGE0_HANDOFF_VERIFICATION.md",
+        "lines": [
+          100,
+          135,
+          193,
+          246
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/runs/day3_transfer_bc_main_20260423/day2_minimal_metrics_history.json",
+        "lines": [
+          9
+        ],
+        "classification": "code_or_data"
+      },
+      {
+        "path": "python/week6_student/tmp/day4_unity_playmode_smoke_report.json",
+        "lines": [
+          3,
+          17
+        ],
+        "classification": "historical_tmp"
+      }
+    ],
+    "legacy032_v2_bc_smoke_20260501T181043Z": [
+      {
+        "path": "python/week6_student/validate_unity_checkpoint_binding.py",
+        "lines": [
+          24,
+          326,
+          328
+        ],
+        "classification": "code_or_data"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_BC_TRAINING_SMOKE_REPORT.md",
+        "lines": [
+          26,
+          34,
+          113,
+          114,
+          115
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/reports/LEGACY032_UNITY_V2_CHECKPOINT_INFERENCE_DRY_RUN_REPORT.md",
+        "lines": [
+          15,
+          18
+        ],
+        "classification": "historical_report"
+      },
+      {
+        "path": "python/week6_student/runs/legacy032_v2_bc_smoke_20260501T181043Z/checkpoint_inference_config.json",
+        "lines": [
+          2
+        ],
+        "classification": "code_or_data"
+      },
+      {
+        "path": "python/week6_student/runs/legacy032_v2_bc_smoke_20260501T181043Z/day2_minimal_metrics_history.json",
+        "lines": [
+          9
+        ],
+        "classification": "code_or_data"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "scene_exists",
+      "ok": true,
+      "details": "Assets/Scenes/Week6_StudentVisualInspection.unity"
+    },
+    {
+      "name": "checkpoint_exists",
+      "ok": true,
+      "details": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+    },
+    {
+      "name": "scene_checkpoint_matches_target",
+      "ok": true,
+      "details": {
+        "scene_value": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+        "expected": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+      }
+    },
+    {
+      "name": "scene_preset_is_stage9_micro_rts_like",
+      "ok": true,
+      "details": {
+        "actual": "4",
+        "expected": 4
+      }
+    },
+    {
+      "name": "visual_runner_autostart_disabled",
+      "ok": true,
+      "details": {
+        "actual": "0",
+        "expected": 0
+      }
+    },
+    {
+      "name": "policy_adapter_default_matches_target",
+      "ok": true,
+      "details": {
+        "actual": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+        "expected": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+      }
+    },
+    {
+      "name": "day4_dryrun_default_matches_target",
+      "ok": true,
+      "details": {
+        "actual": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+        "expected": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+      }
+    },
+    {
+      "name": "global_smoke_fallback_matches_target",
+      "ok": true,
+      "details": {
+        "actual": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+        "expected": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+      }
+    },
+    {
+      "name": "checkpoint_model_variant_is_transfer",
+      "ok": true,
+      "details": {
+        "actual": "transfer",
+        "expected": "transfer"
+      }
+    },
+    {
+      "name": "manifest_target_action_contract_matches",
+      "ok": true,
+      "details": {
+        "actual": "unity_v2_legacy032_gridnet",
+        "expected": "unity_v2_legacy032_gridnet"
+      }
+    },
+    {
+      "name": "manifest_branch_sizes_match",
+      "ok": true,
+      "details": {
+        "actual": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "expected": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      }
+    },
+    {
+      "name": "manifest_direct_weight_transfer_claim_false",
+      "ok": true,
+      "details": {
+        "actual": false,
+        "expected": false
+      }
+    },
+    {
+      "name": "manifest_semantic_parity_claim_false",
+      "ok": true,
+      "details": {
+        "actual": false,
+        "expected": false
+      }
+    },
+    {
+      "name": "no_day3_reference_in_target_scene",
+      "ok": true,
+      "details": [
+        {
+          "path": "Assets/Scenes/GameScene.unity",
+          "lines": [
+            529
+          ],
+          "classification": "inactive_other_scene"
+        },
+        {
+          "path": "Assets/Scenes/Week6_StudentSanity.unity",
+          "lines": [
+            835
+          ],
+          "classification": "inactive_other_scene"
+        },
+        {
+          "path": "Assets/_Recovery/0.unity",
+          "lines": [
+            835
+          ],
+          "classification": "historical_recovery"
+        },
+        {
+          "path": "python/week6_student/validate_unity_checkpoint_binding.py",
+          "lines": [
+            23,
+            315,
+            317
+          ],
+          "classification": "code_or_data"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_CHECKPOINT_INFERENCE_DRY_RUN_REPORT.md",
+          "lines": [
+            21
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_SCENE_PREP_REPORT.md",
+          "lines": [
+            60
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_SCENE_PREP_VALIDATION.json",
+          "lines": [
+            114
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_REMEDIATION_REPORT.md",
+          "lines": [
+            130
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_STAGE0_HANDOFF_VERIFICATION.md",
+          "lines": [
+            100,
+            135,
+            193,
+            246
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/runs/day3_transfer_bc_main_20260423/day2_minimal_metrics_history.json",
+          "lines": [
+            9
+          ],
+          "classification": "code_or_data"
+        },
+        {
+          "path": "python/week6_student/tmp/day4_unity_playmode_smoke_report.json",
+          "lines": [
+            3,
+            17
+          ],
+          "classification": "historical_tmp"
+        }
+      ]
+    },
+    {
+      "name": "no_smoke_reference_in_target_scene",
+      "ok": true,
+      "details": [
+        {
+          "path": "python/week6_student/validate_unity_checkpoint_binding.py",
+          "lines": [
+            24,
+            326,
+            328
+          ],
+          "classification": "code_or_data"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_BC_TRAINING_SMOKE_REPORT.md",
+          "lines": [
+            26,
+            34,
+            113,
+            114,
+            115
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/reports/LEGACY032_UNITY_V2_CHECKPOINT_INFERENCE_DRY_RUN_REPORT.md",
+          "lines": [
+            15,
+            18
+          ],
+          "classification": "historical_report"
+        },
+        {
+          "path": "python/week6_student/runs/legacy032_v2_bc_smoke_20260501T181043Z/checkpoint_inference_config.json",
+          "lines": [
+            2
+          ],
+          "classification": "code_or_data"
+        },
+        {
+          "path": "python/week6_student/runs/legacy032_v2_bc_smoke_20260501T181043Z/day2_minimal_metrics_history.json",
+          "lines": [
+            9
+          ],
+          "classification": "code_or_data"
+        }
+      ]
+    }
+  ],
+  "decision": "GO_FOR_UNITY_SCENE_DRY_RUN"
+}

@@ -77,7 +77,7 @@ namespace RTS.ML
         [Header("Python Bridge")]
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _adapterScriptRelativePath = "python/week6_student/student_inference_adapter.py";
-        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt";
+        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt";
         [SerializeField] private string _artifactDirectoryRelativePath = "WEEK6/artifacts/day4_student_inference";
         [SerializeField] private string _smokeReportRelativePath = "python/week6_student/tmp/day4_unity_playmode_smoke_report.json";
 

@@ -485,7 +485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Gameplay.MatchBootstrap
   _config: {fileID: 11400000, guid: 71d74d96c6637b948b1d66710812bbd8, type: 2}
-  _scenarioPreset: 3
+  _scenarioPreset: 4
   _day6SanityStartResources: 60
   _gridManager: {fileID: 928434337}
   _matchManager: {fileID: 1145832107}
@@ -832,7 +832,7 @@ MonoBehaviour:
   _maxDecisionRequestsPerEpisode: 200
   _pythonExecutableRelativePath: .venv/Scripts/python.exe
   _bridgeScriptRelativePath: python/week6_student/student_inference_server.py
-  _checkpointRelativePath: python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt
+  _checkpointRelativePath: python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt
   _artifactDirectoryRelativePath: python/week6_student/tmp/day5_sanity
   _artifactFilePrefix: day5_sanity
   _artifactRingSlots: 4
@@ -883,7 +883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.ML.Week6VisualInspectionRunner
   _studentControlledPlayer: 1
-  _autoStartOnPlay: 1
+  _autoStartOnPlay: 0
   _showOverlay: 1
   _logTerminalSummary: 1
   _overlayPosition: {x: 14, y: 14}

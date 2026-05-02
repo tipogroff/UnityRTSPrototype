@@ -23,9 +23,11 @@ from student_architecture_transfer import build_day3_student_model
 from student_branch_contract import BRANCH_ORDER, validate_student_branch_contract_consistency
 
 
+# Canonical Legacy032 v2 dataset (updated 2026-05-02; Stage 0 remediation).
+# Previous value pointed to the old non-Legacy032 dataset; do not revert.
 PINNED_BC_READY_RELATIVE = Path(
-    "python/week5_teacher/teacher_exports_bc/"
-    "day6_bc_ready_teacher_adapted_day5_hardened_v2_teacher_candidate_corrective_sl2000_ep8_cpu_20260422T085809Z"
+    "python/week5_teacher_legacy032/teacher_exports_bc/"
+    "day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z"
 )
 
 
@@ -149,9 +151,68 @@ def run_epoch(
     return accumulator.to_metrics(prefix=prefix)
 
 
+_EXPECTED_TARGET_ACTION_CONTRACT = "unity_v2_legacy032_gridnet"
+_EXPECTED_OBS_SHAPE = [576, 27]
+_EXPECTED_ACTION_SHAPE = [576, 7]
+_EXPECTED_BRANCH_SIZES = [6, 4, 4, 4, 4, 7, 49]
+
+
 def _validate_contract_for_day2(dataset: Any) -> None:
+    """Fail-fast manifest contract validation for Legacy032 v2 lineage.
+
+    Hard-fails before any training loop if the loaded dataset does not match
+    the expected unity_v2_legacy032_gridnet contract. Prevents silent training
+    on wrong-lineage data.
+    """
     if dataset.contract.schema_version != "day6.bc_ready.v1":
         raise BCContractError(f"Day2 expected schema_version day6.bc_ready.v1, got {dataset.contract.schema_version}")
+
+    # --- Legacy032 v2 manifest checks (fail fast before training loop) ---
+    manifest = dataset.manifest_payload
+
+    actual_contract = manifest.get("target_action_contract", "<missing>")
+    if actual_contract != _EXPECTED_TARGET_ACTION_CONTRACT:
+        raise BCContractError(
+            f"[MANIFEST MISMATCH] target_action_contract: "
+            f"expected '{_EXPECTED_TARGET_ACTION_CONTRACT}', got '{actual_contract}'. "
+            "Provide the canonical Legacy032 v2 dataset."
+        )
+
+    actual_obs = manifest.get("observation_shape_per_sample", [])
+    if list(actual_obs) != _EXPECTED_OBS_SHAPE:
+        raise BCContractError(
+            f"[MANIFEST MISMATCH] observation_shape_per_sample: "
+            f"expected {_EXPECTED_OBS_SHAPE}, got {actual_obs}"
+        )
+
+    actual_action = manifest.get("action_shape_per_sample", [])
+    if list(actual_action) != _EXPECTED_ACTION_SHAPE:
+        raise BCContractError(
+            f"[MANIFEST MISMATCH] action_shape_per_sample: "
+            f"expected {_EXPECTED_ACTION_SHAPE}, got {actual_action}"
+        )
+
+    actual_branches = manifest.get("branch_sizes", [])
+    if list(actual_branches) != _EXPECTED_BRANCH_SIZES:
+        raise BCContractError(
+            f"[MANIFEST MISMATCH] branch_sizes: "
+            f"expected {_EXPECTED_BRANCH_SIZES}, got {actual_branches}. "
+            "No silent 49->9 or 7->4 remap is performed."
+        )
+
+    if manifest.get("direct_weight_transfer_claim", True) is not False:
+        raise BCContractError(
+            "[MANIFEST MISMATCH] direct_weight_transfer_claim must be false. "
+            "Do not use a dataset that claims direct weight transfer."
+        )
+
+    if manifest.get("semantic_parity_claim", True) is not False:
+        raise BCContractError(
+            "[MANIFEST MISMATCH] semantic_parity_claim must be false. "
+            "Do not use a dataset that claims Gym-uRTS/Unity semantic parity."
+        )
+    # --- end manifest checks ---
+
     if dataset.train.mask_available or dataset.validation.mask_available:
         print("[INFO] Optional mask present in this lineage. Day2 loop remains mask-agnostic by design.")
 

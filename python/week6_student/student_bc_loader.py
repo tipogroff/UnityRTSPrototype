@@ -60,9 +60,70 @@ def _as_tuple_of_ints(value: Any, field_name: str) -> tuple[int, ...]:
     return tuple(ints)
 
 
+def _is_legacy_flat_manifest(manifest: Mapping[str, Any]) -> bool:
+    return (
+        "schema" not in manifest
+        and "split_files" not in manifest
+        and "observation_shape_per_sample" in manifest
+        and "action_shape_per_sample" in manifest
+        and "branch_sizes" in manifest
+    )
+
+
 def _load_manifest_contract(manifest: Mapping[str, Any]) -> ManifestContract:
     schema_version = str(manifest.get("schema_version", "")).strip()
+    if schema_version == "" and _is_legacy_flat_manifest(manifest):
+        # Legacy032 BC-ready manifests may omit schema_version and nested schema blocks.
+        # Treat them as day6.bc_ready.v1 if top-level contract fields are present.
+        schema_version = "day6.bc_ready.v1"
     _require(schema_version in SUPPORTED_SCHEMA_VERSIONS, f"Unsupported schema_version: '{schema_version}'")
+
+    if _is_legacy_flat_manifest(manifest):
+        input_shape_per_sample = _as_tuple_of_ints(
+            manifest.get("observation_shape_per_sample"),
+            "observation_shape_per_sample",
+        )
+        target_shape_per_sample = _as_tuple_of_ints(
+            manifest.get("action_shape_per_sample"),
+            "action_shape_per_sample",
+        )
+        target_branch_sizes = _as_tuple_of_ints(
+            manifest.get("branch_sizes"),
+            "branch_sizes",
+        )
+
+        target_branch_names = (
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target_local",
+        )
+        _require(
+            len(target_branch_names) == len(target_branch_sizes),
+            (
+                "Branch name count must match branch size count. "
+                f"names={len(target_branch_names)} sizes={len(target_branch_sizes)}"
+            ),
+        )
+
+        return ManifestContract(
+            schema_version=schema_version,
+            input_key="input_tensor",
+            input_dtype="float32",
+            input_shape_per_sample=input_shape_per_sample,
+            target_key="target_action_branches",
+            target_dtype="int16",
+            target_shape_per_sample=target_shape_per_sample,
+            target_branch_sizes=target_branch_sizes,
+            target_branch_names=target_branch_names,
+            optional_mask_declared_present=None,
+            optional_mask_note="Legacy032 flat manifest compatibility mode",
+            required_metadata_keys=("episode_id", "step_id"),
+            diagnostic_only_keys=(),
+        )
 
     sample_structure = (
         manifest.get("schema", {})
@@ -148,6 +209,9 @@ def _load_manifest_contract(manifest: Mapping[str, Any]) -> ManifestContract:
 
 def _require_split_path_consistency(run_dir: Path, manifest: Mapping[str, Any]) -> None:
     split_files = manifest.get("split_files", {})
+    if _is_legacy_flat_manifest(manifest):
+        # Legacy032 flat manifests do not declare split_files; canonical names are enforced by loader.
+        return
     _require(isinstance(split_files, Mapping), "Manifest field 'split_files' is missing or invalid")
 
     for split_name in REQUIRED_SPLITS:
@@ -230,20 +294,54 @@ def _load_split(
     with np.load(path, allow_pickle=False) as npz_data:
         arrays: Dict[str, np.ndarray] = {k: np.asarray(npz_data[k]) for k in npz_data.files}
 
+    # Compatibility bridge: canonical Legacy032 BC-ready splits may use observations/actions naming.
+    if "input_tensor" not in arrays and "observations" in arrays:
+        arrays["input_tensor"] = np.asarray(arrays["observations"])
+    if "target_action_branches" not in arrays and "actions" in arrays:
+        arrays["target_action_branches"] = np.asarray(arrays["actions"])
+
+    if "input_tensor" in arrays and "sample_id" not in arrays:
+        n = int(arrays["input_tensor"].shape[0])
+        arrays["sample_id"] = np.arange(n, dtype=np.int64)
+    if "episode_id" in arrays and "source_episode_file" not in arrays:
+        n = int(arrays["episode_id"].shape[0])
+        arrays["source_episode_file"] = np.full((n,), "legacy032_unknown_source", dtype="<U32")
+    if "target_action_branch_sizes" not in arrays:
+        arrays["target_action_branch_sizes"] = np.asarray(contract.target_branch_sizes, dtype=np.int64)
+    if "schema_version" not in arrays:
+        arrays["schema_version"] = np.asarray([contract.schema_version], dtype="<U32")
+    if "split" not in arrays:
+        arrays["split"] = np.asarray([split_name], dtype="<U16")
+
     missing = [k for k in _REQUIRED_ARRAY_KEYS if k not in arrays]
     _require(not missing, f"{split_name}: missing required arrays: {missing}")
 
     input_tensor = arrays["input_tensor"]
     target = arrays["target_action_branches"]
 
+    reshape_flat_grid_input = (
+        input_tensor.ndim == 3
+        and tuple(input_tensor.shape[1:]) == (576, 27)
+        and tuple(contract.input_shape_per_sample) == (576, 27)
+    )
+    if reshape_flat_grid_input:
+        # Legacy032 BC-ready arrays may store observations as flattened spatial grid [N,576,27].
+        # Student models consume spatial input [N,24,24,27], so reshape once in loader.
+        n = int(input_tensor.shape[0])
+        input_tensor = input_tensor.reshape(n, 24, 24, 27)
+
     _require(input_tensor.ndim == 4, f"{split_name}: input_tensor must be 4D, got ndim={input_tensor.ndim}")
     _require(target.ndim == 3, f"{split_name}: target_action_branches must be 3D, got ndim={target.ndim}")
 
+    expected_input_sample_shape = (
+        (24, 24, 27) if tuple(contract.input_shape_per_sample) == (576, 27) else contract.input_shape_per_sample
+    )
+
     _require(
-        tuple(input_tensor.shape[1:]) == contract.input_shape_per_sample,
+        tuple(input_tensor.shape[1:]) == expected_input_sample_shape,
         (
             f"{split_name}: input_tensor sample shape mismatch; "
-            f"expected {contract.input_shape_per_sample}, got {tuple(input_tensor.shape[1:])}"
+            f"expected {expected_input_sample_shape}, got {tuple(input_tensor.shape[1:])}"
         ),
     )
     _require(

@@ -1,0 +1,123 @@
+{
+  "environment_import_ok": true,
+  "dataset_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "dataset_files_present": {
+    "bc_manifest.json": true,
+    "bc_train.npz": true,
+    "bc_validation.npz": true
+  },
+  "manifest_checks": {
+    "target_action_contract": {
+      "expected": "unity_v2_legacy032_gridnet",
+      "actual": "unity_v2_legacy032_gridnet",
+      "ok": true
+    },
+    "observation_shape_per_sample": {
+      "expected": [
+        576,
+        27
+      ],
+      "actual": [
+        576,
+        27
+      ],
+      "ok": true
+    },
+    "action_shape_per_sample": {
+      "expected": [
+        576,
+        7
+      ],
+      "actual": [
+        576,
+        7
+      ],
+      "ok": true
+    },
+    "branch_sizes": {
+      "expected": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "actual": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "ok": true
+    },
+    "direct_weight_transfer_claim": {
+      "expected": false,
+      "actual": false,
+      "ok": true
+    },
+    "semantic_parity_claim": {
+      "expected": false,
+      "actual": false,
+      "ok": true
+    }
+  },
+  "first_batch": {
+    "input_shape": [
+      2,
+      24,
+      24,
+      27
+    ],
+    "target_shape": [
+      2,
+      576,
+      7
+    ]
+  },
+  "logits_shapes": {
+    "action_type_logits": [
+      2,
+      576,
+      6
+    ],
+    "move_dir_logits": [
+      2,
+      576,
+      4
+    ],
+    "harvest_dir_logits": [
+      2,
+      576,
+      4
+    ],
+    "return_dir_logits": [
+      2,
+      576,
+      4
+    ],
+    "produce_dir_logits": [
+      2,
+      576,
+      4
+    ],
+    "produce_unit_type_logits": [
+      2,
+      576,
+      7
+    ],
+    "attack_target_local_logits": [
+      2,
+      576,
+      49
+    ]
+  },
+  "loss": {
+    "total_loss": 1.7720415592193604,
+    "is_finite": true
+  }
+}

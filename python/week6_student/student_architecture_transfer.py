@@ -149,8 +149,8 @@ class StudentBCTransferModel(nn.Module):
                 - harvest_dir_logits: [B, 576, 4]
                 - return_dir_logits: [B, 576, 4]
                 - produce_dir_logits: [B, 576, 4]
-                - produce_unit_type_logits: [B, 576, 4]
-                - attack_target_local_logits: [B, 576, 9]
+                - produce_unit_type_logits: [B, 576, 7]
+                - attack_target_local_logits: [B, 576, 49]
                 - global_aux_embedding (optional): [B, global_aux_dim]
         """
         if x.ndim != 4:

@@ -351,7 +351,7 @@ namespace RTS.ML
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
-        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt";
+        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt";
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
         [SerializeField] private string _artifactFilePrefix = "day5_sanity";
         [SerializeField] private int _artifactRingSlots = 4;

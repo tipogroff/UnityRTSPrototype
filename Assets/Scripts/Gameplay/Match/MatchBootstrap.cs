@@ -32,6 +32,12 @@ namespace RTS.Gameplay
         /// но с более разнесённым стартом, чтобы снизить ранние искажения opening-поведения.
         /// </summary>
         Week6VisualSanitySpread24x24 = 3,
+        /// <summary>
+        /// Week 6 student visual inspection preset: microRTS-like 24x24 mirrored opening.
+        /// P1: Resource A1/B1, Worker B2, Base C3.
+        /// P2: Resource X24/W24, Worker W23, Base V22.
+        /// </summary>
+        Week6StudentMicroRtsMirror24x24 = 4,
     }
 
     /// <summary>
@@ -273,6 +279,20 @@ namespace RTS.Gameplay
                     (UnitType.Light,  new GridPosition(W / 2 + 2, H / 2)),
                 };
             }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24)
+            {
+                p1Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Worker, new GridPosition(1, 1)),
+                    (UnitType.Base,   new GridPosition(2, 2)),
+                };
+
+                p2Spawns = new List<(UnitType type, GridPosition pos)>
+                {
+                    (UnitType.Worker, new GridPosition(W - 2, H - 2)),
+                    (UnitType.Base,   new GridPosition(W - 3, H - 3)),
+                };
+            }
             else
             {
                 p1Spawns = new List<(UnitType type, GridPosition pos)>
@@ -339,6 +359,14 @@ namespace RTS.Gameplay
                     new GridPosition(6, H / 2),
                 };
             }
+            else if (_scenarioPreset == BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24)
+            {
+                p1ResourcePositions = new List<GridPosition>
+                {
+                    new GridPosition(0, 0),
+                    new GridPosition(1, 0),
+                };
+            }
             else
             {
                 p1ResourcePositions = new List<GridPosition>
@@ -382,6 +410,11 @@ namespace RTS.Gameplay
             }
 
             if (_scenarioPreset == BootstrapScenarioPreset.Day6Sanity24x24)
+            {
+                return Mathf.Max(_day6SanityStartResources, 0);
+            }
+
+            if (_scenarioPreset == BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24)
             {
                 return Mathf.Max(_day6SanityStartResources, 0);
             }

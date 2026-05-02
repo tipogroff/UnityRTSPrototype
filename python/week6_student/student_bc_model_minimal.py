@@ -19,6 +19,11 @@ class StudentBCModelMinimal(nn.Module):
 
     This model is intentionally small and training-oriented only.
     It is not the final Week 6 architecture and has no Unity inference integration.
+
+    NOTE (Legacy032 v2 lineage): head sizes are v2-correct [6,4,4,4,4,7,49].
+    For the Legacy032 v2 dataset (target_action_contract=unity_v2_legacy032_gridnet),
+    the transfer model variant (StudentBCTransferModel) is preferred over this minimal
+    model for better representational capacity.
     """
 
     def __init__(self, config: StudentBCModelConfig | None = None) -> None:
@@ -37,8 +42,9 @@ class StudentBCModelMinimal(nn.Module):
         self.head_harvest_dir = nn.Conv2d(cfg.hidden_channels, 4, kernel_size=1)
         self.head_return_dir = nn.Conv2d(cfg.hidden_channels, 4, kernel_size=1)
         self.head_produce_dir = nn.Conv2d(cfg.hidden_channels, 4, kernel_size=1)
-        self.head_produce_unit_type = nn.Conv2d(cfg.hidden_channels, 4, kernel_size=1)
-        self.head_attack_target_local = nn.Conv2d(cfg.hidden_channels, 9, kernel_size=1)
+        # v2 branch sizes: produce_unit_type=7 (Gym/Gridnet order), attack_target_local=49 (7x7 local)
+        self.head_produce_unit_type = nn.Conv2d(cfg.hidden_channels, 7, kernel_size=1)
+        self.head_attack_target_local = nn.Conv2d(cfg.hidden_channels, 49, kernel_size=1)
 
         validate_student_branch_contract_consistency()
 

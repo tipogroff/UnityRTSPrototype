@@ -1,0 +1,192 @@
+{
+  "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+  "config": "Assets/ML/GameConfig_MVP.asset",
+  "checks": {
+    "scene_preset_is_micro_rts_mirror": {
+      "expected": 4,
+      "actual": 4,
+      "ok": true
+    },
+    "map_size_is_24x24": {
+      "expected": [
+        24,
+        24
+      ],
+      "actual": [
+        24,
+        24
+      ],
+      "ok": true
+    },
+    "logical_label_to_grid_mapping_consistent": {
+      "mapping_rule": "A..X -> x=0..23, rows 1..24(top->bottom) -> y=0..23",
+      "ok": true,
+      "mismatches": []
+    },
+    "expected_placement_has_no_overlap": {
+      "occupied_count": 8,
+      "unique_count": 8,
+      "ok": true
+    },
+    "placement_is_180_degree_mirror": {
+      "all_ok": true,
+      "pairs": [
+        {
+          "left": "A1",
+          "right": "X24",
+          "left_grid": [
+            0,
+            0
+          ],
+          "right_grid": [
+            23,
+            23
+          ],
+          "expected_right_grid": [
+            23,
+            23
+          ],
+          "ok": true
+        },
+        {
+          "left": "B1",
+          "right": "W24",
+          "left_grid": [
+            1,
+            0
+          ],
+          "right_grid": [
+            22,
+            23
+          ],
+          "expected_right_grid": [
+            22,
+            23
+          ],
+          "ok": true
+        },
+        {
+          "left": "B2",
+          "right": "W23",
+          "left_grid": [
+            1,
+            1
+          ],
+          "right_grid": [
+            22,
+            22
+          ],
+          "expected_right_grid": [
+            22,
+            22
+          ],
+          "ok": true
+        },
+        {
+          "left": "C3",
+          "right": "V22",
+          "left_grid": [
+            2,
+            2
+          ],
+          "right_grid": [
+            21,
+            21
+          ],
+          "expected_right_grid": [
+            21,
+            21
+          ],
+          "ok": true
+        }
+      ]
+    },
+    "conflicting_runners_active": {
+      "ok": true,
+      "details": {}
+    },
+    "student_and_baseline_control_present": {
+      "week6_student_policy_adapter_active": true,
+      "heuristic_policy_adapter_active": true,
+      "ok": true
+    },
+    "checkpoint_reference_unchanged_by_scene_prep": {
+      "checkpoint_relative_path": "python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt",
+      "ok": true
+    }
+  },
+  "expected_placement": [
+    {
+      "object": "Resource",
+      "owner": "Neutral",
+      "logical_cell": "A1",
+      "grid": [
+        0,
+        0
+      ]
+    },
+    {
+      "object": "Resource",
+      "owner": "Neutral",
+      "logical_cell": "B1",
+      "grid": [
+        1,
+        0
+      ]
+    },
+    {
+      "object": "Worker",
+      "owner": "Player1",
+      "logical_cell": "B2",
+      "grid": [
+        1,
+        1
+      ]
+    },
+    {
+      "object": "Base",
+      "owner": "Player1",
+      "logical_cell": "C3",
+      "grid": [
+        2,
+        2
+      ]
+    },
+    {
+      "object": "Resource",
+      "owner": "Neutral",
+      "logical_cell": "X24",
+      "grid": [
+        23,
+        23
+      ]
+    },
+    {
+      "object": "Resource",
+      "owner": "Neutral",
+      "logical_cell": "W24",
+      "grid": [
+        22,
+        23
+      ]
+    },
+    {
+      "object": "Worker",
+      "owner": "Player2",
+      "logical_cell": "W23",
+      "grid": [
+        22,
+        22
+      ]
+    },
+    {
+      "object": "Base",
+      "owner": "Player2",
+      "logical_cell": "V22",
+      "grid": [
+        21,
+        21
+      ]
+    }
+  ]
+}

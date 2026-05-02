@@ -170,7 +170,7 @@ namespace RTS.ML
 
             string pythonRel = ReadPrivateStringField(component, "_pythonExecutableRelativePath", ".venv/Scripts/python.exe");
             string adapterRel = ReadPrivateStringField(component, "_adapterScriptRelativePath", "python/week6_student/student_action_adapter.py");
-            string checkpointRel = ReadPrivateStringField(component, "_checkpointRelativePath", "python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt");
+            string checkpointRel = ReadPrivateStringField(component, "_checkpointRelativePath", "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt");
             string reportRel = ReadPrivateStringField(component, "_smokeReportRelativePath", "python/week6_student/tmp/day4_unity_playmode_smoke_report.json");
 
             string pythonAbs = Path.GetFullPath(Path.Combine(projectRoot, pythonRel));
