@@ -251,6 +251,53 @@ def _build_actor_summary(
     return rows
 
 
+def _build_global_cell_action_type_diagnostics(
+    obs_hwc: np.ndarray,
+    logits_by_key: Dict[str, torch.Tensor],
+) -> list[Dict[str, Any]]:
+    action_logits = logits_by_key["action_type_logits"][0].detach().cpu().numpy().astype(np.float64)
+    rows: list[Dict[str, Any]] = []
+
+    for flat_index in range(TOTAL_CELLS):
+        row, col = _to_row_col(flat_index)
+        cell_channels = obs_hwc[row, col, :].astype(np.float64)
+        logits = action_logits[flat_index]
+        probs = _softmax(logits)
+        ranked = np.argsort(-probs)
+        predicted_action_type = int(ranked[0])
+        best_non_noop = float(np.max(probs[1:])) if probs.shape[0] > 1 else 0.0
+
+        top3 = []
+        for idx in ranked[:3]:
+            class_id = int(idx)
+            top3.append(
+                {
+                    "class_id": class_id,
+                    "class_name": ACTION_TYPE_NAMES[class_id],
+                    "logit": float(logits[class_id]),
+                    "probability": float(probs[class_id]),
+                }
+            )
+
+        rows.append(
+            {
+                "flat_index": int(flat_index),
+                "grid_position": [int(col), int(row)],
+                "logical_label": _logical_cell_label(row, col),
+                "owner_guess": _infer_owner_name(cell_channels),
+                "unit_type_guess": _infer_unit_type_name(cell_channels),
+                "action_type_logits": [float(x) for x in logits.tolist()],
+                "action_type_probabilities": [float(x) for x in probs.tolist()],
+                "predicted_action_type": int(predicted_action_type),
+                "predicted_action_type_name": ACTION_TYPE_NAMES[predicted_action_type],
+                "non_noop_probability": float(1.0 - probs[0]),
+                "action_type_top3": top3,
+            }
+        )
+
+    return rows
+
+
 def _build_stage10r_debug_payload(
     obs_hwc: np.ndarray,
     logits_by_key: Dict[str, torch.Tensor],
@@ -314,6 +361,7 @@ def _build_stage10r_debug_payload(
         "observation_channel_names": list(OBS_CHANNEL_NAMES),
         "focus_cells": focus_cells,
         "own_actor_action_type_summary": _build_actor_summary(obs_hwc, logits_by_key, controlled_player),
+        "global_cell_action_type_diagnostics": _build_global_cell_action_type_diagnostics(obs_hwc, logits_by_key),
         "flatten_alignment_checks": flatten_checks,
         "observation_vs_bc_expectation": observation_vs_bc_expectation,
     }

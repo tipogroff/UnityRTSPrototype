@@ -1,5 +1,5 @@
 ﻿{
-    "generated_at_utc": "2026-05-03T10:50:59.4163854Z",
+    "generated_at_utc": "2026-05-03T11:53:35.6709235Z",
     "step": 1,
     "scene": "Week6_StudentVisualInspection",
     "checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
@@ -358,7 +358,7 @@
     "controlled_player": "Player1",
     "adapter_invoked": true,
     "inference_request_count": 1,
-    "last_inference_call_utc": "2026-05-03T10:50:55.0494853Z",
+    "last_inference_call_utc": "2026-05-03T11:53:32.0913757Z",
     "candidate_actor_cells_submitted": 2,
     "python_request_status": "completed",
     "python_response_status": "ok",

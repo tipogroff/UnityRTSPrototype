@@ -1,0 +1,55 @@
+{
+  "schema": "stage10t1.teacher_actor_cell_metrics.v1",
+  "generated_at_utc": "2026-05-03T12:20:31Z",
+  "source": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z/teacher_rollout_raw.npz",
+  "total_steps": 88165,
+  "total_cells": 576,
+  "actor_cell_count_per_step_mean": 1.978506209947258,
+  "actor_cell_noop_share": 0.0007165993063318715,
+  "worker_noop_share": 0.0,
+  "worker_harvest_share": 0.9989038250735591,
+  "worker_move_share": 0.0,
+  "worker_return_share": 0.0,
+  "base_noop_share": 0.0014241768257946907,
+  "base_produce_share": 0.9985758231742053,
+  "barracks_noop_share": 0.0,
+  "barracks_produce_share": 0.0,
+  "combat_unit_noop_share": 0.0,
+  "combat_unit_move_share": 0.0,
+  "combat_unit_attack_share": 0.0,
+  "mean_non_noop_actor_actions_per_step": 1.9770884137696365,
+  "mean_non_noop_all_cells_per_step": 1.9770884137696365,
+  "global_noop_share": 0.9965675548372055,
+  "successful_episode_count": 0,
+  "enemy_base_destroyed_count": 0,
+  "own_base_destroyed_count": 4,
+  "timeout_count": 0,
+  "mean_time_to_enemy_base_destroyed": null,
+  "mean_episode_length": 5510.3125,
+  "behavior_chain": {
+    "episodes_with_worker_harvest_then_return_then_base_produce_then_barracks_produce_then_combat_move_or_attack": 0,
+    "episodes_total": 16
+  },
+  "deterministic_vs_stochastic_with_mask": {
+    "deterministic": {
+      "source": "python/week5_teacher_legacy032/reports/stage5_gate_003000000_20260430T225547Z.json",
+      "all_cell_noop_share": 0.9965651659384103,
+      "all_cell_move_share": 0.0,
+      "all_cell_harvest_share": 0.0017279832501040366,
+      "all_cell_produce_share": 0.0016987229504785684,
+      "all_cell_attack_share": 8.127861007074491e-06
+    },
+    "stochastic": {
+      "source": "python/week5_teacher_legacy032/reports/stage5_gate_003000000_20260430T225547Z.json",
+      "all_cell_noop_share": 0.16623751560549313,
+      "all_cell_move_share": 0.16624726903870163,
+      "all_cell_harvest_share": 0.16782935718372868,
+      "all_cell_return_share": 0.16604488529962547,
+      "all_cell_produce_share": 0.1676184391905951,
+      "all_cell_attack_share": 0.16602253368185602
+    },
+    "deterministic_without_mask": null,
+    "stochastic_without_mask": null,
+    "note": "Legacy032 harness evaluated masked modes; explicit unmasked runs were not part of canonical pipeline."
+  }
+}

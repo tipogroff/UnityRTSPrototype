@@ -1,0 +1,110 @@
+{
+  "schema": "stage10t1.bc_ready_behavior_truth.v1",
+  "generated_at_utc": "2026-05-03T12:20:55Z",
+  "bc_manifest": {
+    "num_train": 79348,
+    "num_validation": 8817,
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "source_adapted_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z"
+  },
+  "train": {
+    "global_noop_share": 0.9965678832834826,
+    "actor_cell_count": 156981,
+    "actor_cell_noop_share": 0.0007516833247335665,
+    "actor_cell_action_type_balance": {
+      "NoOp": {
+        "count": 118,
+        "share": 0.0007516833247335665
+      },
+      "Move": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Harvest": {
+        "count": 77904,
+        "share": 0.4962638790681675
+      },
+      "Return": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Produce": {
+        "count": 78871,
+        "share": 0.5024238602123824
+      },
+      "Attack": {
+        "count": 88,
+        "share": 0.0005605773947165581
+      }
+    },
+    "worker_harvest_share": 0.9988716791465792,
+    "worker_move_share": 0.0,
+    "worker_return_share": 0.0,
+    "base_produce_share": 0.9985061211054704,
+    "barracks_produce_share": 0.0,
+    "combat_move_share": 0.0,
+    "combat_attack_share": 0.0,
+    "positive_actor_examples": {
+      "Move": 0,
+      "Harvest": 77904,
+      "Return": 0,
+      "Produce": 78871,
+      "Attack": 88
+    },
+    "no_op_dominates_actor_cells": false
+  },
+  "validation": {
+    "global_noop_share": 0.9965645990069688,
+    "actor_cell_count": 17454,
+    "actor_cell_noop_share": 0.0004010541996104045,
+    "actor_cell_action_type_balance": {
+      "NoOp": {
+        "count": 7,
+        "share": 0.0004010541996104045
+      },
+      "Move": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Harvest": {
+        "count": 8666,
+        "share": 0.49650509911768076
+      },
+      "Return": {
+        "count": 0,
+        "share": 0.0
+      },
+      "Produce": {
+        "count": 8774,
+        "share": 0.5026927924830984
+      },
+      "Attack": {
+        "count": 7,
+        "share": 0.0004010541996104045
+      }
+    },
+    "worker_harvest_share": 0.9991928974979822,
+    "worker_move_share": 0.0,
+    "worker_return_share": 0.0,
+    "base_produce_share": 0.9992028242796948,
+    "barracks_produce_share": 0.0,
+    "combat_move_share": 0.0,
+    "combat_attack_share": 0.0,
+    "positive_actor_examples": {
+      "Move": 0,
+      "Harvest": 8666,
+      "Return": 0,
+      "Produce": 8774,
+      "Attack": 7
+    },
+    "no_op_dominates_actor_cells": false
+  }
+}

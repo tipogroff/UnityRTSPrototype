@@ -1,0 +1,29 @@
+{
+  "schema": "stage10t1.teacher_checkpoint_identity.v1",
+  "generated_at_utc": "2026-05-03T12:20:20Z",
+  "checkpoint_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_main_20260430T130208Z/stage_003000000/agent_final.pt",
+  "checkpoint_exists": true,
+  "checkpoint_file_size_bytes": 3280271,
+  "checkpoint_mtime_utc": "2026-04-30T22:55:44Z",
+  "training_steps_from_path": 3000000,
+  "run_id_in_manifest": "unknown_run_id",
+  "run_id_inferred_from_path": "legacy032_24x24_teacher_main_20260430T130208Z",
+  "rollout_manifest_checkpoint_matches_file": false,
+  "lineage_chain": {
+    "rollout_manifest": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+    "adaptation_source_rollout_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+    "bc_manifest_source_adapted_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+    "student_selected_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt"
+  },
+  "visual_success_reference": {
+    "source": "python/week5_teacher_legacy032/reports/stage5d_large_map_win_diagnostics_20260501T083049Z.json",
+    "manual_observation_context": [
+      "agent eventually destroyed enemy base",
+      "later episodes appeared to destroy enemy base by T~2000 or earlier"
+    ]
+  },
+  "wrong_checkpoint_export_risk": {
+    "is_risky": false,
+    "reason": "none"
+  }
+}

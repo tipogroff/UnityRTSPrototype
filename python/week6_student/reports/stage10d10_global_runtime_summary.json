@@ -1,0 +1,319 @@
+﻿{
+    "generated_at_utc": "2026-05-03T11:53:35.6764376Z",
+    "step": 1,
+    "total_cells": 576,
+    "friendly_actor_cell_count": 2,
+    "friendly_worker_count": 1,
+    "friendly_base_count": 1,
+    "global_predicted_noop_share": 1.0,
+    "actor_cell_predicted_noop_share": 1.0,
+    "worker_predicted_noop_share": 1.0,
+    "base_predicted_noop_share": 1.0,
+    "max_non_noop_probability_globally": 0.21483361721038819,
+    "max_non_noop_probability_on_actor_cells": 0.21483361721038819,
+    "top_k_non_noop_probability_cells": [
+        {
+            "cell_index": 25,
+            "x": 1,
+            "y": 1,
+            "visual_label": "B2",
+            "runtime_is_friendly_actor": true,
+            "predicted_action_type": "NoOp",
+            "score": 0.21483361721038819
+        },
+        {
+            "cell_index": 26,
+            "x": 2,
+            "y": 1,
+            "visual_label": "C2",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.02426864206790924
+        },
+        {
+            "cell_index": 2,
+            "x": 2,
+            "y": 0,
+            "visual_label": "C1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.01578737236559391
+        },
+        {
+            "cell_index": 49,
+            "x": 1,
+            "y": 2,
+            "visual_label": "B3",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.013455590233206749
+        },
+        {
+            "cell_index": 72,
+            "x": 0,
+            "y": 3,
+            "visual_label": "A4",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.00998600386083126
+        },
+        {
+            "cell_index": 1,
+            "x": 1,
+            "y": 0,
+            "visual_label": "B1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.008099121041595936
+        },
+        {
+            "cell_index": 527,
+            "x": 23,
+            "y": 21,
+            "visual_label": "X22",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.008040868677198887
+        },
+        {
+            "cell_index": 3,
+            "x": 3,
+            "y": 0,
+            "visual_label": "D1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.007918163202702999
+        }
+    ],
+    "top_k_harvest_probability_cells": [
+        {
+            "cell_index": 25,
+            "x": 1,
+            "y": 1,
+            "visual_label": "B2",
+            "runtime_is_friendly_actor": true,
+            "predicted_action_type": "NoOp",
+            "score": 0.06612002849578858
+        },
+        {
+            "cell_index": 26,
+            "x": 2,
+            "y": 1,
+            "visual_label": "C2",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.004488292150199413
+        },
+        {
+            "cell_index": 2,
+            "x": 2,
+            "y": 0,
+            "visual_label": "C1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0033167926594614984
+        },
+        {
+            "cell_index": 49,
+            "x": 1,
+            "y": 2,
+            "visual_label": "B3",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.003068667370826006
+        },
+        {
+            "cell_index": 72,
+            "x": 0,
+            "y": 3,
+            "visual_label": "A4",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0021973217371851207
+        },
+        {
+            "cell_index": 527,
+            "x": 23,
+            "y": 21,
+            "visual_label": "X22",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0019012942211702467
+        },
+        {
+            "cell_index": 1,
+            "x": 1,
+            "y": 0,
+            "visual_label": "B1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0017745873192325235
+        },
+        {
+            "cell_index": 3,
+            "x": 3,
+            "y": 0,
+            "visual_label": "D1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0016764214960858226
+        }
+    ],
+    "top_k_produce_probability_cells": [
+        {
+            "cell_index": 25,
+            "x": 1,
+            "y": 1,
+            "visual_label": "B2",
+            "runtime_is_friendly_actor": true,
+            "predicted_action_type": "NoOp",
+            "score": 0.0447799414396286
+        },
+        {
+            "cell_index": 26,
+            "x": 2,
+            "y": 1,
+            "visual_label": "C2",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.007404458709061146
+        },
+        {
+            "cell_index": 2,
+            "x": 2,
+            "y": 0,
+            "visual_label": "C1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.00360267236828804
+        },
+        {
+            "cell_index": 49,
+            "x": 1,
+            "y": 2,
+            "visual_label": "B3",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0027514800895005466
+        },
+        {
+            "cell_index": 72,
+            "x": 0,
+            "y": 3,
+            "visual_label": "A4",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.002104836981743574
+        },
+        {
+            "cell_index": 1,
+            "x": 1,
+            "y": 0,
+            "visual_label": "B1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0018082220340147615
+        },
+        {
+            "cell_index": 3,
+            "x": 3,
+            "y": 0,
+            "visual_label": "D1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.001795771881006658
+        },
+        {
+            "cell_index": 527,
+            "x": 23,
+            "y": 21,
+            "visual_label": "X22",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0017093768110498787
+        }
+    ],
+    "top_k_attack_probability_cells": [
+        {
+            "cell_index": 25,
+            "x": 1,
+            "y": 1,
+            "visual_label": "B2",
+            "runtime_is_friendly_actor": true,
+            "predicted_action_type": "NoOp",
+            "score": 0.036103006452322009
+        },
+        {
+            "cell_index": 26,
+            "x": 2,
+            "y": 1,
+            "visual_label": "C2",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0033132738899439575
+        },
+        {
+            "cell_index": 2,
+            "x": 2,
+            "y": 0,
+            "visual_label": "C1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0028787185437977316
+        },
+        {
+            "cell_index": 49,
+            "x": 1,
+            "y": 2,
+            "visual_label": "B3",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0023791969288140537
+        },
+        {
+            "cell_index": 72,
+            "x": 0,
+            "y": 3,
+            "visual_label": "A4",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0017166143516078592
+        },
+        {
+            "cell_index": 1,
+            "x": 1,
+            "y": 0,
+            "visual_label": "B1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0013845604844391347
+        },
+        {
+            "cell_index": 3,
+            "x": 3,
+            "y": 0,
+            "visual_label": "D1",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0013222352135926486
+        },
+        {
+            "cell_index": 527,
+            "x": 23,
+            "y": 21,
+            "visual_label": "X22",
+            "runtime_is_friendly_actor": false,
+            "predicted_action_type": "NoOp",
+            "score": 0.0013086325488984585
+        }
+    ],
+    "non_noop_predictions_on_actor_cells": 0,
+    "non_noop_predictions_off_actor_cells": 0,
+    "commands_built": 0,
+    "commands_submitted": 0,
+    "commands_accepted": 0,
+    "decoder_reject_counts_by_reason": [],
+    "applier_reject_counts_by_reason": [],
+    "classification": "MIXED_OR_INCONCLUSIVE",
+    "classification_rationale": "Mixed evidence: actor_count=2, actor_noop=2, actor_non_noop=0, off_actor_non_noop=0, max_actor_non_noop_prob=0.215."
+}

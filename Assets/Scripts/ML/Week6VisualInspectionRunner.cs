@@ -173,8 +173,25 @@ namespace RTS.ML
             public string[] observation_channel_names;
             public FocusCellBridgeDiagnostic[] focus_cells;
             public OwnActorActionSummary[] own_actor_action_type_summary;
+            public GlobalCellActionTypeDiagnostic[] global_cell_action_type_diagnostics;
             public FlattenAlignmentCheck[] flatten_alignment_checks;
             public ObservationVsBcExpectation[] observation_vs_bc_expectation;
+        }
+
+        [Serializable]
+        private sealed class GlobalCellActionTypeDiagnostic
+        {
+            public int flat_index;
+            public int[] grid_position;
+            public string logical_label;
+            public string owner_guess;
+            public string unit_type_guess;
+            public float[] action_type_logits;
+            public float[] action_type_probabilities;
+            public int predicted_action_type;
+            public string predicted_action_type_name;
+            public float non_noop_probability;
+            public ActionTypeTopK[] action_type_top3;
         }
 
         [Serializable]
@@ -376,6 +393,112 @@ namespace RTS.ML
             public int rejected;
             public int ignored;
             public string[] rejection_histogram;
+        }
+
+        [Serializable]
+        private sealed class Stage10D10TopCell
+        {
+            public int cell_index;
+            public int x;
+            public int y;
+            public string visual_label;
+            public bool runtime_is_friendly_actor;
+            public string predicted_action_type;
+            public float score;
+        }
+
+        [Serializable]
+        private sealed class Stage10D10ReasonCount
+        {
+            public string reason;
+            public int count;
+        }
+
+        [Serializable]
+        private sealed class Stage10D10CellRow
+        {
+            public int cell_index;
+            public int x;
+            public int y;
+            public string visual_label;
+            public string decoded_observation_owner;
+            public string decoded_observation_unit_type;
+            public bool runtime_is_friendly_actor;
+            public bool runtime_is_friendly_worker;
+            public bool runtime_is_friendly_base;
+            public bool runtime_is_enemy;
+            public bool runtime_is_resource;
+            public bool runtime_is_empty;
+            public float[] action_type_logits;
+            public float[] action_type_probabilities;
+            public float p_noop;
+            public float p_move;
+            public float p_harvest;
+            public float p_return;
+            public float p_produce;
+            public float p_attack;
+            public string predicted_action_type;
+            public float non_noop_prob;
+            public ActionTypeTopK[] top3_action_type_probabilities;
+            public int move_dir;
+            public int harvest_dir;
+            public int return_dir;
+            public int produce_dir;
+            public int produce_unit_type;
+            public int attack_target_local;
+            public string decoder_result_if_predicted_non_noop;
+            public bool command_built;
+            public string decoder_reject_reason;
+            public bool applier_submission_reached;
+            public bool applier_submitted;
+            public bool applier_accepted;
+            public bool applier_rejected;
+            public string applier_reject_reason;
+        }
+
+        [Serializable]
+        private sealed class Stage10D10GlobalSummary
+        {
+            public string generated_at_utc;
+            public int step;
+            public int total_cells;
+            public int friendly_actor_cell_count;
+            public int friendly_worker_count;
+            public int friendly_base_count;
+            public float global_predicted_noop_share;
+            public float actor_cell_predicted_noop_share;
+            public float worker_predicted_noop_share;
+            public float base_predicted_noop_share;
+            public float max_non_noop_probability_globally;
+            public float max_non_noop_probability_on_actor_cells;
+            public Stage10D10TopCell[] top_k_non_noop_probability_cells;
+            public Stage10D10TopCell[] top_k_harvest_probability_cells;
+            public Stage10D10TopCell[] top_k_produce_probability_cells;
+            public Stage10D10TopCell[] top_k_attack_probability_cells;
+            public int non_noop_predictions_on_actor_cells;
+            public int non_noop_predictions_off_actor_cells;
+            public int commands_built;
+            public int commands_submitted;
+            public int commands_accepted;
+            public Stage10D10ReasonCount[] decoder_reject_counts_by_reason;
+            public Stage10D10ReasonCount[] applier_reject_counts_by_reason;
+            public string classification;
+            public string classification_rationale;
+        }
+
+        [Serializable]
+        private sealed class Stage10D10GlobalSnapshot
+        {
+            public string generated_at_utc;
+            public int step;
+            public string scene;
+            public string checkpoint;
+            public string checkpoint_path_used_at_inference;
+            public string controlled_player;
+            public string flatten_formula;
+            public string owner_encoding_mode;
+            public Stage10D10GlobalSummary summary;
+            public Stage10D10CellRow[] cells;
         }
 
         private readonly struct RuntimeRejectionInfo
@@ -934,6 +1057,703 @@ namespace RTS.ML
             File.WriteAllText(path, JsonUtility.ToJson(snapshot, true), Encoding.UTF8);
             _lastSnapshotPath = path;
             Debug.Log("[Week6VisualInspectionRunner] Step diagnostics snapshot: " + path);
+
+            DumpStage10D10GlobalRuntimeDiagnostics(outputDir, step);
+        }
+
+        private void DumpStage10D10GlobalRuntimeDiagnostics(string outputDir, int step)
+        {
+            List<Stage10D10CellRow> rows = BuildStage10D10CellRows();
+            Stage10D10GlobalSummary summary = BuildStage10D10Summary(rows, step);
+
+            string stepSuffix = step.ToString("D4", CultureInfo.InvariantCulture);
+            string logitsSnapshotPath = Path.Combine(outputDir, "stage10d10_global_runtime_logits_snapshot_step" + stepSuffix + ".json");
+            string cellTablePath = Path.Combine(outputDir, "stage10d10_global_runtime_cell_table_step" + stepSuffix + ".jsonl");
+            string summaryPath = Path.Combine(outputDir, "stage10d10_global_runtime_summary.json");
+            string reportPath = Path.Combine(outputDir, "STAGE10D10_GLOBAL_RUNTIME_NOOP_DIAGNOSTIC_REPORT.md");
+
+            var snapshot = new Stage10D10GlobalSnapshot
+            {
+                generated_at_utc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                step = step,
+                scene = SceneManager.GetActiveScene().name,
+                checkpoint = GetCheckpointPathLabel(),
+                checkpoint_path_used_at_inference = _latestInferenceDiagnostics != null
+                    ? _latestInferenceDiagnostics.checkpoint_path_used_at_inference
+                    : string.Empty,
+                controlled_player = _latestBridgeDebug != null && !string.IsNullOrWhiteSpace(_latestBridgeDebug.controlled_player)
+                    ? _latestBridgeDebug.controlled_player
+                    : _studentControlledPlayer.ToString(),
+                flatten_formula = _latestBridgeDebug != null && !string.IsNullOrWhiteSpace(_latestBridgeDebug.flatten_formula)
+                    ? _latestBridgeDebug.flatten_formula
+                    : "flat_index = row * 24 + col",
+                owner_encoding_mode = _latestBridgeDebug != null && !string.IsNullOrWhiteSpace(_latestBridgeDebug.owner_encoding_mode)
+                    ? _latestBridgeDebug.owner_encoding_mode
+                    : "unavailable",
+                summary = summary,
+                cells = rows.ToArray(),
+            };
+
+            File.WriteAllText(logitsSnapshotPath, JsonUtility.ToJson(snapshot, true), Encoding.UTF8);
+
+            using (var writer = new StreamWriter(cellTablePath, false, new UTF8Encoding(true)))
+            {
+                for (int i = 0; i < rows.Count; i++)
+                {
+                    writer.WriteLine(JsonUtility.ToJson(rows[i]));
+                }
+            }
+
+            File.WriteAllText(summaryPath, JsonUtility.ToJson(summary, true), Encoding.UTF8);
+            File.WriteAllText(reportPath, BuildStage10D10MarkdownReport(summary, logitsSnapshotPath, cellTablePath, summaryPath), Encoding.UTF8);
+
+            Debug.Log("[Week6VisualInspectionRunner] Stage10D.10 global diagnostics written: " + logitsSnapshotPath);
+        }
+
+        private List<Stage10D10CellRow> BuildStage10D10CellRows()
+        {
+            var rows = new List<Stage10D10CellRow>(ActionContract.TotalCells);
+            var runtimeByFlat = new Dictionary<int, UnitRuntime>(ActionContract.TotalCells);
+
+            if (_unitRegistry != null)
+            {
+                List<UnitRuntime> units = _unitRegistry.GetAllUnits();
+                for (int i = 0; i < units.Count; i++)
+                {
+                    UnitRuntime unit = units[i];
+                    if (unit == null || !unit.IsAlive)
+                    {
+                        continue;
+                    }
+
+                    int flat = ToFlatIndex(unit.GridPos);
+                    runtimeByFlat[flat] = unit;
+                }
+            }
+
+            Dictionary<int, GlobalCellActionTypeDiagnostic> globalDiagByFlat = BuildGlobalCellDiagnosticsMap();
+
+            for (int flat = 0; flat < ActionContract.TotalCells; flat++)
+            {
+                GridPosition position = GridPosition.FromFlatIndex(flat);
+                UnitRuntime runtimeUnit = null;
+                runtimeByFlat.TryGetValue(flat, out runtimeUnit);
+                ActorCellDiagnosticRow actorRow = null;
+                _latestActorRowsByFlatIndex.TryGetValue(flat, out actorRow);
+
+                GlobalCellActionTypeDiagnostic globalDiag = null;
+                globalDiagByFlat.TryGetValue(flat, out globalDiag);
+
+                float[] cellChannels = GetCellObservationChannels(flat, null);
+                string decodedOwner = InferOwnerFromChannels(cellChannels);
+                string decodedUnitType = InferUnitTypeFromChannelsSafe(cellChannels);
+
+                bool runtimeIsFriendlyActor = runtimeUnit != null
+                    && runtimeUnit.Owner == _studentControlledPlayer
+                    && runtimeUnit.Type != UnitType.Resource;
+                bool runtimeIsFriendlyWorker = runtimeUnit != null
+                    && runtimeUnit.Owner == _studentControlledPlayer
+                    && runtimeUnit.Type == UnitType.Worker;
+                bool runtimeIsFriendlyBase = runtimeUnit != null
+                    && runtimeUnit.Owner == _studentControlledPlayer
+                    && runtimeUnit.Type == UnitType.Base;
+                bool runtimeIsEnemy = runtimeUnit != null
+                    && runtimeUnit.Owner != _studentControlledPlayer
+                    && runtimeUnit.Owner != Owner.Neutral;
+                bool runtimeIsResource = runtimeUnit != null && runtimeUnit.Type == UnitType.Resource;
+                bool runtimeIsEmpty = runtimeUnit == null;
+
+                float[] probs = null;
+                float[] logits = null;
+                ActionTypeTopK[] top3 = null;
+                UnitActionType predictedActionType = UnitActionType.NoOp;
+                string predictedActionTypeName = UnitActionType.NoOp.ToString();
+                float nonNoOpProb = 0f;
+
+                if (globalDiag != null
+                    && globalDiag.action_type_probabilities != null
+                    && globalDiag.action_type_probabilities.Length == 6
+                    && globalDiag.action_type_logits != null
+                    && globalDiag.action_type_logits.Length == 6)
+                {
+                    probs = globalDiag.action_type_probabilities;
+                    logits = globalDiag.action_type_logits;
+                    top3 = globalDiag.action_type_top3;
+                    predictedActionType = ToUnitActionType(globalDiag.predicted_action_type);
+                    predictedActionTypeName = string.IsNullOrWhiteSpace(globalDiag.predicted_action_type_name)
+                        ? predictedActionType.ToString()
+                        : globalDiag.predicted_action_type_name;
+                    nonNoOpProb = Mathf.Clamp01(globalDiag.non_noop_probability);
+                }
+                else
+                {
+                    int move;
+                    int harvest;
+                    int ret;
+                    int produceDir;
+                    int produceType;
+                    int attackLocal;
+                    ExtractBranchValues(_latestArtifact.ActionFlat, flat, out predictedActionType, out move, out harvest, out ret, out produceDir, out produceType, out attackLocal);
+                    predictedActionTypeName = predictedActionType.ToString();
+                    nonNoOpProb = predictedActionType == UnitActionType.NoOp ? 0f : 1f;
+                }
+
+                int moveDirFinal;
+                int harvestDirFinal;
+                int returnDirFinal;
+                int produceDirFinal;
+                int produceUnitTypeFinal;
+                int attackTargetLocalFinal;
+                UnitActionType ignored;
+                ExtractBranchValues(
+                    _latestArtifact.ActionFlat,
+                    flat,
+                    out ignored,
+                    out moveDirFinal,
+                    out harvestDirFinal,
+                    out returnDirFinal,
+                    out produceDirFinal,
+                    out produceUnitTypeFinal,
+                    out attackTargetLocalFinal);
+
+                bool predictedNonNoOp = predictedActionType != UnitActionType.NoOp;
+                bool commandBuilt = _lastAcceptedByActor.ContainsKey(flat) || _lastRejectedByActor.ContainsKey(flat);
+                string decoderRejectReason = string.Empty;
+                string decoderResult = "predicted_noop";
+                if (predictedNonNoOp)
+                {
+                    if (!runtimeIsFriendlyActor)
+                    {
+                        decoderRejectReason = "non_actor_cell";
+                        decoderResult = "predicted_non_noop_on_non_actor_cell";
+                        commandBuilt = false;
+                    }
+                    else if (commandBuilt)
+                    {
+                        decoderResult = "command_built";
+                    }
+                    else
+                    {
+                        decoderRejectReason = ResolveCommandNotBuiltReason(flat, predictedActionType, false);
+                        decoderResult = "decoder_blocked";
+                    }
+                }
+
+                bool applierAccepted = _lastAcceptedByActor.ContainsKey(flat);
+                bool applierRejected = _lastRejectedByActor.ContainsKey(flat);
+                bool applierSubmitted = commandBuilt;
+                string applierRejectReason = string.Empty;
+                if (applierRejected && _lastRejectedByActor.TryGetValue(flat, out RuntimeRejectionInfo rejInfo))
+                {
+                    applierRejectReason = rejInfo.Reason;
+                }
+
+                string visualLabel = globalDiag != null && !string.IsNullOrWhiteSpace(globalDiag.logical_label)
+                    ? globalDiag.logical_label
+                    : ToCellLabel(position);
+
+                var row = new Stage10D10CellRow
+                {
+                    cell_index = flat,
+                    x = position.X,
+                    y = position.Y,
+                    visual_label = visualLabel,
+                    decoded_observation_owner = decodedOwner,
+                    decoded_observation_unit_type = decodedUnitType,
+                    runtime_is_friendly_actor = runtimeIsFriendlyActor,
+                    runtime_is_friendly_worker = runtimeIsFriendlyWorker,
+                    runtime_is_friendly_base = runtimeIsFriendlyBase,
+                    runtime_is_enemy = runtimeIsEnemy,
+                    runtime_is_resource = runtimeIsResource,
+                    runtime_is_empty = runtimeIsEmpty,
+                    action_type_logits = logits,
+                    action_type_probabilities = probs,
+                    p_noop = GetProbability(probs, 0),
+                    p_move = GetProbability(probs, 1),
+                    p_harvest = GetProbability(probs, 2),
+                    p_return = GetProbability(probs, 3),
+                    p_produce = GetProbability(probs, 4),
+                    p_attack = GetProbability(probs, 5),
+                    predicted_action_type = predictedActionTypeName,
+                    non_noop_prob = nonNoOpProb,
+                    top3_action_type_probabilities = top3,
+                    move_dir = moveDirFinal,
+                    harvest_dir = harvestDirFinal,
+                    return_dir = returnDirFinal,
+                    produce_dir = produceDirFinal,
+                    produce_unit_type = produceUnitTypeFinal,
+                    attack_target_local = attackTargetLocalFinal,
+                    decoder_result_if_predicted_non_noop = decoderResult,
+                    command_built = commandBuilt,
+                    decoder_reject_reason = decoderRejectReason,
+                    applier_submission_reached = applierSubmitted,
+                    applier_submitted = applierSubmitted,
+                    applier_accepted = applierAccepted,
+                    applier_rejected = applierRejected,
+                    applier_reject_reason = applierRejectReason,
+                };
+
+                rows.Add(row);
+            }
+
+            return rows;
+        }
+
+        private Dictionary<int, GlobalCellActionTypeDiagnostic> BuildGlobalCellDiagnosticsMap()
+        {
+            var map = new Dictionary<int, GlobalCellActionTypeDiagnostic>(ActionContract.TotalCells);
+            if (_latestBridgeDebug == null || _latestBridgeDebug.global_cell_action_type_diagnostics == null)
+            {
+                return map;
+            }
+
+            for (int i = 0; i < _latestBridgeDebug.global_cell_action_type_diagnostics.Length; i++)
+            {
+                GlobalCellActionTypeDiagnostic item = _latestBridgeDebug.global_cell_action_type_diagnostics[i];
+                if (item == null)
+                {
+                    continue;
+                }
+
+                if (item.flat_index < 0 || item.flat_index >= ActionContract.TotalCells)
+                {
+                    continue;
+                }
+
+                map[item.flat_index] = item;
+            }
+
+            return map;
+        }
+
+        private Stage10D10GlobalSummary BuildStage10D10Summary(List<Stage10D10CellRow> rows, int step)
+        {
+            int totalCells = rows != null ? rows.Count : 0;
+            int friendlyActorCount = 0;
+            int friendlyWorkerCount = 0;
+            int friendlyBaseCount = 0;
+            int globalNoOpCount = 0;
+            int actorNoOpCount = 0;
+            int workerNoOpCount = 0;
+            int baseNoOpCount = 0;
+            int nonNoOpOnActor = 0;
+            int nonNoOpOffActor = 0;
+            float maxNonNoOpGlobal = 0f;
+            float maxNonNoOpOnActor = 0f;
+
+            var decoderRejectHistogram = new Dictionary<string, int>(StringComparer.Ordinal);
+            var applierRejectHistogram = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            for (int i = 0; i < totalCells; i++)
+            {
+                Stage10D10CellRow row = rows[i];
+
+                if (row.predicted_action_type == UnitActionType.NoOp.ToString())
+                {
+                    globalNoOpCount++;
+                }
+
+                if (row.runtime_is_friendly_actor)
+                {
+                    friendlyActorCount++;
+                    if (row.predicted_action_type == UnitActionType.NoOp.ToString())
+                    {
+                        actorNoOpCount++;
+                    }
+                    else
+                    {
+                        nonNoOpOnActor++;
+                    }
+
+                    if (row.non_noop_prob > maxNonNoOpOnActor)
+                    {
+                        maxNonNoOpOnActor = row.non_noop_prob;
+                    }
+                }
+                else if (row.predicted_action_type != UnitActionType.NoOp.ToString())
+                {
+                    nonNoOpOffActor++;
+                }
+
+                if (row.runtime_is_friendly_worker)
+                {
+                    friendlyWorkerCount++;
+                    if (row.predicted_action_type == UnitActionType.NoOp.ToString())
+                    {
+                        workerNoOpCount++;
+                    }
+                }
+
+                if (row.runtime_is_friendly_base)
+                {
+                    friendlyBaseCount++;
+                    if (row.predicted_action_type == UnitActionType.NoOp.ToString())
+                    {
+                        baseNoOpCount++;
+                    }
+                }
+
+                if (row.non_noop_prob > maxNonNoOpGlobal)
+                {
+                    maxNonNoOpGlobal = row.non_noop_prob;
+                }
+
+                if (!string.IsNullOrWhiteSpace(row.decoder_reject_reason))
+                {
+                    IncrementStringCount(decoderRejectHistogram, row.decoder_reject_reason);
+                }
+
+                if (row.applier_rejected && !string.IsNullOrWhiteSpace(row.applier_reject_reason))
+                {
+                    IncrementStringCount(applierRejectHistogram, row.applier_reject_reason);
+                }
+            }
+
+            string classification = ClassifyStage10D10(
+                friendlyActorCount,
+                actorNoOpCount,
+                nonNoOpOnActor,
+                nonNoOpOffActor,
+                maxNonNoOpOnActor,
+                _totalCommandsBuiltAfterFilter,
+                _totalCommandsSubmittedAfterFilter,
+                _acceptedStudentCommands,
+                applierRejectHistogram.Count);
+            string rationale = BuildStage10D10ClassificationRationale(
+                classification,
+                friendlyActorCount,
+                actorNoOpCount,
+                nonNoOpOnActor,
+                nonNoOpOffActor,
+                maxNonNoOpOnActor);
+
+            return new Stage10D10GlobalSummary
+            {
+                generated_at_utc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                step = step,
+                total_cells = totalCells,
+                friendly_actor_cell_count = friendlyActorCount,
+                friendly_worker_count = friendlyWorkerCount,
+                friendly_base_count = friendlyBaseCount,
+                global_predicted_noop_share = SafeShare(globalNoOpCount, totalCells),
+                actor_cell_predicted_noop_share = SafeShare(actorNoOpCount, friendlyActorCount),
+                worker_predicted_noop_share = SafeShare(workerNoOpCount, friendlyWorkerCount),
+                base_predicted_noop_share = SafeShare(baseNoOpCount, friendlyBaseCount),
+                max_non_noop_probability_globally = maxNonNoOpGlobal,
+                max_non_noop_probability_on_actor_cells = maxNonNoOpOnActor,
+                top_k_non_noop_probability_cells = BuildTopKCells(rows, 8, "non_noop"),
+                top_k_harvest_probability_cells = BuildTopKCells(rows, 8, "harvest"),
+                top_k_produce_probability_cells = BuildTopKCells(rows, 8, "produce"),
+                top_k_attack_probability_cells = BuildTopKCells(rows, 8, "attack"),
+                non_noop_predictions_on_actor_cells = nonNoOpOnActor,
+                non_noop_predictions_off_actor_cells = nonNoOpOffActor,
+                commands_built = _totalCommandsBuiltAfterFilter,
+                commands_submitted = _totalCommandsSubmittedAfterFilter,
+                commands_accepted = _acceptedStudentCommands,
+                decoder_reject_counts_by_reason = BuildReasonCounts(decoderRejectHistogram),
+                applier_reject_counts_by_reason = BuildReasonCounts(applierRejectHistogram),
+                classification = classification,
+                classification_rationale = rationale,
+            };
+        }
+
+        private static float SafeShare(int numerator, int denominator)
+        {
+            if (denominator <= 0)
+            {
+                return 0f;
+            }
+
+            return numerator / (float)denominator;
+        }
+
+        private static float GetProbability(float[] probabilities, int index)
+        {
+            if (probabilities == null || probabilities.Length <= index || index < 0)
+            {
+                return 0f;
+            }
+
+            return probabilities[index];
+        }
+
+        private static string InferOwnerFromChannels(float[] channels)
+        {
+            if (channels == null || channels.Length < 5)
+            {
+                return "Unknown";
+            }
+
+            int best = 2;
+            float value = float.NegativeInfinity;
+            for (int i = 2; i <= 4; i++)
+            {
+                if (channels[i] > value)
+                {
+                    value = channels[i];
+                    best = i;
+                }
+            }
+
+            return best switch
+            {
+                3 => "Player1",
+                4 => "Player2",
+                _ => "Neutral",
+            };
+        }
+
+        private static string InferUnitTypeFromChannelsSafe(float[] channels)
+        {
+            if (channels == null || channels.Length < 12)
+            {
+                return "Unknown";
+            }
+
+            return InferUnitTypeFromChannels(channels);
+        }
+
+        private static Stage10D10ReasonCount[] BuildReasonCounts(Dictionary<string, int> histogram)
+        {
+            if (histogram == null || histogram.Count == 0)
+            {
+                return Array.Empty<Stage10D10ReasonCount>();
+            }
+
+            var entries = new List<KeyValuePair<string, int>>(histogram);
+            entries.Sort((left, right) => right.Value.CompareTo(left.Value));
+
+            var result = new Stage10D10ReasonCount[entries.Count];
+            for (int i = 0; i < entries.Count; i++)
+            {
+                result[i] = new Stage10D10ReasonCount
+                {
+                    reason = entries[i].Key,
+                    count = entries[i].Value,
+                };
+            }
+
+            return result;
+        }
+
+        private static Stage10D10TopCell[] BuildTopKCells(List<Stage10D10CellRow> rows, int k, string metric)
+        {
+            if (rows == null || rows.Count == 0 || k <= 0)
+            {
+                return Array.Empty<Stage10D10TopCell>();
+            }
+
+            var scored = new List<Stage10D10TopCell>(rows.Count);
+            for (int i = 0; i < rows.Count; i++)
+            {
+                Stage10D10CellRow row = rows[i];
+                float score = metric switch
+                {
+                    "harvest" => row.p_harvest,
+                    "produce" => row.p_produce,
+                    "attack" => row.p_attack,
+                    _ => row.non_noop_prob,
+                };
+
+                scored.Add(new Stage10D10TopCell
+                {
+                    cell_index = row.cell_index,
+                    x = row.x,
+                    y = row.y,
+                    visual_label = row.visual_label,
+                    runtime_is_friendly_actor = row.runtime_is_friendly_actor,
+                    predicted_action_type = row.predicted_action_type,
+                    score = score,
+                });
+            }
+
+            scored.Sort((left, right) =>
+            {
+                int cmp = right.score.CompareTo(left.score);
+                if (cmp != 0)
+                {
+                    return cmp;
+                }
+
+                return left.cell_index.CompareTo(right.cell_index);
+            });
+
+            if (scored.Count > k)
+            {
+                scored.RemoveRange(k, scored.Count - k);
+            }
+
+            return scored.ToArray();
+        }
+
+        private static string ClassifyStage10D10(
+            int friendlyActorCount,
+            int actorNoOpCount,
+            int nonNoOpOnActor,
+            int nonNoOpOffActor,
+            float maxNonNoOpOnActor,
+            int commandsBuilt,
+            int commandsSubmitted,
+            int commandsAccepted,
+            int applierRejectReasonKinds)
+        {
+            if (friendlyActorCount <= 0)
+            {
+                return "ACTOR_CELL_RECOGNITION_FAILURE";
+            }
+
+            float actorNoOpShare = SafeShare(actorNoOpCount, friendlyActorCount);
+            if (actorNoOpShare >= 0.95f && nonNoOpOnActor == 0 && maxNonNoOpOnActor <= 0.20f)
+            {
+                return "GLOBAL_NOOP_COLLAPSE";
+            }
+
+            if (nonNoOpOnActor == 0 && nonNoOpOffActor > 0)
+            {
+                return "MEANINGFUL_ACTION_MISLOCALIZATION";
+            }
+
+            if (nonNoOpOnActor > 0 && commandsBuilt <= 0)
+            {
+                return "DECODER_BLOCKED_AFTER_NON_NOOP";
+            }
+
+            if (commandsBuilt > 0 && commandsSubmitted > 0 && commandsAccepted <= 0 && applierRejectReasonKinds > 0)
+            {
+                return "APPLIER_BLOCKED_AFTER_COMMAND_BUILD";
+            }
+
+            return "MIXED_OR_INCONCLUSIVE";
+        }
+
+        private static string BuildStage10D10ClassificationRationale(
+            string classification,
+            int friendlyActorCount,
+            int actorNoOpCount,
+            int nonNoOpOnActor,
+            int nonNoOpOffActor,
+            float maxNonNoOpOnActor)
+        {
+            return classification switch
+            {
+                "ACTOR_CELL_RECOGNITION_FAILURE" => "No friendly runtime actor cells were observed in the sampled step.",
+                "GLOBAL_NOOP_COLLAPSE" => "Actor cells are almost entirely NoOp with low non-NoOp probability peaks.",
+                "MEANINGFUL_ACTION_MISLOCALIZATION" => "Non-NoOp confidence appears away from runtime actor cells.",
+                "DECODER_BLOCKED_AFTER_NON_NOOP" => "Actor cells predict non-NoOp, but decoder does not build commands.",
+                "APPLIER_BLOCKED_AFTER_COMMAND_BUILD" => "Commands are built/submitted but not accepted by runtime applier.",
+                _ => string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Mixed evidence: actor_count={0}, actor_noop={1}, actor_non_noop={2}, off_actor_non_noop={3}, max_actor_non_noop_prob={4:F3}.",
+                    friendlyActorCount,
+                    actorNoOpCount,
+                    nonNoOpOnActor,
+                    nonNoOpOffActor,
+                    maxNonNoOpOnActor),
+            };
+        }
+
+        private string BuildStage10D10MarkdownReport(
+            Stage10D10GlobalSummary summary,
+            string logitsSnapshotPath,
+            string cellTablePath,
+            string summaryPath)
+        {
+            var lines = new List<string>
+            {
+                "# STAGE10D10 Global Runtime NoOp Persistence Diagnostic Report",
+                string.Empty,
+                "- generated_at_utc: " + summary.generated_at_utc,
+                "- step: " + summary.step.ToString(CultureInfo.InvariantCulture),
+                "- classification: " + summary.classification,
+                "- rationale: " + summary.classification_rationale,
+                string.Empty,
+                "## Required Metrics",
+                "- total_cells: " + summary.total_cells.ToString(CultureInfo.InvariantCulture),
+                "- friendly_actor_cell_count: " + summary.friendly_actor_cell_count.ToString(CultureInfo.InvariantCulture),
+                "- friendly_worker_count: " + summary.friendly_worker_count.ToString(CultureInfo.InvariantCulture),
+                "- friendly_base_count: " + summary.friendly_base_count.ToString(CultureInfo.InvariantCulture),
+                "- global_predicted_noop_share: " + summary.global_predicted_noop_share.ToString("F6", CultureInfo.InvariantCulture),
+                "- actor_cell_predicted_noop_share: " + summary.actor_cell_predicted_noop_share.ToString("F6", CultureInfo.InvariantCulture),
+                "- worker_predicted_noop_share: " + summary.worker_predicted_noop_share.ToString("F6", CultureInfo.InvariantCulture),
+                "- base_predicted_noop_share: " + summary.base_predicted_noop_share.ToString("F6", CultureInfo.InvariantCulture),
+                "- max_non_noop_probability_globally: " + summary.max_non_noop_probability_globally.ToString("F6", CultureInfo.InvariantCulture),
+                "- max_non_noop_probability_on_actor_cells: " + summary.max_non_noop_probability_on_actor_cells.ToString("F6", CultureInfo.InvariantCulture),
+                "- non_noop_predictions_on_actor_cells: " + summary.non_noop_predictions_on_actor_cells.ToString(CultureInfo.InvariantCulture),
+                "- non_noop_predictions_off_actor_cells: " + summary.non_noop_predictions_off_actor_cells.ToString(CultureInfo.InvariantCulture),
+                "- commands_built: " + summary.commands_built.ToString(CultureInfo.InvariantCulture),
+                "- commands_submitted: " + summary.commands_submitted.ToString(CultureInfo.InvariantCulture),
+                "- commands_accepted: " + summary.commands_accepted.ToString(CultureInfo.InvariantCulture),
+                string.Empty,
+                "## Top-K Non-NoOp Cells",
+            };
+
+            AppendTopCells(lines, summary.top_k_non_noop_probability_cells);
+            lines.Add(string.Empty);
+            lines.Add("## Top-K Harvest Probability Cells");
+            AppendTopCells(lines, summary.top_k_harvest_probability_cells);
+            lines.Add(string.Empty);
+            lines.Add("## Top-K Produce Probability Cells");
+            AppendTopCells(lines, summary.top_k_produce_probability_cells);
+            lines.Add(string.Empty);
+            lines.Add("## Top-K Attack Probability Cells");
+            AppendTopCells(lines, summary.top_k_attack_probability_cells);
+            lines.Add(string.Empty);
+            lines.Add("## Decoder Reject Counts");
+            AppendReasonCounts(lines, summary.decoder_reject_counts_by_reason);
+            lines.Add(string.Empty);
+            lines.Add("## Applier Reject Counts");
+            AppendReasonCounts(lines, summary.applier_reject_counts_by_reason);
+            lines.Add(string.Empty);
+            lines.Add("## Artifact Paths");
+            lines.Add("- logits_snapshot_json: " + logitsSnapshotPath);
+            lines.Add("- cell_table_jsonl: " + cellTablePath);
+            lines.Add("- summary_json: " + summaryPath);
+
+            return string.Join("\n", lines) + "\n";
+        }
+
+        private static void AppendTopCells(List<string> lines, Stage10D10TopCell[] cells)
+        {
+            if (cells == null || cells.Length == 0)
+            {
+                lines.Add("- none");
+                return;
+            }
+
+            for (int i = 0; i < cells.Length; i++)
+            {
+                Stage10D10TopCell cell = cells[i];
+                lines.Add(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "- cell={0} ({1},{2}) label={3}, score={4:F6}, predicted={5}, runtime_actor={6}",
+                    cell.cell_index,
+                    cell.x,
+                    cell.y,
+                    string.IsNullOrWhiteSpace(cell.visual_label) ? "n/a" : cell.visual_label,
+                    cell.score,
+                    string.IsNullOrWhiteSpace(cell.predicted_action_type) ? "n/a" : cell.predicted_action_type,
+                    cell.runtime_is_friendly_actor));
+            }
+        }
+
+        private static void AppendReasonCounts(List<string> lines, Stage10D10ReasonCount[] counts)
+        {
+            if (counts == null || counts.Length == 0)
+            {
+                lines.Add("- none");
+                return;
+            }
+
+            for (int i = 0; i < counts.Length; i++)
+            {
+                Stage10D10ReasonCount item = counts[i];
+                if (item == null)
+                {
+                    continue;
+                }
+
+                lines.Add("- " + item.reason + ": " + item.count.ToString(CultureInfo.InvariantCulture));
+            }
         }
 
         private void ConfigureWeek6ControlModes()

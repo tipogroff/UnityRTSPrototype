@@ -1,0 +1,45 @@
+{
+  "schema": "stage10t1.semantic_adaptation_truth.v1",
+  "generated_at_utc": "2026-05-03T12:20:45Z",
+  "source_conversion_report": "python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z/observation_semantic_conversion_report.json",
+  "frames_preserved": true,
+  "raw_steps": 88165,
+  "adapted_steps": 88165,
+  "actor_cell_noop_share_after_adaptation": 0.0007165993063318715,
+  "actor_action_type_distribution_after_adaptation": {
+    "NoOp": 125,
+    "Harvest": 86570,
+    "Produce": 87645,
+    "Attack": 95
+  },
+  "branch_sizes_expected": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "branch_sizes_reported": 7,
+  "out_of_range_counts": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "action_type_id_map": {
+    "0": "NoOp",
+    "1": "Move",
+    "2": "Harvest",
+    "3": "Return",
+    "4": "Produce",
+    "5": "Attack"
+  },
+  "actor_labels_preserved_vs_raw_exact_row_share": 1.0,
+  "remap_to_noop_count": 0,
+  "semantic_weakening_share": 0.0
+}

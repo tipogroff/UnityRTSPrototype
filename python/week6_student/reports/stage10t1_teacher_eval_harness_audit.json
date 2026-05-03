@@ -1,0 +1,48 @@
+{
+  "schema": "stage10t1.teacher_eval_harness_audit.v1",
+  "generated_at_utc": "2026-05-03T12:20:20Z",
+  "evidence_file": "python/week5_teacher_legacy032/reports/stage5_gate_003000000_20260430T225547Z.json",
+  "env_contract": {
+    "eval_env_id": "MicrortsRandomEnemyShapedReward1-v1",
+    "eval_map_path": "maps/24x24/basesWorkers24x24.xml",
+    "eval_observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "eval_action_space": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "env_matches_training_metadata": true,
+    "env_matches_target_24x24": true,
+    "mask_used_during_eval": true
+  },
+  "mean_return_paradox": {
+    "deterministic_mean_return": -10.0,
+    "stochastic_mean_return": -10.0,
+    "deterministic_noop_share_all_cells": 0.9965651659384103,
+    "stochastic_noop_share_all_cells": 0.16623751560549313,
+    "deterministic_attack_action_count": 40,
+    "deterministic_produce_action_count": 8360,
+    "observed_draw_count_det": 8,
+    "observed_draw_count_stoch": 8,
+    "explanation": "mean_return=-10 can be misleading in this harness because outcomes are logged as draws and terminal win/loss attribution is weak while all-cell noop share dilutes sparse actor actions."
+  },
+  "potential_mismatch_flags": {
+    "player_perspective_mismatch_suspected": true,
+    "reward_signal_or_terminal_interpretation_mismatch_suspected": true,
+    "map_mismatch_detected": false,
+    "opponent_mismatch_detected": false
+  },
+  "warnings": [
+    "selected_action_mask_valid_share and masked_invalid_prevented_count are set to null because mask bit semantics are ambiguous in this legacy runtime.",
+    "Observed max episode length is <= 2000 while max_steps_per_episode=6000; this suggests an additional internal cap."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "stage10t1.export_behavior_truth.v1",
+  "generated_at_utc": "2026-05-03T12:20:31Z",
+  "raw_export_identity": {
+    "rollout_dir": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+    "episodes": 16,
+    "frames": 88165,
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ]
+  },
+  "actor_cell_behavior": {
+    "actor_cell_noop_share": 0.0007165993063318715,
+    "worker_harvest_share": 0.9989038250735591,
+    "worker_move_share": 0.0,
+    "worker_return_share": 0.0,
+    "base_produce_share": 0.9985758231742053,
+    "barracks_produce_share": 0.0,
+    "combat_move_share": 0.0,
+    "combat_attack_share": 0.0,
+    "mean_non_noop_actor_actions_per_step": 1.9770884137696365,
+    "mean_non_noop_all_cells_per_step": 1.9770884137696365,
+    "global_noop_share": 0.9965675548372055
+  },
+  "outcomes": {
+    "enemy_base_destroyed_count": 0,
+    "own_base_destroyed_count": 4,
+    "successful_episode_count": 0,
+    "mean_time_to_enemy_base_destroyed": null
+  },
+  "behavior_chain": {
+    "episodes_with_worker_harvest_then_return_then_base_produce_then_barracks_produce_then_combat_move_or_attack": 0,
+    "episodes_total": 16
+  }
+}

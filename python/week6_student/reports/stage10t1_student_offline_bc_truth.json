@@ -1,0 +1,318 @@
+{
+  "schema": "stage10t1.student_offline_bc_truth.v1",
+  "generated_at_utc": "2026-05-03T12:21:06Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+  "validation_source": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_validation.npz",
+  "actor_cell_action_type_accuracy": 0.9995989458003895,
+  "actor_cell_non_noop_recall": 1.0,
+  "worker_harvest_recall": 1.0,
+  "base_produce_recall": 1.0,
+  "combat_attack_recall": 0.0,
+  "counts": {
+    "actor_cell_total": 17454,
+    "actor_gt_non_noop_total": 17447,
+    "worker_harvest_total": 8666,
+    "base_produce_total": 8774,
+    "combat_attack_total": 0
+  },
+  "confusion_matrix_actor_cells": {
+    "labels": [
+      "NoOp",
+      "Move",
+      "Harvest",
+      "Return",
+      "Produce",
+      "Attack"
+    ],
+    "matrix": [
+      [
+        7,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        8666,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        8774,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "mean_probabilities_on_actor_cells": {
+    "p_noop": 0.0003962160662478965,
+    "p_move": 0.00026782718062882325,
+    "p_harvest": 0.4964668752128922,
+    "p_return": 0.00042072039938907354,
+    "p_produce": 0.5022168841929702,
+    "p_attack": 0.00023109240268952687
+  },
+  "runtime_vs_bc_ood": {
+    "schema": "stage10t1.runtime_vs_bc_ood.v1",
+    "generated_at_utc": "2026-05-03T12:21:06Z",
+    "validation_source": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_validation.npz",
+    "runtime_cell_table": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d10_global_runtime_cell_table_step0001.jsonl",
+    "scanned_validation_samples": 8817,
+    "focus_cells": {
+      "B2": {
+        "match_found": true,
+        "nearest_validation_sample_index": 2655,
+        "nearest_validation_flat_index": 25,
+        "nearest_validation_visual_label": "B2",
+        "l2_distance_27ch": 2.069190502166748,
+        "channel_comparison": {
+          "hit_points_runtime_vs_bc": [
+            0.0,
+            0.0
+          ],
+          "resources_runtime_vs_bc": [
+            0.0,
+            1.0
+          ],
+          "owner_channels_runtime": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "owner_channels_bc": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "unit_type_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unit_type_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "current_action_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "current_action_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "direction_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "direction_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "produce_type_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "produce_type_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "attack_target_index_runtime_vs_bc": [
+            0.0,
+            0.5306122303009033
+          ]
+        },
+        "local_5x5_l2": 6.578871250152588,
+        "local_7x7_l2": 7.828253269195557,
+        "full_map_summary_runtime": {
+          "owner_cell_counts": {
+            "self": 0,
+            "enemy": 0,
+            "neutral": 0
+          },
+          "unit_type_counts": {}
+        },
+        "full_map_summary_bc": {
+          "owner_cell_counts": {
+            "self": 2,
+            "enemy": 52,
+            "neutral": 522
+          },
+          "unit_type_counts": {
+            "0": 2,
+            "1": 2,
+            "3": 52
+          }
+        }
+      },
+      "C3": {
+        "match_found": true,
+        "nearest_validation_sample_index": 824,
+        "nearest_validation_flat_index": 50,
+        "nearest_validation_visual_label": "C3",
+        "l2_distance_27ch": 1.7320507764816284,
+        "channel_comparison": {
+          "hit_points_runtime_vs_bc": [
+            0.0,
+            0.0
+          ],
+          "resources_runtime_vs_bc": [
+            0.0,
+            0.0
+          ],
+          "owner_channels_runtime": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "owner_channels_bc": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "unit_type_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unit_type_channels_bc": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "current_action_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "current_action_channels_bc": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "direction_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "direction_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "produce_type_channels_runtime": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "produce_type_channels_bc": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "attack_target_index_runtime_vs_bc": [
+            0.0,
+            0.0
+          ]
+        },
+        "local_5x5_l2": 7.549834251403809,
+        "local_7x7_l2": 8.88819408416748,
+        "full_map_summary_runtime": {
+          "owner_cell_counts": {
+            "self": 0,
+            "enemy": 0,
+            "neutral": 0
+          },
+          "unit_type_counts": {}
+        },
+        "full_map_summary_bc": {
+          "owner_cell_counts": {
+            "self": 1,
+            "enemy": 42,
+            "neutral": 533
+          },
+          "unit_type_counts": {
+            "0": 3,
+            "1": 2,
+            "2": 1,
+            "3": 40
+          }
+        }
+      }
+    }
+  }
+}
