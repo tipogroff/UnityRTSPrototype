@@ -1,6 +1,6 @@
 ﻿# LEGACY032 UNITY V2 Stage 10 Unity Scene Dry-Run Report
 
-Generated at: 2026-05-02T12:12:35.7130566Z
+Generated at: 2026-05-03T15:19:20.5075441Z
 
 ## 1. Scope
 - Controlled Unity scene dry-run only.
@@ -16,7 +16,7 @@ Generated at: 2026-05-02T12:12:35.7130566Z
 - Scene name: Week6_StudentVisualInspection
 - Scenario preset: 4
 - Map size: 24x24
-- Active checkpoint path: python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt
+- Active checkpoint path: python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt
 - Checkpoint exists: True
 - Active runner/component: Week6VisualInspectionRunner
 - Manual trigger mode: True
@@ -45,19 +45,19 @@ Generated at: 2026-05-02T12:12:35.7130566Z
   - PASS: Active Week6StudentPolicyAdapter count = 1.
   - PASS: Active EpisodeController count = 1.
   - PASS: Active HeuristicPolicyAdapter count = 1.
-  - PASS: Active checkpoint path = python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt.
+  - PASS: Active checkpoint path = python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt.
   - PASS: Checkpoint exists = True.
   - PASS: Duplicate occupancy count = 0.
   - PASS: Observation shape = [24,24,27] (expected 24,24,27).
   - PASS: Observation NaN = False, Inf = False.
   - PASS: Artifact directory = python/week6_student/tmp/day5_sanity.
   - PASS: Artifact file prefix = day5_sanity.
-  - PASS: Successful bridge requests = 55.
+  - PASS: Successful bridge requests = 200.
   - PASS: Step count advanced = True.
-  - WARNING: ActionApplier reached = False.
-  - WARNING: MatchManager.ApplyCommand path reached = False.
-  - WARNING: Meaningful accepted commands = 0.
-  - WARNING: NoOp share = 100.00 %.
+  - PASS: ActionApplier reached = True.
+  - PASS: MatchManager.ApplyCommand path reached = True.
+  - PASS: Meaningful accepted commands = 11.
+  - PASS: NoOp share = 0.00 %.
   - PASS: Wrong-owner rejections after filter = 0.
   - PASS: Runtime rejected commands = 0.
   - PASS: Model output logits shapes captured = True.
@@ -72,12 +72,12 @@ Generated at: 2026-05-02T12:12:35.7130566Z
 
 ## 4. Runtime load result
 - Model loaded: yes
-- Decision requests sent/succeeded/failed: 55/55/0
+- Decision requests sent/succeeded/failed: 200/200/0
 - Bridge shutdown clean: False
 - Last bridge/runtime error: none
 - Checkpoint metadata:
-  - Checkpoint model variant: transfer
-  - Checkpoint epoch: 15
+  - Checkpoint model variant: unknown
+  - Checkpoint epoch: 1
   - Action contract version: v2_gridnet_compatible
 
 ## 5. Observation/inference result
@@ -103,79 +103,156 @@ Generated at: 2026-05-02T12:12:35.7130566Z
   - produce_unit_type_logits: [1, 576, 7]
   - attack_target_local_logits: [1, 576, 49]
 - Branch bounds (first captured adapter artifact):
-  - action_type: min=0, max=0
+  - action_type: min=0, max=4
   - move_dir: min=0, max=3
-  - harvest_dir: min=3, max=3
-  - return_dir: min=0, max=1
-  - produce_dir: min=2, max=2
-  - produce_unit_type: min=3, max=3
+  - harvest_dir: min=0, max=3
+  - return_dir: min=0, max=2
+  - produce_dir: min=2, max=3
+  - produce_unit_type: min=2, max=3
   - attack_target_local: min=0, max=0
 
 ## 6. Decoder/applier result
 - Decoded command sample:
-  - none
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
 - First non-NoOp decoded commands:
-  - none
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(1, 1) type=Harvest dir=West source=TransferCompatible
+  [AgentAction] actor=(2, 2) type=Produce dir=South produce=Ranged source=TransferCompatible
 - Accepted command samples:
-  - none
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
+  owner=Player1 actor=(2,2) type=Produce dir=South produce=Worker
 - Rejected command samples:
   - none
-- Accepted command count: 0
-- Rejected command count: 0
+- Accepted command count: 11
+- Rejected command count: 211
 - Ignored command count: 0
-- Invalid share: 0.00 %
+- Invalid share: 95.05 %
 - Ignored share: 0.00 %
 - Rejection reason histogram:
-  - none
+  - other: 211
 - Runtime rejection reason histogram:
   - none
-- ActionApplier called: False
-- MatchManager.ApplyCommand called: False
+- ActionApplier called: True
+- MatchManager.ApplyCommand called: True
 
 ## 7. Episode/bounded run summary
 - Episodes run: 1
 - Max steps configured: 200
-- Steps actually run: 55
+- Steps actually run: 200
 - MatchManager.AdvanceStep called: True
 - Step count advanced: True
-- Episode reached terminal: True
-- Terminal reason: Loss
-- Winner: Player2
+- Episode reached terminal: False
+- Stop reason: bounded_step_cap_200
 
 ## 8. Action statistics
-- Aggregate action_type histogram: NoOp=576, Move=0, Harvest=0, Return=0, Produce=0, Attack=0
-- Aggregate pre-mask action_type histogram: NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0
+- Aggregate action_type histogram: NoOp=0, Move=0, Harvest=200, Return=0, Produce=22, Attack=0
+- Aggregate pre-mask action_type histogram: NoOp=0, Move=0, Harvest=365, Return=0, Produce=208, Attack=0
 - First steps action histograms:
-  step=1 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=2 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=3 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=4 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=5 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=6 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=7 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=8 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=9 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=10 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=11 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=12 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=13 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=14 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=15 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=16 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=17 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=18 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=19 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-  step=20 NoOp=0, Move=0, Harvest=0, Return=0, Produce=0, Attack=0 accepted=0 rejected=0
-- NoOp share: 100.00 %
-- Non-NoOp share: 0.00 %
-- Move / Harvest / Return counts: 0 / 0 / 0
-- Produce count/share: 0 / 0.00 %
+  step=1 NoOp=0, Move=0, Harvest=1, Return=0, Produce=1, Attack=0 accepted=1 rejected=1
+  step=2 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=3 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=4 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=5 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=6 NoOp=0, Move=0, Harvest=1, Return=0, Produce=1, Attack=0 accepted=1 rejected=1
+  step=7 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=8 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=9 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=10 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=11 NoOp=0, Move=0, Harvest=1, Return=0, Produce=1, Attack=0 accepted=1 rejected=1
+  step=12 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=13 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=14 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=15 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=16 NoOp=0, Move=0, Harvest=1, Return=0, Produce=1, Attack=0 accepted=1 rejected=1
+  step=17 NoOp=0, Move=0, Harvest=1, Return=0, Produce=1, Attack=0 accepted=0 rejected=2
+  step=18 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=19 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+  step=20 NoOp=0, Move=0, Harvest=1, Return=0, Produce=0, Attack=0 accepted=0 rejected=1
+- NoOp share: 0.00 %
+- Non-NoOp share: 100.00 %
+- Move / Harvest / Return counts: 0 / 200 / 0
+- Produce count/share: 22 / 9.91 %
 - Attack count/share: 0 / 0.00 %
-- Commands built after filter: 0
-- Commands submitted after filter: 0
-- Candidate cells / eligible own actor cells: 31680 / 110
+- Commands built after filter: 222
+- Commands submitted after filter: 222
+- Candidate cells / eligible own actor cells: 115200 / 1436
 - Wrong-owner rejections after filter: 0
-- Masked-out action-type choices / fallback-to-NoOp: 0 / 0
+- Masked-out action-type choices / fallback-to-NoOp: 351 / 351
 
 ## 9. Key findings
   - PASS: Scenario preset = 4 (expected 4).
@@ -188,19 +265,19 @@ Generated at: 2026-05-02T12:12:35.7130566Z
   - PASS: Active Week6StudentPolicyAdapter count = 1.
   - PASS: Active EpisodeController count = 1.
   - PASS: Active HeuristicPolicyAdapter count = 1.
-  - PASS: Active checkpoint path = python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt.
+  - PASS: Active checkpoint path = python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt.
   - PASS: Checkpoint exists = True.
   - PASS: Duplicate occupancy count = 0.
   - PASS: Observation shape = [24,24,27] (expected 24,24,27).
   - PASS: Observation NaN = False, Inf = False.
   - PASS: Artifact directory = python/week6_student/tmp/day5_sanity.
   - PASS: Artifact file prefix = day5_sanity.
-  - PASS: Successful bridge requests = 55.
+  - PASS: Successful bridge requests = 200.
   - PASS: Step count advanced = True.
-  - WARNING: ActionApplier reached = False.
-  - WARNING: MatchManager.ApplyCommand path reached = False.
-  - WARNING: Meaningful accepted commands = 0.
-  - WARNING: NoOp share = 100.00 %.
+  - PASS: ActionApplier reached = True.
+  - PASS: MatchManager.ApplyCommand path reached = True.
+  - PASS: Meaningful accepted commands = 11.
+  - PASS: NoOp share = 0.00 %.
   - PASS: Wrong-owner rejections after filter = 0.
   - PASS: Runtime rejected commands = 0.
   - PASS: Model output logits shapes captured = True.
@@ -215,4 +292,4 @@ Generated at: 2026-05-02T12:12:35.7130566Z
 - Unity runtime semantic drift remains possible even if the technical path executes.
 
 ## 11. Decision
-- GO_FOR_UNITY_REMEDIATION
+- GO_FOR_EXECUTION_SEMANTICS_ANALYSIS

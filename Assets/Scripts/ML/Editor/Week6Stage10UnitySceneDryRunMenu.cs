@@ -25,7 +25,7 @@ namespace RTS.ML.Editor
 
         private const string TargetScenePath = "Assets/Scenes/Week6_StudentVisualInspection.unity";
         private const string ReportRelativePath = "python/week6_student/reports/LEGACY032_UNITY_V2_STAGE10_UNITY_SCENE_DRY_RUN_REPORT.md";
-        private const string ExpectedCheckpointRelativePath = "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt";
+        private const string ExpectedCheckpointRelativePath = "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt";
 
         static Week6Stage10UnitySceneDryRunMenu()
         {

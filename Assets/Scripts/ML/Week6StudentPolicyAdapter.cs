@@ -297,6 +297,7 @@ namespace RTS.ML
     {
         private const string ExpectedStudentCheckpointFileNameLegacy = "student_bc_transfer_best.pt";
         private const string ExpectedStudentCheckpointFileNameSemantic = "student_bc_semantic_best.pt";
+        private const string ExpectedStudentCheckpointFileNameAugmented = "student_bc_stage10d14_augmented_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -464,7 +465,7 @@ namespace RTS.ML
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
-        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt";
+        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt";
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
         [SerializeField] private string _artifactFilePrefix = "day5_sanity";
         [SerializeField] private int _artifactRingSlots = 4;
@@ -989,7 +990,8 @@ namespace RTS.ML
             string checkpointFileName = Path.GetFileName(checkpointPath);
             bool checkpointNameAllowed =
                 string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameLegacy, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase);
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameAugmented, StringComparison.OrdinalIgnoreCase);
 
             if (!checkpointNameAllowed)
             {
