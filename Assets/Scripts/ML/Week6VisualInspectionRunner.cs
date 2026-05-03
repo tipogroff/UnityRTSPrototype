@@ -125,6 +125,7 @@ namespace RTS.ML
 
         private AdapterArtifactSnapshot _latestArtifact;
         private ObservationSnapshot _latestObservation;
+        private StudentInferenceDiagnosticsSnapshot _latestInferenceDiagnostics;
         private float[] _latestObservationValues = Array.Empty<float>();
         private int _noOpActorCells;
         private int _nonNoOpActorCells;
@@ -257,6 +258,7 @@ namespace RTS.ML
             public int flat_index;
             public bool eligible;
             public string predicted_action_type;
+            public string predicted_action_type_source;
             public string top3_action_type;
             public int move_dir;
             public int harvest_dir;
@@ -291,6 +293,7 @@ namespace RTS.ML
             public string owner;
             public bool eligible_actor;
             public string predicted_action_type;
+            public string predicted_action_type_source;
             public bool logits_probabilities_available;
             public string logits_probabilities_unavailable_reason;
             public float[] action_type_logits;
@@ -329,6 +332,7 @@ namespace RTS.ML
             public int step;
             public string scene;
             public string checkpoint;
+            public string checkpoint_path_used_at_inference;
             public UnitSnapshot[] unit_positions;
             public ActorCellSnapshot[] actor_cells;
             public int[] observation_shape;
@@ -343,6 +347,20 @@ namespace RTS.ML
             public string flatten_formula;
             public string owner_encoding_mode;
             public string controlled_player;
+            public bool adapter_invoked;
+            public int inference_request_count;
+            public string last_inference_call_utc;
+            public int candidate_actor_cells_submitted;
+            public string python_request_status;
+            public string python_response_status;
+            public string[] raw_bridge_response_keys;
+            public string[] raw_adapter_response_keys;
+            public bool parsed_logits_available;
+            public bool parsed_action_type_probabilities_available;
+            public bool parsed_action_type_top3_available;
+            public bool adapter_artifact_created;
+            public string adapter_artifact_missing_reason;
+            public string adapter_artifact_last_output_json_path;
             public FocusCellSnapshot[] focus_cell_diagnostics;
             public string[] flatten_alignment_checks;
             public string[] observation_vs_bc_expectation;
@@ -434,6 +452,7 @@ namespace RTS.ML
             public string LogicalCell;
             public bool Eligible;
             public UnitActionType PredictedActionType;
+            public string PredictedActionTypeSource;
             public int MoveDir;
             public int HarvestDir;
             public int ReturnDir;
@@ -858,6 +877,9 @@ namespace RTS.ML
                 step = step,
                 scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
                 checkpoint = GetCheckpointPathLabel(),
+                checkpoint_path_used_at_inference = _latestInferenceDiagnostics != null
+                    ? _latestInferenceDiagnostics.checkpoint_path_used_at_inference
+                    : string.Empty,
                 unit_positions = unitSnapshots.ToArray(),
                 actor_cells = actorSnapshots.ToArray(),
                 observation_shape = new[] { 24, 24, 27 },
@@ -878,6 +900,20 @@ namespace RTS.ML
                 controlled_player = _latestBridgeDebug != null && !string.IsNullOrWhiteSpace(_latestBridgeDebug.controlled_player)
                     ? _latestBridgeDebug.controlled_player
                     : _studentControlledPlayer.ToString(),
+                adapter_invoked = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.adapter_invoked,
+                inference_request_count = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.inference_request_count : 0,
+                last_inference_call_utc = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.last_inference_call_utc : string.Empty,
+                candidate_actor_cells_submitted = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.candidate_actor_cells_submitted : 0,
+                python_request_status = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.python_request_status : string.Empty,
+                python_response_status = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.python_response_status : string.Empty,
+                raw_bridge_response_keys = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.raw_bridge_response_keys : Array.Empty<string>(),
+                raw_adapter_response_keys = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.raw_adapter_response_keys : Array.Empty<string>(),
+                parsed_logits_available = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.parsed_logits_available,
+                parsed_action_type_probabilities_available = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.parsed_action_type_probabilities_available,
+                parsed_action_type_top3_available = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.parsed_action_type_top3_available,
+                adapter_artifact_created = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.adapter_artifact_created,
+                adapter_artifact_missing_reason = ResolveAdapterArtifactMissingReason(),
+                adapter_artifact_last_output_json_path = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.last_output_json_path : string.Empty,
                 focus_cell_diagnostics = focusSnapshots.ToArray(),
                 flatten_alignment_checks = flattenChecks,
                 observation_vs_bc_expectation = observationVsBc,
@@ -941,6 +977,7 @@ namespace RTS.ML
             _lastAutoPlaybackStep = 0;
             _latestObservationValues = Array.Empty<float>();
             _latestBridgeDebug = null;
+            _latestInferenceDiagnostics = null;
             _flattenAlignmentClassification = "INCONCLUSIVE_NEEDS_MORE_LOGITS";
 
             _baselineOwner = _studentControlledPlayer == Owner.Player1 ? Owner.Player2 : Owner.Player1;
@@ -1348,12 +1385,18 @@ namespace RTS.ML
         {
             ResolveReferences();
             _latestObservation = CaptureObservationSnapshot();
+            _latestInferenceDiagnostics = _studentAdapter != null
+                ? _studentAdapter.GetInferenceDiagnosticsSnapshot()
+                : null;
 
             string artifactDirRel = GetPrivateField(_studentAdapter, "_artifactDirectoryRelativePath", "python/week6_student/tmp/day5_sanity");
             string artifactPrefix = GetPrivateField(_studentAdapter, "_artifactFilePrefix", "day5_sanity");
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string fallbackOutputJsonPath = _latestInferenceDiagnostics != null
+                ? _latestInferenceDiagnostics.last_output_json_path
+                : string.Empty;
 
-            if (!TryReadLatestAdapterArtifact(projectRoot, artifactDirRel, artifactPrefix, out AdapterArtifactSnapshot artifact))
+            if (!TryReadLatestAdapterArtifact(projectRoot, artifactDirRel, artifactPrefix, fallbackOutputJsonPath, out AdapterArtifactSnapshot artifact))
             {
                 _latestArtifact = default;
                 _latestBridgeDebug = null;
@@ -1403,6 +1446,10 @@ namespace RTS.ML
                         ExtractBranchValues(_latestArtifact.ActionFlat, flat, out predicted, out move, out harvest, out ret, out produceDir, out produceType, out attackLocal);
                     }
 
+                    string predictedActionSource = _latestArtifact.IsAvailable
+                        ? "model_action_flat_argmax"
+                        : "fallback_no_adapter_artifact";
+
                     bool commandBuilt = _lastAcceptedByActor.ContainsKey(flat) || _lastRejectedByActor.ContainsKey(flat);
                     bool actionApplierReached = commandBuilt;
                     bool applyCommandReached = commandBuilt;
@@ -1439,6 +1486,10 @@ namespace RTS.ML
                         observationChannelNames = _latestBridgeDebug != null ? _latestBridgeDebug.observation_channel_names : null;
                         top3 = BuildTop3Label(focus.action_type_top3);
                         ownerLabel = string.IsNullOrWhiteSpace(focus.owner_guess) ? ownerLabel : focus.owner_guess;
+                        if (logitsAvailable)
+                        {
+                            predictedActionSource = "model_logits";
+                        }
                     }
 
                     var row = new ActorCellDiagnosticRow
@@ -1448,6 +1499,7 @@ namespace RTS.ML
                         LogicalCell = ToCellLabel(unit.GridPos),
                         Eligible = true,
                         PredictedActionType = predicted,
+                        PredictedActionTypeSource = predictedActionSource,
                         MoveDir = move,
                         HarvestDir = harvest,
                         ReturnDir = ret,
@@ -1586,6 +1638,7 @@ namespace RTS.ML
                     flat_index = row.FlatIndex,
                     eligible = row.Eligible,
                     predicted_action_type = row.PredictedActionType.ToString(),
+                    predicted_action_type_source = string.IsNullOrWhiteSpace(row.PredictedActionTypeSource) ? "unavailable" : row.PredictedActionTypeSource,
                     top3_action_type = row.Top3ActionType,
                     move_dir = row.MoveDir,
                     harvest_dir = row.HarvestDir,
@@ -1635,6 +1688,9 @@ namespace RTS.ML
 
             GridPosition position = GridPosition.FromFlatIndex(flatIndex);
             string predicted = row != null ? row.PredictedActionType.ToString() : "NoOp";
+            string predictedSource = row != null && !string.IsNullOrWhiteSpace(row.PredictedActionTypeSource)
+                ? row.PredictedActionTypeSource
+                : (_latestArtifact.IsAvailable ? "model_action_flat_argmax" : "fallback_no_adapter_artifact");
             bool logitsAvailable = row != null && row.LogitsAvailable;
 
             focus.Add(new FocusCellSnapshot
@@ -1646,6 +1702,7 @@ namespace RTS.ML
                 owner = row != null ? row.Owner : (bridge != null ? bridge.owner_guess : "Unknown"),
                 eligible_actor = row != null ? row.Eligible : (bridge != null && bridge.eligible_actor_guess),
                 predicted_action_type = predicted,
+                predicted_action_type_source = predictedSource,
                 logits_probabilities_available = logitsAvailable,
                 logits_probabilities_unavailable_reason = logitsAvailable ? string.Empty : "bridge payload missing",
                 action_type_logits = row != null ? row.ActionTypeLogits : null,
@@ -2141,7 +2198,7 @@ namespace RTS.ML
             return new ObservationSnapshot(min, max, hasNaN, hasInf, own, enemy, resources);
         }
 
-        private bool TryReadLatestAdapterArtifact(string projectRoot, string artifactDirRel, string artifactPrefix, out AdapterArtifactSnapshot snapshot)
+        private bool TryReadLatestAdapterArtifact(string projectRoot, string artifactDirRel, string artifactPrefix, string fallbackOutputJsonPath, out AdapterArtifactSnapshot snapshot)
         {
             snapshot = default;
             if (_studentAdapter == null)
@@ -2152,7 +2209,7 @@ namespace RTS.ML
             string dir = Path.GetFullPath(Path.Combine(projectRoot, artifactDirRel));
             if (!Directory.Exists(dir))
             {
-                return false;
+                return TryReadFallbackAdapterArtifact(fallbackOutputJsonPath, out snapshot);
             }
 
             string pattern = string.IsNullOrWhiteSpace(artifactPrefix)
@@ -2162,7 +2219,7 @@ namespace RTS.ML
             string[] files = Directory.GetFiles(dir, pattern, SearchOption.TopDirectoryOnly);
             if (files.Length == 0)
             {
-                return false;
+                return TryReadFallbackAdapterArtifact(fallbackOutputJsonPath, out snapshot);
             }
 
             Array.Sort(files, (left, right) => File.GetLastWriteTimeUtc(right).CompareTo(File.GetLastWriteTimeUtc(left)));
@@ -2171,12 +2228,45 @@ namespace RTS.ML
             var parsed = JsonUtility.FromJson<AdapterArtifactJson>(json);
             if (parsed == null)
             {
-                return false;
+                return TryReadFallbackAdapterArtifact(fallbackOutputJsonPath, out snapshot);
             }
 
             snapshot = new AdapterArtifactSnapshot(
                 true,
                 latest,
+                parsed.observation_shape,
+                parsed.branch_sizes,
+                parsed.logits_keys,
+                parsed.action_flat_size,
+                parsed.action_flat,
+                ParseLogitsShapes(json),
+                parsed.stage10r_debug);
+            return true;
+        }
+
+        private bool TryReadFallbackAdapterArtifact(string fallbackOutputJsonPath, out AdapterArtifactSnapshot snapshot)
+        {
+            snapshot = default;
+            if (string.IsNullOrWhiteSpace(fallbackOutputJsonPath))
+            {
+                return false;
+            }
+
+            if (!File.Exists(fallbackOutputJsonPath))
+            {
+                return false;
+            }
+
+            string json = File.ReadAllText(fallbackOutputJsonPath, Encoding.UTF8);
+            var parsed = JsonUtility.FromJson<AdapterArtifactJson>(json);
+            if (parsed == null)
+            {
+                return false;
+            }
+
+            snapshot = new AdapterArtifactSnapshot(
+                true,
+                fallbackOutputJsonPath,
                 parsed.observation_shape,
                 parsed.branch_sizes,
                 parsed.logits_keys,
@@ -2509,7 +2599,12 @@ namespace RTS.ML
 
             if (!_latestArtifact.IsAvailable)
             {
-                return "no_adapter_artifact";
+                if (_latestInferenceDiagnostics == null || _latestInferenceDiagnostics.inference_request_count <= 0)
+                {
+                    return "no_inference_requests_yet";
+                }
+
+                return "artifact_missing_after_inference";
             }
 
             if (predictedActionType == UnitActionType.NoOp)
@@ -2523,6 +2618,31 @@ namespace RTS.ML
             }
 
             return "not_built_in_decoder_or_filter";
+        }
+
+        private string ResolveAdapterArtifactMissingReason()
+        {
+            if (_latestArtifact.IsAvailable)
+            {
+                return string.Empty;
+            }
+
+            if (_latestInferenceDiagnostics == null)
+            {
+                return "adapter_diagnostics_unavailable";
+            }
+
+            if (_latestInferenceDiagnostics.inference_request_count <= 0)
+            {
+                return "no_inference_requests_yet";
+            }
+
+            if (!string.IsNullOrWhiteSpace(_latestInferenceDiagnostics.adapter_artifact_missing_reason))
+            {
+                return _latestInferenceDiagnostics.adapter_artifact_missing_reason;
+            }
+
+            return "adapter_artifact_missing_after_inference";
         }
 
         private void ExtractBranchValues(

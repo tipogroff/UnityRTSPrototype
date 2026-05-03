@@ -1,0 +1,221 @@
+{
+  "stage": "10D.9R",
+  "task": "runtime_inference_artifact_verification",
+  "generated_at_utc": "2026-05-03T10:51:37.297121+00:00",
+  "status": "pass",
+  "inputs": {
+    "snapshot_json": "python/week6_student/reports/stage10d9r_unity_stage10r_rerun_snapshot_step0001.json",
+    "episode_diagnostics_json": "python/week6_student/tmp/week6_visual/week6_visual_episode_diagnostics.json",
+    "checkpoint_binding_json": "python/week6_student/reports/stage10d9_checkpoint_binding_verification.json"
+  },
+  "summary": {
+    "checkpoint_binding_status": "pass",
+    "runtime_observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "inference_request_count": 1,
+    "adapter_invoked": true,
+    "checkpoint_path_used": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "logits_shapes_captured": true,
+    "episode_terminal_reason": "Loss",
+    "episode_steps_run": 54
+  },
+  "checks": [
+    {
+      "name": "checkpoint_binding_status_pass",
+      "ok": true,
+      "details": "pass"
+    },
+    {
+      "name": "runtime_observation_shape_24x24x27",
+      "ok": true,
+      "details": [
+        24,
+        24,
+        27
+      ]
+    },
+    {
+      "name": "inference_request_count_gt_zero",
+      "ok": true,
+      "details": 1
+    },
+    {
+      "name": "adapter_invoked_true",
+      "ok": true,
+      "details": true
+    },
+    {
+      "name": "checkpoint_path_used_matches_stage10d8",
+      "ok": true,
+      "details": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt"
+    },
+    {
+      "name": "logits_shapes_captured_true",
+      "ok": true,
+      "details": true
+    },
+    {
+      "name": "action_type_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          6
+        ],
+        "expected": [
+          1,
+          576,
+          6
+        ]
+      }
+    },
+    {
+      "name": "move_dir_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          4
+        ],
+        "expected": [
+          1,
+          576,
+          4
+        ]
+      }
+    },
+    {
+      "name": "harvest_dir_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          4
+        ],
+        "expected": [
+          1,
+          576,
+          4
+        ]
+      }
+    },
+    {
+      "name": "return_dir_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          4
+        ],
+        "expected": [
+          1,
+          576,
+          4
+        ]
+      }
+    },
+    {
+      "name": "produce_dir_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          4
+        ],
+        "expected": [
+          1,
+          576,
+          4
+        ]
+      }
+    },
+    {
+      "name": "produce_unit_type_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          7
+        ],
+        "expected": [
+          1,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "name": "attack_target_local_logits_shape",
+      "ok": true,
+      "details": {
+        "actual": [
+          1,
+          576,
+          49
+        ],
+        "expected": [
+          1,
+          576,
+          49
+        ]
+      }
+    },
+    {
+      "name": "b2_action_type_probabilities_len_6",
+      "ok": true,
+      "details": 6
+    },
+    {
+      "name": "b2_action_type_top3_len_ge_3",
+      "ok": true,
+      "details": 3
+    },
+    {
+      "name": "c3_action_type_probabilities_len_6",
+      "ok": true,
+      "details": 6
+    },
+    {
+      "name": "c3_action_type_top3_len_ge_3",
+      "ok": true,
+      "details": 3
+    },
+    {
+      "name": "b2_reason_not_no_adapter_artifact",
+      "ok": true,
+      "details": "predicted_noop"
+    },
+    {
+      "name": "c3_reason_not_no_adapter_artifact",
+      "ok": true,
+      "details": "predicted_noop"
+    },
+    {
+      "name": "b2_predicted_action_source_model_logits",
+      "ok": true,
+      "details": "model_logits"
+    },
+    {
+      "name": "c3_predicted_action_source_model_logits",
+      "ok": true,
+      "details": "model_logits"
+    },
+    {
+      "name": "no_fake_or_fallback_logits",
+      "ok": true,
+      "details": {
+        "parsed_logits_available": true,
+        "parsed_action_type_probabilities_available": true
+      }
+    }
+  ]
+}

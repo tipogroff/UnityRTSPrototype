@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RTS.Core;
 using RTS.Gameplay;
@@ -212,10 +213,78 @@ namespace RTS.ML
         public string LastError { get; }
     }
 
+    [Serializable]
+    public sealed class StudentInferenceDiagnosticsSnapshot
+    {
+        public bool adapter_invoked;
+        public int inference_request_count;
+        public string last_inference_call_utc;
+        public string checkpoint_path_used_at_inference;
+        public int[] observation_shape_sent;
+        public int observation_element_count;
+        public int candidate_actor_cells_submitted;
+        public string python_request_status;
+        public string python_response_status;
+        public string[] raw_bridge_response_keys;
+        public string[] raw_adapter_response_keys;
+        public bool parsed_logits_available;
+        public bool parsed_action_type_probabilities_available;
+        public bool parsed_action_type_top3_available;
+        public bool adapter_artifact_created;
+        public string adapter_artifact_missing_reason;
+        public string last_output_json_path;
+
+        public StudentInferenceDiagnosticsSnapshot Clone()
+        {
+            return new StudentInferenceDiagnosticsSnapshot
+            {
+                adapter_invoked = adapter_invoked,
+                inference_request_count = inference_request_count,
+                last_inference_call_utc = last_inference_call_utc,
+                checkpoint_path_used_at_inference = checkpoint_path_used_at_inference,
+                observation_shape_sent = observation_shape_sent != null ? (int[])observation_shape_sent.Clone() : Array.Empty<int>(),
+                observation_element_count = observation_element_count,
+                candidate_actor_cells_submitted = candidate_actor_cells_submitted,
+                python_request_status = python_request_status ?? string.Empty,
+                python_response_status = python_response_status ?? string.Empty,
+                raw_bridge_response_keys = raw_bridge_response_keys != null ? (string[])raw_bridge_response_keys.Clone() : Array.Empty<string>(),
+                raw_adapter_response_keys = raw_adapter_response_keys != null ? (string[])raw_adapter_response_keys.Clone() : Array.Empty<string>(),
+                parsed_logits_available = parsed_logits_available,
+                parsed_action_type_probabilities_available = parsed_action_type_probabilities_available,
+                parsed_action_type_top3_available = parsed_action_type_top3_available,
+                adapter_artifact_created = adapter_artifact_created,
+                adapter_artifact_missing_reason = adapter_artifact_missing_reason ?? string.Empty,
+                last_output_json_path = last_output_json_path ?? string.Empty,
+            };
+        }
+
+        public void ResetForEpisode()
+        {
+            adapter_invoked = false;
+            inference_request_count = 0;
+            last_inference_call_utc = string.Empty;
+            checkpoint_path_used_at_inference = string.Empty;
+            observation_shape_sent = Array.Empty<int>();
+            observation_element_count = 0;
+            candidate_actor_cells_submitted = 0;
+            python_request_status = "idle";
+            python_response_status = string.Empty;
+            raw_bridge_response_keys = Array.Empty<string>();
+            raw_adapter_response_keys = Array.Empty<string>();
+            parsed_logits_available = false;
+            parsed_action_type_probabilities_available = false;
+            parsed_action_type_top3_available = false;
+            adapter_artifact_created = false;
+            adapter_artifact_missing_reason = string.Empty;
+            last_output_json_path = string.Empty;
+        }
+    }
+
     [DisallowMultipleComponent]
     public sealed class Week6StudentPolicyAdapter : MonoBehaviour
     {
-        private const string ExpectedStudentCheckpointFileName = "student_bc_transfer_best.pt";
+        private const string ExpectedStudentCheckpointFileNameLegacy = "student_bc_transfer_best.pt";
+        private const string ExpectedStudentCheckpointFileNameSemantic = "student_bc_semantic_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -377,6 +446,7 @@ namespace RTS.ML
         private int _studentCommandsSubmitted;
         private bool _serverStarted;
         private bool _serverShutdownClean;
+        private readonly StudentInferenceDiagnosticsSnapshot _inferenceDiagnostics = new StudentInferenceDiagnosticsSnapshot();
 
         public void Initialize(
             GridManager gridManager,
@@ -406,6 +476,7 @@ namespace RTS.ML
             _lastBridgeStdErr = string.Empty;
             _serverStarted = _bridgeProcess != null && !_bridgeProcess.HasExited;
             _serverShutdownClean = false;
+            _inferenceDiagnostics.ResetForEpisode();
 
             if (_cleanupTempArtifactsOnReset)
             {
@@ -430,6 +501,11 @@ namespace RTS.ML
                 _lastRuntimeError);
         }
 
+            public StudentInferenceDiagnosticsSnapshot GetInferenceDiagnosticsSnapshot()
+            {
+                return _inferenceDiagnostics.Clone();
+            }
+
         public string CheckpointRelativePath => _checkpointRelativePath;
 
             public bool ShutdownBridgeForSanity()
@@ -442,8 +518,24 @@ namespace RTS.ML
         {
             EnsurePipeline();
 
+            _inferenceDiagnostics.adapter_invoked = true;
+            _inferenceDiagnostics.inference_request_count++;
+            _inferenceDiagnostics.last_inference_call_utc = DateTime.UtcNow.ToString("O");
+            _inferenceDiagnostics.checkpoint_path_used_at_inference = _checkpointRelativePath ?? string.Empty;
+            _inferenceDiagnostics.python_request_status = "initializing";
+            _inferenceDiagnostics.python_response_status = string.Empty;
+            _inferenceDiagnostics.raw_bridge_response_keys = Array.Empty<string>();
+            _inferenceDiagnostics.raw_adapter_response_keys = Array.Empty<string>();
+            _inferenceDiagnostics.parsed_logits_available = false;
+            _inferenceDiagnostics.parsed_action_type_probabilities_available = false;
+            _inferenceDiagnostics.parsed_action_type_top3_available = false;
+            _inferenceDiagnostics.adapter_artifact_created = false;
+            _inferenceDiagnostics.adapter_artifact_missing_reason = string.Empty;
+
             if (_maxDecisionRequestsPerEpisode > 0 && _decisionRequestsSent >= _maxDecisionRequestsPerEpisode)
             {
+                _inferenceDiagnostics.python_request_status = "skipped_decision_cap";
+                _inferenceDiagnostics.adapter_artifact_missing_reason = "decision_request_cap_reached";
                 return RecordFailure(playerId, false, $"Decision request cap reached ({_maxDecisionRequestsPerEpisode}).");
             }
 
@@ -451,11 +543,15 @@ namespace RTS.ML
 
             if (!CanRun())
             {
+                _inferenceDiagnostics.python_request_status = "pipeline_not_ready";
+                _inferenceDiagnostics.adapter_artifact_missing_reason = "student_policy_pipeline_not_ready";
                 return RecordFailure(playerId, false, "Student policy pipeline is not ready.");
             }
 
             if (!EnsureBridgeStarted(out string bridgeError))
             {
+                _inferenceDiagnostics.python_request_status = "bridge_start_failed";
+                _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_start_failed";
                 return RecordFailure(playerId, false, bridgeError);
             }
 
@@ -467,11 +563,23 @@ namespace RTS.ML
                 ? stepInput.CanonicalObservation
                 : _policyPipeline.BuildObservationPackage(playerId, ObservationMode.UnityMvpTransfer);
 
+            _inferenceDiagnostics.observation_shape_sent = new[]
+            {
+                ObservationContract.GridH,
+                ObservationContract.GridW,
+                ObservationContract.ChannelsPerCell,
+            };
+            _inferenceDiagnostics.observation_element_count = observationPackage.SpatialObservation != null
+                ? observationPackage.SpatialObservation.Length
+                : 0;
+
             if (_validateObservationEachStep)
             {
                 ObservationValidationResult validation = _observationBuilder.ValidateObservation(observationPackage.SpatialObservation);
                 if (!validation.IsValid)
                 {
+                    _inferenceDiagnostics.python_request_status = "observation_validation_failed";
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "observation_validation_failed";
                     return RecordFailure(
                         playerId,
                         canUseCanonical,
@@ -486,6 +594,7 @@ namespace RTS.ML
             string stepStem = $"{_artifactFilePrefix}_{playerId.ToString().ToLowerInvariant()}_slot{slotIndex:D2}";
             string observationBinPath = Path.Combine(artifactDir, stepStem + "_observation.bin");
             string outputJsonPath = Path.Combine(artifactDir, stepStem + "_adapter.json");
+            _inferenceDiagnostics.last_output_json_path = outputJsonPath;
 
             try
             {
@@ -500,27 +609,42 @@ namespace RTS.ML
                     controlled_player = playerId.ToString(),
                 };
 
+                _inferenceDiagnostics.python_request_status = "request_sent";
+
                 _bridgeStdIn.WriteLine(JsonUtility.ToJson(request));
                 _bridgeStdIn.Flush();
 
                 if (!TryReadBridgeLine(_requestTimeoutMs, out string responseLine, out string readError))
                 {
+                    _inferenceDiagnostics.python_response_status = "response_timeout_or_error";
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_response_timeout_or_error";
                     return RecordFailure(playerId, canUseCanonical, "Student bridge response timeout/error: " + readError);
                 }
 
                 if (string.IsNullOrWhiteSpace(responseLine))
                 {
+                    _inferenceDiagnostics.python_response_status = "empty_response_line";
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_empty_response_line";
                     return RecordFailure(playerId, canUseCanonical, "Student bridge returned an empty response line.");
                 }
+
+                _inferenceDiagnostics.raw_bridge_response_keys = ExtractTopLevelJsonKeys(responseLine);
 
                 BridgeResponseEnvelope response = JsonUtility.FromJson<BridgeResponseEnvelope>(responseLine);
                 if (response == null)
                 {
+                    _inferenceDiagnostics.python_response_status = "response_parse_failed";
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_response_parse_failed";
                     return RecordFailure(playerId, canUseCanonical, "Cannot parse student bridge response.");
                 }
 
+                _inferenceDiagnostics.python_response_status = string.IsNullOrWhiteSpace(response.status)
+                    ? "missing_status"
+                    : response.status;
+
                 if (!string.Equals(response.status, "ok", StringComparison.Ordinal))
                 {
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_inference_failed";
                     return RecordFailure(
                         playerId,
                         canUseCanonical,
@@ -529,28 +653,35 @@ namespace RTS.ML
 
                 if (!File.Exists(response.output_json))
                 {
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_json_not_written";
                     return RecordFailure(
                         playerId,
                         canUseCanonical,
                         "Student bridge did not produce adapter JSON: " + response.output_json);
                 }
 
-                AdapterResult adapterResult = JsonUtility.FromJson<AdapterResult>(File.ReadAllText(response.output_json));
+                string adapterJsonText = File.ReadAllText(response.output_json);
+                AdapterResult adapterResult = JsonUtility.FromJson<AdapterResult>(adapterJsonText);
                 if (adapterResult == null)
                 {
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_json_parse_failed";
                     return RecordFailure(playerId, canUseCanonical, "Cannot parse adapter JSON payload.");
                 }
 
                 if (!string.Equals(adapterResult.status, "ok", StringComparison.Ordinal))
                 {
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_status_not_ok";
                     return RecordFailure(
                         playerId,
                         canUseCanonical,
                         "Student adapter payload is not ok: " + adapterResult.error);
                 }
 
+                UpdateInferenceDiagnosticsFromAdapterJson(adapterJsonText, response.output_json);
+
                 if (!ValidateAdapterPayload(adapterResult, out string payloadError))
                 {
+                    _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_payload_validation_failed";
                     return RecordFailure(playerId, canUseCanonical, payloadError);
                 }
 
@@ -559,6 +690,7 @@ namespace RTS.ML
                     : _policyPipeline.BuildTransferCompatibleMask(playerId);
 
                 StudentLiveFilterDiagnostics filterDiagnostics = BuildStudentFilterDiagnostics(playerId, mask, out List<int> eligibleCellIndices);
+                _inferenceDiagnostics.candidate_actor_cells_submitted = eligibleCellIndices.Count;
 
                 PolicyExecutionReport execution = _policyPipeline.ExecuteTransferCompatibleMaskAware(
                     adapterResult.action_flat,
@@ -601,6 +733,8 @@ namespace RTS.ML
                 _decisionRequestsSucceeded++;
                 _studentCommandsSubmitted += report.AcceptedCount + report.RejectedCount;
                 _lastRuntimeError = string.Empty;
+                _inferenceDiagnostics.python_request_status = "completed";
+                _inferenceDiagnostics.adapter_artifact_missing_reason = string.Empty;
 
                 if (_verboseLogs)
                 {
@@ -617,8 +751,54 @@ namespace RTS.ML
             }
             catch (Exception ex)
             {
+                _inferenceDiagnostics.python_response_status = "exception";
+                _inferenceDiagnostics.adapter_artifact_missing_reason = "exception_during_inference";
                 return RecordFailure(playerId, canUseCanonical, "Student live inference failed: " + ex.Message);
             }
+        }
+
+        private void UpdateInferenceDiagnosticsFromAdapterJson(string adapterJsonText, string outputJsonPath)
+        {
+            _inferenceDiagnostics.adapter_artifact_created = true;
+            _inferenceDiagnostics.last_output_json_path = outputJsonPath ?? string.Empty;
+            _inferenceDiagnostics.raw_adapter_response_keys = ExtractTopLevelJsonKeys(adapterJsonText);
+            _inferenceDiagnostics.parsed_logits_available = adapterJsonText != null
+                && adapterJsonText.IndexOf("\"model_output_logits_shapes\"", StringComparison.Ordinal) >= 0;
+            _inferenceDiagnostics.parsed_action_type_probabilities_available = adapterJsonText != null
+                && adapterJsonText.IndexOf("\"action_type_probabilities\"", StringComparison.Ordinal) >= 0;
+            _inferenceDiagnostics.parsed_action_type_top3_available = adapterJsonText != null
+                && adapterJsonText.IndexOf("\"action_type_top3\"", StringComparison.Ordinal) >= 0;
+        }
+
+        private static string[] ExtractTopLevelJsonKeys(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return Array.Empty<string>();
+            }
+
+            var keys = new List<string>(16);
+            MatchCollection matches = Regex.Matches(json, "\"(?<key>[^\"]+)\"\\s*:");
+            for (int i = 0; i < matches.Count; i++)
+            {
+                string key = matches[i].Groups["key"].Value;
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    continue;
+                }
+
+                if (!keys.Contains(key))
+                {
+                    keys.Add(key);
+                }
+
+                if (keys.Count >= 64)
+                {
+                    break;
+                }
+            }
+
+            return keys.ToArray();
         }
 
         private void OnDisable()
@@ -754,7 +934,12 @@ namespace RTS.ML
                 return false;
             }
 
-            if (!string.Equals(Path.GetFileName(checkpointPath), ExpectedStudentCheckpointFileName, StringComparison.OrdinalIgnoreCase))
+            string checkpointFileName = Path.GetFileName(checkpointPath);
+            bool checkpointNameAllowed =
+                string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameLegacy, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase);
+
+            if (!checkpointNameAllowed)
             {
                 error = "Unexpected checkpoint file name for Day 5 bridge: " + checkpointPath;
                 return false;
