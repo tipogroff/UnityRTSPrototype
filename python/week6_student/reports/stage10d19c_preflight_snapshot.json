@@ -1,0 +1,38 @@
+{
+  "stage": "10D.19C",
+  "task": "preflight_snapshot",
+  "generated_at_utc": "2026-05-03T19:58:26Z",
+  "git_status_short": [
+    "?? python/week6_student/reports/stage10d19c_preflight_snapshot.json",
+    "?? python/week6_student/stage10d19c_common.py",
+    "?? python/week6_student/stage10d19c_extract_occupied_move_failure_cases.py",
+    "?? python/week6_student/stage10d19c_failure_case_replay_probe.py"
+  ],
+  "required_artifacts_exist": {
+    "python/week6_student/reports/stage10d18rr_movement_command_path_audit.json": true,
+    "python/week6_student/reports/stage10d18rr_runtime_redeploy_trace.jsonl": true,
+    "python/week6_student/reports/stage10d18rr_produced_unit_lifecycle.json": true,
+    "python/week6_student/reports/stage10d18rr_off_actor_safety_audit.json": true,
+    "python/week6_student/reports/stage10d19_move_command_efficiency_audit.json": true,
+    "python/week6_student/reports/stage10d19_off_actor_safety_deep_audit.json": true,
+    "python/week6_student/reports/STAGE10D19_FULLMAP_POSTPRODUCTION_BEHAVIOR_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19B_VALID_MOVE_EFFICIENCY_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19M_LEGAL_ACTION_MASK_AUDIT_REPORT.md": true,
+    "python/week6_student/reports/stage10d19m_mask_semantics_validation.json": true,
+    "python/week6_student/reports/stage10d19m_legal_action_mask_contract.json": true
+  },
+  "base_dataset_path": "python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/",
+  "stage10d19b_dataset_path": "python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z/",
+  "stage10d17_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "stage10d19b_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+  "selected_gate_from_stage10d19m": "GO_FOR_STAGE10D19B_AUGMENTATION_REDESIGN_WITH_MASK_AWARE_LABELS",
+  "pivot_rationale": "legal mask is valid but prior proxy did not cover actual occupied-target failures",
+  "explicit_non_claims": [
+    "no PPO",
+    "no teacher mutation",
+    "no runtime semantic changes",
+    "no force movement",
+    "no attack augmentation",
+    "no Unity rerun yet"
+  ]
+}

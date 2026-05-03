@@ -1,0 +1,60 @@
+{
+  "generated_at_utc": "2026-05-03T21:31:55.391914+00:00",
+  "number_of_actions_changed_by_mask": 314,
+  "changed_action_breakdown": {
+    "invalid_move_to_noop": 8,
+    "invalid_move_to_valid_move": 0,
+    "off_actor_non_noop_to_noop": 171,
+    "invalid_attack_to_noop": 0,
+    "invalid_produce_to_noop": 59,
+    "other": 76
+  },
+  "raw_action_distribution": {
+    "NoOp": 173,
+    "Move": 12,
+    "Harvest": 76,
+    "Return": 0,
+    "Produce": 74,
+    "Attack": 0
+  },
+  "masked_action_distribution": {
+    "NoOp": 316,
+    "Move": 4,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 15,
+    "Attack": 0
+  },
+  "produced_unit_raw_distribution": {
+    "NoOp": 15,
+    "Move": 0,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 0,
+    "Attack": 0
+  },
+  "produced_unit_masked_distribution": {
+    "NoOp": 15,
+    "Move": 0,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 0,
+    "Attack": 0
+  },
+  "b2_raw_vs_masked": {
+    "raw": "Harvest",
+    "masked": "NoOp"
+  },
+  "c3_raw_vs_masked": {
+    "raw": "Produce",
+    "masked": "Produce"
+  },
+  "mask_suppressed_too_much_movement": false,
+  "mask_introduced_action_starvation": false,
+  "labels": [
+    "STAGE10D20_MASK_DELTA_AUDIT_COMPLETED",
+    "STAGE10D20_MASK_CHANGES_INVALID_ACTIONS_ONLY_OR_MOSTLY",
+    "STAGE10D20_MASK_PRESERVES_ECONOMY_GUARDS",
+    "STAGE10D20_MASK_PRESERVES_PRODUCTION"
+  ]
+}

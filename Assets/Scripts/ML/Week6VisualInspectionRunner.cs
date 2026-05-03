@@ -370,6 +370,9 @@ namespace RTS.ML
             public int candidate_actor_cells_submitted;
             public string python_request_status;
             public string python_response_status;
+            public bool legal_mask_enabled_for_selection;
+            public int total_mask_fallback_to_noop;
+            public int total_masked_out_action_type_choices;
             public string[] raw_bridge_response_keys;
             public string[] raw_adapter_response_keys;
             public bool parsed_logits_available;
@@ -1029,6 +1032,9 @@ namespace RTS.ML
                 candidate_actor_cells_submitted = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.candidate_actor_cells_submitted : 0,
                 python_request_status = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.python_request_status : string.Empty,
                 python_response_status = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.python_response_status : string.Empty,
+                legal_mask_enabled_for_selection = _studentAdapter != null && _studentAdapter.EnableLegalActionMaskForSelection,
+                total_mask_fallback_to_noop = _totalFallbackToNoop,
+                total_masked_out_action_type_choices = _totalMaskedOutActionChoices,
                 raw_bridge_response_keys = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.raw_bridge_response_keys : Array.Empty<string>(),
                 raw_adapter_response_keys = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.raw_adapter_response_keys : Array.Empty<string>(),
                 parsed_logits_available = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.parsed_logits_available,

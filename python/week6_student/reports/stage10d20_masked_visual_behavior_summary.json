@@ -1,0 +1,30 @@
+{
+  "generated_at_utc": "2026-05-03T21:31:55.391914+00:00",
+  "steps_completed": 76,
+  "terminal_result": "Loss",
+  "visible_behavior_observed": true,
+  "b2_harvest_preserved_at_initial_step": true,
+  "c3_produce_preserved_at_initial_step": true,
+  "produced_units_count": 15,
+  "produced_units_visible_in_observation": 15,
+  "produced_units_owner_unit_encoding_valid": 15,
+  "produced_units_with_masked_move_prediction_count": 0,
+  "produced_units_with_move_command_built_count": 0,
+  "produced_units_with_move_command_accepted_count": 0,
+  "produced_units_that_moved_count": 0,
+  "total_units_that_changed_position": 0,
+  "enemy_engagement_observed": false,
+  "attack_predictions_total": 0,
+  "attack_commands_built": 0,
+  "attack_commands_accepted": 0,
+  "behavior_progress_beyond_production": false,
+  "primary_success_or_failure_mode": "economy_or_noop_bias",
+  "labels": [
+    "STAGE10D20_VISUAL_SUMMARY_COMPLETED",
+    "STAGE10D20_B2_HARVEST_PRESERVED",
+    "STAGE10D20_C3_PRODUCE_PRESERVED",
+    "STAGE10D20_PRODUCTION_PRESERVED",
+    "STAGE10D20_UNITS_PRODUCED",
+    "STAGE10D20_ATTACK_ABSENT"
+  ]
+}

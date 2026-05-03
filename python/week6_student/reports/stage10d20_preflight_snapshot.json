@@ -1,0 +1,59 @@
+{
+  "generated_at_utc": "2026-05-03T21:30:21.223938Z",
+  "git_status_short": [
+    " M Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+    " M Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+    "?? Assets/Scripts/ML/Editor/Week6Stage10D20UnityMaskedValidMoveRerunMenu.cs",
+    "?? Assets/Scripts/ML/Editor/Week6Stage10D20UnityMaskedValidMoveRerunMenu.cs.meta",
+    "?? python/week6_student/bc_ready/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200611Z/",
+    "?? python/week6_student/bc_ready/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200935Z/",
+    "?? python/week6_student/reports/STAGE10D19C_MASK_AWARE_FAILURE_REPLAY_REPORT.md",
+    "?? python/week6_student/reports/stage10d19c_checkpoint_comparison.json",
+    "?? python/week6_student/reports/stage10d19c_failure_case_replay_probe_stage10d17.json",
+    "?? python/week6_student/reports/stage10d19c_failure_case_replay_probe_stage10d19b.json",
+    "?? python/week6_student/reports/stage10d19c_mask_aware_failure_dataset_validation.json",
+    "?? python/week6_student/reports/stage10d19c_occupied_move_failure_cases.json",
+    "?? python/week6_student/reports/stage10d19c_occupied_move_failure_cases.jsonl",
+    "?? python/week6_student/reports/stage10d19c_offline_eval_report.json",
+    "?? python/week6_student/reports/stage10d19c_preflight_snapshot.json",
+    "?? python/week6_student/stage10d19c_build_mask_aware_failure_dataset.py",
+    "?? python/week6_student/stage10d19c_build_report.py",
+    "?? python/week6_student/stage10d19c_common.py",
+    "?? python/week6_student/stage10d19c_compare_stage10d17_19b_19c.py",
+    "?? python/week6_student/stage10d19c_eval_mask_aware_student.py",
+    "?? python/week6_student/stage10d19c_extract_occupied_move_failure_cases.py",
+    "?? python/week6_student/stage10d19c_failure_case_replay_probe.py",
+    "?? python/week6_student/stage10d19c_train_mask_aware_student.py",
+    "?? python/week6_student/stage10d19c_validate_mask_aware_failure_dataset.py",
+    "?? python/week6_student/stage10d20_build_unity_masked_rerun_report.py",
+    "?? python/week6_student/stage10d20_verify_masked_checkpoint_binding.py"
+  ],
+  "required_artifacts_exist": {
+    "python/week6_student/reports/STAGE10D18RR_RUNTIME_BC_REDEPLOY_EVAL_RERUN_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19_FULLMAP_POSTPRODUCTION_BEHAVIOR_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19B_VALID_MOVE_EFFICIENCY_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19M_LEGAL_ACTION_MASK_AUDIT_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19C_MASK_AWARE_FAILURE_REPLAY_REPORT.md": true,
+    "python/week6_student/reports/stage10d19c_checkpoint_comparison.json": true,
+    "python/week6_student/reports/stage10d19c_failure_case_replay_probe_stage10d19b.json": true
+  },
+  "selected_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+  "selected_checkpoint_basename": "student_bc_stage10d19b_valid_move_best.pt",
+  "selected_checkpoint_exists": true,
+  "explicitly_rejected_checkpoints": [
+    "Stage10D.19C",
+    "Stage10D.17",
+    "Stage10D.14",
+    "Stage10D.8"
+  ],
+  "selected_gate_from_stage10d19c": "GO_FOR_STAGE10D19C_TRAINING_BALANCE_FIX",
+  "evidence_based_override_reason": "Stage10D.19C checkpoint rejected, Stage10D.19B selected, mask fixed real occupied-target failure replay.",
+  "explicit_non_claims": [
+    "no PPO",
+    "no teacher/student training",
+    "no checkpoint mutation",
+    "no dataset mutation",
+    "no runtime semantic shortcut",
+    "legal mask is pre-selection only"
+  ]
+}

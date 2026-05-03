@@ -1,0 +1,152 @@
+{
+  "stage": "10D.19C",
+  "task": "build_mask_aware_failure_dataset",
+  "generated_at_utc": "2026-05-03T20:07:42Z",
+  "output_dataset_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200611Z",
+  "base_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+  "failure_case_source_artifacts": {
+    "failure_cases_json": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d19c_occupied_move_failure_cases.json"
+  },
+  "counts": {
+    "original_train": 87552,
+    "original_validation": 10737,
+    "merged_train_count": 91953,
+    "merged_validation_count": 11992,
+    "augmented_train_count": 4401,
+    "augmented_validation_count": 1255
+  },
+  "augmentation_family_counts": {
+    "family_b_valid_alt_move": 1328,
+    "family_c_blocked_dir_hard_negative": 1328,
+    "family_d_off_actor_hard_negative": 1800,
+    "family_f_preservation": 1200
+  },
+  "no_valid_alt_count": 0,
+  "valid_alt_count": 1328,
+  "hard_negative_count": 1328,
+  "off_actor_negative_count": 1800,
+  "preservation_count": 1200,
+  "skipped_counts_and_reasons": {},
+  "label_distribution_before_after": {
+    "before": {
+      "train": {
+        "sample_count": 87552,
+        "total_cells": 50429952,
+        "actor_cells": 179660,
+        "noop_ratio_all_cells": 0.9964969429278854,
+        "action_type_counts": {
+          "NoOp": 50253293,
+          "Move": 3470,
+          "Harvest": 86058,
+          "Return": 0,
+          "Produce": 87043,
+          "Attack": 88
+        },
+        "actor_action_type_counts": {
+          "NoOp": 3109,
+          "Move": 3470,
+          "Harvest": 85966,
+          "Return": 0,
+          "Produce": 87027,
+          "Attack": 88
+        }
+      },
+      "validation": {
+        "sample_count": 10737,
+        "total_cells": 6184512,
+        "actor_cells": 22950,
+        "noop_ratio_all_cells": 0.9964165321370546,
+        "action_type_counts": {
+          "NoOp": 6162350,
+          "Move": 883,
+          "Harvest": 10582,
+          "Return": 0,
+          "Produce": 10690,
+          "Attack": 7
+        },
+        "actor_action_type_counts": {
+          "NoOp": 817,
+          "Move": 883,
+          "Harvest": 10557,
+          "Return": 0,
+          "Produce": 10686,
+          "Attack": 7
+        }
+      }
+    },
+    "after": {
+      "train": {
+        "sample_count": 91953,
+        "total_cells": 52964928,
+        "actor_cells": 188682,
+        "noop_ratio_all_cells": 0.9964763286376978,
+        "action_type_counts": {
+          "NoOp": 52778297,
+          "Move": 4657,
+          "Harvest": 90444,
+          "Return": 0,
+          "Produce": 91441,
+          "Attack": 89
+        },
+        "actor_action_type_counts": {
+          "NoOp": 3264,
+          "Move": 3624,
+          "Harvest": 90290,
+          "Return": 0,
+          "Produce": 91415,
+          "Attack": 89
+        }
+      },
+      "validation": {
+        "sample_count": 11992,
+        "total_cells": 6907392,
+        "actor_cells": 25592,
+        "noop_ratio_all_cells": 0.996373160810911,
+        "action_type_counts": {
+          "NoOp": 6882340,
+          "Move": 1266,
+          "Harvest": 11834,
+          "Return": 0,
+          "Produce": 11945,
+          "Attack": 7
+        },
+        "actor_action_type_counts": {
+          "NoOp": 896,
+          "Move": 972,
+          "Harvest": 11788,
+          "Return": 0,
+          "Produce": 11929,
+          "Attack": 7
+        }
+      }
+    }
+  },
+  "move_dir_distribution": {
+    "0": 202,
+    "2": 1126
+  },
+  "blocked_dir_distribution": {
+    "1": 1328
+  },
+  "chosen_alt_dir_distribution": {
+    "0": 202,
+    "2": 1126
+  },
+  "explicit_non_claims": [
+    "no PPO",
+    "no teacher mutation",
+    "no runtime semantic changes",
+    "no force movement",
+    "no attack augmentation",
+    "no Unity rerun in Stage10D.19C"
+  ],
+  "config": {
+    "max_family_a_noop": 1200,
+    "max_family_b_valid_alt": 1800,
+    "max_family_c_hard_negative": 1800,
+    "max_family_d_off_actor_negative": 1800,
+    "max_family_f_preservation": 1200,
+    "train_ratio": 0.8,
+    "seed": 1919
+  }
+}

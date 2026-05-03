@@ -1,0 +1,217 @@
+{
+  "stage": "10D.19C",
+  "task": "offline_eval_mask_aware_student",
+  "generated_at_utc": "2026-05-03T20:51:54Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_20260503T202258Z/student_bc_stage10d19c_mask_aware_best.pt",
+  "bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200935Z",
+  "block_a_original_validation_preservation": {
+    "actor_action_accuracy": 0.9981951087446981,
+    "actor_non_noop_recall": 0.9981951087446981,
+    "worker_harvest_recall": 1.0,
+    "base_produce_recall": 0.9998118178396688
+  },
+  "block_b_b2_c3_true_raw_guards": {
+    "B2": {
+      "flat_index": 25,
+      "predicted_action": "harvest",
+      "p_noop": 1.176069139028993e-24,
+      "p_move": 0.0034993512090295553,
+      "p_harvest": 0.9960903525352478,
+      "p_return": 7.926382750156336e-07,
+      "p_produce": 6.662441592197865e-05,
+      "p_attack": 0.00034281398984603584,
+      "full_probabilities": [
+        1.176069139028993e-24,
+        0.0034993512090295553,
+        0.9960903525352478,
+        7.926382750156336e-07,
+        6.662441592197865e-05,
+        0.00034281398984603584
+      ]
+    },
+    "C3": {
+      "flat_index": 50,
+      "predicted_action": "produce",
+      "p_noop": 1.634479769412056e-13,
+      "p_move": 0.005704227834939957,
+      "p_harvest": 0.0003441738081164658,
+      "p_return": 4.9332695198245347e-05,
+      "p_produce": 0.9938374161720276,
+      "p_attack": 6.480877345893532e-05,
+      "full_probabilities": [
+        1.634479769412056e-13,
+        0.005704227834939957,
+        0.0003441738081164658,
+        4.9332695198245347e-05,
+        0.9938374161720276,
+        6.480877345893532e-05
+      ]
+    },
+    "guards_preserved": true
+  },
+  "block_c_movement_preservation": {
+    "valid_alternative_move_rate": 0.0,
+    "predicted_occupied_or_invalid_target_moves": 0
+  },
+  "block_d_failure_case_evaluation": {
+    "occupied_failure_case_accuracy": 0.5340729001584786,
+    "valid_alternative_move_rate": 0.0,
+    "no_valid_alt_noop_rate": 1.0,
+    "off_actor_noop_accuracy": 1.0,
+    "predicted_occupied_or_invalid_target_moves": 0
+  },
+  "block_e_off_actor_safety": {
+    "off_actor_noop_accuracy": 1.0,
+    "off_actor_non_noop_count_on_failure_steps": 33
+  },
+  "block_f_masked_unmasked_comparison": {
+    "stage10d17": {
+      "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+      "cases_evaluated": 1328,
+      "reconstruction_partial": false,
+      "unmasked_move_predictions": 1296,
+      "masked_move_predictions": 1328,
+      "unmasked_occupied_or_invalid_move_count": 1296,
+      "masked_occupied_or_invalid_move_count": 0,
+      "invalid_move_to_noop_count": 0,
+      "invalid_move_to_valid_move_count": 1296,
+      "valid_alternative_move_selected_count": 1328,
+      "no_valid_alt_noop_selected_count": 0,
+      "off_actor_non_noop_count_unmasked": 711,
+      "off_actor_non_noop_count_masked": 711,
+      "movement_suppressed_count": 0,
+      "mask_changed_action_count": 32,
+      "mask_changed_action_breakdown": {
+        "invalid Move -> valid Move": 1296,
+        "other": 32
+      },
+      "b2_guard_harvest_gt_noop_rate": 1.0,
+      "c3_guard_produce_gt_noop_rate": 1.0,
+      "detail": {
+        "reconstruction_missing_steps": 0,
+        "case_count_in": 1328,
+        "rows_used": 1328,
+        "action_type_unmasked_distribution": {
+          "NoOp": 0,
+          "Move": 1296,
+          "Harvest": 9,
+          "Return": 0,
+          "Produce": 23,
+          "Attack": 0
+        },
+        "action_type_masked_distribution": {
+          "NoOp": 0,
+          "Move": 1328,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        }
+      }
+    },
+    "stage10d19b": {
+      "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+      "cases_evaluated": 1328,
+      "reconstruction_partial": false,
+      "unmasked_move_predictions": 1308,
+      "masked_move_predictions": 1308,
+      "unmasked_occupied_or_invalid_move_count": 229,
+      "masked_occupied_or_invalid_move_count": 0,
+      "invalid_move_to_noop_count": 0,
+      "invalid_move_to_valid_move_count": 229,
+      "valid_alternative_move_selected_count": 1308,
+      "no_valid_alt_noop_selected_count": 0,
+      "off_actor_non_noop_count_unmasked": 36,
+      "off_actor_non_noop_count_masked": 36,
+      "movement_suppressed_count": 0,
+      "mask_changed_action_count": 0,
+      "mask_changed_action_breakdown": {
+        "invalid Move -> valid Move": 229
+      },
+      "b2_guard_harvest_gt_noop_rate": 1.0,
+      "c3_guard_produce_gt_noop_rate": 1.0,
+      "detail": {
+        "reconstruction_missing_steps": 0,
+        "case_count_in": 1328,
+        "rows_used": 1328,
+        "action_type_unmasked_distribution": {
+          "NoOp": 20,
+          "Move": 1308,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_masked_distribution": {
+          "NoOp": 20,
+          "Move": 1308,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        }
+      }
+    },
+    "stage10d19c": {
+      "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_20260503T202258Z/student_bc_stage10d19c_mask_aware_best.pt",
+      "cases_evaluated": 1328,
+      "reconstruction_partial": false,
+      "unmasked_move_predictions": 1093,
+      "masked_move_predictions": 1093,
+      "unmasked_occupied_or_invalid_move_count": 237,
+      "masked_occupied_or_invalid_move_count": 0,
+      "invalid_move_to_noop_count": 0,
+      "invalid_move_to_valid_move_count": 237,
+      "valid_alternative_move_selected_count": 1093,
+      "no_valid_alt_noop_selected_count": 0,
+      "off_actor_non_noop_count_unmasked": 33,
+      "off_actor_non_noop_count_masked": 33,
+      "movement_suppressed_count": 0,
+      "mask_changed_action_count": 0,
+      "mask_changed_action_breakdown": {
+        "invalid Move -> valid Move": 237
+      },
+      "b2_guard_harvest_gt_noop_rate": 1.0,
+      "c3_guard_produce_gt_noop_rate": 1.0,
+      "detail": {
+        "reconstruction_missing_steps": 0,
+        "case_count_in": 1328,
+        "rows_used": 1328,
+        "action_type_unmasked_distribution": {
+          "NoOp": 235,
+          "Move": 1093,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_masked_distribution": {
+          "NoOp": 235,
+          "Move": 1093,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        }
+      }
+    }
+  },
+  "block_g_attack_watch_only": {
+    "max_p_attack": 0.00034281398984603584,
+    "attack_near_miss_count_if_inferable": 0
+  },
+  "labels": [
+    "STAGE10D19C_ORIGINAL_PERFORMANCE_PRESERVED",
+    "STAGE10D19C_B2_C3_GUARDS_PRESERVED",
+    "STAGE10D19C_NOT_READY_FOR_UNITY",
+    "STAGE10D19C_NOT_READY_FOR_UNITY",
+    "STAGE10D19C_NOT_READY_FOR_UNITY",
+    "STAGE10D19C_NOT_READY_FOR_UNITY",
+    "STAGE10D19C_NO_VALID_ALT_NOOP_SELECTION_IMPROVED",
+    "STAGE10D19C_OFF_ACTOR_RISK_REDUCED_OR_CONTROLLED",
+    "STAGE10D19C_MASK_COMPATIBLE",
+    "STAGE10D19C_ATTACK_WATCH_ONLY_OK",
+    "STAGE10D19C_NOT_READY_FOR_UNITY"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D19C_TRAINING_BALANCE_FIX"
+}

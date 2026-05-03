@@ -299,6 +299,7 @@ namespace RTS.ML
         private const string ExpectedStudentCheckpointFileNameSemantic = "student_bc_semantic_best.pt";
         private const string ExpectedStudentCheckpointFileNameAugmented = "student_bc_stage10d14_augmented_best.pt";
         private const string ExpectedStudentCheckpointFileNameMovementAugmented = "student_bc_stage10d17_movement_augmented_best.pt";
+        private const string ExpectedStudentCheckpointFileNameStage10D19B = "student_bc_stage10d19b_valid_move_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -467,6 +468,7 @@ namespace RTS.ML
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
         [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt";
+        [SerializeField] private bool _enableLegalActionMaskForSelection = false;
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
         [SerializeField] private string _artifactFilePrefix = "day5_sanity";
         [SerializeField] private int _artifactRingSlots = 4;
@@ -552,6 +554,7 @@ namespace RTS.ML
             }
 
         public string CheckpointRelativePath => _checkpointRelativePath;
+        public bool EnableLegalActionMaskForSelection => _enableLegalActionMaskForSelection;
 
             public bool ShutdownBridgeForSanity()
             {
@@ -746,23 +749,39 @@ namespace RTS.ML
                 StudentLiveFilterDiagnostics filterDiagnostics = BuildStudentFilterDiagnostics(playerId, mask, out List<int> eligibleCellIndices);
                 _inferenceDiagnostics.candidate_actor_cells_submitted = eligibleCellIndices.Count;
 
-                PolicyExecutionReport execution = _policyPipeline.ExecuteTransferCompatibleMaskAware(
-                    adapterResult.action_flat,
-                    playerId,
-                    eligibleCellIndices,
-                    mask,
-                    out int maskedOutChoicesCount,
-                    out int fallbackToNoopCount,
-                    out Dictionary<UnitActionType, int> preMaskHistogram,
-                    out Dictionary<UnitActionType, int> postMaskHistogram,
-                    "week6-day5-student-live");
+                PolicyExecutionReport execution;
+                StudentMaskAwareDiagnostics maskAwareDiagnostics;
+                if (_enableLegalActionMaskForSelection)
+                {
+                    execution = _policyPipeline.ExecuteTransferCompatibleMaskAware(
+                        adapterResult.action_flat,
+                        playerId,
+                        eligibleCellIndices,
+                        mask,
+                        out int maskedOutChoicesCount,
+                        out int fallbackToNoopCount,
+                        out Dictionary<UnitActionType, int> preMaskHistogram,
+                        out Dictionary<UnitActionType, int> postMaskHistogram,
+                        "week6-day5-student-live");
 
-                var maskAwareDiagnostics = new StudentMaskAwareDiagnostics(
-                    enabled: true,
-                    maskedOutActionTypeChoicesCount: maskedOutChoicesCount,
-                    fallbackToNoopCount: fallbackToNoopCount,
-                    preMaskRawHistogram: preMaskHistogram,
-                    postMaskHistogram: postMaskHistogram);
+                    maskAwareDiagnostics = new StudentMaskAwareDiagnostics(
+                        enabled: true,
+                        maskedOutActionTypeChoicesCount: maskedOutChoicesCount,
+                        fallbackToNoopCount: fallbackToNoopCount,
+                        preMaskRawHistogram: preMaskHistogram,
+                        postMaskHistogram: postMaskHistogram);
+                }
+                else
+                {
+                    execution = _policyPipeline.ExecuteTransferCompatibleFiltered(
+                        adapterResult.action_flat,
+                        playerId,
+                        eligibleCellIndices,
+                        mask,
+                        "week6-day5-student-live");
+
+                    maskAwareDiagnostics = StudentMaskAwareDiagnostics.Empty;
+                }
 
                 int commandsBuiltAfterFilter = execution.DecodedActions.Count;
                 int commandsSubmittedAfterFilter = execution.AcceptedCount + execution.RejectedCount;
@@ -993,7 +1012,8 @@ namespace RTS.ML
                 string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameLegacy, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameAugmented, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameMovementAugmented, StringComparison.OrdinalIgnoreCase);
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameMovementAugmented, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameStage10D19B, StringComparison.OrdinalIgnoreCase);
 
             if (!checkpointNameAllowed)
             {

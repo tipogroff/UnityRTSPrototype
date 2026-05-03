@@ -1,0 +1,19 @@
+{
+  "generated_at_utc": "2026-05-03T21:31:55.391914+00:00",
+  "total_off_actor_raw_non_noop": 171,
+  "total_off_actor_masked_non_noop": 0,
+  "max_off_actor_raw_non_noop_per_step": 5,
+  "max_off_actor_masked_non_noop_per_step": 0,
+  "off_actor_command_built_count": 0,
+  "off_actor_submission_count": 0,
+  "off_actor_reached_action_applier_count": 0,
+  "off_actor_reached_match_manager_count": 0,
+  "mask_changed_off_actor_to_noop_count": 171,
+  "off_actor_nonnoop_reduction_rate": 1.0,
+  "off_actor_residual_risk": "none",
+  "labels": [
+    "STAGE10D20_OFF_ACTOR_SAFETY_AUDIT_COMPLETED",
+    "STAGE10D20_OFF_ACTOR_MASK_REDUCED_NONNOOP",
+    "STAGE10D20_OFF_ACTOR_MASKED_SAFE"
+  ]
+}

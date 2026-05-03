@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-05-03T21:31:55.404663+00:00",
+  "preflight": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_preflight_snapshot.json",
+  "binding": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_checkpoint_binding.json",
+  "runtime_trace": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_runtime_trace.jsonl",
+  "move_efficiency": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_move_efficiency.json",
+  "off_actor_safety": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_off_actor_safety.json",
+  "mask_action_delta": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_action_delta_audit.json",
+  "visual_summary": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_visual_behavior_summary.json",
+  "report_markdown": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/STAGE10D20_UNITY_MASKED_VALID_MOVE_RERUN_REPORT.md",
+  "primary_next_gate": "GO_FOR_STAGE10D20_MASK_LOGIC_FIX",
+  "stage10d20_status": "PARTIAL"
+}

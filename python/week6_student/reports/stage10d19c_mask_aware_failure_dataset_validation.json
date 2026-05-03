@@ -1,0 +1,233 @@
+{
+  "stage": "10D.19C",
+  "task": "validate_mask_aware_failure_dataset",
+  "generated_at_utc": "2026-05-03T20:12:18Z",
+  "augmented_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200935Z",
+  "base_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+  "status": "pass",
+  "shape_checks": {
+    "train_observations_shape": true,
+    "train_actions_shape": true,
+    "validation_observations_shape": true,
+    "validation_actions_shape": true
+  },
+  "dtype_checks": {
+    "observations_float32": true,
+    "actions_integer": true
+  },
+  "finite_checks": {
+    "train_finite": true,
+    "validation_finite": true
+  },
+  "branch_bounds": {
+    "expected": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "train": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    },
+    "validation": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    }
+  },
+  "family_coverage": {
+    "occupied_target_failure_cases_included": true,
+    "valid_alt_cases_included": true,
+    "no_valid_alt_cases_included": true,
+    "off_actor_hard_negatives_included": true,
+    "preservation_rows_included": true
+  },
+  "family_counts": {
+    "train": {
+      "family_a_no_valid_alt_noop": 179,
+      "family_b_valid_alt_move": 1034,
+      "family_c_blocked_dir_hard_negative": 1034,
+      "family_d_off_actor_hard_negative": 1377,
+      "family_f_preservation": 956
+    },
+    "validation": {
+      "family_b_valid_alt_move": 294,
+      "family_c_blocked_dir_hard_negative": 294,
+      "family_d_off_actor_hard_negative": 423,
+      "family_a_no_valid_alt_noop": 43,
+      "family_f_preservation": 244
+    }
+  },
+  "legal_label_checks": {
+    "train": {
+      "family_b_valid_alt_total": 1034,
+      "family_b_valid_alt_ok": 1034,
+      "family_a_no_valid_alt_total": 179,
+      "family_a_no_valid_alt_ok": 179,
+      "family_d_off_actor_total": 1377,
+      "family_d_off_actor_ok": 1376
+    },
+    "validation": {
+      "family_b_valid_alt_total": 294,
+      "family_b_valid_alt_ok": 294,
+      "family_a_no_valid_alt_total": 43,
+      "family_a_no_valid_alt_ok": 43,
+      "family_d_off_actor_total": 423,
+      "family_d_off_actor_ok": 423
+    }
+  },
+  "leakage_checks": {
+    "leakage_risk_train": 0,
+    "leakage_risk_validation": 0,
+    "leakage_risk_total": 0
+  },
+  "preservation": {
+    "train": {
+      "b2_harvest_base": 86058,
+      "b2_harvest_augmented": 90623,
+      "c3_produce_base": 87043,
+      "c3_produce_augmented": 91620,
+      "move_labels_base": 3470,
+      "move_labels_augmented": 4663,
+      "attack_labels_base": 88,
+      "attack_labels_augmented": 89,
+      "preservation_rows": 956,
+      "b2_c3_preserved": true,
+      "movement_preserved": true,
+      "attack_preserved": true
+    },
+    "validation": {
+      "b2_harvest_base": 10582,
+      "b2_harvest_augmented": 11877,
+      "c3_produce_base": 10690,
+      "c3_produce_augmented": 11988,
+      "move_labels_base": 883,
+      "move_labels_augmented": 1271,
+      "attack_labels_base": 7,
+      "attack_labels_augmented": 7,
+      "preservation_rows": 244,
+      "b2_c3_preserved": true,
+      "movement_preserved": true,
+      "attack_preserved": true
+    }
+  },
+  "distribution": {
+    "base_train": {
+      "sample_count": 87552,
+      "total_cells": 50429952,
+      "actor_cells": 179660,
+      "noop_ratio_all_cells": 0.9964969429278854,
+      "action_type_counts": {
+        "NoOp": 50253293,
+        "Move": 3470,
+        "Harvest": 86058,
+        "Return": 0,
+        "Produce": 87043,
+        "Attack": 88
+      },
+      "actor_action_type_counts": {
+        "NoOp": 3109,
+        "Move": 3470,
+        "Harvest": 85966,
+        "Return": 0,
+        "Produce": 87027,
+        "Attack": 88
+      }
+    },
+    "base_validation": {
+      "sample_count": 10737,
+      "total_cells": 6184512,
+      "actor_cells": 22950,
+      "noop_ratio_all_cells": 0.9964165321370546,
+      "action_type_counts": {
+        "NoOp": 6162350,
+        "Move": 883,
+        "Harvest": 10582,
+        "Return": 0,
+        "Produce": 10690,
+        "Attack": 7
+      },
+      "actor_action_type_counts": {
+        "NoOp": 817,
+        "Move": 883,
+        "Harvest": 10557,
+        "Return": 0,
+        "Produce": 10686,
+        "Attack": 7
+      }
+    },
+    "augmented_train": {
+      "sample_count": 92132,
+      "total_cells": 53068032,
+      "actor_cells": 189055,
+      "noop_ratio_all_cells": 0.9964763155339923,
+      "action_type_counts": {
+        "NoOp": 52881037,
+        "Move": 4663,
+        "Harvest": 90623,
+        "Return": 0,
+        "Produce": 91620,
+        "Attack": 89
+      },
+      "actor_action_type_counts": {
+        "NoOp": 3276,
+        "Move": 3630,
+        "Harvest": 90467,
+        "Return": 0,
+        "Produce": 91593,
+        "Attack": 89
+      }
+    },
+    "augmented_validation": {
+      "sample_count": 12035,
+      "total_cells": 6932160,
+      "actor_cells": 25686,
+      "noop_ratio_all_cells": 0.9963729919678714,
+      "action_type_counts": {
+        "NoOp": 6907017,
+        "Move": 1271,
+        "Harvest": 11877,
+        "Return": 0,
+        "Produce": 11988,
+        "Attack": 7
+      },
+      "actor_action_type_counts": {
+        "NoOp": 899,
+        "Move": 977,
+        "Harvest": 11831,
+        "Return": 0,
+        "Produce": 11972,
+        "Attack": 7
+      }
+    },
+    "noop_ratio_ok": true,
+    "move_not_catastrophic": true
+  },
+  "classification_labels": [
+    "STAGE10D19C_DATASET_VALID",
+    "STAGE10D19C_FAILURE_CASE_COVERAGE_CONFIRMED",
+    "STAGE10D19C_VALID_ALT_MOVE_LABELS_CONFIRMED",
+    "STAGE10D19C_NO_VALID_ALT_NOOP_LABELS_CONFIRMED",
+    "STAGE10D19C_OFF_ACTOR_HARD_NEGATIVES_CONFIRMED",
+    "STAGE10D19C_MASK_LEGAL_LABELS_CONFIRMED",
+    "STAGE10D19C_NO_LABEL_LEAKAGE_CONFIRMED",
+    "STAGE10D19C_B2_C3_GUARDS_PRESERVED",
+    "STAGE10D19C_MOVEMENT_PRESERVATION_CONFIRMED",
+    "STAGE10D19C_ATTACK_LABELS_PRESERVED",
+    "STAGE10D19C_TARGET_DISTRIBUTION_ACCEPTABLE"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D19C_MASK_AWARE_BC_TRAINING"
+}

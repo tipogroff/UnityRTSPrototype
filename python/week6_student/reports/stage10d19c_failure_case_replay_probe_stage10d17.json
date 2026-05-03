@@ -1,0 +1,54 @@
+{
+  "stage": "10D.19C",
+  "task": "failure_case_replay_probe",
+  "generated_at_utc": "2026-05-03T20:01:54Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "failure_cases_total": 1328,
+  "cases_evaluated": 1328,
+  "reconstruction_partial": false,
+  "unmasked_move_predictions": 1296,
+  "masked_move_predictions": 1328,
+  "unmasked_occupied_or_invalid_move_count": 1296,
+  "masked_occupied_or_invalid_move_count": 0,
+  "invalid_move_to_noop_count": 0,
+  "invalid_move_to_valid_move_count": 1296,
+  "valid_alternative_move_selected_count": 1328,
+  "no_valid_alt_noop_selected_count": 0,
+  "off_actor_non_noop_count_unmasked": 711,
+  "off_actor_non_noop_count_masked": 711,
+  "movement_suppressed_count": 0,
+  "mask_changed_action_count": 32,
+  "mask_changed_action_breakdown": {
+    "invalid Move -> valid Move": 1296,
+    "other": 32
+  },
+  "b2_guard_harvest_gt_noop_rate": 1.0,
+  "c3_guard_produce_gt_noop_rate": 1.0,
+  "reconstruction": {
+    "reconstruction_missing_steps": 0,
+    "case_count_in": 1328,
+    "rows_used": 1328,
+    "action_type_unmasked_distribution": {
+      "NoOp": 0,
+      "Move": 1296,
+      "Harvest": 9,
+      "Return": 0,
+      "Produce": 23,
+      "Attack": 0
+    },
+    "action_type_masked_distribution": {
+      "NoOp": 0,
+      "Move": 1328,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    }
+  },
+  "mask_contract_note": "Legal mask used as diagnostic/pre-selection constraint only; runtime decoder/applier/matchmanager remain authoritative.",
+  "labels": [
+    "STAGE10D19C_FAILURE_REPLAY_COMPLETED",
+    "STAGE10D19C_MASK_REDUCES_FAILURE_CASE_INVALID_MOVES",
+    "STAGE10D19C_MASK_CONVERTS_INVALID_TO_VALID_MOVE"
+  ]
+}
