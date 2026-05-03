@@ -1,0 +1,179 @@
+{
+  "generated_at_utc": "2026-05-03T14:18:49Z",
+  "stage": "10D.13A",
+  "classification_labels": [
+    "BASELINE_CONFIRMED",
+    "B2_CURRENT_ACTION_ONLY_SUFFICIENT",
+    "B2_CURRENT_ACTION_DIRECTION_SUFFICIENT",
+    "B2_SCALAR_DEPENDENCY_PRESENT",
+    "B2_MINIMAL_HARVEST_ENCODING_SUFFICIENT",
+    "C3_LOCAL_5X5_CURRENT_ACTION_SUFFICIENT",
+    "FULL_ACTOR_MAP_POLICY_RESTORES_ACTOR_ACTIONS",
+    "FULL_ACTOR_MAP_POLICY_TOO_INVASIVE",
+    "CURRENT_ACTION_SEMANTIC_MISMATCH_CONFIRMED",
+    "RUNTIME_OBSERVATION_REMAP_CANDIDATE_SUPPORTED",
+    "RUNTIME_OBSERVATION_REMAP_HIGH_RISK",
+    "TARGETED_BC_AUGMENTATION_SUPPORTED"
+  ],
+  "semantic_audit": {
+    "bc_current_action_hypothesis": "BC [12:18] encodes action-associated state from teacher trajectory context, not explicitly desired-next-action target.",
+    "bc_direction_hypothesis": "BC [18:22] encodes direction context coupled with action channels when applicable.",
+    "unity_current_action_observed": {
+      "self_actor_noop_share": 1.0,
+      "empty_cell_action_all_zero_share": 1.0,
+      "b2_current_action": "noop",
+      "c3_current_action": "noop"
+    },
+    "classification": [
+      "CURRENT_ACTION_SEMANTIC_MISMATCH_CONFIRMED",
+      "RUNTIME_OBSERVATION_REMAP_CANDIDATE_SUPPORTED",
+      "RUNTIME_OBSERVATION_REMAP_HIGH_RISK",
+      "TARGETED_BC_AUGMENTATION_SUPPORTED"
+    ],
+    "safety_note": "Any remap that injects target-like action intent into observation channels is treated as high risk unless semantics are source-verified."
+  },
+  "candidate_fix_decision_matrix": [
+    {
+      "row": "A",
+      "candidate": "Runtime observation current_action remap for actor cells only",
+      "evidence_for": [
+        "B2 current_action-only patch flips to harvest in diagnostic inference",
+        "C3 local current_action patches can raise produce probability"
+      ],
+      "evidence_against": [
+        "May encode intent-like signal rather than factual ongoing action",
+        "Can diverge from Unity runtime semantics for idle actors"
+      ],
+      "expected_effect": "Can reduce actor NoOp collapse in offline probes",
+      "risk_level": "HIGH",
+      "contract_risk": "MEDIUM",
+      "runtime_behavior_risk": "HIGH",
+      "academic_claim_safety": "LOW",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13B_MINIMAL_TOGGLE_RUNTIME_TEST"
+    },
+    {
+      "row": "B",
+      "candidate": "Runtime observation current_action+direction remap for actor cells only",
+      "evidence_for": [
+        "B2 current_action+direction produces stronger harvest confidence"
+      ],
+      "evidence_against": [
+        "Direction may further leak latent policy prior",
+        "Higher semantic intervention than action-only"
+      ],
+      "expected_effect": "Potentially stronger action restoration than action-only",
+      "risk_level": "HIGH",
+      "contract_risk": "MEDIUM",
+      "runtime_behavior_risk": "HIGH",
+      "academic_claim_safety": "LOW",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13B_MINIMAL_TOGGLE_RUNTIME_TEST"
+    },
+    {
+      "row": "C",
+      "candidate": "Runtime local base-context current_action remap",
+      "evidence_for": [
+        "C3 produce can be restored by local context patches (3x3/5x5)"
+      ],
+      "evidence_against": [
+        "Touches non-actor neighborhood cells",
+        "Increases risk of context leakage"
+      ],
+      "expected_effect": "Can target C3 produce suppression specifically",
+      "risk_level": "HIGH",
+      "contract_risk": "MEDIUM",
+      "runtime_behavior_risk": "HIGH",
+      "academic_claim_safety": "LOW",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13B_MINIMAL_TOGGLE_RUNTIME_TEST"
+    },
+    {
+      "row": "D",
+      "candidate": "Clear action channels for empty cells",
+      "evidence_for": [
+        "Semantic cleanup candidate; prevents synthetic action in empty tiles"
+      ],
+      "evidence_against": [
+        "May not restore actor actions alone"
+      ],
+      "expected_effect": "Low-to-moderate calibration cleanup",
+      "risk_level": "MEDIUM",
+      "contract_risk": "LOW",
+      "runtime_behavior_risk": "MEDIUM",
+      "academic_claim_safety": "MEDIUM",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13B_MINIMAL_TOGGLE_RUNTIME_TEST"
+    },
+    {
+      "row": "E",
+      "candidate": "Scene distribution alignment",
+      "evidence_for": [
+        "Always useful as control axis"
+      ],
+      "evidence_against": [
+        "Stage10D.12R did not confirm scene OOD as primary root cause"
+      ],
+      "expected_effect": "Low direct effect on current NoOp collapse",
+      "risk_level": "LOW",
+      "contract_risk": "LOW",
+      "runtime_behavior_risk": "LOW",
+      "academic_claim_safety": "HIGH",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13A_DEEPER_PROBES"
+    },
+    {
+      "row": "F",
+      "candidate": "Targeted BC augmentation with Unity-like NoOp-state observations",
+      "evidence_for": [
+        "Addresses representation gap without runtime semantic rewriting",
+        "Avoids action-leaking remap in deployed runtime observation"
+      ],
+      "evidence_against": [
+        "Requires new BC data engineering and retraining cycle"
+      ],
+      "expected_effect": "Model learns Unity-like idle/current_action context directly",
+      "risk_level": "MEDIUM",
+      "contract_risk": "LOW",
+      "runtime_behavior_risk": "LOW",
+      "academic_claim_safety": "HIGH",
+      "recommended": true,
+      "next_gate_if_selected": "GO_FOR_TARGETED_BC_AUGMENTATION_WITH_UNITY_LIKE_STATES"
+    },
+    {
+      "row": "G",
+      "candidate": "Rerun Stage10D.12R with improved probes",
+      "evidence_for": [
+        "Useful only if baseline drift or capture/probe invalid"
+      ],
+      "evidence_against": [
+        "Current stage baseline confirmed and strict probe already valid"
+      ],
+      "expected_effect": "Mostly duplicate evidence if no drift",
+      "risk_level": "LOW",
+      "contract_risk": "LOW",
+      "runtime_behavior_risk": "LOW",
+      "academic_claim_safety": "MEDIUM",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D12R_STRICT_PROBE_RERUN"
+    },
+    {
+      "row": "H",
+      "candidate": "Do nothing / keep Python bridge diagnostic only",
+      "evidence_for": [
+        "No implementation risk"
+      ],
+      "evidence_against": [
+        "No path to resolve persistent runtime NoOp behavior"
+      ],
+      "expected_effect": "No practical improvement",
+      "risk_level": "LOW",
+      "contract_risk": "LOW",
+      "runtime_behavior_risk": "LOW",
+      "academic_claim_safety": "MEDIUM",
+      "recommended": false,
+      "next_gate_if_selected": "GO_FOR_STAGE10D13A_DEEPER_PROBES"
+    }
+  ],
+  "primary_next_gate": "GO_FOR_TARGETED_BC_AUGMENTATION_WITH_UNITY_LIKE_STATES"
+}

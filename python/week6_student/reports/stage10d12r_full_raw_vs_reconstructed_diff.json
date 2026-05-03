@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-05-03T14:09:24.004256Z",
+  "comparison_status": "UNAVAILABLE",
+  "true_raw_cells": 576,
+  "reconstructed_tensor_available": false,
+  "message": "Reconstructed fullmap not found in Stage10D.11/D.12 artifacts",
+  "classification": "RECONSTRUCTION_COMPARISON_UNAVAILABLE"
+}

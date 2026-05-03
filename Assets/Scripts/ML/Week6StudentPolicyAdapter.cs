@@ -233,6 +233,10 @@ namespace RTS.ML
         public bool adapter_artifact_created;
         public string adapter_artifact_missing_reason;
         public string last_output_json_path;
+        public string stage10d12r_capture_path;
+        public string stage10d12r_capture_status;
+        public int stage10d12r_capture_json_length;
+        public int stage10d12r_capture_cell_count;
 
         public StudentInferenceDiagnosticsSnapshot Clone()
         {
@@ -255,6 +259,10 @@ namespace RTS.ML
                 adapter_artifact_created = adapter_artifact_created,
                 adapter_artifact_missing_reason = adapter_artifact_missing_reason ?? string.Empty,
                 last_output_json_path = last_output_json_path ?? string.Empty,
+                stage10d12r_capture_path = stage10d12r_capture_path ?? string.Empty,
+                stage10d12r_capture_status = stage10d12r_capture_status ?? string.Empty,
+                stage10d12r_capture_json_length = stage10d12r_capture_json_length,
+                stage10d12r_capture_cell_count = stage10d12r_capture_cell_count,
             };
         }
 
@@ -277,6 +285,10 @@ namespace RTS.ML
             adapter_artifact_created = false;
             adapter_artifact_missing_reason = string.Empty;
             last_output_json_path = string.Empty;
+            stage10d12r_capture_path = string.Empty;
+            stage10d12r_capture_status = "idle";
+            stage10d12r_capture_json_length = 0;
+            stage10d12r_capture_cell_count = 0;
         }
     }
 
@@ -333,6 +345,37 @@ namespace RTS.ML
             public string[] logits_keys;
             public int action_flat_size;
             public int[] action_flat;
+        }
+
+        [Serializable]
+        private sealed class Stage10D12RCellCapture
+        {
+            public int flat_index;
+            public int x;
+            public int y;
+            public string logical_label;
+            public float[] raw_channel_vector;
+            public string decoded_owner;
+            public string decoded_unit;
+            public string decoded_current_action;
+        }
+
+        [Serializable]
+        private sealed class Stage10D12RFullRawObservationCapture
+        {
+            public string generated_at_utc;
+            public string stage;
+            public string capture_type;
+            public int step_index;
+            public string controlled_player;
+            public string capture_point;
+            public int[] tensor_shape;
+            public int[] tensor_shape_flat;
+            public string flatten_order;
+            public string[] channel_names;
+            public int channel_count;
+            public int cell_count;
+            public Stage10D12RCellCapture[] cells;
         }
 
         [ContextMenu("Run Week6 Adapter Contract Validation Smoke")]
@@ -600,16 +643,14 @@ namespace RTS.ML
             {
                 WriteFloat32Buffer(observationPackage.SpatialObservation, observationBinPath);
 
-                // Stage10D.12R: Capture full raw runtime observation tensor for diagnostics
-                if (observationPackage.SpatialObservation != null && observationPackage.SpatialObservation.Length == 576 * 27)
-                {
-                    string rawTensorJsonPath = Path.Combine(artifactDir, $"stage10d12r_full_raw_runtime_observation_step{_decisionIndex:D4}.json");
-                    CaptureFullRawObservationDiagnostic(
-                        observationPackage.SpatialObservation,
-                        playerId,
-                        _decisionIndex,
-                        rawTensorJsonPath);
-                }
+                // Stage10D.12R: Capture full raw runtime observation tensor for diagnostics.
+                // Capture point must remain before bridge request send.
+                string rawTensorJsonPath = Path.Combine(artifactDir, $"stage10d12r_full_raw_runtime_observation_step{_decisionIndex:D4}.json");
+                CaptureFullRawObservationDiagnostic(
+                    observationPackage.SpatialObservation,
+                    playerId,
+                    _decisionIndex,
+                    rawTensorJsonPath);
 
                 var request = new BridgeRequestEnvelope
                 {
@@ -1203,16 +1244,46 @@ namespace RTS.ML
             int stepIndex,
             string outputJsonPath)
         {
+            const int H = ObservationContract.GridH;
+            const int W = ObservationContract.GridW;
+            const int C = ObservationContract.ChannelsPerCell;
+
+            _inferenceDiagnostics.stage10d12r_capture_path = outputJsonPath ?? string.Empty;
+            _inferenceDiagnostics.stage10d12r_capture_status = "initializing";
+            _inferenceDiagnostics.stage10d12r_capture_json_length = 0;
+            _inferenceDiagnostics.stage10d12r_capture_cell_count = 0;
+
             try
             {
-                const int H = ObservationContract.GridH;   // 24
-                const int W = ObservationContract.GridW;   // 24
-                const int C = ObservationContract.ChannelsPerCell;  // 27
-                
+                if (spatialObservation == null)
+                {
+                    string reason = "spatialObservation is null";
+                    _inferenceDiagnostics.stage10d12r_capture_status = "invalid_observation_null";
+                    WriteStage10D12RCaptureErrorSidecar(outputJsonPath, reason, 0, 0, H, W, C, null, null);
+                    Debug.LogError("[Stage10D.12R] Capture serialization invalid: " + reason);
+                    return;
+                }
+
                 if (spatialObservation.Length != H * W * C)
                 {
-                    Debug.LogWarning($"[Stage10D.12R] Observation size mismatch: expected {H * W * C}, got {spatialObservation.Length}");
+                    string reason = $"Observation size mismatch: expected {H * W * C}, got {spatialObservation.Length}";
+                    _inferenceDiagnostics.stage10d12r_capture_status = "invalid_observation_shape";
+                    WriteStage10D12RCaptureErrorSidecar(outputJsonPath, reason, 0, spatialObservation.Length, H, W, C, null, null);
+                    Debug.LogError("[Stage10D.12R] Capture serialization invalid: " + reason);
                     return;
+                }
+
+                for (int i = 0; i < spatialObservation.Length; i++)
+                {
+                    float v = spatialObservation[i];
+                    if (float.IsNaN(v) || float.IsInfinity(v))
+                    {
+                        string reason = $"Observation contains non-finite value at index {i}";
+                        _inferenceDiagnostics.stage10d12r_capture_status = "invalid_observation_non_finite";
+                        WriteStage10D12RCaptureErrorSidecar(outputJsonPath, reason, 0, spatialObservation.Length, H, W, C, null, null);
+                        Debug.LogError("[Stage10D.12R] Capture serialization invalid: " + reason);
+                        return;
+                    }
                 }
 
                 // Build diagnostic JSON with full raw tensor and metadata
@@ -1253,7 +1324,7 @@ namespace RTS.ML
                 };
 
                 // Build cell entries
-                var cellList = new List<object>();
+                var cells = new Stage10D12RCellCapture[H * W];
                 for (int flat = 0; flat < H * W; flat++)
                 {
                     int y = flat / W;
@@ -1270,23 +1341,21 @@ namespace RTS.ML
                     string decodedUnit = DecodeUnitFromChannels(cellChannels);
                     string decodedAction = DecodeCurrentActionFromChannels(cellChannels);
 
-                    var cellData = new
+                    cells[flat] = new Stage10D12RCellCapture
                     {
                         flat_index = flat,
                         x = x,
                         y = y,
-                        logical_label = GetLogicalCellLabel(flat),  // e.g., "B2", "C3"
+                        logical_label = GetLogicalCellLabel(flat),
                         raw_channel_vector = cellChannels,
                         decoded_owner = decodedOwner,
                         decoded_unit = decodedUnit,
                         decoded_current_action = decodedAction,
                     };
-                    
-                    cellList.Add(cellData);
                 }
 
                 // Build final diagnostic JSON
-                var diagnosticData = new
+                var diagnosticData = new Stage10D12RFullRawObservationCapture
                 {
                     generated_at_utc = System.DateTime.UtcNow.ToString("O"),
                     stage = "10D.12R",
@@ -1300,21 +1369,101 @@ namespace RTS.ML
                     channel_names = channelNames,
                     channel_count = C,
                     cell_count = H * W,
-                    cells = cellList,
+                    cells = cells,
                 };
 
                 // Write diagnostic JSON
-                string json = JsonUtility.ToJson(diagnosticData);
-                System.IO.File.WriteAllText(outputJsonPath, json, System.Text.Encoding.UTF8);
+                string json = JsonUtility.ToJson(diagnosticData, true);
+                System.IO.File.WriteAllText(outputJsonPath, json, new System.Text.UTF8Encoding(false));
+
+                bool fileExists = System.IO.File.Exists(outputJsonPath);
+                long fileLength = fileExists ? new FileInfo(outputJsonPath).Length : 0L;
+                bool hasTensorShape = json.Contains("\"tensor_shape\"");
+                bool hasCells = json.Contains("\"cells\"");
+                bool hasRawChannelVector = json.Contains("\"raw_channel_vector\"");
+                bool hasB2 = json.Contains("\"flat_index\": 25") || json.Contains("\"flat_index\":25");
+                bool hasC3 = json.Contains("\"flat_index\": 50") || json.Contains("\"flat_index\":50");
+
+                bool serializationValid = fileExists
+                    && fileLength > 10000L
+                    && hasTensorShape
+                    && hasCells
+                    && hasRawChannelVector
+                    && hasB2
+                    && hasC3;
+
+                _inferenceDiagnostics.stage10d12r_capture_json_length = json.Length;
+                _inferenceDiagnostics.stage10d12r_capture_cell_count = H * W;
+
+                if (!serializationValid)
+                {
+                    string reason =
+                        $"post-write validation failed | exists={fileExists} | file_length={fileLength} | " +
+                        $"json_length={json.Length} | has_tensor_shape={hasTensorShape} | has_cells={hasCells} | " +
+                        $"has_raw_channel_vector={hasRawChannelVector} | has_B2={hasB2} | has_C3={hasC3}";
+                    _inferenceDiagnostics.stage10d12r_capture_status = "serialization_invalid";
+                    WriteStage10D12RCaptureErrorSidecar(outputJsonPath, reason, json.Length, spatialObservation.Length, H, W, C, null, json);
+                    Debug.LogError("[Stage10D.12R] Capture serialization invalid: " + reason);
+                    return;
+                }
+
+                _inferenceDiagnostics.stage10d12r_capture_status = "ok";
 
                 if (_verboseLogs)
                 {
-                    Debug.Log($"[Stage10D.12R] Full raw observation captured to {outputJsonPath}");
+                    Debug.Log($"[Stage10D.12R] Full raw observation captured to {outputJsonPath} (json_length={json.Length}, file_length={fileLength})");
                 }
             }
             catch (System.Exception ex)
             {
+                _inferenceDiagnostics.stage10d12r_capture_status = "exception";
+                WriteStage10D12RCaptureErrorSidecar(
+                    outputJsonPath,
+                    "exception_during_capture",
+                    0,
+                    spatialObservation != null ? spatialObservation.Length : 0,
+                    H,
+                    W,
+                    C,
+                    ex,
+                    null);
                 Debug.LogError($"[Stage10D.12R] Failed to capture full raw observation: {ex.Message}");
+            }
+        }
+
+        private static void WriteStage10D12RCaptureErrorSidecar(
+            string outputJsonPath,
+            string reason,
+            int jsonLength,
+            int observationLength,
+            int h,
+            int w,
+            int c,
+            Exception exception,
+            string jsonSnapshot)
+        {
+            try
+            {
+                string sidecarPath = Path.ChangeExtension(outputJsonPath, ".capture_error.txt");
+                var lines = new List<string>
+                {
+                    "[Stage10D.12R] Capture serialization invalid",
+                    "utc=" + DateTime.UtcNow.ToString("O"),
+                    "output_path=" + (outputJsonPath ?? string.Empty),
+                    "reason=" + (reason ?? string.Empty),
+                    "json_length=" + jsonLength,
+                    "spatial_observation_length=" + observationLength,
+                    "H=" + h,
+                    "W=" + w,
+                    "C=" + c,
+                    "json_utility_result_is_empty_object=" + string.Equals(jsonSnapshot, "{}", StringComparison.Ordinal),
+                    "exception=" + (exception != null ? exception.ToString() : string.Empty),
+                };
+                File.WriteAllLines(sidecarPath, lines, new System.Text.UTF8Encoding(false));
+            }
+            catch
+            {
+                // Sidecar write is best-effort in diagnostics path.
             }
         }
 
