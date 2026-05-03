@@ -26,6 +26,53 @@ namespace RTS.ML
     /// </summary>
     public class ActionDecoder
     {
+        public readonly struct MaskAwareCellTelemetry
+        {
+            public MaskAwareCellTelemetry(
+                int cellIndex,
+                UnitActionType rawActionTypeTop1,
+                int rawMoveDirTop1,
+                UnitActionType maskedActionType,
+                int maskedMoveDir,
+                bool[] legalActionTypeMask,
+                bool[] legalMoveDirMask,
+                bool maskedMoveDirLegal,
+                bool branchMaskAppliedForMove,
+                string moveDirMaskFallbackReason,
+                UnitActionType decoderReceivedActionType,
+                int decoderReceivedMoveDir,
+                bool decoderReceivedMoveDirLegal)
+            {
+                CellIndex = cellIndex;
+                RawActionTypeTop1 = rawActionTypeTop1;
+                RawMoveDirTop1 = rawMoveDirTop1;
+                MaskedActionType = maskedActionType;
+                MaskedMoveDir = maskedMoveDir;
+                LegalActionTypeMask = legalActionTypeMask ?? Array.Empty<bool>();
+                LegalMoveDirMask = legalMoveDirMask ?? Array.Empty<bool>();
+                MaskedMoveDirLegal = maskedMoveDirLegal;
+                BranchMaskAppliedForMove = branchMaskAppliedForMove;
+                MoveDirMaskFallbackReason = moveDirMaskFallbackReason ?? string.Empty;
+                DecoderReceivedActionType = decoderReceivedActionType;
+                DecoderReceivedMoveDir = decoderReceivedMoveDir;
+                DecoderReceivedMoveDirLegal = decoderReceivedMoveDirLegal;
+            }
+
+            public int CellIndex { get; }
+            public UnitActionType RawActionTypeTop1 { get; }
+            public int RawMoveDirTop1 { get; }
+            public UnitActionType MaskedActionType { get; }
+            public int MaskedMoveDir { get; }
+            public bool[] LegalActionTypeMask { get; }
+            public bool[] LegalMoveDirMask { get; }
+            public bool MaskedMoveDirLegal { get; }
+            public bool BranchMaskAppliedForMove { get; }
+            public string MoveDirMaskFallbackReason { get; }
+            public UnitActionType DecoderReceivedActionType { get; }
+            public int DecoderReceivedMoveDir { get; }
+            public bool DecoderReceivedMoveDirLegal { get; }
+        }
+
         private readonly GridManager _gridManager;
         private readonly UnitRegistry _unitRegistry;
 
@@ -147,12 +194,14 @@ namespace RTS.ML
             out int maskedOutChoicesCount,
             out int fallbackToNoopCount,
             out Dictionary<UnitActionType, int> preMaskHistogram,
-            out Dictionary<UnitActionType, int> postMaskHistogram)
+            out Dictionary<UnitActionType, int> postMaskHistogram,
+            out Dictionary<int, MaskAwareCellTelemetry> cellTelemetryByFlat)
         {
             maskedOutChoicesCount = 0;
             fallbackToNoopCount = 0;
             preMaskHistogram = new Dictionary<UnitActionType, int>();
             postMaskHistogram = new Dictionary<UnitActionType, int>();
+            cellTelemetryByFlat = new Dictionary<int, MaskAwareCellTelemetry>();
             var results = new List<AgentAction>();
 
             if (actionFlat == null || eligibleCellIndices == null || eligibleCellIndices.Count == 0)
@@ -173,8 +222,19 @@ namespace RTS.ML
                 if (!TryDecodeCell(actionFlat, cellIndex, playerPerspective, out AgentAction action))
                     continue;
 
-                if (action.ActionType == UnitActionType.NoOp)
-                    continue;
+                int cellBaseOffset = cellIndex * ActionContract.ActionFlatSize;
+                int rawMoveDir = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_MOVE_DIR),
+                    ActionContract.SIZE_DIRECTION);
+                bool[] legalActionTypeMask = BuildLegalActionTypeMask(maskSet, cellIndex);
+                bool[] legalMoveDirMask = BuildLegalMoveDirectionMask(maskSet, cellIndex);
+                UnitActionType rawActionTypeTop1 = action.ActionType;
+                UnitActionType maskedActionType = action.ActionType;
+                int maskedMoveDir = rawMoveDir;
+                bool branchMaskAppliedForMove = false;
+                bool maskedMoveDirLegal = true;
+                string moveDirFallbackReason = string.Empty;
 
                 // Track what the model chose before mask constraint
                 IncrementActionDict(preMaskHistogram, action.ActionType);
@@ -190,16 +250,175 @@ namespace RTS.ML
                         // Masked out: skip (safe fallback to NoOp)
                         maskedOutChoicesCount++;
                         fallbackToNoopCount++;
+                        maskedActionType = UnitActionType.NoOp;
+                        moveDirFallbackReason = "action_type_masked_out";
+                        cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                            cellIndex,
+                            rawActionTypeTop1,
+                            rawMoveDir,
+                            maskedActionType,
+                            maskedMoveDir,
+                            legalActionTypeMask,
+                            legalMoveDirMask,
+                            maskedMoveDirLegal,
+                            branchMaskAppliedForMove,
+                            moveDirFallbackReason,
+                            UnitActionType.NoOp,
+                            0,
+                            true);
                         continue;
                     }
+
+                    if (action.ActionType == UnitActionType.Move && actorMask != null)
+                    {
+                        branchMaskAppliedForMove = true;
+                        bool hasAnyLegalMoveDir = false;
+                        for (int d = 0; d < actorMask.MoveDirectionMask.Length; d++)
+                        {
+                            if (actorMask.MoveDirectionMask[d])
+                            {
+                                hasAnyLegalMoveDir = true;
+                                break;
+                            }
+                        }
+
+                        if (!hasAnyLegalMoveDir)
+                        {
+                            // Required Stage10D.20S behavior: Move cannot be selected without a legal direction.
+                            maskedOutChoicesCount++;
+                            fallbackToNoopCount++;
+                            maskedActionType = UnitActionType.NoOp;
+                            moveDirFallbackReason = "no_legal_move_dir";
+                            cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                                cellIndex,
+                                rawActionTypeTop1,
+                                rawMoveDir,
+                                maskedActionType,
+                                maskedMoveDir,
+                                legalActionTypeMask,
+                                legalMoveDirMask,
+                                false,
+                                branchMaskAppliedForMove,
+                                moveDirFallbackReason,
+                                UnitActionType.NoOp,
+                                0,
+                                true);
+                            continue;
+                        }
+
+                        bool rawMoveDirLegal = rawMoveDir >= 0
+                            && rawMoveDir < actorMask.MoveDirectionMask.Length
+                            && actorMask.MoveDirectionMask[rawMoveDir];
+
+                        if (!rawMoveDirLegal)
+                        {
+                            // Stage10D.20S: do not submit Move with illegal masked direction.
+                            maskedOutChoicesCount++;
+                            fallbackToNoopCount++;
+                            maskedActionType = UnitActionType.NoOp;
+                            maskedMoveDirLegal = false;
+                            moveDirFallbackReason = "illegal_move_dir_after_mask";
+                            cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                                cellIndex,
+                                rawActionTypeTop1,
+                                rawMoveDir,
+                                maskedActionType,
+                                maskedMoveDir,
+                                legalActionTypeMask,
+                                legalMoveDirMask,
+                                false,
+                                branchMaskAppliedForMove,
+                                moveDirFallbackReason,
+                                UnitActionType.NoOp,
+                                0,
+                                true);
+                            continue;
+                        }
+
+                        maskedMoveDirLegal = true;
+                    }
+                }
+
+                if (action.ActionType == UnitActionType.NoOp)
+                {
+                    cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                        cellIndex,
+                        rawActionTypeTop1,
+                        rawMoveDir,
+                        maskedActionType,
+                        maskedMoveDir,
+                        legalActionTypeMask,
+                        legalMoveDirMask,
+                        maskedMoveDirLegal,
+                        branchMaskAppliedForMove,
+                        moveDirFallbackReason,
+                        UnitActionType.NoOp,
+                        0,
+                        true);
+                    continue;
                 }
 
                 // Action type passes the mask — include it in the submission
                 results.Add(action);
                 IncrementActionDict(postMaskHistogram, action.ActionType);
+                cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                    cellIndex,
+                    rawActionTypeTop1,
+                    rawMoveDir,
+                    maskedActionType,
+                    maskedMoveDir,
+                    legalActionTypeMask,
+                    legalMoveDirMask,
+                    maskedMoveDirLegal,
+                    branchMaskAppliedForMove,
+                    moveDirFallbackReason,
+                    action.ActionType,
+                    action.ActionType == UnitActionType.Move ? rawMoveDir : 0,
+                    action.ActionType != UnitActionType.Move || maskedMoveDirLegal);
             }
 
             return results;
+        }
+
+        private static bool[] BuildLegalActionTypeMask(ActionMaskSet maskSet, int cellIndex)
+        {
+            var mask = new bool[ActionContract.SIZE_ACTION_TYPE];
+            if (maskSet == null)
+            {
+                for (int i = 0; i < mask.Length; i++)
+                    mask[i] = true;
+                return mask;
+            }
+
+            ActorActionMask actorMask = maskSet.GetActorMaskByFlatIndex(cellIndex);
+            if (actorMask == null || actorMask.ActionTypeMask == null)
+            {
+                mask[(int)UnitActionType.NoOp] = true;
+                return mask;
+            }
+
+            for (int i = 0; i < mask.Length && i < actorMask.ActionTypeMask.Length; i++)
+                mask[i] = actorMask.ActionTypeMask[i];
+            return mask;
+        }
+
+        private static bool[] BuildLegalMoveDirectionMask(ActionMaskSet maskSet, int cellIndex)
+        {
+            var mask = new bool[ActionContract.SIZE_DIRECTION];
+            if (maskSet == null)
+            {
+                for (int i = 0; i < mask.Length; i++)
+                    mask[i] = true;
+                return mask;
+            }
+
+            ActorActionMask actorMask = maskSet.GetActorMaskByFlatIndex(cellIndex);
+            if (actorMask == null || actorMask.MoveDirectionMask == null)
+                return mask;
+
+            for (int i = 0; i < mask.Length && i < actorMask.MoveDirectionMask.Length; i++)
+                mask[i] = actorMask.MoveDirectionMask[i];
+            return mask;
         }
 
         /// <summary>

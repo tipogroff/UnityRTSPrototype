@@ -1,0 +1,52 @@
+{
+  "generated_at_utc": "2026-05-03T22:21:44.214869+00:00",
+  "stage": "Stage10D.21A",
+  "source_stage": "Stage10D.20S rerun artifacts",
+  "source_manifest": "python/week6_student/tmp/stage10d20_masked_runtime_rerun/stage10d20_run_manifest.json",
+  "steps_analyzed": 76,
+  "last_step": 76,
+  "acceptance": {
+    "all_events_classified_exactly_once": true,
+    "categories_present": [
+      "H"
+    ],
+    "pass": true
+  },
+  "counts": {
+    "legal_masked_move_events_traced": 4,
+    "clean_accepted_move_commands": 0,
+    "legacy_conflict_move_commands": 4,
+    "matchmanager_accepted_commands": 4,
+    "commands_set_or_queued_on_unit": 4,
+    "commands_with_displacement_within_plus1": 0,
+    "commands_with_displacement_within_plus2_to_plus5": 0
+  },
+  "canonical_status_counts": {
+    "accepted_pending": 4,
+    "applied": 0,
+    "applier_rejected": 0,
+    "completed": 0,
+    "decoder_rejected": 0,
+    "matchmanager_rejected": 0,
+    "not_submitted": 0
+  },
+  "category_counts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 0,
+    "F": 0,
+    "G": 0,
+    "H": 4,
+    "I": 0
+  },
+  "first_failure_point_counts": {
+    "telemetry_conflict": 4
+  },
+  "go_no_go": {
+    "movement_application_fix": "NO-GO",
+    "command_status_telemetry_cleanup": "NO-GO",
+    "full_map_stage10d21_behavior_rerun": "NO-GO"
+  }
+}

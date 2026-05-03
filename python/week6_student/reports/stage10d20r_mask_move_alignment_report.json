@@ -1,0 +1,127 @@
+{
+  "generated_at_utc": "2026-05-03T21:50:45.327689+00:00",
+  "manifest": {
+    "generated_at_utc": "2026-05-03T21:31:14.4903292Z",
+    "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "output_relative_dir": "python/week6_student/tmp/stage10d20_masked_runtime_rerun",
+    "snapshot_prefix": "stage10d20_snapshot_step",
+    "target_steps": 200,
+    "steps_completed": 76,
+    "final_match_step": 76,
+    "terminal": true,
+    "terminal_reason": "Loss",
+    "configured_checkpoint_relative_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+    "configured_legal_mask_enabled": true
+  },
+  "masked_move_events_traced": 4,
+  "per_event_alignment": [
+    {
+      "event_index": 1,
+      "step": 30,
+      "unit_id": "Worker_003",
+      "source_flat": 45,
+      "raw_action": "Move",
+      "raw_move_dir": "E",
+      "masked_action": "Move",
+      "masked_move_dir": "E",
+      "dir_legal_under_mask": false,
+      "target_before_free": false,
+      "applier_submitted": true,
+      "applier_accepted": true,
+      "applier_rejected": true,
+      "moved_by_id": false,
+      "first_mismatch_point": "selector_stage:move_dir_selected_not_legal_under_move_dir_mask"
+    },
+    {
+      "event_index": 2,
+      "step": 37,
+      "unit_id": "Worker_005",
+      "source_flat": 42,
+      "raw_action": "Move",
+      "raw_move_dir": "E",
+      "masked_action": "Move",
+      "masked_move_dir": "E",
+      "dir_legal_under_mask": false,
+      "target_before_free": false,
+      "applier_submitted": true,
+      "applier_accepted": true,
+      "applier_rejected": true,
+      "moved_by_id": false,
+      "first_mismatch_point": "selector_stage:move_dir_selected_not_legal_under_move_dir_mask"
+    },
+    {
+      "event_index": 3,
+      "step": 41,
+      "unit_id": "Worker_006",
+      "source_flat": 41,
+      "raw_action": "Move",
+      "raw_move_dir": "E",
+      "masked_action": "Move",
+      "masked_move_dir": "E",
+      "dir_legal_under_mask": false,
+      "target_before_free": false,
+      "applier_submitted": true,
+      "applier_accepted": true,
+      "applier_rejected": true,
+      "moved_by_id": false,
+      "first_mismatch_point": "selector_stage:move_dir_selected_not_legal_under_move_dir_mask"
+    },
+    {
+      "event_index": 4,
+      "step": 48,
+      "unit_id": "Worker_008",
+      "source_flat": 38,
+      "raw_action": "Move",
+      "raw_move_dir": "E",
+      "masked_action": "Move",
+      "masked_move_dir": "E",
+      "dir_legal_under_mask": false,
+      "target_before_free": false,
+      "applier_submitted": true,
+      "applier_accepted": true,
+      "applier_rejected": true,
+      "moved_by_id": false,
+      "first_mismatch_point": "selector_stage:move_dir_selected_not_legal_under_move_dir_mask"
+    }
+  ],
+  "mismatch_category_counts": {
+    "A_report_uses_raw_or_unmasked_branch_values": 0,
+    "B_selector_not_applying_branch_move_dir_mask": 4,
+    "C_direction_or_coordinate_mapping_mismatch": 0,
+    "D_stale_occupancy_snapshot": 1,
+    "E_actiondecoder_or_applier_value_mismatch": 4,
+    "F_accepted_move_not_physically_applied": 4,
+    "G_movement_tracking_or_identity_issue": 0
+  },
+  "mismatch_categories_in_order": [
+    "A_report_uses_raw_or_unmasked_branch_values",
+    "B_selector_not_applying_branch_move_dir_mask",
+    "C_direction_or_coordinate_mapping_mismatch",
+    "D_stale_occupancy_snapshot",
+    "E_actiondecoder_or_applier_value_mismatch",
+    "F_accepted_move_not_physically_applied",
+    "G_movement_tracking_or_identity_issue"
+  ],
+  "first_mismatch_point_counts": {
+    "selector_stage:move_dir_selected_not_legal_under_move_dir_mask": 4
+  },
+  "primary_first_mismatch_point_in_chain": "selector_stage:move_dir_selected_not_legal_under_move_dir_mask",
+  "recommendations": {
+    "mask_logic_fix": {
+      "recommendation": "GO",
+      "rationale": "Masked Move events selected move_dir E while legal move_dir mask disabled E on every traced event."
+    },
+    "report_builder_fix": {
+      "recommendation": "GO",
+      "rationale": "Stage10D.20 infers masked action through command_built side effects; Stage10D.20R requires explicit mask-stage fields."
+    },
+    "actiondecoder_audit": {
+      "recommendation": "GO",
+      "rationale": "ActionApplier flags show accepted and rejected both true on traced events, requiring value/contract audit."
+    },
+    "actionapplier_matchmanager_movement_application_audit": {
+      "recommendation": "GO",
+      "rationale": "All traced accepted Move commands show no displacement by unit-id tracking."
+    }
+  }
+}

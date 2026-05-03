@@ -119,6 +119,10 @@ namespace RTS.ML
         private readonly Dictionary<int, RuntimeRejectionInfo> _lastRejectedByActor = new Dictionary<int, RuntimeRejectionInfo>();
         private readonly Dictionary<int, MatchCommand> _lastBaselineAcceptedByActor = new Dictionary<int, MatchCommand>();
         private readonly Dictionary<int, RuntimeRejectionInfo> _lastBaselineRejectedByActor = new Dictionary<int, RuntimeRejectionInfo>();
+        private readonly Dictionary<int, ActionDecoder.MaskAwareCellTelemetry> _latestMaskAwareCellTelemetryByFlat =
+            new Dictionary<int, ActionDecoder.MaskAwareCellTelemetry>();
+        private readonly Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> _latestLegalMaskByFlat =
+            new Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry>();
 
         private GUIStyle _statusBannerStyle;
         private GUIStyle _worldLabelStyle;
@@ -449,8 +453,25 @@ namespace RTS.ML
             public int produce_dir;
             public int produce_unit_type;
             public int attack_target_local;
+            public string raw_action_type_top1;
+            public int raw_move_dir_top1;
+            public string masked_action_type;
+            public int masked_move_dir;
+            public bool[] legal_action_type_mask;
+            public bool[] legal_move_dir_mask;
+            public bool masked_move_dir_legal;
+            public bool branch_mask_applied_for_move;
+            public string move_dir_mask_fallback_reason;
+            public string decoder_received_action_type;
+            public int decoder_received_move_dir;
+            public bool decoder_received_move_dir_legal;
             public string decoder_result_if_predicted_non_noop;
             public bool command_built;
+            public bool command_submitted;
+            public string command_result_status;
+            public string reject_stage;
+            public string reject_reason;
+            public bool legacy_status_conflict;
             public string decoder_reject_reason;
             public bool applier_submission_reached;
             public bool applier_submitted;
@@ -506,12 +527,18 @@ namespace RTS.ML
 
         private readonly struct RuntimeRejectionInfo
         {
-            public RuntimeRejectionInfo(string reason)
+            public RuntimeRejectionInfo(string reason, MatchCommand command)
             {
                 Reason = string.IsNullOrWhiteSpace(reason) ? "other" : reason;
+                HasCommand = true;
+                ActionType = command.ActionType;
+                Direction = command.Direction;
             }
 
             public string Reason { get; }
+            public bool HasCommand { get; }
+            public UnitActionType ActionType { get; }
+            public Direction Direction { get; }
         }
 
         private readonly struct AdapterArtifactSnapshot
@@ -684,10 +711,26 @@ namespace RTS.ML
                 MergeActionHistogram(_aggregateActionTypeHistogram, report.MaskAwareDiagnostics.PostMaskHistogram);
                 MergeActionHistogram(_aggregateActorActionTypeHistogram, report.MaskAwareDiagnostics.PostMaskHistogram);
 
+                _latestMaskAwareCellTelemetryByFlat.Clear();
+                foreach (KeyValuePair<int, ActionDecoder.MaskAwareCellTelemetry> kvp in report.MaskAwareDiagnostics.CellTelemetryByFlat)
+                {
+                    _latestMaskAwareCellTelemetryByFlat[kvp.Key] = kvp.Value;
+                }
+                _latestLegalMaskByFlat.Clear();
+                foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in report.MaskAwareDiagnostics.LegalMaskByFlat)
+                {
+                    _latestLegalMaskByFlat[kvp.Key] = kvp.Value;
+                }
+
                 for (int i = 0; i < report.RejectionReasons.Count; i++)
                 {
                     IncrementStringCount(_rejectionReasons, NormalizeReason(report.RejectionReasons[i]));
                 }
+            }
+            else
+            {
+                _latestMaskAwareCellTelemetryByFlat.Clear();
+                _latestLegalMaskByFlat.Clear();
             }
 
             if (currentStep > 0)
@@ -936,6 +979,8 @@ namespace RTS.ML
             _lastStepApplyCommandCalled = false;
             _lastAcceptedByActor.Clear();
             _lastRejectedByActor.Clear();
+            _latestMaskAwareCellTelemetryByFlat.Clear();
+            _latestLegalMaskByFlat.Clear();
 
             bool stillRunning = _episodeController.StepEpisodeOnce();
             RefreshLatestDiagnosticsFromArtifacts();
@@ -1120,6 +1165,34 @@ namespace RTS.ML
         {
             var rows = new List<Stage10D10CellRow>(ActionContract.TotalCells);
             var runtimeByFlat = new Dictionary<int, UnitRuntime>(ActionContract.TotalCells);
+            var maskTelemetryByFlat = new Dictionary<int, ActionDecoder.MaskAwareCellTelemetry>();
+            var legalMaskByFlat = new Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry>();
+
+            if (_episodeController != null
+                && _episodeController.TryGetWeek6StudentExecutionReport(_studentControlledPlayer, out StudentPolicyExecutionReport liveReport))
+            {
+                foreach (KeyValuePair<int, ActionDecoder.MaskAwareCellTelemetry> kvp in liveReport.MaskAwareDiagnostics.CellTelemetryByFlat)
+                {
+                    maskTelemetryByFlat[kvp.Key] = kvp.Value;
+                }
+
+                foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in liveReport.MaskAwareDiagnostics.LegalMaskByFlat)
+                {
+                    legalMaskByFlat[kvp.Key] = kvp.Value;
+                }
+            }
+            else
+            {
+                foreach (KeyValuePair<int, ActionDecoder.MaskAwareCellTelemetry> kvp in _latestMaskAwareCellTelemetryByFlat)
+                {
+                    maskTelemetryByFlat[kvp.Key] = kvp.Value;
+                }
+
+                foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in _latestLegalMaskByFlat)
+                {
+                    legalMaskByFlat[kvp.Key] = kvp.Value;
+                }
+            }
 
             if (_unitRegistry != null)
             {
@@ -1223,7 +1296,9 @@ namespace RTS.ML
                     out attackTargetLocalFinal);
 
                 bool predictedNonNoOp = predictedActionType != UnitActionType.NoOp;
-                bool commandBuilt = _lastAcceptedByActor.ContainsKey(flat) || _lastRejectedByActor.ContainsKey(flat);
+                bool hasAcceptedCommand = _lastAcceptedByActor.TryGetValue(flat, out MatchCommand acceptedCommand);
+                bool hasRejectedCommand = _lastRejectedByActor.TryGetValue(flat, out RuntimeRejectionInfo rejInfo);
+                bool commandBuilt = hasAcceptedCommand || hasRejectedCommand;
                 string decoderRejectReason = string.Empty;
                 string decoderResult = "predicted_noop";
                 if (predictedNonNoOp)
@@ -1245,13 +1320,109 @@ namespace RTS.ML
                     }
                 }
 
-                bool applierAccepted = _lastAcceptedByActor.ContainsKey(flat);
-                bool applierRejected = _lastRejectedByActor.ContainsKey(flat);
+                bool applierAccepted = hasAcceptedCommand;
+                bool applierRejected = hasRejectedCommand;
                 bool applierSubmitted = commandBuilt;
                 string applierRejectReason = string.Empty;
-                if (applierRejected && _lastRejectedByActor.TryGetValue(flat, out RuntimeRejectionInfo rejInfo))
+                if (applierRejected)
                 {
                     applierRejectReason = rejInfo.Reason;
+                }
+
+                bool hasMaskTelemetry = maskTelemetryByFlat.TryGetValue(flat, out ActionDecoder.MaskAwareCellTelemetry maskTelemetry);
+                string rawActionTypeTop1 = hasMaskTelemetry
+                    ? maskTelemetry.RawActionTypeTop1.ToString()
+                    : predictedActionTypeName;
+                int rawMoveDirTop1 = hasMaskTelemetry ? maskTelemetry.RawMoveDirTop1 : moveDirFinal;
+                string maskedActionType = hasMaskTelemetry
+                    ? maskTelemetry.MaskedActionType.ToString()
+                    : predictedActionTypeName;
+                int maskedMoveDir = hasMaskTelemetry ? maskTelemetry.MaskedMoveDir : moveDirFinal;
+                bool[] legalActionTypeMask = hasMaskTelemetry ? CopyBoolArray(maskTelemetry.LegalActionTypeMask) : Array.Empty<bool>();
+                bool[] legalMoveDirMask = hasMaskTelemetry ? CopyBoolArray(maskTelemetry.LegalMoveDirMask) : Array.Empty<bool>();
+                if (!hasMaskTelemetry
+                    && legalMaskByFlat.TryGetValue(flat, out StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry legalMaskTelemetry))
+                {
+                    legalActionTypeMask = CopyBoolArray(legalMaskTelemetry.ActionTypeMask);
+                    legalMoveDirMask = CopyBoolArray(legalMaskTelemetry.MoveDirMask);
+                }
+                bool maskedMoveDirLegal = hasMaskTelemetry
+                    ? maskTelemetry.MaskedMoveDirLegal
+                    : IsMoveDirLegal(legalMoveDirMask, maskedMoveDir);
+                bool branchMaskAppliedForMove = hasMaskTelemetry
+                    ? maskTelemetry.BranchMaskAppliedForMove
+                    : (predictedActionType == UnitActionType.Move);
+                string moveDirMaskFallbackReason = hasMaskTelemetry
+                    ? (maskTelemetry.MoveDirMaskFallbackReason ?? string.Empty)
+                    : string.Empty;
+
+                if (!runtimeIsFriendlyActor)
+                {
+                    maskedActionType = UnitActionType.NoOp.ToString();
+                    maskedMoveDirLegal = true;
+                    branchMaskAppliedForMove = false;
+                    if (string.IsNullOrWhiteSpace(moveDirMaskFallbackReason))
+                    {
+                        moveDirMaskFallbackReason = "off_actor_forced_noop";
+                    }
+                }
+
+                UnitActionType decoderReceivedActionTypeValue = UnitActionType.NoOp;
+                int decoderReceivedMoveDir = 0;
+                if (hasAcceptedCommand)
+                {
+                    decoderReceivedActionTypeValue = acceptedCommand.ActionType;
+                    decoderReceivedMoveDir = (int)acceptedCommand.Direction;
+                }
+                else if (hasRejectedCommand && rejInfo.HasCommand)
+                {
+                    decoderReceivedActionTypeValue = rejInfo.ActionType;
+                    decoderReceivedMoveDir = (int)rejInfo.Direction;
+                }
+                else if (hasMaskTelemetry)
+                {
+                    decoderReceivedActionTypeValue = maskTelemetry.DecoderReceivedActionType;
+                    decoderReceivedMoveDir = maskTelemetry.DecoderReceivedMoveDir;
+                }
+
+                bool decoderReceivedMoveDirLegal = decoderReceivedActionTypeValue != UnitActionType.Move
+                    || IsMoveDirLegal(legalMoveDirMask, decoderReceivedMoveDir);
+
+                bool commandSubmitted = commandBuilt;
+                bool legacyConflict = applierAccepted && applierRejected;
+                string commandResultStatus;
+                string rejectStage = string.Empty;
+                string rejectReason = string.Empty;
+
+                if (!predictedNonNoOp)
+                {
+                    commandResultStatus = "not_submitted";
+                }
+                else if (!commandBuilt)
+                {
+                    commandResultStatus = "decoder_rejected";
+                    rejectStage = "decoder";
+                    rejectReason = decoderRejectReason;
+                }
+                else if (legacyConflict)
+                {
+                    commandResultStatus = "accepted";
+                    rejectStage = "legacy_conflict";
+                    rejectReason = applierRejectReason;
+                }
+                else if (applierRejected)
+                {
+                    commandResultStatus = "applier_rejected";
+                    rejectStage = "applier";
+                    rejectReason = applierRejectReason;
+                }
+                else if (applierAccepted)
+                {
+                    commandResultStatus = "accepted";
+                }
+                else
+                {
+                    commandResultStatus = "not_submitted";
                 }
 
                 string visualLabel = globalDiag != null && !string.IsNullOrWhiteSpace(globalDiag.logical_label)
@@ -1289,8 +1460,25 @@ namespace RTS.ML
                     produce_dir = produceDirFinal,
                     produce_unit_type = produceUnitTypeFinal,
                     attack_target_local = attackTargetLocalFinal,
+                    raw_action_type_top1 = rawActionTypeTop1,
+                    raw_move_dir_top1 = rawMoveDirTop1,
+                    masked_action_type = maskedActionType,
+                    masked_move_dir = maskedMoveDir,
+                    legal_action_type_mask = legalActionTypeMask,
+                    legal_move_dir_mask = legalMoveDirMask,
+                    masked_move_dir_legal = maskedMoveDirLegal,
+                    branch_mask_applied_for_move = branchMaskAppliedForMove,
+                    move_dir_mask_fallback_reason = moveDirMaskFallbackReason,
+                    decoder_received_action_type = decoderReceivedActionTypeValue.ToString(),
+                    decoder_received_move_dir = decoderReceivedMoveDir,
+                    decoder_received_move_dir_legal = decoderReceivedMoveDirLegal,
                     decoder_result_if_predicted_non_noop = decoderResult,
                     command_built = commandBuilt,
+                    command_submitted = commandSubmitted,
+                    command_result_status = commandResultStatus,
+                    reject_stage = rejectStage,
+                    reject_reason = rejectReason,
+                    legacy_status_conflict = legacyConflict,
                     decoder_reject_reason = decoderRejectReason,
                     applier_submission_reached = applierSubmitted,
                     applier_submitted = applierSubmitted,
@@ -1303,6 +1491,26 @@ namespace RTS.ML
             }
 
             return rows;
+        }
+
+        private static bool[] CopyBoolArray(bool[] source)
+        {
+            if (source == null || source.Length == 0)
+            {
+                return Array.Empty<bool>();
+            }
+
+            var copy = new bool[source.Length];
+            Array.Copy(source, copy, source.Length);
+            return copy;
+        }
+
+        private static bool IsMoveDirLegal(bool[] moveDirMask, int moveDir)
+        {
+            return moveDirMask != null
+                   && moveDir >= 0
+                   && moveDir < moveDirMask.Length
+                   && moveDirMask[moveDir];
         }
 
         private Dictionary<int, GlobalCellActionTypeDiagnostic> BuildGlobalCellDiagnosticsMap()
@@ -1821,6 +2029,8 @@ namespace RTS.ML
             _latestActorRows.Clear();
             _lastAcceptedByActor.Clear();
             _lastRejectedByActor.Clear();
+            _latestMaskAwareCellTelemetryByFlat.Clear();
+            _latestLegalMaskByFlat.Clear();
             _lastBaselineAcceptedByActor.Clear();
             _lastBaselineRejectedByActor.Clear();
 
@@ -1932,7 +2142,7 @@ namespace RTS.ML
             if (command.Owner != _studentControlledPlayer)
             {
                 int baselineFlat = ToFlatIndex(command.UnitPosition);
-                _lastBaselineRejectedByActor[baselineFlat] = new RuntimeRejectionInfo(NormalizeReason(reason));
+                _lastBaselineRejectedByActor[baselineFlat] = new RuntimeRejectionInfo(NormalizeReason(reason), command);
                 _baselineRejectedCount++;
                 _baselineLastCommandSummary = BuildCommandSummary(command, accepted: false, NormalizeReason(reason));
                 return;
@@ -1943,7 +2153,7 @@ namespace RTS.ML
             _lastStepApplyCommandCalled = true;
 
             int flat = ToFlatIndex(command.UnitPosition);
-            _lastRejectedByActor[flat] = new RuntimeRejectionInfo(NormalizeReason(reason));
+            _lastRejectedByActor[flat] = new RuntimeRejectionInfo(NormalizeReason(reason), command);
             IncrementStringCount(_runtimeRejectionReasons, NormalizeReason(reason));
         }
 

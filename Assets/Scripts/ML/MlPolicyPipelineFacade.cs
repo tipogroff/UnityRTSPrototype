@@ -254,6 +254,7 @@ namespace RTS.ML
             out int fallbackToNoopCount,
             out Dictionary<UnitActionType, int> preMaskHistogram,
             out Dictionary<UnitActionType, int> postMaskHistogram,
+            out Dictionary<int, ActionDecoder.MaskAwareCellTelemetry> cellTelemetryByFlat,
             string sourceActionFormat = "ml-policy")
         {
             var decodedActions = _actionDecoder.DecodeTransferCompatibleBatchMaskAware(
@@ -264,7 +265,8 @@ namespace RTS.ML
                 out maskedOutChoicesCount,
                 out fallbackToNoopCount,
                 out preMaskHistogram,
-                out postMaskHistogram);
+                out postMaskHistogram,
+                out cellTelemetryByFlat);
 
             return ApplyDecodedActions(decodedActions, playerPerspective, maskSet, sourceActionFormat);
         }

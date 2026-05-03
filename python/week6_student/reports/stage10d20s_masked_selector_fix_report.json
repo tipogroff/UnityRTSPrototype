@@ -1,0 +1,30 @@
+{
+  "generated_at_utc": "2026-05-03T22:12:10.084100+00:00",
+  "stage": "Stage10D.20S",
+  "source_manifest": "python/week6_student/tmp/stage10d20_masked_runtime_rerun/stage10d20_run_manifest.json",
+  "steps_analyzed": 76,
+  "last_step": 76,
+  "masked_move_events": 4,
+  "masked_move_illegal_count": 0,
+  "decoder_move_dir_mismatch_count": 0,
+  "decoder_move_dir_illegal_count": 0,
+  "off_actor_masked_non_noop": 0,
+  "legacy_status_conflicts": 4,
+  "move_accepted_count": 4,
+  "move_with_displacement_count": 0,
+  "move_without_displacement_count": 4,
+  "move_missing_identity_next_step_count": 0,
+  "command_result_status_counts": {
+    "not_submitted": 43443,
+    "decoder_rejected": 314,
+    "accepted": 19
+  },
+  "checks": {
+    "all_masked_move_dirs_legal": true,
+    "decoder_received_move_dir_matches_masked": true,
+    "decoder_received_move_dir_legal": true,
+    "off_actor_masked_non_noop_zero": true,
+    "legacy_conflicts_explicit_only": true
+  },
+  "pass": true
+}

@@ -157,31 +157,53 @@ namespace RTS.ML
     /// </summary>
     public readonly struct StudentMaskAwareDiagnostics
     {
+        public readonly struct ActorLegalMaskTelemetry
+        {
+            public ActorLegalMaskTelemetry(bool[] actionTypeMask, bool[] moveDirMask)
+            {
+                ActionTypeMask = actionTypeMask ?? Array.Empty<bool>();
+                MoveDirMask = moveDirMask ?? Array.Empty<bool>();
+            }
+
+            public bool[] ActionTypeMask { get; }
+            public bool[] MoveDirMask { get; }
+        }
+
         public StudentMaskAwareDiagnostics(
             bool enabled,
             int maskedOutActionTypeChoicesCount,
             int fallbackToNoopCount,
             IReadOnlyDictionary<UnitActionType, int> preMaskRawHistogram,
-            IReadOnlyDictionary<UnitActionType, int> postMaskHistogram)
+            IReadOnlyDictionary<UnitActionType, int> postMaskHistogram,
+            IReadOnlyDictionary<int, ActionDecoder.MaskAwareCellTelemetry> cellTelemetryByFlat,
+            IReadOnlyDictionary<int, ActorLegalMaskTelemetry> legalMaskByFlat)
         {
             Enabled = enabled;
             MaskedOutActionTypeChoicesCount = maskedOutActionTypeChoicesCount;
             FallbackToNoopCount = fallbackToNoopCount;
             PreMaskRawHistogram = preMaskRawHistogram ?? EmptyHistogram;
             PostMaskHistogram = postMaskHistogram ?? EmptyHistogram;
+            CellTelemetryByFlat = cellTelemetryByFlat ?? EmptyCellTelemetry;
+            LegalMaskByFlat = legalMaskByFlat ?? EmptyLegalMask;
         }
 
         private static readonly IReadOnlyDictionary<UnitActionType, int> EmptyHistogram =
             new Dictionary<UnitActionType, int>();
+        private static readonly IReadOnlyDictionary<int, ActionDecoder.MaskAwareCellTelemetry> EmptyCellTelemetry =
+            new Dictionary<int, ActionDecoder.MaskAwareCellTelemetry>();
+        private static readonly IReadOnlyDictionary<int, ActorLegalMaskTelemetry> EmptyLegalMask =
+            new Dictionary<int, ActorLegalMaskTelemetry>();
 
         public bool Enabled { get; }
         public int MaskedOutActionTypeChoicesCount { get; }
         public int FallbackToNoopCount { get; }
         public IReadOnlyDictionary<UnitActionType, int> PreMaskRawHistogram { get; }
         public IReadOnlyDictionary<UnitActionType, int> PostMaskHistogram { get; }
+        public IReadOnlyDictionary<int, ActionDecoder.MaskAwareCellTelemetry> CellTelemetryByFlat { get; }
+        public IReadOnlyDictionary<int, ActorLegalMaskTelemetry> LegalMaskByFlat { get; }
 
         public static StudentMaskAwareDiagnostics Empty =>
-            new StudentMaskAwareDiagnostics(false, 0, 0, null, null);
+            new StudentMaskAwareDiagnostics(false, 0, 0, null, null, null, null);
     }
 
     public readonly struct StudentBridgeRuntimeSnapshot
@@ -753,6 +775,9 @@ namespace RTS.ML
                 StudentMaskAwareDiagnostics maskAwareDiagnostics;
                 if (_enableLegalActionMaskForSelection)
                 {
+                    Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> legalMaskByFlat =
+                        BuildActorLegalMaskByFlat(mask);
+
                     execution = _policyPipeline.ExecuteTransferCompatibleMaskAware(
                         adapterResult.action_flat,
                         playerId,
@@ -762,6 +787,7 @@ namespace RTS.ML
                         out int fallbackToNoopCount,
                         out Dictionary<UnitActionType, int> preMaskHistogram,
                         out Dictionary<UnitActionType, int> postMaskHistogram,
+                        out Dictionary<int, ActionDecoder.MaskAwareCellTelemetry> cellTelemetryByFlat,
                         "week6-day5-student-live");
 
                     maskAwareDiagnostics = new StudentMaskAwareDiagnostics(
@@ -769,7 +795,9 @@ namespace RTS.ML
                         maskedOutActionTypeChoicesCount: maskedOutChoicesCount,
                         fallbackToNoopCount: fallbackToNoopCount,
                         preMaskRawHistogram: preMaskHistogram,
-                        postMaskHistogram: postMaskHistogram);
+                        postMaskHistogram: postMaskHistogram,
+                        cellTelemetryByFlat: cellTelemetryByFlat,
+                        legalMaskByFlat: legalMaskByFlat);
                 }
                 else
                 {
@@ -1697,6 +1725,40 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private static Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> BuildActorLegalMaskByFlat(ActionMaskSet mask)
+        {
+            var result = new Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry>();
+            if (mask == null || mask.ActorCellMask == null)
+            {
+                return result;
+            }
+
+            for (int flat = 0; flat < ActionContract.TotalCells; flat++)
+            {
+                if (flat < 0 || flat >= mask.ActorCellMask.Length || !mask.ActorCellMask[flat])
+                {
+                    continue;
+                }
+
+                ActorActionMask actorMask = mask.GetActorMaskByFlatIndex(flat);
+                if (actorMask == null)
+                {
+                    continue;
+                }
+
+                bool[] actionTypeMask = actorMask.ActionTypeMask != null
+                    ? (bool[])actorMask.ActionTypeMask.Clone()
+                    : Array.Empty<bool>();
+                bool[] moveDirMask = actorMask.MoveDirectionMask != null
+                    ? (bool[])actorMask.MoveDirectionMask.Clone()
+                    : Array.Empty<bool>();
+
+                result[flat] = new StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry(actionTypeMask, moveDirMask);
+            }
+
+            return result;
         }
 
         private StudentLiveFilterDiagnostics BuildStudentFilterDiagnostics(
