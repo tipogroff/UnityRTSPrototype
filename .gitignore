@@ -76,3 +76,11 @@ python/week5_teacher_reference/scripts/__pycache__/
 **/train.log
 **/teacher_logs/
 **/teacher_rollouts/
+
+# Week6 runtime diagnostics and temporary captures (generated)
+python/week6_student/tmp/
+python/week6_student/reports/stage10d10_global_runtime_*.json
+python/week6_student/reports/stage10d10_global_runtime_*.jsonl
+python/week6_student/reports/stage10r_noop_collapse_snapshot_step*.json
+python/week6_student/reports/stage10d15_*.json
+python/week6_student/reports/stage10d15_*.jsonl
