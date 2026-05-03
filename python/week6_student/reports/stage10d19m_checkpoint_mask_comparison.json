@@ -1,0 +1,43 @@
+{
+  "stage": "10D.19M",
+  "task": "checkpoint_mask_comparison",
+  "generated_at_utc": "2026-05-03T19:46:16Z",
+  "stage10d17": {
+    "checkpoint": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+    "b2_c3_preserved": true,
+    "movement_preserved": true,
+    "masked_valid_move_count": 12,
+    "masked_invalid_move_count": 0,
+    "command_build_readiness": 1.0,
+    "masked_off_actor_non_noop": 0,
+    "attack_watch_only": true,
+    "mask_ready_label": false,
+    "production_proxy": {
+      "Move": 12,
+      "Harvest": 1
+    }
+  },
+  "stage10d19b": {
+    "checkpoint": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+    "b2_c3_preserved": true,
+    "movement_preserved": true,
+    "masked_valid_move_count": 10,
+    "masked_invalid_move_count": 0,
+    "command_build_readiness": 1.0,
+    "masked_off_actor_non_noop": 2,
+    "attack_watch_only": true,
+    "mask_ready_label": false,
+    "production_proxy": {
+      "Move": 10,
+      "NoOp": 2,
+      "Harvest": 1
+    }
+  },
+  "selected_candidate_for_unity_mask_rerun": "none",
+  "decision_reason": "No checkpoint met masked-ready criteria with guard/movement preservation under current evidence.",
+  "labels": [
+    "STAGE10D19M_STAGE10D17_MASKED_BASELINE_EVALUATED",
+    "STAGE10D19M_STAGE10D19B_MASKED_EVALUATED",
+    "STAGE10D19M_NO_CHECKPOINT_READY_FOR_MASK_RERUN"
+  ]
+}

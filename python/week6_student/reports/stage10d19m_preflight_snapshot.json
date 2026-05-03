@@ -1,0 +1,35 @@
+{
+  "stage": "10D.19M",
+  "task": "preflight_and_artifact_hygiene",
+  "generated_at_utc": "2026-05-03T19:40:51Z",
+  "git_status_short": [],
+  "candidate_checkpoint_paths": {
+    "primary_mask_probe_checkpoint": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+    "baseline_comparison_checkpoint": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt"
+  },
+  "required_prior_artifacts_exist": {
+    "python/week6_student/reports/STAGE10D18RR_RUNTIME_BC_REDEPLOY_EVAL_RERUN_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19_FULLMAP_POSTPRODUCTION_BEHAVIOR_REPORT.md": true,
+    "python/week6_student/reports/STAGE10D19B_VALID_MOVE_EFFICIENCY_REPORT.md": true,
+    "python/week6_student/reports/stage10d19b_offline_eval_report.json": true,
+    "python/week6_student/reports/stage10d19b_stage10d18rr_snapshot_replay_report.json": true
+  },
+  "selected_gate_from_stage10d19b": "GO_FOR_STAGE10D19B_AUGMENTATION_REDESIGN",
+  "pivot_rationale": {
+    "formal_gate": "GO_FOR_STAGE10D19B_AUGMENTATION_REDESIGN",
+    "interpretation": "mask-aware redesign via Unity legal action mask audit and masked selection probe",
+    "why_now": "dataset-only improvements were confirmed offline but occupied-target negative control remained insufficient for Unity rerun approval"
+  },
+  "artifact_hygiene_guards": [
+    "do not delete prior evidence",
+    "do not overwrite Stage10D.19B artifacts",
+    "use Stage10D.19M artifact names only"
+  ],
+  "explicit_non_claims": [
+    "no training",
+    "no PPO",
+    "no runtime semantic changes",
+    "no forced movement",
+    "no heuristic fallback"
+  ]
+}

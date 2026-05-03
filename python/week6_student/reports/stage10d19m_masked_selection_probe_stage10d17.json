@@ -1,0 +1,89 @@
+{
+  "stage": "10D.19M",
+  "task": "masked_selection_probe",
+  "generated_at_utc": "2026-05-03T19:45:56Z",
+  "checkpoint": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "checkpoint_tag": "stage10d17",
+  "augmented_bc_ready_dir": "python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+  "selected_source_steps": [
+    1,
+    55,
+    200
+  ],
+  "sample_count": 18,
+  "evidence_note": "Probe uses Stage10D19B validation rows derived from Stage10D18RR replay sources. Steps with missing full raw runtime state are evaluated via this preserved proxy subset.",
+  "unmasked_action_distribution": {
+    "NoOp": 2,
+    "Move": 5,
+    "Harvest": 16,
+    "Return": 0,
+    "Produce": 31,
+    "Attack": 0
+  },
+  "masked_action_distribution": {
+    "NoOp": 2,
+    "Move": 18,
+    "Harvest": 16,
+    "Return": 0,
+    "Produce": 18,
+    "Attack": 0
+  },
+  "unmasked_off_actor_non_noop_count": 0,
+  "masked_off_actor_non_noop_count": 0,
+  "unmasked_move_predictions": 3,
+  "masked_move_predictions": 12,
+  "unmasked_valid_target_moves": 3,
+  "masked_valid_target_moves": 12,
+  "unmasked_occupied_or_invalid_target_moves": 0,
+  "masked_occupied_or_invalid_target_moves": 0,
+  "unmasked_estimated_command_build_readiness": 1.0,
+  "masked_estimated_command_build_readiness": 1.0,
+  "unmasked_attack_predictions": 0,
+  "masked_attack_predictions": 0,
+  "masked_attack_valid_target_count": 0,
+  "B2": {
+    "unmasked_action": "Harvest",
+    "masked_action": "Harvest",
+    "probabilities": [
+      0.0,
+      4.468982297112234e-06,
+      0.9999904632568359,
+      1.9463954004095285e-08,
+      2.616897063489887e-06,
+      2.5511526473565027e-06
+    ]
+  },
+  "C3": {
+    "unmasked_action": "Produce",
+    "masked_action": "Produce",
+    "probabilities": [
+      0.0,
+      4.813099621969741e-06,
+      4.34262074122671e-06,
+      3.663651284568914e-07,
+      0.9999904632568359,
+      1.9892179015101874e-09
+    ]
+  },
+  "produced_unit_masked_action_distribution": {
+    "Move": 12,
+    "Harvest": 1
+  },
+  "number_of_actions_changed_by_mask": 13,
+  "changed_action_breakdown": {
+    "invalid Move -> NoOp": 0,
+    "invalid Move -> valid Move": 0,
+    "off-actor non-NoOp -> NoOp": 0,
+    "invalid Attack -> NoOp": 0,
+    "other": 13
+  },
+  "labels": [
+    "STAGE10D19M_MASKED_SELECTION_PROBE_COMPLETED",
+    "STAGE10D19M_MASK_NOT_READY",
+    "STAGE10D19M_MASK_NOT_READY",
+    "STAGE10D19M_MASK_PRESERVES_B2_C3_GUARDS",
+    "STAGE10D19M_MASK_PRESERVES_MOVEMENT",
+    "STAGE10D19M_MASK_ATTACK_STILL_ABSENT",
+    "STAGE10D19M_MASK_NOT_READY"
+  ]
+}

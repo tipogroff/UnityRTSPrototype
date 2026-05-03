@@ -1,0 +1,72 @@
+{
+  "stage": "10D.19M",
+  "task": "legal_action_mask_contract",
+  "generated_at_utc": "2026-05-03T19:44:46Z",
+  "level_a_cell_action_type_mask": {
+    "shape": [
+      576,
+      6
+    ],
+    "rules": {
+      "NoOp": "legal for all cells",
+      "off_actor": "NoOp only",
+      "Move": "friendly movable actor (Worker/Light/Heavy/Ranged) and at least one legal move_dir",
+      "Harvest": "friendly Worker and adjacent Resource in harvest_dir",
+      "Return": "friendly Worker and adjacent friendly Base/stockpile in return_dir (carried-resource availability may be partial)",
+      "Produce": "friendly Base/Barracks, produce_dir to adjacent free cell, produce_unit_type constrained by producer (Base->Worker; Barracks->combat units if available), resource-cost check optional if unavailable",
+      "Attack": "friendly combat-capable unit (Worker/Light/Heavy/Ranged) with at least one enemy in local 7x7, attack_target_local only on enemy offsets"
+    }
+  },
+  "level_b_branch_masks": {
+    "action_type_mask": [
+      576,
+      6
+    ],
+    "move_dir_mask": [
+      576,
+      4
+    ],
+    "harvest_dir_mask": [
+      576,
+      4
+    ],
+    "return_dir_mask": [
+      576,
+      4
+    ],
+    "produce_dir_mask": [
+      576,
+      4
+    ],
+    "produce_unit_type_mask": [
+      576,
+      7
+    ],
+    "attack_target_local_mask": [
+      576,
+      49
+    ],
+    "branch_rules": [
+      "Branch masks are applied only when corresponding action_type is selected",
+      "Invalid branch values must not be selected",
+      "If all branch options are invalid for selected action_type, that action_type must be masked out",
+      "Never make a non-NoOp action legal for off-actor cells"
+    ]
+  },
+  "runtime_authority_chain": [
+    "model logits",
+    "Unity legal action mask",
+    "masked action selection",
+    "ActionDecoder",
+    "ActionApplier",
+    "MatchManager.ApplyCommand()"
+  ],
+  "runtime_authority_note": "Mask is pre-selection only and never replaces runtime validation or command acceptance authority.",
+  "labels": [
+    "STAGE10D19M_MASK_CONTRACT_DEFINED",
+    "STAGE10D19M_OFF_ACTOR_ONLY_NOOP_RULE_DEFINED",
+    "STAGE10D19M_MOVE_VALID_TARGET_RULE_DEFINED",
+    "STAGE10D19M_ATTACK_7X7_TARGET_RULE_DEFINED",
+    "STAGE10D19M_RUNTIME_VALIDATION_REMAINS_AUTHORITATIVE"
+  ]
+}

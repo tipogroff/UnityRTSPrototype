@@ -1,0 +1,50 @@
+{
+  "stage": "10D.19M",
+  "task": "validate_mask_semantics",
+  "generated_at_utc": "2026-05-03T19:45:43Z",
+  "total_cells_checked": 1728,
+  "off_actor_violations": 0,
+  "move_mask_violations": 0,
+  "harvest_mask_violations": 0,
+  "produce_mask_violations": 0,
+  "attack_mask_violations": 0,
+  "branch_mask_violations": 0,
+  "approximation_count": 9,
+  "per_step": {
+    "1": {
+      "off_actor_violations": 0,
+      "move_mask_violations": 0,
+      "harvest_mask_violations": 0,
+      "produce_mask_violations": 0,
+      "attack_mask_violations": 0,
+      "branch_mask_violations": 0,
+      "total_cells_checked": 576
+    },
+    "55": {
+      "off_actor_violations": 0,
+      "move_mask_violations": 0,
+      "harvest_mask_violations": 0,
+      "produce_mask_violations": 0,
+      "attack_mask_violations": 0,
+      "branch_mask_violations": 0,
+      "total_cells_checked": 576
+    },
+    "200": {
+      "off_actor_violations": 0,
+      "move_mask_violations": 0,
+      "harvest_mask_violations": 0,
+      "produce_mask_violations": 0,
+      "attack_mask_violations": 0,
+      "branch_mask_violations": 0,
+      "total_cells_checked": 576
+    }
+  },
+  "labels": [
+    "STAGE10D19M_MASK_SEMANTICS_VALID",
+    "STAGE10D19M_MASK_OFF_ACTOR_SAFE",
+    "STAGE10D19M_MASK_MOVE_TARGETS_SAFE",
+    "STAGE10D19M_MASK_ATTACK_TARGETS_SAFE"
+  ],
+  "gate": "GO_FOR_STAGE10D19M_MASKED_SELECTION_PROBE",
+  "runtime_authority_note": "Mask modifies selection legality only; ActionDecoder/ActionApplier/MatchManager remain authoritative."
+}
