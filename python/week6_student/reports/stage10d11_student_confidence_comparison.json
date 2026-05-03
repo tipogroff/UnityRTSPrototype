@@ -1,0 +1,170 @@
+{
+  "generated_at_utc": "2026-05-03T12:52:04Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_semantic_bc_stage10d8_20260503T093718Z\\student_bc_semantic_best.pt",
+  "runtime_reconstructed_from_stage10d10_cell_table": {
+    "B2": {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9820078015327454,
+      "p_harvest": 0.004535490181297064,
+      "p_produce": 0.003566161962226033,
+      "probabilities": [
+        0.9820078015327454,
+        0.003072780091315508,
+        0.004535490181297064,
+        0.0035647531040012836,
+        0.003566161962226033,
+        0.003252946073189378
+      ]
+    },
+    "C3": {
+      "flat_index": 50,
+      "predicted_action": "NoOp",
+      "p_noop": 0.996549129486084,
+      "p_harvest": 0.000739885086659342,
+      "p_produce": 0.0007559610530734062,
+      "probabilities": [
+        0.996549129486084,
+        0.0006502116448245943,
+        0.000739885086659342,
+        0.0007325495244003832,
+        0.0007559610530734062,
+        0.0005723434151150286
+      ]
+    }
+  },
+  "bc_validation_positive_confidence": {
+    "worker_harvest": {
+      "count": 8666,
+      "mean_p_noop": 2.8047144785506572e-14,
+      "mean_p_harvest": 0.9978983041845622,
+      "mean_p_produce": 0.0016408322644359786,
+      "predicted_action_distribution": {
+        "Harvest": 8666
+      },
+      "representative_high_confidence_examples": [
+        {
+          "split": "validation",
+          "sample_index": 7438,
+          "flat_index": 25,
+          "target_action": "Harvest",
+          "target_probability": 0.9985824823379517,
+          "p_noop": 1.802697210409742e-29,
+          "p_harvest": 0.9985824823379517,
+          "p_produce": 0.0011812909506261349,
+          "predicted_action": "Harvest"
+        },
+        {
+          "split": "validation",
+          "sample_index": 3755,
+          "flat_index": 25,
+          "target_action": "Harvest",
+          "target_probability": 0.9985820055007935,
+          "p_noop": 1.8096135558592456e-29,
+          "p_harvest": 0.9985820055007935,
+          "p_produce": 0.001181707251816988,
+          "predicted_action": "Harvest"
+        },
+        {
+          "split": "validation",
+          "sample_index": 4815,
+          "flat_index": 25,
+          "target_action": "Harvest",
+          "target_probability": 0.9985820055007935,
+          "p_noop": 1.8092963792715294e-29,
+          "p_harvest": 0.9985820055007935,
+          "p_produce": 0.0011817635968327522,
+          "predicted_action": "Harvest"
+        },
+        {
+          "split": "validation",
+          "sample_index": 8238,
+          "flat_index": 25,
+          "target_action": "Harvest",
+          "target_probability": 0.9985820055007935,
+          "p_noop": 1.8096135558592456e-29,
+          "p_harvest": 0.9985820055007935,
+          "p_produce": 0.001181707251816988,
+          "predicted_action": "Harvest"
+        },
+        {
+          "split": "validation",
+          "sample_index": 5088,
+          "flat_index": 25,
+          "target_action": "Harvest",
+          "target_probability": 0.9985818862915039,
+          "p_noop": 1.800084716532836e-29,
+          "p_harvest": 0.9985818862915039,
+          "p_produce": 0.0011817928170785308,
+          "predicted_action": "Harvest"
+        }
+      ]
+    },
+    "base_produce": {
+      "count": 8774,
+      "mean_p_noop": 3.553458147471015e-07,
+      "mean_p_harvest": 0.0016134765887438347,
+      "mean_p_produce": 0.9972867147510025,
+      "predicted_action_distribution": {
+        "Produce": 8774
+      },
+      "representative_high_confidence_examples": [
+        {
+          "split": "validation",
+          "sample_index": 1475,
+          "flat_index": 50,
+          "target_action": "Produce",
+          "target_probability": 0.9992615580558777,
+          "p_noop": 1.9302672834429e-31,
+          "p_harvest": 0.0004250587080605328,
+          "p_produce": 0.9992615580558777,
+          "predicted_action": "Produce"
+        },
+        {
+          "split": "validation",
+          "sample_index": 2555,
+          "flat_index": 50,
+          "target_action": "Produce",
+          "target_probability": 0.9992606043815613,
+          "p_noop": 1.599294153629896e-31,
+          "p_harvest": 0.0004316136473789811,
+          "p_produce": 0.9992606043815613,
+          "predicted_action": "Produce"
+        },
+        {
+          "split": "validation",
+          "sample_index": 2450,
+          "flat_index": 50,
+          "target_action": "Produce",
+          "target_probability": 0.9992601275444031,
+          "p_noop": 1.562710653542475e-31,
+          "p_harvest": 0.00043232610914856195,
+          "p_produce": 0.9992601275444031,
+          "predicted_action": "Produce"
+        },
+        {
+          "split": "validation",
+          "sample_index": 7301,
+          "flat_index": 50,
+          "target_action": "Produce",
+          "target_probability": 0.9992601275444031,
+          "p_noop": 1.562710653542475e-31,
+          "p_harvest": 0.00043232610914856195,
+          "p_produce": 0.9992601275444031,
+          "predicted_action": "Produce"
+        },
+        {
+          "split": "validation",
+          "sample_index": 6259,
+          "flat_index": 50,
+          "target_action": "Produce",
+          "target_probability": 0.9992600083351135,
+          "p_noop": 1.5556208944643605e-31,
+          "p_harvest": 0.0004335556295700371,
+          "p_produce": 0.9992600083351135,
+          "predicted_action": "Produce"
+        }
+      ]
+    }
+  }
+}

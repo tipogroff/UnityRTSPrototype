@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-05-03T13:38:16.449228Z",
+  "input_file": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\stage10d12r_full_raw_runtime_observation_step0001.json",
+  "classification": "RAW_CAPTURE_SHAPE_INVALID",
+  "all_checks_passed": false,
+  "summary": {
+    "total_issues": 4,
+    "shape_valid": false,
+    "cell_count_valid": false,
+    "channels_valid": true,
+    "focus_cells_valid": false,
+    "owner_valid": true,
+    "unit_valid": true,
+    "action_valid": true
+  },
+  "nan_inf_stats": {
+    "nan_count": 0,
+    "inf_count": 0,
+    "total_values": 0
+  },
+  "owner_distribution": {
+    "owner_neutral": 0,
+    "owner_self": 0,
+    "owner_enemy": 0,
+    "owner_none": 0,
+    "owner_multi": 0,
+    "owner_invalid": 0
+  },
+  "unit_distribution": {
+    "unit_resource": 0,
+    "unit_base": 0,
+    "unit_barracks": 0,
+    "unit_worker": 0,
+    "unit_light": 0,
+    "unit_heavy": 0,
+    "unit_ranged": 0,
+    "unit_none": 0,
+    "unit_multi": 0
+  },
+  "action_distribution": {
+    "action_noop": 0,
+    "action_move": 0,
+    "action_harvest": 0,
+    "action_return": 0,
+    "action_produce": 0,
+    "action_attack": 0,
+    "action_none": 0,
+    "action_multi": 0
+  },
+  "focus_cell_vectors": {
+    "B2": [],
+    "C3": []
+  },
+  "issues": [
+    "Missing tensor_shape field",
+    "Cell count mismatch: got 0, expected 576",
+    "Focus cell B2 (flat=25) not found",
+    "Focus cell C3 (flat=50) not found"
+  ],
+  "issues_truncated": false
+}

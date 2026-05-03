@@ -600,6 +600,17 @@ namespace RTS.ML
             {
                 WriteFloat32Buffer(observationPackage.SpatialObservation, observationBinPath);
 
+                // Stage10D.12R: Capture full raw runtime observation tensor for diagnostics
+                if (observationPackage.SpatialObservation != null && observationPackage.SpatialObservation.Length == 576 * 27)
+                {
+                    string rawTensorJsonPath = Path.Combine(artifactDir, $"stage10d12r_full_raw_runtime_observation_step{_decisionIndex:D4}.json");
+                    CaptureFullRawObservationDiagnostic(
+                        observationPackage.SpatialObservation,
+                        playerId,
+                        _decisionIndex,
+                        rawTensorJsonPath);
+                }
+
                 var request = new BridgeRequestEnvelope
                 {
                     command = "infer",
@@ -1183,6 +1194,201 @@ namespace RTS.ML
             {
                 writer.Write(values[i]);
             }
+        }
+
+        // Stage10D.12R: Read-only diagnostic capture of full raw runtime observation tensor
+        private void CaptureFullRawObservationDiagnostic(
+            float[] spatialObservation,
+            Owner playerId,
+            int stepIndex,
+            string outputJsonPath)
+        {
+            try
+            {
+                const int H = ObservationContract.GridH;   // 24
+                const int W = ObservationContract.GridW;   // 24
+                const int C = ObservationContract.ChannelsPerCell;  // 27
+                
+                if (spatialObservation.Length != H * W * C)
+                {
+                    Debug.LogWarning($"[Stage10D.12R] Observation size mismatch: expected {H * W * C}, got {spatialObservation.Length}");
+                    return;
+                }
+
+                // Build diagnostic JSON with full raw tensor and metadata
+                var channelNames = new[]
+                {
+                    // Entity attributes (0-11)
+                    "ch0_hit_points",
+                    "ch1_resources",
+                    "ch2_owner_neutral",
+                    "ch3_owner_self_friendly",
+                    "ch4_owner_enemy",
+                    "ch5_unit_resource",
+                    "ch6_unit_base",
+                    "ch7_unit_barracks",
+                    "ch8_unit_worker",
+                    "ch9_unit_light",
+                    "ch10_unit_heavy",
+                    "ch11_unit_ranged",
+                    // Current action (12-17)
+                    "ch12_action_noop",
+                    "ch13_action_move",
+                    "ch14_action_harvest",
+                    "ch15_action_return",
+                    "ch16_action_produce",
+                    "ch17_action_attack",
+                    // Direction (18-21)
+                    "ch18_dir_north",
+                    "ch19_dir_east",
+                    "ch20_dir_south",
+                    "ch21_dir_west",
+                    // Produce type (22-25)
+                    "ch22_produce_worker",
+                    "ch23_produce_light",
+                    "ch24_produce_heavy",
+                    "ch25_produce_ranged",
+                    // Attack target (26)
+                    "ch26_attack_target_index",
+                };
+
+                // Build cell entries
+                var cellList = new List<object>();
+                for (int flat = 0; flat < H * W; flat++)
+                {
+                    int y = flat / W;
+                    int x = flat % W;
+                    
+                    var cellChannels = new float[C];
+                    for (int c = 0; c < C; c++)
+                    {
+                        cellChannels[c] = spatialObservation[flat * C + c];
+                    }
+
+                    // Decode semantics from channels
+                    string decodedOwner = DecodeOwnerFromChannels(cellChannels);
+                    string decodedUnit = DecodeUnitFromChannels(cellChannels);
+                    string decodedAction = DecodeCurrentActionFromChannels(cellChannels);
+
+                    var cellData = new
+                    {
+                        flat_index = flat,
+                        x = x,
+                        y = y,
+                        logical_label = GetLogicalCellLabel(flat),  // e.g., "B2", "C3"
+                        raw_channel_vector = cellChannels,
+                        decoded_owner = decodedOwner,
+                        decoded_unit = decodedUnit,
+                        decoded_current_action = decodedAction,
+                    };
+                    
+                    cellList.Add(cellData);
+                }
+
+                // Build final diagnostic JSON
+                var diagnosticData = new
+                {
+                    generated_at_utc = System.DateTime.UtcNow.ToString("O"),
+                    stage = "10D.12R",
+                    capture_type = "full_raw_runtime_observation",
+                    step_index = stepIndex,
+                    controlled_player = playerId.ToString(),
+                    capture_point = "after_observation_validation_before_python_bridge_send",
+                    tensor_shape = new[] { H, W, C },
+                    tensor_shape_flat = new[] { H * W, C },
+                    flatten_order = "flat = y * W + x; x = flat % W; y = flat / W",
+                    channel_names = channelNames,
+                    channel_count = C,
+                    cell_count = H * W,
+                    cells = cellList,
+                };
+
+                // Write diagnostic JSON
+                string json = JsonUtility.ToJson(diagnosticData);
+                System.IO.File.WriteAllText(outputJsonPath, json, System.Text.Encoding.UTF8);
+
+                if (_verboseLogs)
+                {
+                    Debug.Log($"[Stage10D.12R] Full raw observation captured to {outputJsonPath}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[Stage10D.12R] Failed to capture full raw observation: {ex.Message}");
+            }
+        }
+
+        private static string DecodeOwnerFromChannels(float[] channels)
+        {
+            if (channels.Length < 5) return "unknown";
+            
+            float neutral = channels[2];
+            float self = channels[3];
+            float enemy = channels[4];
+            
+            if (self > 0.5f) return "player1_friendly";
+            if (enemy > 0.5f) return "player2_enemy";
+            if (neutral > 0.5f) return "neutral";
+            return "none";
+        }
+
+        private static string DecodeUnitFromChannels(float[] channels)
+        {
+            if (channels.Length < 12) return "none";
+            
+            float resource = channels[5];
+            float base_unit = channels[6];
+            float barracks = channels[7];
+            float worker = channels[8];
+            float light = channels[9];
+            float heavy = channels[10];
+            float ranged = channels[11];
+            
+            if (resource > 0.5f) return "resource";
+            if (base_unit > 0.5f) return "base";
+            if (barracks > 0.5f) return "barracks";
+            if (worker > 0.5f) return "worker";
+            if (light > 0.5f) return "light";
+            if (heavy > 0.5f) return "heavy";
+            if (ranged > 0.5f) return "ranged";
+            return "none";
+        }
+
+        private static string DecodeCurrentActionFromChannels(float[] channels)
+        {
+            if (channels.Length < 18) return "unknown";
+            
+            float noop = channels[12];
+            float move = channels[13];
+            float harvest = channels[14];
+            float return_res = channels[15];
+            float produce = channels[16];
+            float attack = channels[17];
+            
+            if (noop > 0.5f) return "noop";
+            if (move > 0.5f) return "move";
+            if (harvest > 0.5f) return "harvest";
+            if (return_res > 0.5f) return "return";
+            if (produce > 0.5f) return "produce";
+            if (attack > 0.5f) return "attack";
+            return "none";
+        }
+
+        private static string GetLogicalCellLabel(int flatIndex)
+        {
+            const int W = ObservationContract.GridW;  // 24
+            int y = flatIndex / W;
+            int x = flatIndex % W;
+            
+            // Grid reference: column letter + row number (1-indexed from bottom-left, like chess)
+            if (x >= 0 && x < 26 && y >= 0 && y < 26)
+            {
+                char col = (char)('A' + x);
+                int row = y + 1;
+                return $"{col}{row}";
+            }
+            
+            return $"[{x},{y}]";
         }
 
         private static bool ValidateAdapterPayload(AdapterResult adapter, out string error)

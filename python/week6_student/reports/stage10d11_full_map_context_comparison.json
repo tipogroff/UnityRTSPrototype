@@ -1,0 +1,51 @@
+{
+  "generated_at_utc": "2026-05-03T12:51:53Z",
+  "runtime_reconstructed_map_summary": {
+    "count_self_friendly_cells": 2,
+    "count_enemy_cells": 3,
+    "count_neutral_cells": 571,
+    "count_resources": 4,
+    "count_bases": 2,
+    "count_workers": 2,
+    "count_barracks": 1,
+    "count_combat_units": 0,
+    "count_empty_cells": 567,
+    "total_actor_cells": 5,
+    "friendly_actor_cells": 2,
+    "enemy_actor_cells": 3
+  },
+  "bc_representative_worker_map_summary": {
+    "count_self_friendly_cells": 2,
+    "count_enemy_cells": 14,
+    "count_neutral_cells": 560,
+    "count_resources": 4,
+    "count_bases": 2,
+    "count_workers": 14,
+    "count_barracks": 0,
+    "count_combat_units": 0,
+    "count_empty_cells": 556,
+    "total_actor_cells": 16,
+    "friendly_actor_cells": 2,
+    "enemy_actor_cells": 14
+  },
+  "bc_representative_base_map_summary": {
+    "count_self_friendly_cells": 2,
+    "count_enemy_cells": 4,
+    "count_neutral_cells": 570,
+    "count_resources": 4,
+    "count_bases": 2,
+    "count_workers": 3,
+    "count_barracks": 1,
+    "count_combat_units": 0,
+    "count_empty_cells": 566,
+    "total_actor_cells": 6,
+    "friendly_actor_cells": 2,
+    "enemy_actor_cells": 4
+  },
+  "local_context": {
+    "B2_runtime_patch5_l2_vs_nearest_worker_patch5": 6.164414002968976,
+    "B2_runtime_patch7_l2_vs_nearest_worker_patch7": 7.483314773547883,
+    "C3_runtime_patch5_l2_vs_nearest_base_patch5": 7.483314773547883,
+    "C3_runtime_patch7_l2_vs_nearest_base_patch7": 8.831760866327848
+  }
+}

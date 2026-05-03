@@ -1,0 +1,1215 @@
+{
+  "generated_at_utc": "2026-05-03T13:02:12Z",
+  "based_on_reconstructed_fullmap": true,
+  "runtime_b2_baseline": {
+    "flat_index": 25,
+    "predicted_action": "NoOp",
+    "p_noop": 0.9820078015327454,
+    "p_move": 0.003072780091315508,
+    "p_harvest": 0.004535490181297064,
+    "p_return": 0.0035647531040012836,
+    "p_produce": 0.003566161962226033,
+    "p_attack": 0.003252946073189378,
+    "probabilities": [
+      0.9820078015327454,
+      0.003072780091315508,
+      0.004535490181297064,
+      0.0035647531040012836,
+      0.003566161962226033,
+      0.003252946073189378
+    ]
+  },
+  "reference_worker_harvest": {
+    "split": "train",
+    "sample_index": 0,
+    "flat_index": 25,
+    "xy": [
+      1,
+      1
+    ],
+    "dist_to_runtime_b2_l2": 2.449489742783178,
+    "reference_cell_probs": {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.8848051710802153e-29,
+      "p_move": 5.657664951286279e-05,
+      "p_harvest": 0.9985673427581787,
+      "p_return": 3.4308603062527254e-05,
+      "p_produce": 0.0011941972188651562,
+      "p_attack": 0.00014755642041563988,
+      "probabilities": [
+        1.8848051710802153e-29,
+        5.657664951286279e-05,
+        0.9985673427581787,
+        3.4308603062527254e-05,
+        0.0011941972188651562,
+        0.00014755642041563988
+      ]
+    }
+  },
+  "forward_group_patch_results": [
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9776915311813354,
+      "p_move": 0.00376598397269845,
+      "p_harvest": 0.005865144543349743,
+      "p_return": 0.00438893586397171,
+      "p_produce": 0.004203419201076031,
+      "p_attack": 0.004085113760083914,
+      "probabilities": [
+        0.9776915311813354,
+        0.00376598397269845,
+        0.005865144543349743,
+        0.00438893586397171,
+        0.004203419201076031,
+        0.004085113760083914
+      ],
+      "probe_name": "scalars_only",
+      "channels": [
+        0,
+        1,
+        26
+      ],
+      "channel_names": [
+        "hit_points",
+        "resources",
+        "attack_target_index"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.004316270351409912,
+        "delta_p_harvest": 0.001329654362052679,
+        "delta_p_produce": 0.0006372572388499975
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9820078015327454,
+      "p_move": 0.003072780091315508,
+      "p_harvest": 0.004535490181297064,
+      "p_return": 0.0035647531040012836,
+      "p_produce": 0.003566161962226033,
+      "p_attack": 0.003252946073189378,
+      "probabilities": [
+        0.9820078015327454,
+        0.003072780091315508,
+        0.004535490181297064,
+        0.0035647531040012836,
+        0.003566161962226033,
+        0.003252946073189378
+      ],
+      "probe_name": "owner_only",
+      "channels": [
+        2,
+        3,
+        4
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0,
+        "delta_p_produce": 0.0
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9820078015327454,
+      "p_move": 0.003072780091315508,
+      "p_harvest": 0.004535490181297064,
+      "p_return": 0.0035647531040012836,
+      "p_produce": 0.003566161962226033,
+      "p_attack": 0.003252946073189378,
+      "probabilities": [
+        0.9820078015327454,
+        0.003072780091315508,
+        0.004535490181297064,
+        0.0035647531040012836,
+        0.003566161962226033,
+        0.003252946073189378
+      ],
+      "probe_name": "unit_type_only",
+      "channels": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "channel_names": [
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0,
+        "delta_p_produce": 0.0
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.3823174238204956,
+      "p_move": 0.08059296011924744,
+      "p_harvest": 0.22073794901371002,
+      "p_return": 0.09607276320457458,
+      "p_produce": 0.12487998604774475,
+      "p_attack": 0.09539896994829178,
+      "probabilities": [
+        0.3823174238204956,
+        0.08059296011924744,
+        0.22073794901371002,
+        0.09607276320457458,
+        0.12487998604774475,
+        0.09539896994829178
+      ],
+      "probe_name": "current_action_only",
+      "channels": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "channel_names": [
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.5996903777122498,
+        "delta_p_harvest": 0.21620245883241296,
+        "delta_p_produce": 0.12131382408551872
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": true,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.8639843463897705,
+      "p_move": 0.021364685148000717,
+      "p_harvest": 0.04166051745414734,
+      "p_return": 0.02545873261988163,
+      "p_produce": 0.024042749777436256,
+      "p_attack": 0.02348906546831131,
+      "probabilities": [
+        0.8639843463897705,
+        0.021364685148000717,
+        0.04166051745414734,
+        0.02545873261988163,
+        0.024042749777436256,
+        0.02348906546831131
+      ],
+      "probe_name": "direction_only",
+      "channels": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.11802345514297485,
+        "delta_p_harvest": 0.037125027272850275,
+        "delta_p_produce": 0.020476587815210223
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9820078015327454,
+      "p_move": 0.003072780091315508,
+      "p_harvest": 0.004535490181297064,
+      "p_return": 0.0035647531040012836,
+      "p_produce": 0.003566161962226033,
+      "p_attack": 0.003252946073189378,
+      "probabilities": [
+        0.9820078015327454,
+        0.003072780091315508,
+        0.004535490181297064,
+        0.0035647531040012836,
+        0.003566161962226033,
+        0.003252946073189378
+      ],
+      "probe_name": "produce_type_only",
+      "channels": [
+        22,
+        23,
+        24,
+        25
+      ],
+      "channel_names": [
+        "produce_worker",
+        "produce_light",
+        "produce_heavy",
+        "produce_ranged"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0,
+        "delta_p_produce": 0.0
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 0.000801681715529412,
+      "p_move": 0.08448278903961182,
+      "p_harvest": 0.5443900227546692,
+      "p_return": 0.10853433609008789,
+      "p_produce": 0.16135011613368988,
+      "p_attack": 0.1004411056637764,
+      "probabilities": [
+        0.000801681715529412,
+        0.08448278903961182,
+        0.5443900227546692,
+        0.10853433609008789,
+        0.16135011613368988,
+        0.1004411056637764
+      ],
+      "probe_name": "current_action_plus_direction",
+      "channels": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.981206119817216,
+        "delta_p_harvest": 0.5398545325733721,
+        "delta_p_produce": 0.15778395417146385
+      },
+      "harvest_top1": true,
+      "p_noop_lt_0_5": true,
+      "p_harvest_gt_0_5": true
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 0.00013337770360521972,
+      "p_move": 0.06715962290763855,
+      "p_harvest": 0.6185013651847839,
+      "p_return": 0.09174622595310211,
+      "p_produce": 0.13644418120384216,
+      "p_attack": 0.0860152468085289,
+      "probabilities": [
+        0.00013337770360521972,
+        0.06715962290763855,
+        0.6185013651847839,
+        0.09174622595310211,
+        0.13644418120384216,
+        0.0860152468085289
+      ],
+      "probe_name": "scalars_plus_current_action_plus_direction",
+      "channels": [
+        0,
+        1,
+        26,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "hit_points",
+        "resources",
+        "attack_target_index",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.9818744238291401,
+        "delta_p_harvest": 0.6139658750034869,
+        "delta_p_produce": 0.13287801924161613
+      },
+      "harvest_top1": true,
+      "p_noop_lt_0_5": true,
+      "p_harvest_gt_0_5": true
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.9820078015327454,
+      "p_move": 0.003072780091315508,
+      "p_harvest": 0.004535490181297064,
+      "p_return": 0.0035647531040012836,
+      "p_produce": 0.003566161962226033,
+      "p_attack": 0.003252946073189378,
+      "probabilities": [
+        0.9820078015327454,
+        0.003072780091315508,
+        0.004535490181297064,
+        0.0035647531040012836,
+        0.003566161962226033,
+        0.003252946073189378
+      ],
+      "probe_name": "owner_plus_unit_type",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0,
+        "delta_p_produce": 0.0
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.3823174238204956,
+      "p_move": 0.08059296011924744,
+      "p_harvest": 0.22073794901371002,
+      "p_return": 0.09607276320457458,
+      "p_produce": 0.12487998604774475,
+      "p_attack": 0.09539896994829178,
+      "probabilities": [
+        0.3823174238204956,
+        0.08059296011924744,
+        0.22073794901371002,
+        0.09607276320457458,
+        0.12487998604774475,
+        0.09539896994829178
+      ],
+      "probe_name": "owner_plus_unit_type_plus_current_action",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.5996903777122498,
+        "delta_p_harvest": 0.21620245883241296,
+        "delta_p_produce": 0.12131382408551872
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": true,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "NoOp",
+      "p_noop": 0.8639843463897705,
+      "p_move": 0.021364685148000717,
+      "p_harvest": 0.04166051745414734,
+      "p_return": 0.02545873261988163,
+      "p_produce": 0.024042749777436256,
+      "p_attack": 0.02348906546831131,
+      "probabilities": [
+        0.8639843463897705,
+        0.021364685148000717,
+        0.04166051745414734,
+        0.02545873261988163,
+        0.024042749777436256,
+        0.02348906546831131
+      ],
+      "probe_name": "owner_plus_unit_type_plus_direction",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.11802345514297485,
+        "delta_p_harvest": 0.037125027272850275,
+        "delta_p_produce": 0.020476587815210223
+      },
+      "harvest_top1": false,
+      "p_noop_lt_0_5": false,
+      "p_harvest_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 0.000801681715529412,
+      "p_move": 0.08448278903961182,
+      "p_harvest": 0.5443900227546692,
+      "p_return": 0.10853433609008789,
+      "p_produce": 0.16135011613368988,
+      "p_attack": 0.1004411056637764,
+      "probabilities": [
+        0.000801681715529412,
+        0.08448278903961182,
+        0.5443900227546692,
+        0.10853433609008789,
+        0.16135011613368988,
+        0.1004411056637764
+      ],
+      "probe_name": "owner_plus_unit_type_plus_current_action_plus_direction",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_runtime": {
+        "delta_p_noop": -0.981206119817216,
+        "delta_p_harvest": 0.5398545325733721,
+        "delta_p_produce": 0.15778395417146385
+      },
+      "harvest_top1": true,
+      "p_noop_lt_0_5": true,
+      "p_harvest_gt_0_5": true
+    }
+  ],
+  "reverse_group_ablation_results": [
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 2.700386841124591e-24,
+      "p_move": 0.0003445512556936592,
+      "p_harvest": 0.9946954846382141,
+      "p_return": 0.0001972400932572782,
+      "p_produce": 0.003959489520639181,
+      "p_attack": 0.0008032095502130687,
+      "probabilities": [
+        2.700386841124591e-24,
+        0.0003445512556936592,
+        0.9946954846382141,
+        0.0001972400932572782,
+        0.003959489520639181,
+        0.0008032095502130687
+      ],
+      "probe_name": "scalars_only",
+      "channels": [
+        0,
+        1,
+        26
+      ],
+      "channel_names": [
+        "hit_points",
+        "resources",
+        "attack_target_index"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 2.70036799307288e-24,
+        "delta_p_harvest": -0.0038718581199645996
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.8848051710802153e-29,
+      "p_move": 5.657664951286279e-05,
+      "p_harvest": 0.9985673427581787,
+      "p_return": 3.4308603062527254e-05,
+      "p_produce": 0.0011941972188651562,
+      "p_attack": 0.00014755642041563988,
+      "probabilities": [
+        1.8848051710802153e-29,
+        5.657664951286279e-05,
+        0.9985673427581787,
+        3.4308603062527254e-05,
+        0.0011941972188651562,
+        0.00014755642041563988
+      ],
+      "probe_name": "owner_only",
+      "channels": [
+        2,
+        3,
+        4
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.8848051710802153e-29,
+      "p_move": 5.657664951286279e-05,
+      "p_harvest": 0.9985673427581787,
+      "p_return": 3.4308603062527254e-05,
+      "p_produce": 0.0011941972188651562,
+      "p_attack": 0.00014755642041563988,
+      "probabilities": [
+        1.8848051710802153e-29,
+        5.657664951286279e-05,
+        0.9985673427581787,
+        3.4308603062527254e-05,
+        0.0011941972188651562,
+        0.00014755642041563988
+      ],
+      "probe_name": "unit_type_only",
+      "channels": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "channel_names": [
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 6.470930534425766e-18,
+      "p_move": 0.0016883391654118896,
+      "p_harvest": 0.9834120273590088,
+      "p_return": 0.001056651584804058,
+      "p_produce": 0.009283449500799179,
+      "p_attack": 0.0045595248229801655,
+      "probabilities": [
+        6.470930534425766e-18,
+        0.0016883391654118896,
+        0.9834120273590088,
+        0.001056651584804058,
+        0.009283449500799179,
+        0.0045595248229801655
+      ],
+      "probe_name": "current_action_only",
+      "channels": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "channel_names": [
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 6.4709305344069185e-18,
+        "delta_p_harvest": -0.015155315399169922
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.447053284611501e-20,
+      "p_move": 0.0008431680616922677,
+      "p_harvest": 0.9898646473884583,
+      "p_return": 0.0005222284817136824,
+      "p_produce": 0.006496849935501814,
+      "p_attack": 0.002273032907396555,
+      "probabilities": [
+        1.447053284611501e-20,
+        0.0008431680616922677,
+        0.9898646473884583,
+        0.0005222284817136824,
+        0.006496849935501814,
+        0.002273032907396555
+      ],
+      "probe_name": "direction_only",
+      "channels": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 1.4470532827266956e-20,
+        "delta_p_harvest": -0.008702695369720459
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.8848051710802153e-29,
+      "p_move": 5.657664951286279e-05,
+      "p_harvest": 0.9985673427581787,
+      "p_return": 3.4308603062527254e-05,
+      "p_produce": 0.0011941972188651562,
+      "p_attack": 0.00014755642041563988,
+      "probabilities": [
+        1.8848051710802153e-29,
+        5.657664951286279e-05,
+        0.9985673427581787,
+        3.4308603062527254e-05,
+        0.0011941972188651562,
+        0.00014755642041563988
+      ],
+      "probe_name": "produce_type_only",
+      "channels": [
+        22,
+        23,
+        24,
+        25
+      ],
+      "channel_names": [
+        "produce_worker",
+        "produce_light",
+        "produce_heavy",
+        "produce_ranged"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 4.787089551427925e-07,
+      "p_move": 0.01972707360982895,
+      "p_harvest": 0.8574162125587463,
+      "p_return": 0.01600271835923195,
+      "p_produce": 0.05482839047908783,
+      "p_attack": 0.05202515795826912,
+      "probabilities": [
+        4.787089551427925e-07,
+        0.01972707360982895,
+        0.8574162125587463,
+        0.01600271835923195,
+        0.05482839047908783,
+        0.05202515795826912
+      ],
+      "probe_name": "current_action_plus_direction",
+      "channels": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 4.787089551427925e-07,
+        "delta_p_harvest": -0.14115113019943237
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 0.02075561322271824,
+      "p_move": 0.05935516953468323,
+      "p_harvest": 0.6353991031646729,
+      "p_return": 0.05077685788273811,
+      "p_produce": 0.11090287566184998,
+      "p_attack": 0.12281039357185364,
+      "probabilities": [
+        0.02075561322271824,
+        0.05935516953468323,
+        0.6353991031646729,
+        0.05077685788273811,
+        0.11090287566184998,
+        0.12281039357185364
+      ],
+      "probe_name": "scalars_plus_current_action_plus_direction",
+      "channels": [
+        0,
+        1,
+        26,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "hit_points",
+        "resources",
+        "attack_target_index",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 0.02075561322271824,
+        "delta_p_harvest": -0.36316823959350586
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.8848051710802153e-29,
+      "p_move": 5.657664951286279e-05,
+      "p_harvest": 0.9985673427581787,
+      "p_return": 3.4308603062527254e-05,
+      "p_produce": 0.0011941972188651562,
+      "p_attack": 0.00014755642041563988,
+      "probabilities": [
+        1.8848051710802153e-29,
+        5.657664951286279e-05,
+        0.9985673427581787,
+        3.4308603062527254e-05,
+        0.0011941972188651562,
+        0.00014755642041563988
+      ],
+      "probe_name": "owner_plus_unit_type",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 0.0,
+        "delta_p_harvest": 0.0
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 6.470930534425766e-18,
+      "p_move": 0.0016883391654118896,
+      "p_harvest": 0.9834120273590088,
+      "p_return": 0.001056651584804058,
+      "p_produce": 0.009283449500799179,
+      "p_attack": 0.0045595248229801655,
+      "probabilities": [
+        6.470930534425766e-18,
+        0.0016883391654118896,
+        0.9834120273590088,
+        0.001056651584804058,
+        0.009283449500799179,
+        0.0045595248229801655
+      ],
+      "probe_name": "owner_plus_unit_type_plus_current_action",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 6.4709305344069185e-18,
+        "delta_p_harvest": -0.015155315399169922
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 1.447053284611501e-20,
+      "p_move": 0.0008431680616922677,
+      "p_harvest": 0.9898646473884583,
+      "p_return": 0.0005222284817136824,
+      "p_produce": 0.006496849935501814,
+      "p_attack": 0.002273032907396555,
+      "probabilities": [
+        1.447053284611501e-20,
+        0.0008431680616922677,
+        0.9898646473884583,
+        0.0005222284817136824,
+        0.006496849935501814,
+        0.002273032907396555
+      ],
+      "probe_name": "owner_plus_unit_type_plus_direction",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 1.4470532827266956e-20,
+        "delta_p_harvest": -0.008702695369720459
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    },
+    {
+      "flat_index": 25,
+      "predicted_action": "Harvest",
+      "p_noop": 4.787089551427925e-07,
+      "p_move": 0.01972707360982895,
+      "p_harvest": 0.8574162125587463,
+      "p_return": 0.01600271835923195,
+      "p_produce": 0.05482839047908783,
+      "p_attack": 0.05202515795826912,
+      "probabilities": [
+        4.787089551427925e-07,
+        0.01972707360982895,
+        0.8574162125587463,
+        0.01600271835923195,
+        0.05482839047908783,
+        0.05202515795826912
+      ],
+      "probe_name": "owner_plus_unit_type_plus_current_action_plus_direction",
+      "channels": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "channel_names": [
+        "owner_neutral",
+        "owner_self",
+        "owner_enemy",
+        "unit_resource",
+        "unit_base",
+        "unit_barracks",
+        "unit_worker",
+        "unit_light",
+        "unit_heavy",
+        "unit_ranged",
+        "action_noop",
+        "action_move",
+        "action_harvest",
+        "action_return",
+        "action_produce",
+        "action_attack",
+        "dir_north",
+        "dir_east",
+        "dir_south",
+        "dir_west"
+      ],
+      "delta_from_worker_reference": {
+        "delta_p_noop": 4.787089551427925e-07,
+        "delta_p_harvest": -0.14115113019943237
+      },
+      "harvest_destroyed": false,
+      "p_noop_gt_0_5": false
+    }
+  ],
+  "classification": "B2_INCONCLUSIVE"
+}

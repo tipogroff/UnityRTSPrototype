@@ -1,0 +1,1210 @@
+{
+  "generated_at_utc": "2026-05-03T13:02:12Z",
+  "runtime_c3_baseline": {
+    "flat_index": 50,
+    "predicted_action": "NoOp",
+    "p_noop": 0.996549129486084,
+    "p_move": 0.0006502116448245943,
+    "p_harvest": 0.000739885086659342,
+    "p_return": 0.0007325495244003832,
+    "p_produce": 0.0007559610530734062,
+    "p_attack": 0.0005723434151150286,
+    "probabilities": [
+      0.996549129486084,
+      0.0006502116448245943,
+      0.000739885086659342,
+      0.0007325495244003832,
+      0.0007559610530734062,
+      0.0005723434151150286
+    ]
+  },
+  "reference_base_produce": {
+    "split": "train",
+    "sample_index": 6,
+    "flat_index": 50,
+    "xy": [
+      2,
+      2
+    ],
+    "dist_to_runtime_c3_l2": 2.0,
+    "reference_cell_probs": {
+      "flat_index": 50,
+      "predicted_action": "Produce",
+      "p_noop": 1.1058978274830632e-20,
+      "p_move": 0.0006462078890763223,
+      "p_harvest": 0.006601983681321144,
+      "p_return": 0.0006540702888742089,
+      "p_produce": 0.99201899766922,
+      "p_attack": 7.877906318753958e-05,
+      "probabilities": [
+        1.1058978274830632e-20,
+        0.0006462078890763223,
+        0.006601983681321144,
+        0.0006540702888742089,
+        0.99201899766922,
+        7.877906318753958e-05
+      ]
+    }
+  },
+  "single_neighbor_results": [
+    {
+      "target_xy": [
+        1,
+        1
+      ],
+      "source_xy": [
+        1,
+        1
+      ],
+      "target_flat": 25,
+      "source_flat": 25,
+      "semantic_flags": {
+        "owner_idx": 1,
+        "unit_idx": 3,
+        "is_empty": false,
+        "is_worker": true,
+        "is_resource": false,
+        "is_friendly": true,
+        "is_enemy": false,
+        "is_neutral": false
+      },
+      "p_noop": 0.9875131249427795,
+      "p_produce": 0.0038954138290137053,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 0.003139452775940299,
+      "delta_p_noop": -0.009036004543304443
+    },
+    {
+      "target_xy": [
+        2,
+        1
+      ],
+      "source_xy": [
+        2,
+        1
+      ],
+      "target_flat": 26,
+      "source_flat": 26,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9958081245422363,
+      "p_produce": 0.0009303269325755537,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 0.00017436587950214744,
+      "delta_p_noop": -0.0007410049438476562
+    },
+    {
+      "target_xy": [
+        1,
+        2
+      ],
+      "source_xy": [
+        1,
+        2
+      ],
+      "target_flat": 49,
+      "source_flat": 49,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9960696697235107,
+      "p_produce": 0.00087250757496804,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 0.00011654652189463377,
+      "delta_p_noop": -0.0004794597625732422
+    },
+    {
+      "target_xy": [
+        0,
+        1
+      ],
+      "source_xy": [
+        0,
+        1
+      ],
+      "target_flat": 24,
+      "source_flat": 24,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": false,
+        "is_worker": false,
+        "is_resource": true,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9961714148521423,
+      "p_produce": 0.00085105822654441,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 9.509717347100377e-05,
+      "delta_p_noop": -0.0003777146339416504
+    },
+    {
+      "target_xy": [
+        4,
+        2
+      ],
+      "source_xy": [
+        4,
+        2
+      ],
+      "target_flat": 52,
+      "source_flat": 52,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9961990714073181,
+      "p_produce": 0.000838116800878197,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 8.215574780479074e-05,
+      "delta_p_noop": -0.00035005807876586914
+    },
+    {
+      "target_xy": [
+        4,
+        1
+      ],
+      "source_xy": [
+        4,
+        1
+      ],
+      "target_flat": 28,
+      "source_flat": 28,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9962783455848694,
+      "p_produce": 0.0008263896452262998,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 7.042859215289354e-05,
+      "delta_p_noop": -0.0002707839012145996
+    },
+    {
+      "target_xy": [
+        2,
+        3
+      ],
+      "source_xy": [
+        2,
+        3
+      ],
+      "target_flat": 74,
+      "source_flat": 74,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9962756633758545,
+      "p_produce": 0.0008233312983065844,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 6.737024523317814e-05,
+      "delta_p_noop": -0.0002734661102294922
+    },
+    {
+      "target_xy": [
+        1,
+        0
+      ],
+      "source_xy": [
+        1,
+        0
+      ],
+      "target_flat": 1,
+      "source_flat": 1,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9962518811225891,
+      "p_produce": 0.0008208287181332707,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 6.486766505986452e-05,
+      "delta_p_noop": -0.00029724836349487305
+    },
+    {
+      "target_xy": [
+        4,
+        0
+      ],
+      "source_xy": [
+        4,
+        0
+      ],
+      "target_flat": 4,
+      "source_flat": 4,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9962867498397827,
+      "p_produce": 0.0008125276654027402,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 5.656661232933402e-05,
+      "delta_p_noop": -0.00026237964630126953
+    },
+    {
+      "target_xy": [
+        3,
+        2
+      ],
+      "source_xy": [
+        3,
+        2
+      ],
+      "target_flat": 51,
+      "source_flat": 51,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.996336817741394,
+      "p_produce": 0.0008108611800707877,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 5.490012699738145e-05,
+      "delta_p_noop": -0.0002123117446899414
+    },
+    {
+      "target_xy": [
+        3,
+        0
+      ],
+      "source_xy": [
+        3,
+        0
+      ],
+      "target_flat": 3,
+      "source_flat": 3,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9963562488555908,
+      "p_produce": 0.000807483505923301,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 5.152245284989476e-05,
+      "delta_p_noop": -0.00019288063049316406
+    },
+    {
+      "target_xy": [
+        2,
+        4
+      ],
+      "source_xy": [
+        2,
+        4
+      ],
+      "target_flat": 98,
+      "source_flat": 98,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9963271021842957,
+      "p_produce": 0.0007935116882435977,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 3.7550635170191526e-05,
+      "delta_p_noop": -0.00022202730178833008
+    },
+    {
+      "target_xy": [
+        0,
+        3
+      ],
+      "source_xy": [
+        0,
+        3
+      ],
+      "target_flat": 72,
+      "source_flat": 72,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9964867830276489,
+      "p_produce": 0.0007857036544010043,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 2.9742601327598095e-05,
+      "delta_p_noop": -6.23464584350586e-05
+    },
+    {
+      "target_xy": [
+        3,
+        3
+      ],
+      "source_xy": [
+        3,
+        3
+      ],
+      "target_flat": 75,
+      "source_flat": 75,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.996492326259613,
+      "p_produce": 0.0007845002692192793,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 2.853921614587307e-05,
+      "delta_p_noop": -5.6803226470947266e-05
+    },
+    {
+      "target_xy": [
+        1,
+        3
+      ],
+      "source_xy": [
+        1,
+        3
+      ],
+      "target_flat": 73,
+      "source_flat": 73,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.996422290802002,
+      "p_produce": 0.000780806876718998,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 2.4845823645591736e-05,
+      "delta_p_noop": -0.00012683868408203125
+    },
+    {
+      "target_xy": [
+        1,
+        4
+      ],
+      "source_xy": [
+        1,
+        4
+      ],
+      "target_flat": 97,
+      "source_flat": 97,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9964485168457031,
+      "p_produce": 0.000764666881877929,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 8.705828804522753e-06,
+      "delta_p_noop": -0.00010061264038085938
+    },
+    {
+      "target_xy": [
+        3,
+        1
+      ],
+      "source_xy": [
+        3,
+        1
+      ],
+      "target_flat": 27,
+      "source_flat": 27,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9966011047363281,
+      "p_produce": 0.0007611004402860999,
+      "predicted_action": "NoOp",
+      "delta_p_produce": 5.139387212693691e-06,
+      "delta_p_noop": 5.1975250244140625e-05
+    },
+    {
+      "target_xy": [
+        0,
+        4
+      ],
+      "source_xy": [
+        0,
+        4
+      ],
+      "target_flat": 96,
+      "source_flat": 96,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9965848922729492,
+      "p_produce": 0.0007448605610989034,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -1.1100491974502802e-05,
+      "delta_p_noop": 3.5762786865234375e-05
+    },
+    {
+      "target_xy": [
+        0,
+        2
+      ],
+      "source_xy": [
+        0,
+        2
+      ],
+      "target_flat": 48,
+      "source_flat": 48,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9966012239456177,
+      "p_produce": 0.0007386159850284457,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -1.73450680449605e-05,
+      "delta_p_noop": 5.2094459533691406e-05
+    },
+    {
+      "target_xy": [
+        0,
+        0
+      ],
+      "source_xy": [
+        0,
+        0
+      ],
+      "target_flat": 0,
+      "source_flat": 0,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": false,
+        "is_worker": false,
+        "is_resource": true,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9967377781867981,
+      "p_produce": 0.0007176866638474166,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -3.827438922598958e-05,
+      "delta_p_noop": 0.00018864870071411133
+    },
+    {
+      "target_xy": [
+        2,
+        0
+      ],
+      "source_xy": [
+        2,
+        0
+      ],
+      "target_flat": 2,
+      "source_flat": 2,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9966727495193481,
+      "p_produce": 0.000713967252522707,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -4.1993800550699234e-05,
+      "delta_p_noop": 0.00012362003326416016
+    },
+    {
+      "target_xy": [
+        3,
+        4
+      ],
+      "source_xy": [
+        3,
+        4
+      ],
+      "target_flat": 99,
+      "source_flat": 99,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9967058300971985,
+      "p_produce": 0.000708859704900533,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -4.710134817287326e-05,
+      "delta_p_noop": 0.00015670061111450195
+    },
+    {
+      "target_xy": [
+        4,
+        4
+      ],
+      "source_xy": [
+        4,
+        4
+      ],
+      "target_flat": 100,
+      "source_flat": 100,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.9967294931411743,
+      "p_produce": 0.0007053872686810791,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -5.057378439232707e-05,
+      "delta_p_noop": 0.00018036365509033203
+    },
+    {
+      "target_xy": [
+        4,
+        3
+      ],
+      "source_xy": [
+        4,
+        3
+      ],
+      "target_flat": 76,
+      "source_flat": 76,
+      "semantic_flags": {
+        "owner_idx": 0,
+        "unit_idx": 0,
+        "is_empty": true,
+        "is_worker": false,
+        "is_resource": false,
+        "is_friendly": false,
+        "is_enemy": false,
+        "is_neutral": true
+      },
+      "p_noop": 0.996914267539978,
+      "p_produce": 0.00066774757578969,
+      "predicted_action": "NoOp",
+      "delta_p_produce": -8.82134772837162e-05,
+      "delta_p_noop": 0.00036513805389404297
+    }
+  ],
+  "combination_results": {
+    "top_1_neighbor": {
+      "patched_cell_count": 1,
+      "target_cells": [
+        [
+          1,
+          1
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9875131249427795,
+      "p_produce": 0.0038954138290137053,
+      "delta_p_produce": 0.003139452775940299,
+      "delta_p_noop": -0.009036004543304443,
+      "produce_top1": false
+    },
+    "top_2_neighbors": {
+      "patched_cell_count": 2,
+      "target_cells": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9496138691902161,
+      "p_produce": 0.018839005380868912,
+      "delta_p_produce": 0.018083044327795506,
+      "delta_p_noop": -0.04693526029586792,
+      "produce_top1": false
+    },
+    "top_3_neighbors": {
+      "patched_cell_count": 3,
+      "target_cells": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9116755127906799,
+      "p_produce": 0.035844866186380386,
+      "delta_p_produce": 0.03508890513330698,
+      "delta_p_noop": -0.08487361669540405,
+      "produce_top1": false
+    },
+    "same_row_as_c3": {
+      "patched_cell_count": 4,
+      "target_cells": [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9943166375160217,
+      "p_produce": 0.0012946885544806719,
+      "delta_p_produce": 0.0005387275014072657,
+      "delta_p_noop": -0.002232491970062256,
+      "produce_top1": false
+    },
+    "same_column_as_c3": {
+      "patched_cell_count": 4,
+      "target_cells": [
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9950534701347351,
+      "p_produce": 0.0010776935378089547,
+      "delta_p_produce": 0.0003217324847355485,
+      "delta_p_noop": -0.001495659351348877,
+      "produce_top1": false
+    },
+    "resource_cells_only": {
+      "patched_cell_count": 2,
+      "target_cells": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9963201284408569,
+      "p_produce": 0.0008236959693022072,
+      "delta_p_produce": 6.773491622880101e-05,
+      "delta_p_noop": -0.00022900104522705078,
+      "produce_top1": false
+    },
+    "worker_cells_only": {
+      "patched_cell_count": 1,
+      "target_cells": [
+        [
+          1,
+          1
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9875131249427795,
+      "p_produce": 0.0038954138290137053,
+      "delta_p_produce": 0.003139452775940299,
+      "delta_p_noop": -0.009036004543304443,
+      "produce_top1": false
+    },
+    "empty_free_cells_only": {
+      "patched_cell_count": 21,
+      "target_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9943678975105286,
+      "p_produce": 0.0014154795790091157,
+      "delta_p_produce": 0.0006595185259357095,
+      "delta_p_noop": -0.00218123197555542,
+      "produce_top1": false
+    },
+    "friendly_cells_only": {
+      "patched_cell_count": 1,
+      "target_cells": [
+        [
+          1,
+          1
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9875131249427795,
+      "p_produce": 0.0038954138290137053,
+      "delta_p_produce": 0.003139452775940299,
+      "delta_p_noop": -0.009036004543304443,
+      "produce_top1": false
+    },
+    "enemy_cells_only": {
+      "patched_cell_count": 0,
+      "target_cells": [],
+      "predicted_action": "NoOp",
+      "p_noop": 0.996549129486084,
+      "p_produce": 0.0007559610530734062,
+      "delta_p_produce": 0.0,
+      "delta_p_noop": 0.0,
+      "produce_top1": false
+    },
+    "neutral_or_resource_cells_only": {
+      "patched_cell_count": 23,
+      "target_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "predicted_action": "NoOp",
+      "p_noop": 0.9913911819458008,
+      "p_produce": 0.002330395858734846,
+      "delta_p_produce": 0.00157443480566144,
+      "delta_p_noop": -0.005157947540283203,
+      "produce_top1": false
+    }
+  },
+  "summary": {
+    "most_important_neighbors": [
+      {
+        "target_xy": [
+          1,
+          1
+        ],
+        "source_xy": [
+          1,
+          1
+        ],
+        "target_flat": 25,
+        "source_flat": 25,
+        "semantic_flags": {
+          "owner_idx": 1,
+          "unit_idx": 3,
+          "is_empty": false,
+          "is_worker": true,
+          "is_resource": false,
+          "is_friendly": true,
+          "is_enemy": false,
+          "is_neutral": false
+        },
+        "p_noop": 0.9875131249427795,
+        "p_produce": 0.0038954138290137053,
+        "predicted_action": "NoOp",
+        "delta_p_produce": 0.003139452775940299,
+        "delta_p_noop": -0.009036004543304443
+      },
+      {
+        "target_xy": [
+          2,
+          1
+        ],
+        "source_xy": [
+          2,
+          1
+        ],
+        "target_flat": 26,
+        "source_flat": 26,
+        "semantic_flags": {
+          "owner_idx": 0,
+          "unit_idx": 0,
+          "is_empty": true,
+          "is_worker": false,
+          "is_resource": false,
+          "is_friendly": false,
+          "is_enemy": false,
+          "is_neutral": true
+        },
+        "p_noop": 0.9958081245422363,
+        "p_produce": 0.0009303269325755537,
+        "predicted_action": "NoOp",
+        "delta_p_produce": 0.00017436587950214744,
+        "delta_p_noop": -0.0007410049438476562
+      },
+      {
+        "target_xy": [
+          1,
+          2
+        ],
+        "source_xy": [
+          1,
+          2
+        ],
+        "target_flat": 49,
+        "source_flat": 49,
+        "semantic_flags": {
+          "owner_idx": 0,
+          "unit_idx": 0,
+          "is_empty": true,
+          "is_worker": false,
+          "is_resource": false,
+          "is_friendly": false,
+          "is_enemy": false,
+          "is_neutral": true
+        },
+        "p_noop": 0.9960696697235107,
+        "p_produce": 0.00087250757496804,
+        "predicted_action": "NoOp",
+        "delta_p_produce": 0.00011654652189463377,
+        "delta_p_noop": -0.0004794597625732422
+      },
+      {
+        "target_xy": [
+          0,
+          1
+        ],
+        "source_xy": [
+          0,
+          1
+        ],
+        "target_flat": 24,
+        "source_flat": 24,
+        "semantic_flags": {
+          "owner_idx": 0,
+          "unit_idx": 0,
+          "is_empty": false,
+          "is_worker": false,
+          "is_resource": true,
+          "is_friendly": false,
+          "is_enemy": false,
+          "is_neutral": true
+        },
+        "p_noop": 0.9961714148521423,
+        "p_produce": 0.00085105822654441,
+        "predicted_action": "NoOp",
+        "delta_p_produce": 9.509717347100377e-05,
+        "delta_p_noop": -0.0003777146339416504
+      },
+      {
+        "target_xy": [
+          4,
+          2
+        ],
+        "source_xy": [
+          4,
+          2
+        ],
+        "target_flat": 52,
+        "source_flat": 52,
+        "semantic_flags": {
+          "owner_idx": 0,
+          "unit_idx": 0,
+          "is_empty": true,
+          "is_worker": false,
+          "is_resource": false,
+          "is_friendly": false,
+          "is_enemy": false,
+          "is_neutral": true
+        },
+        "p_noop": 0.9961990714073181,
+        "p_produce": 0.000838116800878197,
+        "predicted_action": "NoOp",
+        "delta_p_produce": 8.215574780479074e-05,
+        "delta_p_noop": -0.00035005807876586914
+      }
+    ],
+    "small_subset_sufficient": false,
+    "produce_requires_full_5x5_context": true
+  }
+}

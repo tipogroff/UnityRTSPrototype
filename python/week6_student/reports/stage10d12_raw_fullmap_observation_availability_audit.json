@@ -1,0 +1,17 @@
+{
+  "generated_at_utc": "2026-05-03T13:01:56Z",
+  "classification": "FOCUS_ONLY_RAW_AVAILABLE",
+  "full_raw_576_available": false,
+  "focus_only_raw_available": true,
+  "reconstructed_fullmap_available": true,
+  "strict_probes": false,
+  "preliminary_probes_based_on_reconstructed_fullmap": true,
+  "go_for_stage10d12r_full_raw_observation_capture": true,
+  "evidence": {
+    "stage10r_full_raw_candidates": [],
+    "stage10d10_logits_full_raw_candidates": [],
+    "stage10d11_fullmap_candidates": [],
+    "stage10d10_cell_table_row_count": 576,
+    "stage10r_actor_cells_with_27ch": 2
+  }
+}

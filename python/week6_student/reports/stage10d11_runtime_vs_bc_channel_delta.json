@@ -1,0 +1,565 @@
+{
+  "generated_at_utc": "2026-05-03T12:51:53Z",
+  "B2_vs_worker_harvest": {
+    "runtime_vector": [
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bc_mean_vector": [
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "nearest_27ch": {
+      "dist": 2.449489742783178,
+      "split": "train",
+      "sample_index": 0,
+      "flat_index": 25,
+      "xy": [
+        1,
+        1
+      ],
+      "channel_vector": [
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "action_type": "Harvest"
+    },
+    "nearest_5x5": {
+      "distance": 6.164414002968976,
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 25,
+      "xy": [
+        1,
+        1
+      ]
+    },
+    "nearest_7x7": {
+      "distance": 7.483314773547883,
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 25,
+      "xy": [
+        1,
+        1
+      ]
+    },
+    "per_channel_abs_delta_vs_mean": [
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "group_l2_delta_vs_mean": {
+      "scalars": 1.4142135623730951,
+      "owner": 0.0,
+      "unit_type": 0.0,
+      "current_action": 1.4142135623730951,
+      "direction": 1.4142135623730951,
+      "produce_type": 0.0
+    },
+    "top_differing_channels_vs_mean": [
+      {
+        "channel_index": 0,
+        "channel_name": "hit_points",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 1,
+        "channel_name": "resources",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 21,
+        "channel_name": "dir_west",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 20,
+        "channel_name": "dir_south",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 12,
+        "channel_name": "action_noop",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 14,
+        "channel_name": "action_harvest",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 24,
+        "channel_name": "produce_heavy",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 23,
+        "channel_name": "produce_light",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      }
+    ],
+    "group_l2_delta_vs_nearest": {
+      "scalars": 1.4142135623730951,
+      "owner": 0.0,
+      "unit_type": 0.0,
+      "current_action": 1.4142135623730951,
+      "direction": 1.4142135623730951,
+      "produce_type": 0.0
+    },
+    "top_differing_channels_vs_nearest": [
+      {
+        "channel_index": 0,
+        "channel_name": "hit_points",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 1,
+        "channel_name": "resources",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 21,
+        "channel_name": "dir_west",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 20,
+        "channel_name": "dir_south",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 12,
+        "channel_name": "action_noop",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 14,
+        "channel_name": "action_harvest",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 24,
+        "channel_name": "produce_heavy",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 23,
+        "channel_name": "produce_light",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      }
+    ]
+  },
+  "C3_vs_base_produce": {
+    "runtime_vector": [
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bc_mean_vector": [
+      0.0,
+      0.00019396428251639009,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.8872610926628113,
+      0.11059387028217316,
+      0.002145016798749566,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    "nearest_27ch": {
+      "dist": 2.0,
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 50,
+      "xy": [
+        2,
+        2
+      ],
+      "channel_vector": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "action_type": "Produce"
+    },
+    "nearest_5x5": {
+      "distance": 7.483314773547883,
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 50,
+      "xy": [
+        2,
+        2
+      ]
+    },
+    "nearest_7x7": {
+      "distance": 8.831760866327848,
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 50,
+      "xy": [
+        2,
+        2
+      ]
+    },
+    "per_channel_abs_delta_vs_mean": [
+      1.0,
+      0.00019396428251639009,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.8872610926628113,
+      0.889406144618988,
+      0.002145016798749566,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    "group_l2_delta_vs_mean": {
+      "scalars": 1.0000000188110714,
+      "owner": 0.0,
+      "unit_type": 0.0,
+      "current_action": 1.4142135623730951,
+      "direction": 1.2562961982495549,
+      "produce_type": 1.0
+    },
+    "top_differing_channels_vs_mean": [
+      {
+        "channel_index": 0,
+        "channel_name": "hit_points",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 16,
+        "channel_name": "action_produce",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 12,
+        "channel_name": "action_noop",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 25,
+        "channel_name": "produce_ranged",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 20,
+        "channel_name": "dir_south",
+        "abs_delta": 0.8894061297178268,
+        "runtime_value": 1.0,
+        "bc_value": 0.11059387028217316
+      },
+      {
+        "channel_index": 19,
+        "channel_name": "dir_east",
+        "abs_delta": 0.8872610926628113,
+        "runtime_value": 0.0,
+        "bc_value": 0.8872610926628113
+      },
+      {
+        "channel_index": 21,
+        "channel_name": "dir_west",
+        "abs_delta": 0.002145016798749566,
+        "runtime_value": 0.0,
+        "bc_value": 0.002145016798749566
+      },
+      {
+        "channel_index": 1,
+        "channel_name": "resources",
+        "abs_delta": 0.00019396428251639009,
+        "runtime_value": 0.0,
+        "bc_value": 0.00019396428251639009
+      }
+    ],
+    "group_l2_delta_vs_nearest": {
+      "scalars": 1.0,
+      "owner": 0.0,
+      "unit_type": 0.0,
+      "current_action": 1.4142135623730951,
+      "direction": 0.0,
+      "produce_type": 1.0
+    },
+    "top_differing_channels_vs_nearest": [
+      {
+        "channel_index": 0,
+        "channel_name": "hit_points",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 16,
+        "channel_name": "action_produce",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 12,
+        "channel_name": "action_noop",
+        "abs_delta": 1.0,
+        "runtime_value": 1.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 25,
+        "channel_name": "produce_ranged",
+        "abs_delta": 1.0,
+        "runtime_value": 0.0,
+        "bc_value": 1.0
+      },
+      {
+        "channel_index": 24,
+        "channel_name": "produce_heavy",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 23,
+        "channel_name": "produce_light",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 22,
+        "channel_name": "produce_worker",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      },
+      {
+        "channel_index": 21,
+        "channel_name": "dir_west",
+        "abs_delta": 0.0,
+        "runtime_value": 0.0,
+        "bc_value": 0.0
+      }
+    ]
+  }
+}

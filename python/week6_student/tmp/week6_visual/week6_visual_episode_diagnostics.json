@@ -1,8 +1,8 @@
 {
     "report_version": "week6_episode_diagnostics_v1",
-    "generated_at_utc": "2026-05-03T10:27:23.8148714Z",
+    "generated_at_utc": "2026-05-03T13:36:35.8375614Z",
     "episode_index": 2,
-    "steps_run": 54,
+    "steps_run": 1,
     "terminal_reason": "Loss",
     "student_side": {
         "side": "Player1",
