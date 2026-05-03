@@ -1,0 +1,14 @@
+{
+  "generated_at_utc": "2026-05-03T16:12:10.264707+00:00",
+  "total_move_predictions": 0,
+  "total_move_commands_built": 0,
+  "total_move_commands_accepted": 0,
+  "total_units_that_moved": 1,
+  "first_move_prediction_step": null,
+  "first_move_command_built_step": null,
+  "first_move_command_accepted_step": null,
+  "move_decoder_reject_counts_by_reason": {},
+  "move_applier_reject_counts_by_reason": {},
+  "move_matchmanager_reject_counts_by_reason": {},
+  "move_predictions": []
+}
