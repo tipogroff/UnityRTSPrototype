@@ -1,0 +1,297 @@
+{
+  "attack_predictions_total": 0,
+  "attack_commands_built": 0,
+  "attack_commands_accepted": 0,
+  "max_p_attack_global_actor": 0.07469579577445984,
+  "max_p_attack_produced_units": 0.06808805465698242,
+  "steps_with_enemy_in_attack_window": 1,
+  "friendly_units_with_enemy_in_attack_window": 4,
+  "attack_opportunity_present": true,
+  "attack_opportunity_absent": false,
+  "attack_near_miss_count": 97,
+  "attack_target_validity_if_predicted_or_near_miss": {
+    "range_valid": 1
+  },
+  "sampled_snapshot_enemy_counts": [
+    {
+      "step": 1,
+      "enemy_actor_count": 3
+    },
+    {
+      "step": 55,
+      "enemy_actor_count": 17
+    },
+    {
+      "step": 200,
+      "enemy_actor_count": 14
+    }
+  ],
+  "sampled_snapshot_min_distance_stats": {
+    "min": 1,
+    "max": 40,
+    "mean": 23.105263157894736,
+    "sample_count": 38
+  },
+  "top_k_cells_by_p_attack": [
+    {
+      "step": 168,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07469579577445984,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 77,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451549917459488,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 174,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451440393924713,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 180,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451440393924713,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 186,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451440393924713,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 192,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451440393924713,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 198,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07451440393924713,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 26,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.07193007320165634,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 62,
+      "unit_id": "Worker_003",
+      "unit_type": "Worker",
+      "x": 4,
+      "y": 1,
+      "p_attack": 0.06808805465698242,
+      "predicted_action": "NoOp",
+      "attack_target_local": 0
+    },
+    {
+      "step": 163,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.061902180314064026,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 169,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06176742538809776,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 41,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06175181269645691,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 175,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06172199174761772,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 181,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06172199174761772,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 187,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06172199174761772,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 193,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06172199174761772,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 199,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06172199174761772,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 78,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06156260892748833,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 72,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.06141740083694458,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 31,
+      "unit_id": "Worker_005",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 2,
+      "p_attack": 0.061111826449632645,
+      "predicted_action": "Move",
+      "attack_target_local": 0
+    },
+    {
+      "step": 21,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.05905322730541229,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 83,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.058965399861335754,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 36,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.05886036530137062,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 88,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.05841522291302681,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    },
+    {
+      "step": 93,
+      "unit_id": "Worker_001",
+      "unit_type": "Worker",
+      "x": 1,
+      "y": 1,
+      "p_attack": 0.05833568051457405,
+      "predicted_action": "Harvest",
+      "attack_target_local": 0
+    }
+  ],
+  "source_note": "Enemy proximity/opportunity derived from preserved rerun snapshots (steps 1,55,200) due sparse enemy fields in runtime trace jsonl.",
+  "labels": [
+    "STAGE10D19_ATTACK_READINESS_AUDIT_COMPLETED",
+    "STAGE10D19_ATTACK_BEHAVIOR_ABSENT_CONFIRMED",
+    "STAGE10D19_ATTACK_OPPORTUNITY_PRESENT",
+    "STAGE10D19_ATTACK_NEAR_MISS_PRESENT",
+    "STAGE10D19_ATTACK_LABEL_OR_POLICY_GAP_SUSPECTED"
+  ],
+  "recommended_gate": "GO_FOR_STAGE10D19_ATTACK_AUGMENTATION_DATASET_BUILD",
+  "reference_attack_predictions_summary": 0
+}

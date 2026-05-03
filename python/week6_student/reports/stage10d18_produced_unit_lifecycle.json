@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-05-03T17:32:25.519799+00:00",
+  "status": "SKIPPED_BINDING_FAILED",
+  "reason": "Checkpoint binding/inference verification failed before runtime behavior analysis.",
+  "produced_units_count": 0,
+  "produced_units_visible_in_observation": 0,
+  "produced_units_owner_unit_encoding_valid": 0,
+  "produced_units_with_move_prediction_count": 0,
+  "produced_units_with_move_command_built_count": 0,
+  "produced_units_with_move_command_accepted_count": 0,
+  "produced_units_that_moved_count": 0,
+  "units": []
+}

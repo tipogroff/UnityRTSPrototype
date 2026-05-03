@@ -1,0 +1,219 @@
+{
+  "stage": "10D.19B",
+  "task": "validate_valid_move_augmented_dataset",
+  "generated_at_utc": "2026-05-03T19:21:08Z",
+  "augmented_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+  "base_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+  "status": "pass",
+  "shape_checks": {
+    "train_observations_shape": true,
+    "train_actions_shape": true,
+    "validation_observations_shape": true,
+    "validation_actions_shape": true
+  },
+  "dtype_checks": {
+    "observations_float32": true,
+    "actions_integer": true
+  },
+  "finite_checks": {
+    "train_finite": true,
+    "validation_finite": true
+  },
+  "branch_bounds": {
+    "expected": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "train": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    },
+    "validation": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    }
+  },
+  "valid_move_positive_checks": {
+    "train": {
+      "checked": 207,
+      "unit_ok": 207,
+      "dir_ok": 207,
+      "in_bounds_ok": 207,
+      "free_ok": 207,
+      "adjacent_ok": 207,
+      "leakage_risk": 0
+    },
+    "validation": {
+      "checked": 49,
+      "unit_ok": 49,
+      "dir_ok": 49,
+      "in_bounds_ok": 49,
+      "free_ok": 49,
+      "adjacent_ok": 49,
+      "leakage_risk": 0
+    }
+  },
+  "negative_control_checks": {
+    "train": {
+      "occupied_controls_exist": 2090,
+      "occupied_controls_valid": 2090,
+      "off_actor_controls_exist": 961,
+      "off_actor_controls_valid": 961
+    },
+    "validation": {
+      "occupied_controls_exist": 576,
+      "occupied_controls_valid": 576,
+      "off_actor_controls_exist": 239,
+      "off_actor_controls_valid": 239
+    }
+  },
+  "preservation_checks": {
+    "train": {
+      "b2_harvest_base": 81319,
+      "b2_harvest_augmented": 86058,
+      "c3_produce_base": 82304,
+      "c3_produce_augmented": 87043,
+      "move_labels_base": 841,
+      "move_labels_augmented": 3470,
+      "attack_labels_base": 88,
+      "attack_labels_augmented": 88,
+      "preservation_metadata_rows": 661,
+      "guards_preserved": true,
+      "movement_preserved": true,
+      "attack_not_removed": true
+    },
+    "validation": {
+      "b2_harvest_base": 9351,
+      "b2_harvest_augmented": 10582,
+      "c3_produce_base": 9459,
+      "c3_produce_augmented": 10690,
+      "move_labels_base": 201,
+      "move_labels_augmented": 883,
+      "attack_labels_base": 7,
+      "attack_labels_augmented": 7,
+      "preservation_metadata_rows": 180,
+      "guards_preserved": true,
+      "movement_preserved": true,
+      "attack_not_removed": true
+    }
+  },
+  "distribution": {
+    "base_train": {
+      "sample_count": 82813,
+      "total_cells": 47700288,
+      "actor_cells": 164681,
+      "noop_ratio_all_cells": 0.996550293365105,
+      "action_type_counts": {
+        "NoOp": 47535736,
+        "Move": 841,
+        "Harvest": 81319,
+        "Return": 0,
+        "Produce": 82304,
+        "Attack": 88
+      },
+      "actor_action_type_counts": {
+        "NoOp": 150,
+        "Move": 841,
+        "Harvest": 81298,
+        "Return": 0,
+        "Produce": 82304,
+        "Attack": 88
+      }
+    },
+    "base_validation": {
+      "sample_count": 9506,
+      "total_cells": 5475456,
+      "actor_cells": 19027,
+      "noop_ratio_all_cells": 0.9965266819786334,
+      "action_type_counts": {
+        "NoOp": 5456438,
+        "Move": 201,
+        "Harvest": 9351,
+        "Return": 0,
+        "Produce": 9459,
+        "Attack": 7
+      },
+      "actor_action_type_counts": {
+        "NoOp": 11,
+        "Move": 201,
+        "Harvest": 9350,
+        "Return": 0,
+        "Produce": 9458,
+        "Attack": 7
+      }
+    },
+    "augmented_train": {
+      "sample_count": 87552,
+      "total_cells": 50429952,
+      "actor_cells": 179660,
+      "noop_ratio_all_cells": 0.9964969429278854,
+      "action_type_counts": {
+        "NoOp": 50253293,
+        "Move": 3470,
+        "Harvest": 86058,
+        "Return": 0,
+        "Produce": 87043,
+        "Attack": 88
+      },
+      "actor_action_type_counts": {
+        "NoOp": 3109,
+        "Move": 3470,
+        "Harvest": 85966,
+        "Return": 0,
+        "Produce": 87027,
+        "Attack": 88
+      }
+    },
+    "augmented_validation": {
+      "sample_count": 10737,
+      "total_cells": 6184512,
+      "actor_cells": 22950,
+      "noop_ratio_all_cells": 0.9964165321370546,
+      "action_type_counts": {
+        "NoOp": 6162350,
+        "Move": 883,
+        "Harvest": 10582,
+        "Return": 0,
+        "Produce": 10690,
+        "Attack": 7
+      },
+      "actor_action_type_counts": {
+        "NoOp": 817,
+        "Move": 883,
+        "Harvest": 10557,
+        "Return": 0,
+        "Produce": 10686,
+        "Attack": 7
+      }
+    },
+    "move_rebalanced": true,
+    "noop_shift_ok": true
+  },
+  "classification_labels": [
+    "STAGE10D19B_DATASET_VALID",
+    "STAGE10D19B_VALID_MOVE_POSITIVES_PRESENT",
+    "STAGE10D19B_VALID_MOVE_TARGETS_CONFIRMED",
+    "STAGE10D19B_OCCUPIED_NEGATIVE_CONTROLS_PRESENT",
+    "STAGE10D19B_OFF_ACTOR_NEGATIVE_CONTROLS_PRESENT",
+    "STAGE10D19B_NO_LABEL_LEAKAGE_CONFIRMED",
+    "STAGE10D19B_B2_C3_GUARDS_PRESERVED",
+    "STAGE10D19B_MOVEMENT_PRESERVATION_CONFIRMED",
+    "STAGE10D19B_TARGET_DISTRIBUTION_ACCEPTABLE"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D19B_VALID_MOVE_BC_TRAINING"
+}

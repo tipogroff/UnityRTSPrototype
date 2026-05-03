@@ -1,0 +1,87 @@
+{
+  "generated_at_utc": "2026-05-03T17:42:19.910161Z",
+  "unity_config": {
+    "configured_checkpoint_path_from_scene": null,
+    "configured_checkpoint_path_from_stage10d18_runner": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+    "resolved_absolute_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z\\student_bc_stage10d17_movement_augmented_best.pt",
+    "file_exists": true,
+    "file_size_bytes": 6111691,
+    "basename": "student_bc_stage10d17_movement_augmented_best.pt",
+    "parent_directory_exists": true
+  },
+  "filename_checkpoint_gating": {
+    "hardcoded_allowlist_has_stage10d17": false,
+    "diagnosis": "Stage10D17 basename rejected by Week6StudentPolicyAdapter allowlist gate"
+  },
+  "python_bridge_launch": {
+    "python_executable": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\.venv\\Scripts\\python.exe",
+    "python_executable_exists": true,
+    "cwd": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+    "script_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\student_inference_server.py",
+    "script_exists": true,
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z\\student_bc_stage10d17_movement_augmented_best.pt",
+    "checkpoint_exists": true,
+    "quoted_args_expected": true,
+    "relative_path_resolution_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype",
+    "launch_diagnosis": "Paths resolve and are launchable; Unity failed before launch due to filename gate"
+  },
+  "adapter_manual_execution": {
+    "adapter_cli_stage10d17": "pass",
+    "observation_shape": [
+      24,
+      24,
+      27
+    ]
+  },
+  "checkpoint_payload_compatibility": {
+    "manual_compare": [
+      {
+        "checkpoint": "stage10d14",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z\\student_bc_stage10d14_augmented_best.pt",
+        "returncode": 0,
+        "stdout": "OK ok {'action_type_logits': [1, 576, 6], 'move_dir_logits': [1, 576, 4], 'harvest_dir_logits': [1, 576, 4], 'return_dir_logits': [1, 576, 4], 'produce_dir_logits': [1, 576, 4], 'produce_unit_type_logits': [1, 576, 7], 'attack_target_local_logits': [1, 576, 49]}",
+        "stderr": "",
+        "loads_and_forwards": true
+      },
+      {
+        "checkpoint": "stage10d17",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z\\student_bc_stage10d17_movement_augmented_best.pt",
+        "returncode": 0,
+        "stdout": "OK ok {'action_type_logits': [1, 576, 6], 'move_dir_logits': [1, 576, 4], 'harvest_dir_logits': [1, 576, 4], 'return_dir_logits': [1, 576, 4], 'produce_dir_logits': [1, 576, 4], 'produce_unit_type_logits': [1, 576, 7], 'attack_target_local_logits': [1, 576, 49]}",
+        "stderr": "",
+        "loads_and_forwards": true
+      }
+    ],
+    "strict_load_required": true,
+    "payload_formats_supported_now": [
+      "model_state_dict"
+    ]
+  },
+  "stage10d14_vs_stage10d17_loader_compare": [
+    {
+      "checkpoint": "stage10d14",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z\\student_bc_stage10d14_augmented_best.pt",
+      "returncode": 0,
+      "stdout": "OK ok {'action_type_logits': [1, 576, 6], 'move_dir_logits': [1, 576, 4], 'harvest_dir_logits': [1, 576, 4], 'return_dir_logits': [1, 576, 4], 'produce_dir_logits': [1, 576, 4], 'produce_unit_type_logits': [1, 576, 7], 'attack_target_local_logits': [1, 576, 49]}",
+      "stderr": "",
+      "loads_and_forwards": true
+    },
+    {
+      "checkpoint": "stage10d17",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z\\student_bc_stage10d17_movement_augmented_best.pt",
+      "returncode": 0,
+      "stdout": "OK ok {'action_type_logits': [1, 576, 6], 'move_dir_logits': [1, 576, 4], 'harvest_dir_logits': [1, 576, 4], 'return_dir_logits': [1, 576, 4], 'produce_dir_logits': [1, 576, 4], 'produce_unit_type_logits': [1, 576, 7], 'attack_target_local_logits': [1, 576, 49]}",
+      "stderr": "",
+      "loads_and_forwards": true
+    }
+  ],
+  "classification_labels": [
+    "STAGE10D18R_CHECKPOINT_FILE_EXISTS",
+    "STAGE10D18R_FILENAME_GATE_REJECTS_STAGE10D17",
+    "STAGE10D18R_PYTHON_BRIDGE_LAUNCH_OK",
+    "STAGE10D18R_CHECKPOINT_LOADS_MANUALLY",
+    "STAGE10D18R_STAGE10D17_STATE_DICT_COMPATIBLE",
+    "STAGE10D18R_ROOT_CAUSE_IDENTIFIED"
+  ],
+  "root_cause": "filename_gate_rejects_stage10d17"
+}

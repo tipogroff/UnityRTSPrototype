@@ -1,0 +1,59 @@
+{
+  "generated_at_utc": "2026-05-03T17:45:37.925018+00:00",
+  "step": 1,
+  "b2": {
+    "flat": 25,
+    "predicted_action": "Harvest",
+    "predicted_source": null,
+    "p_noop": 9.74388083990954e-29,
+    "p_harvest": 0.9899958372116089,
+    "p_move": 0.00653872499242425,
+    "action_type_logits_len": 6
+  },
+  "c3": {
+    "flat": 50,
+    "predicted_action": "Produce",
+    "predicted_source": null,
+    "p_noop": 4.746975427548096e-26,
+    "p_produce": 0.9871749877929688,
+    "p_move": 0.010416160337626934,
+    "action_type_logits_len": 6
+  },
+  "logits_shapes": {
+    "action_type_logits": [
+      1,
+      576,
+      6
+    ],
+    "move_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "harvest_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "return_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_unit_type_logits": [
+      1,
+      576,
+      7
+    ],
+    "attack_target_local_logits": [
+      1,
+      576,
+      49
+    ]
+  }
+}

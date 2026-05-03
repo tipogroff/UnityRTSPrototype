@@ -298,6 +298,7 @@ namespace RTS.ML
         private const string ExpectedStudentCheckpointFileNameLegacy = "student_bc_transfer_best.pt";
         private const string ExpectedStudentCheckpointFileNameSemantic = "student_bc_semantic_best.pt";
         private const string ExpectedStudentCheckpointFileNameAugmented = "student_bc_stage10d14_augmented_best.pt";
+        private const string ExpectedStudentCheckpointFileNameMovementAugmented = "student_bc_stage10d17_movement_augmented_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -991,7 +992,8 @@ namespace RTS.ML
             bool checkpointNameAllowed =
                 string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameLegacy, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameAugmented, StringComparison.OrdinalIgnoreCase);
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameAugmented, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameMovementAugmented, StringComparison.OrdinalIgnoreCase);
 
             if (!checkpointNameAllowed)
             {

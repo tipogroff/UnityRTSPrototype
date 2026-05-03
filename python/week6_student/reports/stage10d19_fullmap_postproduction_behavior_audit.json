@@ -1,0 +1,7590 @@
+{
+  "run_steps": 200,
+  "terminal_result": "none",
+  "friendly_actor_cells_over_time": [
+    {
+      "step": 1,
+      "friendly_actor_cells": 2,
+      "produced_unit_count": 0,
+      "combat_capable_unit_count": 1,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 2,
+      "friendly_actor_cells": 2,
+      "produced_unit_count": 0,
+      "combat_capable_unit_count": 1,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 3,
+      "friendly_actor_cells": 2,
+      "produced_unit_count": 0,
+      "combat_capable_unit_count": 1,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 4,
+      "friendly_actor_cells": 2,
+      "produced_unit_count": 0,
+      "combat_capable_unit_count": 1,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 5,
+      "friendly_actor_cells": 3,
+      "produced_unit_count": 1,
+      "combat_capable_unit_count": 2,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 6,
+      "friendly_actor_cells": 3,
+      "produced_unit_count": 1,
+      "combat_capable_unit_count": 2,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 7,
+      "friendly_actor_cells": 3,
+      "produced_unit_count": 1,
+      "combat_capable_unit_count": 2,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 8,
+      "friendly_actor_cells": 3,
+      "produced_unit_count": 1,
+      "combat_capable_unit_count": 2,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 9,
+      "friendly_actor_cells": 3,
+      "produced_unit_count": 1,
+      "combat_capable_unit_count": 2,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 10,
+      "friendly_actor_cells": 4,
+      "produced_unit_count": 2,
+      "combat_capable_unit_count": 3,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 11,
+      "friendly_actor_cells": 4,
+      "produced_unit_count": 2,
+      "combat_capable_unit_count": 3,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 12,
+      "friendly_actor_cells": 4,
+      "produced_unit_count": 2,
+      "combat_capable_unit_count": 3,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 13,
+      "friendly_actor_cells": 4,
+      "produced_unit_count": 2,
+      "combat_capable_unit_count": 3,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 14,
+      "friendly_actor_cells": 4,
+      "produced_unit_count": 2,
+      "combat_capable_unit_count": 3,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 15,
+      "friendly_actor_cells": 5,
+      "produced_unit_count": 3,
+      "combat_capable_unit_count": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 16,
+      "friendly_actor_cells": 5,
+      "produced_unit_count": 3,
+      "combat_capable_unit_count": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 17,
+      "friendly_actor_cells": 5,
+      "produced_unit_count": 3,
+      "combat_capable_unit_count": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 18,
+      "friendly_actor_cells": 5,
+      "produced_unit_count": 3,
+      "combat_capable_unit_count": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 19,
+      "friendly_actor_cells": 5,
+      "produced_unit_count": 3,
+      "combat_capable_unit_count": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 20,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 21,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 22,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 23,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 24,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 25,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 26,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 27,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 28,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 29,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 30,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 31,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 32,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 33,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 34,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 35,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 36,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 37,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 38,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 39,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 40,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 41,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 42,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 43,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 44,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 45,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 46,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 47,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 48,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 49,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 50,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 51,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 52,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 53,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 54,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 55,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 56,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 57,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 58,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 59,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 60,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 61,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 62,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 63,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 64,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 65,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 66,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 67,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 68,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 69,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 70,
+      "friendly_actor_cells": 6,
+      "produced_unit_count": 4,
+      "combat_capable_unit_count": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 71,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 72,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 73,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 74,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 75,
+      "friendly_actor_cells": 7,
+      "produced_unit_count": 5,
+      "combat_capable_unit_count": 6,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 76,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 77,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 78,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 79,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 80,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 81,
+      "friendly_actor_cells": 8,
+      "produced_unit_count": 6,
+      "combat_capable_unit_count": 7,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 82,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 83,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 84,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 85,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 86,
+      "friendly_actor_cells": 9,
+      "produced_unit_count": 7,
+      "combat_capable_unit_count": 8,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 87,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 88,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 89,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 90,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 91,
+      "friendly_actor_cells": 10,
+      "produced_unit_count": 8,
+      "combat_capable_unit_count": 9,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 92,
+      "friendly_actor_cells": 11,
+      "produced_unit_count": 9,
+      "combat_capable_unit_count": 10,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 93,
+      "friendly_actor_cells": 11,
+      "produced_unit_count": 9,
+      "combat_capable_unit_count": 10,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 94,
+      "friendly_actor_cells": 11,
+      "produced_unit_count": 9,
+      "combat_capable_unit_count": 10,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 95,
+      "friendly_actor_cells": 11,
+      "produced_unit_count": 9,
+      "combat_capable_unit_count": 10,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 96,
+      "friendly_actor_cells": 11,
+      "produced_unit_count": 9,
+      "combat_capable_unit_count": 10,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 97,
+      "friendly_actor_cells": 12,
+      "produced_unit_count": 10,
+      "combat_capable_unit_count": 11,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 98,
+      "friendly_actor_cells": 12,
+      "produced_unit_count": 10,
+      "combat_capable_unit_count": 11,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 99,
+      "friendly_actor_cells": 12,
+      "produced_unit_count": 10,
+      "combat_capable_unit_count": 11,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 100,
+      "friendly_actor_cells": 12,
+      "produced_unit_count": 10,
+      "combat_capable_unit_count": 11,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 101,
+      "friendly_actor_cells": 12,
+      "produced_unit_count": 10,
+      "combat_capable_unit_count": 11,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 102,
+      "friendly_actor_cells": 13,
+      "produced_unit_count": 11,
+      "combat_capable_unit_count": 12,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 103,
+      "friendly_actor_cells": 13,
+      "produced_unit_count": 11,
+      "combat_capable_unit_count": 12,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 104,
+      "friendly_actor_cells": 13,
+      "produced_unit_count": 11,
+      "combat_capable_unit_count": 12,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 105,
+      "friendly_actor_cells": 13,
+      "produced_unit_count": 11,
+      "combat_capable_unit_count": 12,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 106,
+      "friendly_actor_cells": 13,
+      "produced_unit_count": 11,
+      "combat_capable_unit_count": 12,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 107,
+      "friendly_actor_cells": 14,
+      "produced_unit_count": 12,
+      "combat_capable_unit_count": 13,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 108,
+      "friendly_actor_cells": 14,
+      "produced_unit_count": 12,
+      "combat_capable_unit_count": 13,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 109,
+      "friendly_actor_cells": 14,
+      "produced_unit_count": 12,
+      "combat_capable_unit_count": 13,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 110,
+      "friendly_actor_cells": 14,
+      "produced_unit_count": 12,
+      "combat_capable_unit_count": 13,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 111,
+      "friendly_actor_cells": 14,
+      "produced_unit_count": 12,
+      "combat_capable_unit_count": 13,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 112,
+      "friendly_actor_cells": 15,
+      "produced_unit_count": 13,
+      "combat_capable_unit_count": 14,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 113,
+      "friendly_actor_cells": 15,
+      "produced_unit_count": 13,
+      "combat_capable_unit_count": 14,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 114,
+      "friendly_actor_cells": 15,
+      "produced_unit_count": 13,
+      "combat_capable_unit_count": 14,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 115,
+      "friendly_actor_cells": 15,
+      "produced_unit_count": 13,
+      "combat_capable_unit_count": 14,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 116,
+      "friendly_actor_cells": 15,
+      "produced_unit_count": 13,
+      "combat_capable_unit_count": 14,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 117,
+      "friendly_actor_cells": 16,
+      "produced_unit_count": 14,
+      "combat_capable_unit_count": 15,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 118,
+      "friendly_actor_cells": 16,
+      "produced_unit_count": 14,
+      "combat_capable_unit_count": 15,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 119,
+      "friendly_actor_cells": 16,
+      "produced_unit_count": 14,
+      "combat_capable_unit_count": 15,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 120,
+      "friendly_actor_cells": 16,
+      "produced_unit_count": 14,
+      "combat_capable_unit_count": 15,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 121,
+      "friendly_actor_cells": 16,
+      "produced_unit_count": 14,
+      "combat_capable_unit_count": 15,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 122,
+      "friendly_actor_cells": 17,
+      "produced_unit_count": 15,
+      "combat_capable_unit_count": 16,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 123,
+      "friendly_actor_cells": 17,
+      "produced_unit_count": 15,
+      "combat_capable_unit_count": 16,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 124,
+      "friendly_actor_cells": 17,
+      "produced_unit_count": 15,
+      "combat_capable_unit_count": 16,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 125,
+      "friendly_actor_cells": 17,
+      "produced_unit_count": 15,
+      "combat_capable_unit_count": 16,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 126,
+      "friendly_actor_cells": 17,
+      "produced_unit_count": 15,
+      "combat_capable_unit_count": 16,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 127,
+      "friendly_actor_cells": 18,
+      "produced_unit_count": 16,
+      "combat_capable_unit_count": 17,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 128,
+      "friendly_actor_cells": 18,
+      "produced_unit_count": 16,
+      "combat_capable_unit_count": 17,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 129,
+      "friendly_actor_cells": 18,
+      "produced_unit_count": 16,
+      "combat_capable_unit_count": 17,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 130,
+      "friendly_actor_cells": 18,
+      "produced_unit_count": 16,
+      "combat_capable_unit_count": 17,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 131,
+      "friendly_actor_cells": 18,
+      "produced_unit_count": 16,
+      "combat_capable_unit_count": 17,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 132,
+      "friendly_actor_cells": 19,
+      "produced_unit_count": 17,
+      "combat_capable_unit_count": 18,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 133,
+      "friendly_actor_cells": 19,
+      "produced_unit_count": 17,
+      "combat_capable_unit_count": 18,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 134,
+      "friendly_actor_cells": 19,
+      "produced_unit_count": 17,
+      "combat_capable_unit_count": 18,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 135,
+      "friendly_actor_cells": 19,
+      "produced_unit_count": 17,
+      "combat_capable_unit_count": 18,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 136,
+      "friendly_actor_cells": 19,
+      "produced_unit_count": 17,
+      "combat_capable_unit_count": 18,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 137,
+      "friendly_actor_cells": 20,
+      "produced_unit_count": 18,
+      "combat_capable_unit_count": 19,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 138,
+      "friendly_actor_cells": 20,
+      "produced_unit_count": 18,
+      "combat_capable_unit_count": 19,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 139,
+      "friendly_actor_cells": 20,
+      "produced_unit_count": 18,
+      "combat_capable_unit_count": 19,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 140,
+      "friendly_actor_cells": 20,
+      "produced_unit_count": 18,
+      "combat_capable_unit_count": 19,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 141,
+      "friendly_actor_cells": 20,
+      "produced_unit_count": 18,
+      "combat_capable_unit_count": 19,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 142,
+      "friendly_actor_cells": 21,
+      "produced_unit_count": 19,
+      "combat_capable_unit_count": 20,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 143,
+      "friendly_actor_cells": 21,
+      "produced_unit_count": 19,
+      "combat_capable_unit_count": 20,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 144,
+      "friendly_actor_cells": 21,
+      "produced_unit_count": 19,
+      "combat_capable_unit_count": 20,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 145,
+      "friendly_actor_cells": 21,
+      "produced_unit_count": 19,
+      "combat_capable_unit_count": 20,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 146,
+      "friendly_actor_cells": 21,
+      "produced_unit_count": 19,
+      "combat_capable_unit_count": 20,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 147,
+      "friendly_actor_cells": 22,
+      "produced_unit_count": 20,
+      "combat_capable_unit_count": 21,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 148,
+      "friendly_actor_cells": 22,
+      "produced_unit_count": 20,
+      "combat_capable_unit_count": 21,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 149,
+      "friendly_actor_cells": 22,
+      "produced_unit_count": 20,
+      "combat_capable_unit_count": 21,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 150,
+      "friendly_actor_cells": 22,
+      "produced_unit_count": 20,
+      "combat_capable_unit_count": 21,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 151,
+      "friendly_actor_cells": 22,
+      "produced_unit_count": 20,
+      "combat_capable_unit_count": 21,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 152,
+      "friendly_actor_cells": 23,
+      "produced_unit_count": 21,
+      "combat_capable_unit_count": 22,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 153,
+      "friendly_actor_cells": 23,
+      "produced_unit_count": 21,
+      "combat_capable_unit_count": 22,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 154,
+      "friendly_actor_cells": 23,
+      "produced_unit_count": 21,
+      "combat_capable_unit_count": 22,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 155,
+      "friendly_actor_cells": 23,
+      "produced_unit_count": 21,
+      "combat_capable_unit_count": 22,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 156,
+      "friendly_actor_cells": 23,
+      "produced_unit_count": 21,
+      "combat_capable_unit_count": 22,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 157,
+      "friendly_actor_cells": 24,
+      "produced_unit_count": 22,
+      "combat_capable_unit_count": 23,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 158,
+      "friendly_actor_cells": 24,
+      "produced_unit_count": 22,
+      "combat_capable_unit_count": 23,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 159,
+      "friendly_actor_cells": 24,
+      "produced_unit_count": 22,
+      "combat_capable_unit_count": 23,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 160,
+      "friendly_actor_cells": 24,
+      "produced_unit_count": 22,
+      "combat_capable_unit_count": 23,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 161,
+      "friendly_actor_cells": 24,
+      "produced_unit_count": 22,
+      "combat_capable_unit_count": 23,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 162,
+      "friendly_actor_cells": 25,
+      "produced_unit_count": 23,
+      "combat_capable_unit_count": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 163,
+      "friendly_actor_cells": 25,
+      "produced_unit_count": 23,
+      "combat_capable_unit_count": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 164,
+      "friendly_actor_cells": 25,
+      "produced_unit_count": 23,
+      "combat_capable_unit_count": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 165,
+      "friendly_actor_cells": 25,
+      "produced_unit_count": 23,
+      "combat_capable_unit_count": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 166,
+      "friendly_actor_cells": 25,
+      "produced_unit_count": 23,
+      "combat_capable_unit_count": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 167,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 168,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 169,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 170,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 171,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 172,
+      "friendly_actor_cells": 26,
+      "produced_unit_count": 24,
+      "combat_capable_unit_count": 25,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 173,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 174,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 175,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 176,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 177,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 178,
+      "friendly_actor_cells": 27,
+      "produced_unit_count": 25,
+      "combat_capable_unit_count": 26,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 179,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 180,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 181,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 182,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 183,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 184,
+      "friendly_actor_cells": 28,
+      "produced_unit_count": 26,
+      "combat_capable_unit_count": 27,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 185,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 186,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 187,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 188,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 189,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 190,
+      "friendly_actor_cells": 29,
+      "produced_unit_count": 27,
+      "combat_capable_unit_count": 28,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 191,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 192,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 193,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 194,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 195,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 196,
+      "friendly_actor_cells": 30,
+      "produced_unit_count": 28,
+      "combat_capable_unit_count": 29,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 197,
+      "friendly_actor_cells": 31,
+      "produced_unit_count": 29,
+      "combat_capable_unit_count": 30,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 198,
+      "friendly_actor_cells": 31,
+      "produced_unit_count": 29,
+      "combat_capable_unit_count": 30,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 199,
+      "friendly_actor_cells": 31,
+      "produced_unit_count": 29,
+      "combat_capable_unit_count": 30,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 200,
+      "friendly_actor_cells": 31,
+      "produced_unit_count": 29,
+      "combat_capable_unit_count": 30,
+      "off_actor_non_noop_count": 0
+    }
+  ],
+  "actor_cell_predicted_action_counts_over_time": [
+    {
+      "step": 1,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 2,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 3,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 4,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 5,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 6,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 7,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 8,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 9,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 10,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 11,
+      "NoOp": 0,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 12,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 13,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 14,
+      "NoOp": 0,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 15,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 16,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 17,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 18,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 19,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 20,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 21,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 22,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 23,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 24,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 25,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 26,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 27,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 28,
+      "NoOp": 2,
+      "Move": 1,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 29,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 30,
+      "NoOp": 3,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 31,
+      "NoOp": 2,
+      "Move": 1,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 32,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 33,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 34,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 35,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 36,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 37,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 38,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 39,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 40,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 41,
+      "NoOp": 1,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 42,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 43,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 44,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 45,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 46,
+      "NoOp": 0,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 47,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 48,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 49,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 50,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 51,
+      "NoOp": 1,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 52,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 53,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 54,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 55,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 56,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 57,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 58,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 59,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 60,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 61,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 62,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 63,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 64,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 65,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 66,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 67,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 68,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 69,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 70,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 71,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 72,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 73,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 74,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 75,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 76,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 77,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 78,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 79,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 80,
+      "NoOp": 3,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 81,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 82,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 83,
+      "NoOp": 3,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 84,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 85,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 86,
+      "NoOp": 3,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 87,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 88,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 89,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 90,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 91,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 92,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 93,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 94,
+      "NoOp": 4,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 95,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 96,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 97,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 98,
+      "NoOp": 4,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 99,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 100,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 101,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 102,
+      "NoOp": 5,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 103,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 104,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 105,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 106,
+      "NoOp": 4,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 107,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 108,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 109,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 110,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 111,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 112,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 113,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 114,
+      "NoOp": 5,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 115,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 116,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 117,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 118,
+      "NoOp": 5,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 119,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 120,
+      "NoOp": 2,
+      "Move": 7,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 121,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 122,
+      "NoOp": 6,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 123,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 124,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 125,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 126,
+      "NoOp": 5,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 127,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 128,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 129,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 130,
+      "NoOp": 5,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 131,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 132,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 133,
+      "NoOp": 4,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 134,
+      "NoOp": 6,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 135,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 136,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 137,
+      "NoOp": 5,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 138,
+      "NoOp": 6,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 139,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 140,
+      "NoOp": 3,
+      "Move": 9,
+      "Harvest": 2,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 141,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 142,
+      "NoOp": 6,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 143,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 144,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 145,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 146,
+      "NoOp": 3,
+      "Move": 10,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 147,
+      "NoOp": 4,
+      "Move": 10,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 148,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 149,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 150,
+      "NoOp": 2,
+      "Move": 13,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 151,
+      "NoOp": 2,
+      "Move": 13,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 152,
+      "NoOp": 3,
+      "Move": 13,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 153,
+      "NoOp": 2,
+      "Move": 14,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 154,
+      "NoOp": 2,
+      "Move": 14,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 155,
+      "NoOp": 1,
+      "Move": 16,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 156,
+      "NoOp": 1,
+      "Move": 16,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 157,
+      "NoOp": 2,
+      "Move": 16,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 158,
+      "NoOp": 1,
+      "Move": 17,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 159,
+      "NoOp": 1,
+      "Move": 17,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 160,
+      "NoOp": 0,
+      "Move": 19,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 161,
+      "NoOp": 0,
+      "Move": 19,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 162,
+      "NoOp": 1,
+      "Move": 19,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 163,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 164,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 165,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 166,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 167,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 168,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 169,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 170,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 171,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 172,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 173,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 174,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 175,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 176,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 177,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 178,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 179,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 180,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 181,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 182,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 183,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 184,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 185,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 186,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 187,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 188,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 8,
+      "Attack": 0
+    },
+    {
+      "step": 189,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 190,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 8,
+      "Attack": 0
+    },
+    {
+      "step": 191,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 192,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 193,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 194,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 9,
+      "Attack": 0
+    },
+    {
+      "step": 195,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 196,
+      "NoOp": 0,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 8,
+      "Attack": 0
+    },
+    {
+      "step": 197,
+      "NoOp": 6,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 198,
+      "NoOp": 1,
+      "Move": 22,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 199,
+      "NoOp": 6,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 200,
+      "NoOp": 0,
+      "Move": 21,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 9,
+      "Attack": 0
+    }
+  ],
+  "actor_cell_command_built_counts_by_action_type": {
+    "NoOp": 0,
+    "Move": 5,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 39,
+    "Attack": 0
+  },
+  "actor_cell_command_accepted_counts_by_action_type": {
+    "NoOp": 0,
+    "Move": 5,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 39,
+    "Attack": 0
+  },
+  "produced_unit_action_distribution_over_time": [
+    {
+      "step": 1,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 2,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 3,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 4,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 5,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 6,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 7,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 8,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 9,
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 10,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 11,
+      "NoOp": 0,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 12,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 13,
+      "NoOp": 1,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 14,
+      "NoOp": 0,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 15,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 16,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 17,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 18,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 19,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 20,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 21,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 22,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 23,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 24,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 25,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 26,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 27,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 28,
+      "NoOp": 2,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 29,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 30,
+      "NoOp": 3,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 31,
+      "NoOp": 2,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 32,
+      "NoOp": 0,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 33,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 34,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 35,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 36,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 37,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 38,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 39,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 40,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 41,
+      "NoOp": 1,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 42,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 43,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 44,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 45,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 46,
+      "NoOp": 0,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 47,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 48,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 49,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 50,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 51,
+      "NoOp": 1,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 52,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 53,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 54,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 55,
+      "NoOp": 0,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 56,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 57,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 58,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 59,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 60,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 61,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 62,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 63,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 64,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 65,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 66,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 67,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 68,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 69,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 70,
+      "NoOp": 0,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 71,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 72,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 73,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 74,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 75,
+      "NoOp": 0,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 76,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 77,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 78,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    {
+      "step": 79,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 80,
+      "NoOp": 3,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 81,
+      "NoOp": 1,
+      "Move": 1,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 82,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 83,
+      "NoOp": 3,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 84,
+      "NoOp": 1,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 85,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 86,
+      "NoOp": 3,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 87,
+      "NoOp": 2,
+      "Move": 2,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 88,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 89,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 90,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 1,
+      "Attack": 0
+    },
+    {
+      "step": 91,
+      "NoOp": 1,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 92,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 93,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 94,
+      "NoOp": 4,
+      "Move": 3,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 95,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 96,
+      "NoOp": 1,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 97,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 98,
+      "NoOp": 4,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 99,
+      "NoOp": 2,
+      "Move": 3,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 100,
+      "NoOp": 1,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 101,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 102,
+      "NoOp": 5,
+      "Move": 4,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 103,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 104,
+      "NoOp": 2,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 105,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 106,
+      "NoOp": 4,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 107,
+      "NoOp": 3,
+      "Move": 4,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 108,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 109,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 110,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 111,
+      "NoOp": 2,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 112,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 113,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 114,
+      "NoOp": 5,
+      "Move": 5,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 115,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 116,
+      "NoOp": 2,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 117,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 118,
+      "NoOp": 5,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 119,
+      "NoOp": 3,
+      "Move": 5,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 120,
+      "NoOp": 2,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 121,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 122,
+      "NoOp": 6,
+      "Move": 6,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 123,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 124,
+      "NoOp": 3,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 125,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 126,
+      "NoOp": 5,
+      "Move": 7,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 127,
+      "NoOp": 4,
+      "Move": 6,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 128,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 129,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 130,
+      "NoOp": 5,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 131,
+      "NoOp": 3,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 132,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 133,
+      "NoOp": 4,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 134,
+      "NoOp": 6,
+      "Move": 7,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 135,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 136,
+      "NoOp": 3,
+      "Move": 8,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 137,
+      "NoOp": 5,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 138,
+      "NoOp": 6,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 139,
+      "NoOp": 4,
+      "Move": 7,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 140,
+      "NoOp": 3,
+      "Move": 9,
+      "Harvest": 1,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 141,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 142,
+      "NoOp": 6,
+      "Move": 8,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 143,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 144,
+      "NoOp": 4,
+      "Move": 9,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 145,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 146,
+      "NoOp": 3,
+      "Move": 10,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 147,
+      "NoOp": 4,
+      "Move": 10,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 148,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 149,
+      "NoOp": 3,
+      "Move": 11,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 150,
+      "NoOp": 2,
+      "Move": 13,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 151,
+      "NoOp": 2,
+      "Move": 13,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 152,
+      "NoOp": 3,
+      "Move": 13,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 153,
+      "NoOp": 2,
+      "Move": 14,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 154,
+      "NoOp": 2,
+      "Move": 14,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 155,
+      "NoOp": 1,
+      "Move": 16,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 156,
+      "NoOp": 1,
+      "Move": 16,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 157,
+      "NoOp": 2,
+      "Move": 16,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 158,
+      "NoOp": 1,
+      "Move": 17,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 159,
+      "NoOp": 1,
+      "Move": 17,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 160,
+      "NoOp": 0,
+      "Move": 19,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 161,
+      "NoOp": 0,
+      "Move": 19,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 162,
+      "NoOp": 1,
+      "Move": 19,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 163,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 164,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 165,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 166,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 167,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 168,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 169,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 170,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 171,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 172,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 173,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 174,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 4,
+      "Attack": 0
+    },
+    {
+      "step": 175,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 176,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 177,
+      "NoOp": 2,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 178,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 179,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 180,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 5,
+      "Attack": 0
+    },
+    {
+      "step": 181,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 182,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 183,
+      "NoOp": 3,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 184,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 185,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 186,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 6,
+      "Attack": 0
+    },
+    {
+      "step": 187,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 188,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 189,
+      "NoOp": 4,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 190,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 191,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 192,
+      "NoOp": 1,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 193,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 194,
+      "NoOp": 0,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 8,
+      "Attack": 0
+    },
+    {
+      "step": 195,
+      "NoOp": 5,
+      "Move": 20,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 3,
+      "Attack": 0
+    },
+    {
+      "step": 196,
+      "NoOp": 0,
+      "Move": 21,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 197,
+      "NoOp": 6,
+      "Move": 21,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 198,
+      "NoOp": 1,
+      "Move": 21,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 7,
+      "Attack": 0
+    },
+    {
+      "step": 199,
+      "NoOp": 6,
+      "Move": 21,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 2,
+      "Attack": 0
+    },
+    {
+      "step": 200,
+      "NoOp": 0,
+      "Move": 21,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 8,
+      "Attack": 0
+    }
+  ],
+  "combat_capable_unit_action_distribution_over_time": {
+    "over_time": [
+      {
+        "step": 1,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 2,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 3,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 4,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 5,
+        "NoOp": 1,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 6,
+        "NoOp": 1,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 7,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 8,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 9,
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 10,
+        "NoOp": 1,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 11,
+        "NoOp": 0,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 12,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 13,
+        "NoOp": 1,
+        "Move": 0,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 14,
+        "NoOp": 0,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 15,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 16,
+        "NoOp": 0,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 17,
+        "NoOp": 0,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 18,
+        "NoOp": 0,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 19,
+        "NoOp": 0,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 20,
+        "NoOp": 1,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 21,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 22,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 23,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 24,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 25,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 26,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 27,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 28,
+        "NoOp": 2,
+        "Move": 1,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 29,
+        "NoOp": 1,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 30,
+        "NoOp": 3,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 31,
+        "NoOp": 2,
+        "Move": 1,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 32,
+        "NoOp": 0,
+        "Move": 2,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 33,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 34,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 35,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 36,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 37,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 38,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 39,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 40,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 41,
+        "NoOp": 1,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 42,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 43,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 44,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 45,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 46,
+        "NoOp": 0,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 47,
+        "NoOp": 0,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 48,
+        "NoOp": 0,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 49,
+        "NoOp": 0,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 50,
+        "NoOp": 1,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 51,
+        "NoOp": 1,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 52,
+        "NoOp": 1,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 53,
+        "NoOp": 0,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 54,
+        "NoOp": 1,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 55,
+        "NoOp": 0,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 56,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 57,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 58,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 59,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 60,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 61,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 62,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 63,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 64,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 65,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 66,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 67,
+        "NoOp": 1,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 68,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 69,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 70,
+        "NoOp": 0,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 71,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 72,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 73,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 74,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 75,
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 76,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 77,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 78,
+        "NoOp": 2,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      {
+        "step": 79,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 80,
+        "NoOp": 3,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 81,
+        "NoOp": 1,
+        "Move": 1,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 82,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 83,
+        "NoOp": 3,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 84,
+        "NoOp": 1,
+        "Move": 2,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 85,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 86,
+        "NoOp": 3,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 87,
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 88,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 89,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 90,
+        "NoOp": 3,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 1,
+        "Attack": 0
+      },
+      {
+        "step": 91,
+        "NoOp": 1,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 92,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 93,
+        "NoOp": 2,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 94,
+        "NoOp": 4,
+        "Move": 3,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 95,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 96,
+        "NoOp": 1,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 97,
+        "NoOp": 3,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 98,
+        "NoOp": 4,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 99,
+        "NoOp": 2,
+        "Move": 3,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 100,
+        "NoOp": 1,
+        "Move": 5,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 101,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 102,
+        "NoOp": 5,
+        "Move": 4,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 103,
+        "NoOp": 2,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 104,
+        "NoOp": 2,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 105,
+        "NoOp": 2,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 106,
+        "NoOp": 4,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 107,
+        "NoOp": 3,
+        "Move": 4,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 108,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 109,
+        "NoOp": 3,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 110,
+        "NoOp": 4,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 111,
+        "NoOp": 2,
+        "Move": 5,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 112,
+        "NoOp": 3,
+        "Move": 5,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 113,
+        "NoOp": 3,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 114,
+        "NoOp": 5,
+        "Move": 5,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 115,
+        "NoOp": 2,
+        "Move": 6,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 116,
+        "NoOp": 2,
+        "Move": 6,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 117,
+        "NoOp": 4,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 118,
+        "NoOp": 5,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 119,
+        "NoOp": 3,
+        "Move": 5,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 120,
+        "NoOp": 2,
+        "Move": 7,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 121,
+        "NoOp": 3,
+        "Move": 7,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 122,
+        "NoOp": 6,
+        "Move": 6,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 123,
+        "NoOp": 3,
+        "Move": 6,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 124,
+        "NoOp": 3,
+        "Move": 6,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 125,
+        "NoOp": 3,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 126,
+        "NoOp": 5,
+        "Move": 7,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 127,
+        "NoOp": 4,
+        "Move": 6,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 128,
+        "NoOp": 3,
+        "Move": 7,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 129,
+        "NoOp": 4,
+        "Move": 7,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 130,
+        "NoOp": 5,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 131,
+        "NoOp": 3,
+        "Move": 7,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 132,
+        "NoOp": 4,
+        "Move": 7,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 133,
+        "NoOp": 4,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 134,
+        "NoOp": 6,
+        "Move": 7,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 135,
+        "NoOp": 3,
+        "Move": 8,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 136,
+        "NoOp": 3,
+        "Move": 8,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 137,
+        "NoOp": 5,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 138,
+        "NoOp": 6,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 139,
+        "NoOp": 4,
+        "Move": 7,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 140,
+        "NoOp": 3,
+        "Move": 9,
+        "Harvest": 2,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 141,
+        "NoOp": 4,
+        "Move": 9,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 142,
+        "NoOp": 6,
+        "Move": 8,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 143,
+        "NoOp": 4,
+        "Move": 9,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 144,
+        "NoOp": 4,
+        "Move": 9,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 145,
+        "NoOp": 3,
+        "Move": 11,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 146,
+        "NoOp": 3,
+        "Move": 10,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 147,
+        "NoOp": 4,
+        "Move": 10,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 148,
+        "NoOp": 3,
+        "Move": 11,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 149,
+        "NoOp": 3,
+        "Move": 11,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 150,
+        "NoOp": 2,
+        "Move": 13,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 151,
+        "NoOp": 2,
+        "Move": 13,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 152,
+        "NoOp": 3,
+        "Move": 13,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 153,
+        "NoOp": 2,
+        "Move": 14,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 154,
+        "NoOp": 2,
+        "Move": 14,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 155,
+        "NoOp": 1,
+        "Move": 16,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 156,
+        "NoOp": 1,
+        "Move": 16,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 157,
+        "NoOp": 2,
+        "Move": 16,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 158,
+        "NoOp": 1,
+        "Move": 17,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 159,
+        "NoOp": 1,
+        "Move": 17,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 160,
+        "NoOp": 0,
+        "Move": 19,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 161,
+        "NoOp": 0,
+        "Move": 19,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 162,
+        "NoOp": 1,
+        "Move": 19,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 163,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 164,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 165,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 166,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 167,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 168,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 169,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 170,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 171,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 172,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 173,
+        "NoOp": 2,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 174,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 4,
+        "Attack": 0
+      },
+      {
+        "step": 175,
+        "NoOp": 2,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 176,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 177,
+        "NoOp": 2,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 178,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 179,
+        "NoOp": 3,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 180,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      {
+        "step": 181,
+        "NoOp": 3,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 182,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 183,
+        "NoOp": 3,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 184,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 185,
+        "NoOp": 4,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 186,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 6,
+        "Attack": 0
+      },
+      {
+        "step": 187,
+        "NoOp": 4,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 188,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 7,
+        "Attack": 0
+      },
+      {
+        "step": 189,
+        "NoOp": 4,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 190,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 7,
+        "Attack": 0
+      },
+      {
+        "step": 191,
+        "NoOp": 5,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 192,
+        "NoOp": 1,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 7,
+        "Attack": 0
+      },
+      {
+        "step": 193,
+        "NoOp": 5,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 194,
+        "NoOp": 0,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 8,
+        "Attack": 0
+      },
+      {
+        "step": 195,
+        "NoOp": 5,
+        "Move": 20,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      {
+        "step": 196,
+        "NoOp": 0,
+        "Move": 21,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 7,
+        "Attack": 0
+      },
+      {
+        "step": 197,
+        "NoOp": 6,
+        "Move": 21,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 198,
+        "NoOp": 1,
+        "Move": 21,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 7,
+        "Attack": 0
+      },
+      {
+        "step": 199,
+        "NoOp": 6,
+        "Move": 21,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 2,
+        "Attack": 0
+      },
+      {
+        "step": 200,
+        "NoOp": 0,
+        "Move": 21,
+        "Harvest": 1,
+        "Return": 0,
+        "Produce": 8,
+        "Attack": 0
+      }
+    ],
+    "by_unit_type": {
+      "Worker": {
+        "NoOp": 360,
+        "Move": 1589,
+        "Harvest": 240,
+        "Return": 0,
+        "Produce": 567,
+        "Attack": 0
+      },
+      "Light": {
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 0,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      "Heavy": {
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 0,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      },
+      "Ranged": {
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 0,
+        "Return": 0,
+        "Produce": 0,
+        "Attack": 0
+      }
+    }
+  },
+  "per_unit_lifecycle_summaries": [
+    {
+      "unit_id": "Worker_002",
+      "unit_type": "Worker",
+      "spawn_step": 5,
+      "first_non_NoOp": 7,
+      "first_Move": 11,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.7146337628364563,
+      "max_p_attack": 0.03168366104364395,
+      "position_changes": 50
+    },
+    {
+      "unit_id": "Worker_003",
+      "unit_type": "Worker",
+      "spawn_step": 10,
+      "first_non_NoOp": 10,
+      "first_Move": 15,
+      "first_accepted_Move": 45,
+      "first_Attack": null,
+      "max_p_move": 0.709109365940094,
+      "max_p_attack": 0.06808805465698242,
+      "position_changes": 48
+    },
+    {
+      "unit_id": "Worker_004",
+      "unit_type": "Worker",
+      "spawn_step": 15,
+      "first_non_NoOp": 15,
+      "first_Move": 33,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.763537585735321,
+      "max_p_attack": 0.03002549149096012,
+      "position_changes": 13
+    },
+    {
+      "unit_id": "Worker_005",
+      "unit_type": "Worker",
+      "spawn_step": 20,
+      "first_non_NoOp": 21,
+      "first_Move": 21,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6351256370544434,
+      "max_p_attack": 0.061111826449632645,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_006",
+      "unit_type": "Worker",
+      "spawn_step": 25,
+      "first_non_NoOp": null,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.0006165264640003443,
+      "max_p_attack": 9.203814988723025e-05,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_007",
+      "unit_type": "Worker",
+      "spawn_step": 26,
+      "first_non_NoOp": 27,
+      "first_Move": 37,
+      "first_accepted_Move": 53,
+      "first_Attack": null,
+      "max_p_move": 0.730443000793457,
+      "max_p_attack": 0.04270215332508087,
+      "position_changes": 6
+    },
+    {
+      "unit_id": "Worker_008",
+      "unit_type": "Worker",
+      "spawn_step": 30,
+      "first_non_NoOp": 30,
+      "first_Move": 45,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.559418261051178,
+      "max_p_attack": 0.01658426597714424,
+      "position_changes": 3
+    },
+    {
+      "unit_id": "Worker_009",
+      "unit_type": "Worker",
+      "spawn_step": 35,
+      "first_non_NoOp": 35,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.38508471846580505,
+      "max_p_attack": 0.02489018626511097,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_010",
+      "unit_type": "Worker",
+      "spawn_step": 37,
+      "first_non_NoOp": 37,
+      "first_Move": 40,
+      "first_accepted_Move": 44,
+      "first_Attack": null,
+      "max_p_move": 0.6865366101264954,
+      "max_p_attack": 0.021112140268087387,
+      "position_changes": 3
+    },
+    {
+      "unit_id": "Worker_011",
+      "unit_type": "Worker",
+      "spawn_step": 40,
+      "first_non_NoOp": 40,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.33486247062683105,
+      "max_p_attack": 0.007850413210690022,
+      "position_changes": 1
+    },
+    {
+      "unit_id": "Worker_012",
+      "unit_type": "Worker",
+      "spawn_step": 45,
+      "first_non_NoOp": 46,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.192752406001091,
+      "max_p_attack": 0.008185303770005703,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_013",
+      "unit_type": "Worker",
+      "spawn_step": 50,
+      "first_non_NoOp": 53,
+      "first_Move": 59,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.536044180393219,
+      "max_p_attack": 0.017439398914575577,
+      "position_changes": 4
+    },
+    {
+      "unit_id": "Worker_014",
+      "unit_type": "Worker",
+      "spawn_step": 56,
+      "first_non_NoOp": null,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.006180094089359045,
+      "max_p_attack": 0.0005419468507170677,
+      "position_changes": 1
+    },
+    {
+      "unit_id": "Worker_015",
+      "unit_type": "Worker",
+      "spawn_step": 58,
+      "first_non_NoOp": 58,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.17814071476459503,
+      "max_p_attack": 0.015682149678468704,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_016",
+      "unit_type": "Worker",
+      "spawn_step": 61,
+      "first_non_NoOp": 61,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.14707383513450623,
+      "max_p_attack": 0.00581359351053834,
+      "position_changes": 1
+    },
+    {
+      "unit_id": "Worker_017",
+      "unit_type": "Worker",
+      "spawn_step": 66,
+      "first_non_NoOp": 66,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.4165695607662201,
+      "max_p_attack": 0.008676839992403984,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_018",
+      "unit_type": "Worker",
+      "spawn_step": 67,
+      "first_non_NoOp": 67,
+      "first_Move": 69,
+      "first_accepted_Move": 69,
+      "first_Attack": null,
+      "max_p_move": 0.6953555345535278,
+      "max_p_attack": 0.04654906690120697,
+      "position_changes": 35
+    },
+    {
+      "unit_id": "Worker_019",
+      "unit_type": "Worker",
+      "spawn_step": 71,
+      "first_non_NoOp": 71,
+      "first_Move": 88,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.7178748250007629,
+      "max_p_attack": 0.05194561928510666,
+      "position_changes": 34
+    },
+    {
+      "unit_id": "Worker_020",
+      "unit_type": "Worker",
+      "spawn_step": 76,
+      "first_non_NoOp": null,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.0011168605415150523,
+      "max_p_attack": 0.0001510533329565078,
+      "position_changes": 1
+    },
+    {
+      "unit_id": "Worker_021",
+      "unit_type": "Worker",
+      "spawn_step": 78,
+      "first_non_NoOp": 79,
+      "first_Move": 92,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6793076992034912,
+      "max_p_attack": 0.04947492852807045,
+      "position_changes": 32
+    },
+    {
+      "unit_id": "Worker_022",
+      "unit_type": "Worker",
+      "spawn_step": 82,
+      "first_non_NoOp": 82,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.2447221875190735,
+      "max_p_attack": 0.008832505904138088,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_023",
+      "unit_type": "Worker",
+      "spawn_step": 83,
+      "first_non_NoOp": 84,
+      "first_Move": 97,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6639726161956787,
+      "max_p_attack": 0.04593218117952347,
+      "position_changes": 29
+    },
+    {
+      "unit_id": "Worker_024",
+      "unit_type": "Worker",
+      "spawn_step": 87,
+      "first_non_NoOp": 87,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3530246615409851,
+      "max_p_attack": 0.026541290804743767,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_025",
+      "unit_type": "Worker",
+      "spawn_step": 89,
+      "first_non_NoOp": 89,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23632009327411652,
+      "max_p_attack": 0.010197296738624573,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_026",
+      "unit_type": "Worker",
+      "spawn_step": 90,
+      "first_non_NoOp": 91,
+      "first_Move": 104,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6738016605377197,
+      "max_p_attack": 0.046527065336704254,
+      "position_changes": 26
+    },
+    {
+      "unit_id": "Worker_027",
+      "unit_type": "Worker",
+      "spawn_step": 92,
+      "first_non_NoOp": 92,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3446124494075775,
+      "max_p_attack": 0.026399292051792145,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_028",
+      "unit_type": "Worker",
+      "spawn_step": 93,
+      "first_non_NoOp": 93,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23631086945533752,
+      "max_p_attack": 0.010219241492450237,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_029",
+      "unit_type": "Worker",
+      "spawn_step": 94,
+      "first_non_NoOp": 95,
+      "first_Move": 108,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6736090779304504,
+      "max_p_attack": 0.04668338596820831,
+      "position_changes": 24
+    },
+    {
+      "unit_id": "Worker_030",
+      "unit_type": "Worker",
+      "spawn_step": 97,
+      "first_non_NoOp": 97,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23564068973064423,
+      "max_p_attack": 0.010146921500563622,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_031",
+      "unit_type": "Worker",
+      "spawn_step": 98,
+      "first_non_NoOp": 99,
+      "first_Move": 112,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6732933521270752,
+      "max_p_attack": 0.047097720205783844,
+      "position_changes": 22
+    },
+    {
+      "unit_id": "Worker_032",
+      "unit_type": "Worker",
+      "spawn_step": 102,
+      "first_non_NoOp": 103,
+      "first_Move": 117,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6725555658340454,
+      "max_p_attack": 0.047097720205783844,
+      "position_changes": 20
+    },
+    {
+      "unit_id": "Worker_033",
+      "unit_type": "Worker",
+      "spawn_step": 107,
+      "first_non_NoOp": 107,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.34683167934417725,
+      "max_p_attack": 0.026483722031116486,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_034",
+      "unit_type": "Worker",
+      "spawn_step": 109,
+      "first_non_NoOp": 109,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23564068973064423,
+      "max_p_attack": 0.010146921500563622,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_035",
+      "unit_type": "Worker",
+      "spawn_step": 110,
+      "first_non_NoOp": 111,
+      "first_Move": 124,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6725555658340454,
+      "max_p_attack": 0.047097720205783844,
+      "position_changes": 17
+    },
+    {
+      "unit_id": "Worker_036",
+      "unit_type": "Worker",
+      "spawn_step": 112,
+      "first_non_NoOp": 112,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3423829674720764,
+      "max_p_attack": 0.026483722031116486,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_037",
+      "unit_type": "Worker",
+      "spawn_step": 113,
+      "first_non_NoOp": 113,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23564068973064423,
+      "max_p_attack": 0.010146921500563622,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_038",
+      "unit_type": "Worker",
+      "spawn_step": 114,
+      "first_non_NoOp": 115,
+      "first_Move": 128,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6725555658340454,
+      "max_p_attack": 0.047097720205783844,
+      "position_changes": 15
+    },
+    {
+      "unit_id": "Worker_039",
+      "unit_type": "Worker",
+      "spawn_step": 117,
+      "first_non_NoOp": 117,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23564068973064423,
+      "max_p_attack": 0.010146921500563622,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_040",
+      "unit_type": "Worker",
+      "spawn_step": 118,
+      "first_non_NoOp": 119,
+      "first_Move": 132,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6725555658340454,
+      "max_p_attack": 0.047097720205783844,
+      "position_changes": 13
+    },
+    {
+      "unit_id": "Worker_041",
+      "unit_type": "Worker",
+      "spawn_step": 122,
+      "first_non_NoOp": 123,
+      "first_Move": 137,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6724989414215088,
+      "max_p_attack": 0.047105222940444946,
+      "position_changes": 11
+    },
+    {
+      "unit_id": "Worker_042",
+      "unit_type": "Worker",
+      "spawn_step": 127,
+      "first_non_NoOp": 127,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.34688708186149597,
+      "max_p_attack": 0.026440082117915154,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_043",
+      "unit_type": "Worker",
+      "spawn_step": 129,
+      "first_non_NoOp": 129,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.23330800235271454,
+      "max_p_attack": 0.010203651152551174,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_044",
+      "unit_type": "Worker",
+      "spawn_step": 130,
+      "first_non_NoOp": 131,
+      "first_Move": 144,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6718727946281433,
+      "max_p_attack": 0.04705892875790596,
+      "position_changes": 8
+    },
+    {
+      "unit_id": "Worker_045",
+      "unit_type": "Worker",
+      "spawn_step": 132,
+      "first_non_NoOp": 132,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.34196776151657104,
+      "max_p_attack": 0.026563569903373718,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_046",
+      "unit_type": "Worker",
+      "spawn_step": 133,
+      "first_non_NoOp": 133,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.21591179072856903,
+      "max_p_attack": 0.009497455321252346,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_047",
+      "unit_type": "Worker",
+      "spawn_step": 134,
+      "first_non_NoOp": 135,
+      "first_Move": 143,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6711718440055847,
+      "max_p_attack": 0.047067172825336456,
+      "position_changes": 6
+    },
+    {
+      "unit_id": "Worker_048",
+      "unit_type": "Worker",
+      "spawn_step": 137,
+      "first_non_NoOp": 137,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.2518159747123718,
+      "max_p_attack": 0.012764966115355492,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_049",
+      "unit_type": "Worker",
+      "spawn_step": 138,
+      "first_non_NoOp": 139,
+      "first_Move": 152,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.6682704091072083,
+      "max_p_attack": 0.046937208622694016,
+      "position_changes": 4
+    },
+    {
+      "unit_id": "Worker_050",
+      "unit_type": "Worker",
+      "spawn_step": 142,
+      "first_non_NoOp": 143,
+      "first_Move": 157,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.661666750907898,
+      "max_p_attack": 0.05377562716603279,
+      "position_changes": 4
+    },
+    {
+      "unit_id": "Worker_051",
+      "unit_type": "Worker",
+      "spawn_step": 147,
+      "first_non_NoOp": 147,
+      "first_Move": 162,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.649385392665863,
+      "max_p_attack": 0.04929838702082634,
+      "position_changes": 3
+    },
+    {
+      "unit_id": "Worker_052",
+      "unit_type": "Worker",
+      "spawn_step": 152,
+      "first_non_NoOp": 152,
+      "first_Move": 196,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.524644136428833,
+      "max_p_attack": 0.049112219363451004,
+      "position_changes": 2
+    },
+    {
+      "unit_id": "Worker_053",
+      "unit_type": "Worker",
+      "spawn_step": 157,
+      "first_non_NoOp": 157,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3189212679862976,
+      "max_p_attack": 0.049112219363451004,
+      "position_changes": 1
+    },
+    {
+      "unit_id": "Worker_054",
+      "unit_type": "Worker",
+      "spawn_step": 162,
+      "first_non_NoOp": 162,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.27697721123695374,
+      "max_p_attack": 0.04938550293445587,
+      "position_changes": 0
+    },
+    {
+      "unit_id": "Worker_055",
+      "unit_type": "Worker",
+      "spawn_step": 167,
+      "first_non_NoOp": 170,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3838598132133484,
+      "max_p_attack": 0.014561504125595093,
+      "position_changes": 17
+    },
+    {
+      "unit_id": "Worker_056",
+      "unit_type": "Worker",
+      "spawn_step": 173,
+      "first_non_NoOp": 176,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.39048081636428833,
+      "max_p_attack": 0.016559552401304245,
+      "position_changes": 14
+    },
+    {
+      "unit_id": "Worker_057",
+      "unit_type": "Worker",
+      "spawn_step": 179,
+      "first_non_NoOp": 182,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.389704167842865,
+      "max_p_attack": 0.016555026173591614,
+      "position_changes": 11
+    },
+    {
+      "unit_id": "Worker_058",
+      "unit_type": "Worker",
+      "spawn_step": 185,
+      "first_non_NoOp": 188,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.389704167842865,
+      "max_p_attack": 0.016555026173591614,
+      "position_changes": 8
+    },
+    {
+      "unit_id": "Worker_059",
+      "unit_type": "Worker",
+      "spawn_step": 191,
+      "first_non_NoOp": 194,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.389704167842865,
+      "max_p_attack": 0.01641683466732502,
+      "position_changes": 5
+    },
+    {
+      "unit_id": "Worker_060",
+      "unit_type": "Worker",
+      "spawn_step": 197,
+      "first_non_NoOp": 200,
+      "first_Move": null,
+      "first_accepted_Move": null,
+      "first_Attack": null,
+      "max_p_move": 0.3317667543888092,
+      "max_p_attack": 0.010789945721626282,
+      "position_changes": 2
+    }
+  ],
+  "global_behavior_pattern": {
+    "production_only": false,
+    "movement_emerged": true,
+    "movement_weak": true,
+    "attack_absent": true,
+    "off_actor_risk_present": true
+  },
+  "classification_labels": [
+    "STAGE10D19_FULLMAP_AUDIT_COMPLETED",
+    "STAGE10D19_B2_C3_REGRESSION_GUARDS_PASSED",
+    "STAGE10D19_POSTPRODUCTION_BEHAVIOR_PARTIAL",
+    "STAGE10D19_OFF_ACTOR_RISK_PRESENT",
+    "STAGE10D19_MOVEMENT_EMERGED_IN_RUNTIME",
+    "STAGE10D19_MOVEMENT_WEAK_OR_SPARSE",
+    "STAGE10D19_ATTACK_ABSENT_IN_RUNTIME"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "generated_at_utc": "2026-05-03T17:32:25.524835+00:00",
+  "run_steps_completed": 55,
+  "terminal_result": "Loss",
+  "active_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "active_checkpoint_basename": "student_bc_stage10d17_movement_augmented_best.pt",
+  "visible_behavior_observed": false,
+  "initial_b2_harvest_preserved": false,
+  "initial_c3_produce_preserved": false,
+  "units_produced_count": 0,
+  "produced_units_visible_in_observation": 0,
+  "produced_units_owner_unit_encoding_valid": 0,
+  "total_move_predictions": 0,
+  "total_move_commands_built": 0,
+  "total_move_commands_accepted": 0,
+  "units_that_changed_position_count": 0,
+  "move_driven_position_change_count": 0,
+  "total_attack_predictions": 0,
+  "total_attack_commands_accepted": 0,
+  "enemy_engagement_observed": false,
+  "base_destroyed_observed": false,
+  "off_actor_safety_status": "SKIPPED_BINDING_FAILED",
+  "primary_failure_or_success_mode": "binding_failure",
+  "classification_labels": [
+    "STAGE10D18_CHECKPOINT_BINDING_FAILED",
+    "STAGE10D18_INFERENCE_FALLBACK_USED",
+    "STAGE10D18_LOGITS_SHAPES_INVALID",
+    "STAGE10D18_RUNTIME_REDEPLOY_FAIL"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D18_CHECKPOINT_BINDING_FIX"
+}

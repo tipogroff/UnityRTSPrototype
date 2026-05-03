@@ -1,0 +1,28 @@
+{
+  "total_off_actor_non_noop_count": 337,
+  "max_off_actor_non_noop_count": 6,
+  "off_actor_action_type_distribution": {
+    "Produce": 1
+  },
+  "off_actor_cell_type_distribution": {
+    "empty": 1
+  },
+  "off_actor_command_built_count": 0,
+  "off_actor_submission_count": 0,
+  "off_actor_near_friendly_actor_share": 0.0,
+  "off_actor_near_base_share": 0.0,
+  "off_actor_near_produced_unit_share": 0.0,
+  "sampled_cell_table_non_noop_count": 1,
+  "sampled_cell_tables": [
+    "stage10d10_global_runtime_cell_table_step0001.jsonl",
+    "stage10d10_global_runtime_cell_table_step0055.jsonl",
+    "stage10d10_global_runtime_cell_table_step0200.jsonl"
+  ],
+  "labels": [
+    "STAGE10D19_OFF_ACTOR_SAFETY_AUDIT_COMPLETED",
+    "STAGE10D19_OFF_ACTOR_NONNOOP_PRESENT",
+    "STAGE10D19_OFF_ACTOR_NEGATIVE_CONTROLS_REQUIRED",
+    "STAGE10D19_OFF_ACTOR_FILTERED_BEFORE_COMMAND_BUILD"
+  ],
+  "recommended_gate": "GO_FOR_STAGE10D19_OFF_ACTOR_NEGATIVE_CONTROL_AUGMENTATION"
+}

@@ -1,0 +1,24 @@
+{
+  "inputs": {
+    "fullmap_audit": "python/week6_student/reports/stage10d19_fullmap_postproduction_behavior_audit.json",
+    "move_efficiency_audit": "python/week6_student/reports/stage10d19_move_command_efficiency_audit.json",
+    "off_actor_safety_audit": "python/week6_student/reports/stage10d19_off_actor_safety_deep_audit.json",
+    "attack_readiness_audit": "python/week6_student/reports/stage10d19_attack_readiness_audit.json",
+    "attack_label_distribution_audit": "python/week6_student/reports/stage10d19_attack_label_distribution_audit.json"
+  },
+  "decision": "GO_FOR_STAGE10D19_MOVE_COMMAND_EFFICIENCY_FIX_OR_AUGMENTATION",
+  "rationale": [
+    "Move predictions are mostly invalid-target/occupied before decoder build."
+  ],
+  "key_signals": {
+    "move_prediction_to_build_rate": 0.0031308703819661866,
+    "valid_target_move_prediction_count": 264,
+    "invalid_target_move_prediction_count": 1333,
+    "off_actor_command_built_count": 0,
+    "off_actor_submission_count": 0,
+    "attack_opportunity_present": true,
+    "attack_predictions_total": 0,
+    "attack_commands_built": 0,
+    "attack_labels_underrepresented_or_absent": true
+  }
+}

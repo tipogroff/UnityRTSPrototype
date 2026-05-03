@@ -1,0 +1,163 @@
+{
+  "datasets": {
+    "stage10d7": {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+      "train": {
+        "total_actor_cells": 156981,
+        "attack_labels_total": 88,
+        "attack_labels_by_unit_type": {
+          "Worker": 88,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "17": 5,
+          "25": 31,
+          "31": 52
+        },
+        "attack_label_share_among_actor_cells": 0.0005605773947165581,
+        "attack_label_share_among_combat_units": 0.0011283208534208636,
+        "examples_with_enemy_nearby_proxy": 12706,
+        "valid_attack_target_range_share": 1.0
+      },
+      "validation": {
+        "total_actor_cells": 17454,
+        "attack_labels_total": 7,
+        "attack_labels_by_unit_type": {
+          "Worker": 7,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "25": 4,
+          "31": 3
+        },
+        "attack_label_share_among_actor_cells": 0.0004010541996104045,
+        "attack_label_share_among_combat_units": 0.0008071025020177562,
+        "examples_with_enemy_nearby_proxy": 1414,
+        "valid_attack_target_range_share": 1.0
+      },
+      "aggregate": {
+        "total_actor_cells": 174435,
+        "attack_labels_total": 95,
+        "attack_share": 0.0005446154728122223
+      }
+    },
+    "stage10d14": {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T145301Z",
+      "train": {
+        "total_actor_cells": 159619,
+        "attack_labels_total": 88,
+        "attack_labels_by_unit_type": {
+          "Worker": 88,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "17": 5,
+          "25": 31,
+          "31": 52
+        },
+        "attack_label_share_among_actor_cells": 0.0005513128136374742,
+        "attack_label_share_among_combat_units": 0.0011099059102489721,
+        "examples_with_enemy_nearby_proxy": 12860,
+        "valid_attack_target_range_share": 1.0
+      },
+      "validation": {
+        "total_actor_cells": 17786,
+        "attack_labels_total": 7,
+        "attack_labels_by_unit_type": {
+          "Worker": 7,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "25": 4,
+          "31": 3
+        },
+        "attack_label_share_among_actor_cells": 0.00039356797481164964,
+        "attack_label_share_among_combat_units": 0.0007921240239900419,
+        "examples_with_enemy_nearby_proxy": 1438,
+        "valid_attack_target_range_share": 1.0
+      },
+      "aggregate": {
+        "total_actor_cells": 177405,
+        "attack_labels_total": 95,
+        "attack_share": 0.0005354978721005608
+      }
+    },
+    "stage10d17": {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+      "train": {
+        "total_actor_cells": 164681,
+        "attack_labels_total": 88,
+        "attack_labels_by_unit_type": {
+          "Worker": 88,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "17": 5,
+          "25": 31,
+          "31": 52
+        },
+        "attack_label_share_among_actor_cells": 0.0005343664417874558,
+        "attack_label_share_among_combat_units": 0.001070208082503314,
+        "examples_with_enemy_nearby_proxy": 13165,
+        "valid_attack_target_range_share": 1.0
+      },
+      "validation": {
+        "total_actor_cells": 19027,
+        "attack_labels_total": 7,
+        "attack_labels_by_unit_type": {
+          "Worker": 7,
+          "Light": 0,
+          "Heavy": 0,
+          "Ranged": 0,
+          "Base": 0,
+          "Barracks": 0
+        },
+        "attack_target_branch_distribution": {
+          "25": 4,
+          "31": 3
+        },
+        "attack_label_share_among_actor_cells": 0.00036789824985546853,
+        "attack_label_share_among_combat_units": 0.000732370788867964,
+        "examples_with_enemy_nearby_proxy": 1513,
+        "valid_attack_target_range_share": 1.0
+      },
+      "aggregate": {
+        "total_actor_cells": 183708,
+        "attack_labels_total": 95,
+        "attack_share": 0.0005171250027217106
+      }
+    }
+  },
+  "attack_label_trend": {
+    "stage10d7_attack_share": 0.0005446154728122223,
+    "stage10d14_attack_share": 0.0005354978721005608,
+    "stage10d17_attack_share": 0.0005171250027217106,
+    "likely_washed_out_after_movement_augmentation": true
+  },
+  "labels": [
+    "STAGE10D19_ATTACK_LABEL_AUDIT_COMPLETED",
+    "ATTACK_LABELS_UNDERREPRESENTED",
+    "ATTACK_TARGET_DISTRIBUTION_VALID",
+    "ATTACK_AUGMENTATION_REQUIRED"
+  ]
+}

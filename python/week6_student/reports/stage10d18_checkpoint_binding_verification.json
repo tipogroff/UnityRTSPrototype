@@ -1,0 +1,63 @@
+{
+  "generated_at_utc": "2026-05-03T17:32:25.519294+00:00",
+  "active_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "active_checkpoint_basename": "student_bc_stage10d17_movement_augmented_best.pt",
+  "expected_checkpoint_basename": "student_bc_stage10d17_movement_augmented_best.pt",
+  "checkpoint_path_matches_expected": true,
+  "model_loaded": false,
+  "predicted_source": "model_logits",
+  "fallback_used": false,
+  "fake_logits_used": false,
+  "heuristic_policy_path_used": false,
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "observation_shape_valid": true,
+  "logits_shapes": {},
+  "expected_logits_shapes": {
+    "action_type_logits": [
+      1,
+      576,
+      6
+    ],
+    "move_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "harvest_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "return_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_unit_type_logits": [
+      1,
+      576,
+      7
+    ],
+    "attack_target_local_logits": [
+      1,
+      576,
+      49
+    ]
+  },
+  "logits_shapes_valid": false,
+  "labels": [
+    "STAGE10D18_CHECKPOINT_BINDING_CONFIRMED",
+    "STAGE10D18_INFERENCE_FALLBACK_USED",
+    "STAGE10D18_LOGITS_SHAPES_INVALID"
+  ],
+  "binding_ok": false
+}

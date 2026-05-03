@@ -1,0 +1,30 @@
+{
+  "generated_at_utc": "2026-05-03T17:40:59.914355Z",
+  "git_status_short": [
+    "?? Assets/Scripts/ML/Editor/Week6Stage10D18RuntimeRedeployEvaluationMenu.cs",
+    "?? Assets/Scripts/ML/Editor/Week6Stage10D18RuntimeRedeployEvaluationMenu.cs.meta",
+    "?? python/week6_student/reports/STAGE10D18_RUNTIME_BC_REDEPLOY_EVAL_REPORT.md",
+    "?? python/week6_student/reports/stage10d18_action_distribution_over_time.json",
+    "?? python/week6_student/reports/stage10d18_checkpoint_binding_verification.json",
+    "?? python/week6_student/reports/stage10d18_movement_command_path_audit.json",
+    "?? python/week6_student/reports/stage10d18_off_actor_safety_audit.json",
+    "?? python/week6_student/reports/stage10d18_produced_unit_lifecycle.json",
+    "?? python/week6_student/reports/stage10d18_runtime_redeploy_trace.jsonl",
+    "?? python/week6_student/reports/stage10d18_visual_behavior_summary.json",
+    "?? python/week6_student/stage10d18_build_runtime_redeploy_report.py"
+  ],
+  "failed_stage10d18_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "failed_stage10d18_checkpoint_basename": "student_bc_stage10d17_movement_augmented_best.pt",
+  "failed_model_loaded": false,
+  "failed_logits_shapes_valid": false,
+  "failed_python_request_status": "bridge_start_failed",
+  "failed_predicted_source": {
+    "binding_report": "model_logits",
+    "b2": "fallback_no_adapter_artifact",
+    "c3": "fallback_no_adapter_artifact"
+  },
+  "failed_fallback_source": {
+    "b2": "fallback_no_adapter_artifact",
+    "c3": "fallback_no_adapter_artifact"
+  }
+}

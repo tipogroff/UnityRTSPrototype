@@ -1,0 +1,99 @@
+{
+  "stage": "10D.19B",
+  "task": "stage10d18rr_snapshot_replay",
+  "generated_at_utc": "2026-05-03T19:29:27Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+  "augmented_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+  "steps": {
+    "1": {
+      "present": true,
+      "sample_count": 3,
+      "actor_action_distribution": {
+        "NoOp": 0,
+        "Move": 0,
+        "Harvest": 3,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      "move_predictions": 0,
+      "valid_target_moves": 0,
+      "occupied_or_invalid_target_moves": 0,
+      "off_actor_non_noop": 0,
+      "b2_predicted_action": 2,
+      "c3_predicted_action": null,
+      "produced_unit_move_predictions": 0,
+      "max_p_attack_watch": 0.00013614626368507743
+    },
+    "55": {
+      "present": true,
+      "sample_count": 5,
+      "actor_action_distribution": {
+        "NoOp": 0,
+        "Move": 4,
+        "Harvest": 5,
+        "Return": 0,
+        "Produce": 5,
+        "Attack": 0
+      },
+      "move_predictions": 4,
+      "valid_target_moves": 4,
+      "occupied_or_invalid_target_moves": 0,
+      "off_actor_non_noop": 0,
+      "b2_predicted_action": null,
+      "c3_predicted_action": null,
+      "produced_unit_move_predictions": 4,
+      "max_p_attack_watch": 0.0030404923018068075
+    },
+    "100": {
+      "present": true,
+      "sample_count": 3,
+      "actor_action_distribution": {
+        "NoOp": 2,
+        "Move": 2,
+        "Harvest": 3,
+        "Return": 0,
+        "Produce": 3,
+        "Attack": 0
+      },
+      "move_predictions": 2,
+      "valid_target_moves": 2,
+      "occupied_or_invalid_target_moves": 0,
+      "off_actor_non_noop": 0,
+      "b2_predicted_action": null,
+      "c3_predicted_action": null,
+      "produced_unit_move_predictions": 2,
+      "max_p_attack_watch": 0.0022273992653936148
+    },
+    "200": {
+      "present": true,
+      "sample_count": 10,
+      "actor_action_distribution": {
+        "NoOp": 10,
+        "Move": 6,
+        "Harvest": 8,
+        "Return": 0,
+        "Produce": 10,
+        "Attack": 0
+      },
+      "move_predictions": 6,
+      "valid_target_moves": 6,
+      "occupied_or_invalid_target_moves": 0,
+      "off_actor_non_noop": 2,
+      "b2_predicted_action": null,
+      "c3_predicted_action": null,
+      "produced_unit_move_predictions": 6,
+      "max_p_attack_watch": 0.16462989151477814
+    }
+  },
+  "summary": {
+    "valid_sum": 12,
+    "invalid_sum": 0,
+    "off_actor_non_noop_sum": 2
+  },
+  "labels": [
+    "STAGE10D19B_SNAPSHOT_REPLAY_COMPLETED",
+    "STAGE10D19B_VALID_MOVE_REPLAY_IMPROVED",
+    "STAGE10D19B_OFF_ACTOR_REPLAY_SAFE"
+  ]
+}

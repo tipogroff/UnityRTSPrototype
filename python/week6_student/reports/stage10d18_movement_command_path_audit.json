@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-05-03T17:32:25.520298+00:00",
+  "status": "SKIPPED_BINDING_FAILED",
+  "reason": "Binding failed: movement command path audit not executed.",
+  "total_move_predictions": 0,
+  "total_move_commands_built": 0,
+  "total_move_commands_submitted_to_action_applier": 0,
+  "total_move_commands_reached_match_manager": 0,
+  "total_move_commands_accepted": 0,
+  "total_units_that_changed_position_after_move": 0,
+  "move_decoder_reject_counts_by_reason": {},
+  "move_applier_reject_counts_by_reason": {},
+  "move_matchmanager_reject_counts_by_reason": {},
+  "events": []
+}

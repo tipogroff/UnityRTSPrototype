@@ -1,0 +1,817 @@
+{
+  "generated_at_utc": "2026-05-03T18:03:57.612464+00:00",
+  "per_step_off_actor_non_noop_count": [
+    {
+      "step": 1,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 2,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 3,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 4,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 5,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 6,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 7,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 8,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 9,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 10,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 11,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 12,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 13,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 14,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 15,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 16,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 17,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 18,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 19,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 20,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 21,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 22,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 23,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 24,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 25,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 26,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 27,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 28,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 29,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 30,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 31,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 32,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 33,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 34,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 35,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 36,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 37,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 38,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 39,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 40,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 41,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 42,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 43,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 44,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 45,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 46,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 47,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 48,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 49,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 50,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 51,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 52,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 53,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 54,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 55,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 56,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 57,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 58,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 59,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 60,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 61,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 62,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 63,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 64,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 65,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 66,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 67,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 68,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 69,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 70,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 71,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 72,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 73,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 74,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 75,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 76,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 77,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 78,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 79,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 80,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 81,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 82,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 83,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 84,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 85,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 86,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 87,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 88,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 89,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 90,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 91,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 92,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 93,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 94,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 95,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 96,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 97,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 98,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 99,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 100,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 101,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 102,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 103,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 104,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 105,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 106,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 107,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 108,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 109,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 110,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 111,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 112,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 113,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 114,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 115,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 116,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 117,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 118,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 119,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 120,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 121,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 122,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 123,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 124,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 125,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 126,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 127,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 128,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 129,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 130,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 131,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 132,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 133,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 134,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 135,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 136,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 137,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 138,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 139,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 140,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 141,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 142,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 143,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 144,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 145,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 146,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 147,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 148,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 149,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 150,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 151,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 152,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 153,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 154,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 155,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 156,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 157,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 158,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 159,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 160,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 161,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 162,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 163,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 164,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 165,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 166,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 167,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 168,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 169,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 170,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 171,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 172,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 173,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 174,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 175,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 176,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 177,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 178,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 179,
+      "off_actor_non_noop_count": 2
+    },
+    {
+      "step": 180,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 181,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 182,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 183,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 184,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 185,
+      "off_actor_non_noop_count": 3
+    },
+    {
+      "step": 186,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 187,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 188,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 189,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 190,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 191,
+      "off_actor_non_noop_count": 4
+    },
+    {
+      "step": 192,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 193,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 194,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 195,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 196,
+      "off_actor_non_noop_count": 0
+    },
+    {
+      "step": 197,
+      "off_actor_non_noop_count": 5
+    },
+    {
+      "step": 198,
+      "off_actor_non_noop_count": 1
+    },
+    {
+      "step": 199,
+      "off_actor_non_noop_count": 6
+    },
+    {
+      "step": 200,
+      "off_actor_non_noop_count": 0
+    }
+  ],
+  "max_off_actor_non_noop_count": 6,
+  "total_off_actor_non_noop_count": 337,
+  "off_actor_predicted_action_types": {
+    "Move": 327,
+    "Produce": 10
+  },
+  "off_actor_predictions_reached_command_build": false,
+  "off_actor_predictions_reached_submission": false,
+  "status": "STAGE10D18RR_OFF_ACTOR_MISLOCALIZATION_DETECTED",
+  "classification_labels": [
+    "STAGE10D18RR_OFF_ACTOR_MISLOCALIZATION_DETECTED"
+  ]
+}

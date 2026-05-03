@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-05-03T17:45:37.925018+00:00",
+  "adapter_invoked": true,
+  "inference_request_count": 1,
+  "python_request_status": "completed",
+  "python_response_status": "ok",
+  "parsed_logits_available": true,
+  "adapter_artifact_created": true,
+  "adapter_artifact_missing_reason": "",
+  "raw_bridge_response_keys": [
+    "status",
+    "request_id",
+    "output_json"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z\\student_bc_stage10d17_movement_augmented_best.pt",
+  "checkpoint_exists": true,
+  "checkpoint_size_bytes": 6111691,
+  "load_status": "ok",
+  "load_exception_summary": null,
+  "strict_load": true,
+  "forward_status": "ok",
+  "logits_shapes": {
+    "action_type_logits": [
+      1,
+      576,
+      6
+    ],
+    "move_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "harvest_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "return_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_dir_logits": [
+      1,
+      576,
+      4
+    ],
+    "produce_unit_type_logits": [
+      1,
+      576,
+      7
+    ],
+    "attack_target_local_logits": [
+      1,
+      576,
+      49
+    ]
+  },
+  "logits_shapes_valid": true,
+  "model_loaded": true,
+  "classification_labels": [
+    "STAGE10D18R_MANUAL_CHECKPOINT_LOAD_PASS",
+    "STAGE10D18R_MANUAL_FORWARD_PASS",
+    "STAGE10D18R_MANUAL_LOGITS_SHAPES_VALID"
+  ],
+  "checkpoint_epoch": 2,
+  "checkpoint_model_variant": "unknown"
+}

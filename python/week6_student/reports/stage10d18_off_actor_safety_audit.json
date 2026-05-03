@@ -1,0 +1,12 @@
+{
+  "generated_at_utc": "2026-05-03T17:32:25.524835+00:00",
+  "status": "SKIPPED_BINDING_FAILED",
+  "reason": "Binding failed: off-actor safety audit not analyzed.",
+  "per_step_off_actor_non_noop_count": [],
+  "max_off_actor_non_noop_count": null,
+  "total_off_actor_non_noop_count": null,
+  "off_actor_predicted_action_types": {},
+  "off_actor_predictions_reached_command_build": null,
+  "off_actor_predictions_reached_submission": null,
+  "off_actor_status": "STAGE10D18_OFF_ACTOR_MISLOCALIZATION_DETECTED"
+}
