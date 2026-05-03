@@ -1,0 +1,161 @@
+{
+  "stage": "10D.14",
+  "task": "targeted_bc_augmentation_with_unity_like_observations",
+  "generated_at_utc": "2026-05-03T14:30:23Z",
+  "original_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+  "output_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T142914Z",
+  "input_artifacts": {
+    "bc_train": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_train.npz",
+    "bc_validation": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_validation.npz",
+    "true_raw_capture": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d12r_full_raw_runtime_observation_step0001.json"
+  },
+  "counts": {
+    "original_train_count": 79348,
+    "original_validation_count": 8817,
+    "augmented_train_count": 46,
+    "augmented_validation_count": 13,
+    "output_train_count": 79394,
+    "output_validation_count": 8830
+  },
+  "family_counts": {
+    "family1_true_raw_unity_observation_teacher_labels": 6,
+    "family2_positive_worker_or_base_noop_state": 40,
+    "family3_base_local_context": 10,
+    "family4_negative_controls": 3
+  },
+  "target_positive_counts_before_after": {
+    "train_before": {
+      "sample_count": 79348,
+      "actor_cell_count": 156981,
+      "worker_harvest": 77904,
+      "base_produce": 78871,
+      "attack": 88,
+      "noop_actor_cells": 118,
+      "noop_all_cells": 45547585,
+      "noop_ratio_all_cells": 0.9965678832834826
+    },
+    "validation_before": {
+      "sample_count": 8817,
+      "actor_cell_count": 17454,
+      "worker_harvest": 8666,
+      "base_produce": 8774,
+      "attack": 7,
+      "noop_actor_cells": 7,
+      "noop_all_cells": 5061145,
+      "noop_ratio_all_cells": 0.9965645990069688
+    },
+    "train_after": {
+      "sample_count": 79394,
+      "actor_cell_count": 157071,
+      "worker_harvest": 77948,
+      "base_produce": 78915,
+      "attack": 88,
+      "noop_actor_cells": 120,
+      "noop_all_cells": 45573993,
+      "noop_ratio_all_cells": 0.9965679475149256
+    },
+    "validation_after": {
+      "sample_count": 8830,
+      "actor_cell_count": 17479,
+      "worker_harvest": 8678,
+      "base_produce": 8786,
+      "attack": 7,
+      "noop_actor_cells": 8,
+      "noop_all_cells": 5068609,
+      "noop_ratio_all_cells": 0.9965649380269284
+    }
+  },
+  "branch_bounds": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "observation_shape": [
+    576,
+    27
+  ],
+  "action_shape": [
+    576,
+    7
+  ],
+  "exact_channel_policy_used": {
+    "family1_true_raw": "exact true raw Unity observation retained; B2 current_action=noop and C3 current_action=noop remain untouched in observation",
+    "family2_positive_variants": [
+      "actor_current_action_noop_only",
+      "actor_current_action_noop_direction_unchanged",
+      "actor_current_action_noop_direction_cleared",
+      "local_5x5_around_base_current_action_noop",
+      "full_map_empty_action_convention_unity_like"
+    ],
+    "family3_base_local_context": [
+      "local_3x3_current_action_noop",
+      "local_5x5_current_action_noop"
+    ],
+    "family4_negative_controls": "small set of noop-labeled actor samples rendered Unity-like to reduce shortcut risk"
+  },
+  "references": {
+    "b2_worker_harvest_reference": {
+      "split": "train",
+      "sample_index": 0,
+      "flat_index": 25,
+      "l2_distance": 2.4494898319244385,
+      "target_action": 2,
+      "harvest_dir": 3
+    },
+    "c3_base_produce_reference": {
+      "split": "train",
+      "sample_index": 6,
+      "flat_index": 50,
+      "l2_distance": 2.0,
+      "target_action": 4,
+      "produce_dir": 2,
+      "produce_unit_type": 3
+    }
+  },
+  "metadata_sidecars": {
+    "train": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T142914Z/stage10d14_augmented_sample_metadata_train.jsonl",
+    "validation": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T142914Z/stage10d14_augmented_sample_metadata_validation.jsonl"
+  },
+  "builder_config": {
+    "max_worker_aug_samples": 4,
+    "max_base_aug_samples": 4,
+    "negative_control_samples": 2,
+    "true_raw_repeat_factor": 2,
+    "worker_repeat_factor": 1,
+    "base_repeat_factor": 1
+  },
+  "branch_bounds_valid_output": {
+    "train": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    },
+    "validation": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    }
+  },
+  "explicit_non_claims": [
+    "No PPO run.",
+    "No Gym teacher checkpoint change.",
+    "No Unity runtime mutation.",
+    "No ActionDecoder change.",
+    "No ActionApplier change.",
+    "No MatchManager change.",
+    "No runtime current_action remap deployed.",
+    "No semantic parity claim made."
+  ]
+}

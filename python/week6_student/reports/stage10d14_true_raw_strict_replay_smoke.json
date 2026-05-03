@@ -1,0 +1,103 @@
+{
+  "stage": "10D.14",
+  "task": "true_raw_strict_replay",
+  "generated_at_utc": "2026-05-03T14:52:25Z",
+  "checkpoint_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/stage10d14_smoke_train_20260503T1436Z_retry/student_bc_stage10d14_augmented_best.pt",
+  "model_loaded_strict": true,
+  "B2": {
+    "flat_index": 25,
+    "predicted_action": "harvest",
+    "p_noop": 1.8083903818855163e-10,
+    "p_move": 0.022225413471460342,
+    "p_harvest": 0.8438246250152588,
+    "p_return": 0.0183781236410141,
+    "p_produce": 0.07221845537424088,
+    "p_attack": 0.043353453278541565,
+    "full_probabilities": [
+      1.8083903818855163e-10,
+      0.022225413471460342,
+      0.8438246250152588,
+      0.0183781236410141,
+      0.07221845537424088,
+      0.043353453278541565
+    ]
+  },
+  "C3": {
+    "flat_index": 50,
+    "predicted_action": "produce",
+    "p_noop": 4.683917359216139e-05,
+    "p_move": 0.04665616899728775,
+    "p_harvest": 0.057442840188741684,
+    "p_return": 0.06141189858317375,
+    "p_produce": 0.8215343952178955,
+    "p_attack": 0.012907864525914192,
+    "full_probabilities": [
+      4.683917359216139e-05,
+      0.04665616899728775,
+      0.057442840188741684,
+      0.06141189858317375,
+      0.8215343952178955,
+      0.012907864525914192
+    ]
+  },
+  "friendly_actor_predictions": [
+    {
+      "flat_index": 25,
+      "predicted_action": "harvest",
+      "p_noop": 1.8083903818855163e-10,
+      "p_move": 0.022225413471460342,
+      "p_harvest": 0.8438246250152588,
+      "p_return": 0.0183781236410141,
+      "p_produce": 0.07221845537424088,
+      "p_attack": 0.043353453278541565,
+      "full_probabilities": [
+        1.8083903818855163e-10,
+        0.022225413471460342,
+        0.8438246250152588,
+        0.0183781236410141,
+        0.07221845537424088,
+        0.043353453278541565
+      ],
+      "x": 1,
+      "y": 1
+    },
+    {
+      "flat_index": 50,
+      "predicted_action": "produce",
+      "p_noop": 4.683917359216139e-05,
+      "p_move": 0.04665616899728775,
+      "p_harvest": 0.057442840188741684,
+      "p_return": 0.06141189858317375,
+      "p_produce": 0.8215343952178955,
+      "p_attack": 0.012907864525914192,
+      "full_probabilities": [
+        4.683917359216139e-05,
+        0.04665616899728775,
+        0.057442840188741684,
+        0.06141189858317375,
+        0.8215343952178955,
+        0.012907864525914192
+      ],
+      "x": 2,
+      "y": 2
+    }
+  ],
+  "off_actor_non_noop_count": 0,
+  "global_predicted_noop_share": 0.9965277777777778,
+  "actor_predicted_noop_share": 0.0,
+  "comparison_with_stage10d12r_baseline": {
+    "B2_delta_p_harvest": 0.777704693377018,
+    "B2_delta_p_noop": -0.7851666210273519,
+    "C3_delta_p_produce": 0.8202579464996234,
+    "C3_delta_p_noop": -0.9945726495425333
+  },
+  "classification_labels": [
+    "STRICT_REPLAY_AUGMENTED_MODEL_LOADED",
+    "STRICT_REPLAY_TRUE_RAW_B2_HARVEST",
+    "STRICT_REPLAY_TRUE_RAW_C3_PRODUCE",
+    "STRICT_REPLAY_TRUE_RAW_ACTOR_ACTIONS_RESTORED",
+    "STRICT_REPLAY_OFF_ACTOR_SAFE",
+    "STRICT_REPLAY_READY_FOR_UNITY_VISUAL_RERUN"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D15_UNITY_VISUAL_RERUN_WITH_AUGMENTED_STUDENT"
+}

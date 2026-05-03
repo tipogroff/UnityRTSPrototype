@@ -1,0 +1,235 @@
+{
+  "stage": "10D.14",
+  "task": "augmented_bc_dataset_validation",
+  "generated_at_utc": "2026-05-03T14:54:46Z",
+  "augmented_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T145301Z",
+  "original_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+  "status": "pass",
+  "shape_checks": {
+    "train_observations_shape": true,
+    "train_actions_shape": true,
+    "validation_observations_shape": true,
+    "validation_actions_shape": true
+  },
+  "dtype_checks": {
+    "observations_float32": true,
+    "actions_integer": true
+  },
+  "finite_checks": {
+    "train_finite": true,
+    "validation_finite": true
+  },
+  "branch_bounds": {
+    "train": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    },
+    "validation": {
+      "action_type": true,
+      "move_dir": true,
+      "harvest_dir": true,
+      "return_dir": true,
+      "produce_dir": true,
+      "produce_unit_type": true,
+      "attack_target": true
+    }
+  },
+  "semantic_checks": {
+    "true_raw_unity_like_sample_exists": true,
+    "true_raw_unity_like_sample_exact_match_exists": true,
+    "b2_unity_like_harvest_target_present": true,
+    "c3_unity_like_produce_target_present": true,
+    "owner_unit_channels_unchanged": true,
+    "c3_local_context_variants_exist": true
+  },
+  "owner_unit_integrity": {
+    "train": {
+      "checked_rows": 1312,
+      "failure_count": 0,
+      "passed": true
+    },
+    "validation": {
+      "checked_rows": 164,
+      "failure_count": 0,
+      "passed": true
+    }
+  },
+  "label_leakage_checks": {
+    "train": {
+      "checked_rows": 1344,
+      "direct_match_count": 32,
+      "direct_match_share": 0.023809523809523808,
+      "positive_checked_rows": 1312,
+      "positive_direct_match_count": 0,
+      "positive_direct_match_share": 0.0,
+      "examples": [
+        {
+          "metadata_index": 1312,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1313,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1314,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1315,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1316,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1317,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1318,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 1319,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        }
+      ],
+      "passed": true
+    },
+    "validation": {
+      "checked_rows": 168,
+      "direct_match_count": 4,
+      "direct_match_share": 0.023809523809523808,
+      "positive_checked_rows": 164,
+      "positive_direct_match_count": 0,
+      "positive_direct_match_share": 0.0,
+      "examples": [
+        {
+          "metadata_index": 164,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 165,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 166,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        },
+        {
+          "metadata_index": 167,
+          "target_flat": 50,
+          "target_action_type": 0,
+          "observed_action_index": 0,
+          "variant": "unity_like_noop_actor_negative_control",
+          "family": "family4_negative_controls"
+        }
+      ],
+      "passed": true
+    }
+  },
+  "distribution_checks": {
+    "original_train": {
+      "sample_count": 79348,
+      "actor_cell_count": 156981,
+      "worker_harvest": 77904,
+      "base_produce": 78871,
+      "attack": 88,
+      "noop_actor_cells": 118,
+      "noop_all_cells": 45547585,
+      "noop_ratio_all_cells": 0.9965678832834826
+    },
+    "original_validation": {
+      "sample_count": 8817,
+      "actor_cell_count": 17454,
+      "worker_harvest": 8666,
+      "base_produce": 8774,
+      "attack": 7,
+      "noop_actor_cells": 7,
+      "noop_all_cells": 5061145,
+      "noop_ratio_all_cells": 0.9965645990069688
+    },
+    "augmented_train": {
+      "sample_count": 80692,
+      "actor_cell_count": 159619,
+      "worker_harvest": 79198,
+      "base_produce": 80183,
+      "attack": 88,
+      "noop_actor_cells": 150,
+      "noop_all_cells": 46319123,
+      "noop_ratio_all_cells": 0.9965689795422374
+    },
+    "augmented_validation": {
+      "sample_count": 8985,
+      "actor_cell_count": 17786,
+      "worker_harvest": 8830,
+      "base_produce": 8938,
+      "attack": 7,
+      "noop_actor_cells": 11,
+      "noop_all_cells": 5157585,
+      "noop_ratio_all_cells": 0.9965654563160824
+    },
+    "target_distribution_acceptable": true
+  },
+  "classification_labels": [
+    "AUGMENTED_DATASET_VALID",
+    "TRUE_RAW_UNITY_LIKE_SAMPLE_PRESENT",
+    "B2_UNITY_LIKE_HARVEST_TARGET_PRESENT",
+    "C3_UNITY_LIKE_PRODUCE_TARGET_PRESENT",
+    "NO_OBSERVATION_LABEL_LEAKAGE_CONFIRMED",
+    "BRANCH_BOUNDS_VALID",
+    "TARGET_DISTRIBUTION_ACCEPTABLE"
+  ],
+  "primary_next_gate": "GO_FOR_STAGE10D14_AUGMENTED_BC_TRAINING"
+}
