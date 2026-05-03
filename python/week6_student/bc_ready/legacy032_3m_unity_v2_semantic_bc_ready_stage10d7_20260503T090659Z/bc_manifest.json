@@ -1,0 +1,71 @@
+{
+  "generated_at_utc": "2026-05-03T09:07:38Z",
+  "schema_version": "day6.bc_ready.v1",
+  "dataset_kind": "semantic_bc_ready",
+  "source_stage": "10D.7",
+  "source_adapted_dataset_stage": "10D.6",
+  "source_teacher": "legacy032_3m",
+  "source_adapted_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "source_adapted_manifest": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z/adapted_manifest.json",
+  "source_observation_semantic_conversion_report_json": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z/observation_semantic_conversion_report.json",
+  "source_observation_semantic_conversion_report_md": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z/observation_semantic_conversion_report.md",
+  "mapping_spec_version": "stage10d6_v1",
+  "observation_semantics_version": "unity_v2_runtime_stage10d6",
+  "target_action_contract": "unity_v2_legacy032_gridnet",
+  "observation_shape": [
+    576,
+    27
+  ],
+  "action_shape": [
+    576,
+    7
+  ],
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "num_train": 79348,
+  "num_validation": 8817,
+  "num_debug": 1024,
+  "dtype": {
+    "observations": "float32",
+    "actions": "int16"
+  },
+  "checks": {
+    "no_nan": true,
+    "no_inf": true,
+    "observation_value_range": [
+      0.0,
+      1.0
+    ]
+  },
+  "split": {
+    "seed": 17,
+    "train_ratio": 0.9,
+    "train_count": 79348,
+    "validation_count": 8817,
+    "debug_count": 1024
+  },
+  "direct_weight_transfer_claim": false,
+  "semantic_parity_claim": false,
+  "explicit_non_claims": [
+    "no retraining performed",
+    "no PPO performed",
+    "no checkpoint mutation",
+    "semantic observation compatibility does not prove policy-level behavior"
+  ],
+  "notes": "Stage10D.7 semantic BC-ready packaging only. No training performed."
+}

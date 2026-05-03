@@ -1,0 +1,84 @@
+{
+  "stage": "10D.7",
+  "diagnostic": "student_forward_dry_run",
+  "generated_at_utc": "2026-05-03T09:08:47Z",
+  "bc_ready_dir": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+  "status": "pass",
+  "checks": {
+    "batch_loaded": true,
+    "no_optimizer_step_performed": true,
+    "no_backward_performed": true,
+    "all_required_logits_present": true,
+    "shape_action_type_logits": true,
+    "shape_move_dir_logits": true,
+    "shape_harvest_dir_logits": true,
+    "shape_return_dir_logits": true,
+    "shape_produce_dir_logits": true,
+    "shape_produce_unit_type_logits": true,
+    "shape_attack_target_local_logits": true,
+    "finite_loss": true
+  },
+  "details": {
+    "run_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+    "manifest_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_manifest.json",
+    "batch_size_used": 8,
+    "input_shape": [
+      8,
+      24,
+      24,
+      27
+    ],
+    "target_shape": [
+      8,
+      576,
+      7
+    ],
+    "logits_shapes": {
+      "action_type_logits": [
+        8,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        8,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        8,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        8,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        8,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        8,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        8,
+        576,
+        49
+      ]
+    },
+    "dry_run_supervised_loss": 1.8192832469940186,
+    "objective_active_count": 4632,
+    "device": "cpu"
+  },
+  "hard_failures": [],
+  "explicit_non_claims": [
+    "No retraining performed.",
+    "No PPO performed.",
+    "No checkpoint mutation.",
+    "No optimizer step and no weight update in this script."
+  ]
+}

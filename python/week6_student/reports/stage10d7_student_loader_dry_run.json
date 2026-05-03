@@ -1,0 +1,66 @@
+{
+  "stage": "10D.7",
+  "diagnostic": "student_loader_dry_run",
+  "generated_at_utc": "2026-05-03T09:08:20Z",
+  "bc_ready_dir": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+  "status": "pass",
+  "checks": {
+    "loader_read_manifest": true,
+    "loader_read_train_validation": true,
+    "debug_npz_exists": true,
+    "loader_read_debug_npz": true,
+    "branch_size_match": true,
+    "one_batch_loaded": true,
+    "batch_input_shape": true,
+    "batch_action_shape": true,
+    "batch_convert_model_input": true,
+    "batch_actions_align_[B,576,7]": true,
+    "no_dtype_device_error": true,
+    "no_shape_mismatch": true
+  },
+  "details": {
+    "manifest_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z/bc_manifest.json",
+    "run_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+    "debug_npz_keys": [
+      "observations",
+      "actions",
+      "episode_id",
+      "step_id",
+      "reward_t",
+      "done_t",
+      "terminated_t",
+      "truncated_t",
+      "action_mask_available_t"
+    ],
+    "train_samples": 79348,
+    "validation_samples": 8817,
+    "batch_size_used": 8,
+    "batch_input_shape": [
+      8,
+      24,
+      24,
+      27
+    ],
+    "batch_action_shape": [
+      8,
+      576,
+      7
+    ],
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "device": "cpu"
+  },
+  "hard_failures": [],
+  "explicit_non_claims": [
+    "No retraining performed.",
+    "No PPO performed.",
+    "No checkpoint mutation."
+  ]
+}
