@@ -1,0 +1,343 @@
+{
+  "stage": "10D.8",
+  "generated_at_utc": "2026-05-03T09:48:46Z",
+  "inputs": {
+    "run_dir": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z",
+    "training_config": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/training_config.json",
+    "training_history": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/training_history.json",
+    "validation_metrics": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/validation_metrics.json",
+    "checkpoint_selection_report": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/checkpoint_selection_report.json",
+    "stage10d8_training_report": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/stage10d8_training_report.json",
+    "checkpoint_inference_dry_run": "python/week6_student/reports/stage10d8_checkpoint_inference_dry_run.json",
+    "unity_snapshot_probe": "python/week6_student/reports/stage10d8_unity_snapshot_checkpoint_probe.json"
+  },
+  "scope": [
+    "Supervised BC retraining only (Stage10D.8).",
+    "No PPO run.",
+    "No teacher training continuation.",
+    "No checkpoint overwrite of previous runs.",
+    "No Unity runtime behavior mutation.",
+    "No ActionApplier/MatchManager modifications."
+  ],
+  "stage10d7_recap": {
+    "schema_version": "day6.bc_ready.v1",
+    "dataset_kind": "semantic_bc_ready",
+    "source_stage": "10D.7",
+    "source_adapted_dataset_stage": "10D.6",
+    "mapping_spec_version": "stage10d6_v1",
+    "observation_semantics_version": "unity_v2_runtime_stage10d6",
+    "observation_shape": [
+      576,
+      27
+    ],
+    "action_shape": [
+      576,
+      7
+    ],
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "num_train": 79348,
+    "num_validation": 8817,
+    "num_debug": 1024
+  },
+  "training_configuration": {
+    "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\bc_ready\\legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+    "run_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_semantic_bc_stage10d8_20260503T093718Z",
+    "epochs": 2,
+    "batch_size": 512,
+    "learning_rate": 0.001,
+    "device": "cpu",
+    "seed": 17,
+    "gradient_clip_norm": 1.0,
+    "actor_cell_loss_weight": 1.0,
+    "actor_weighting_used": false,
+    "comparable_with_previous_stage7": true
+  },
+  "training_history": {
+    "epochs_completed": 2,
+    "best_epoch": 2,
+    "last_epoch": 2
+  },
+  "validation_metrics": {
+    "best_val_total_loss": 0.005798334798151672,
+    "best_val_action_type_loss": 0.005820260045448882,
+    "best_val_action_type_accuracy_all_cells": 0.9999986216652175,
+    "best_val_noop_share_pred_all_cells": 0.9965645990069688,
+    "best_val_noop_share_target_all_cells": 0.9965645990069688
+  },
+  "actor_cell_metrics": {
+    "val_actor_cell_count": 17447,
+    "val_actor_cell_action_type_accuracy": 0.9995987848913853,
+    "val_actor_cell_non_noop_recall": 1.0,
+    "val_actor_cell_noop_pred_share": 0.0,
+    "val_worker_harvest_proxy_accuracy": 1.0,
+    "val_base_produce_proxy_accuracy": 1.0,
+    "val_attack_proxy_accuracy": 0.0,
+    "thresholds": {
+      "actor_cell_count_gt_0": true,
+      "actor_cell_action_type_accuracy_gt_0_25": true,
+      "actor_cell_noop_pred_share_lt_0_5": true,
+      "worker_harvest_proxy_accuracy_gt_0_5": true,
+      "base_produce_proxy_accuracy_gt_0_5": true
+    },
+    "thresholds_pass": true
+  },
+  "checkpoint_selection": {
+    "selected_epoch": 2,
+    "selection_rule": {
+      "primary": "maximize val_actor_cell_action_type_accuracy",
+      "secondary": "minimize val_actor_cell_noop_pred_share",
+      "tertiary": "minimize val_total_loss"
+    },
+    "composite_score": {
+      "actor_cell_action_type_accuracy": 0.9995987848913853,
+      "negative_actor_cell_noop_pred_share": -0.0,
+      "negative_val_total_loss": -0.005798334798151672
+    },
+    "actor_metrics_pass": true,
+    "best_checkpoint_path": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "last_checkpoint_path": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_last.pt"
+  },
+  "checkpoint_inference_dry_run": {
+    "status": "pass",
+    "hard_failures_count": 0,
+    "details": {
+      "checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+      "bc_ready_dir": "python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+      "batch_size_used": 128,
+      "input_shape": [
+        128,
+        24,
+        24,
+        27
+      ],
+      "target_shape": [
+        128,
+        576,
+        7
+      ],
+      "logits_shapes": {
+        "action_type_logits": [
+          128,
+          576,
+          6
+        ],
+        "move_dir_logits": [
+          128,
+          576,
+          4
+        ],
+        "harvest_dir_logits": [
+          128,
+          576,
+          4
+        ],
+        "return_dir_logits": [
+          128,
+          576,
+          4
+        ],
+        "produce_dir_logits": [
+          128,
+          576,
+          4
+        ],
+        "produce_unit_type_logits": [
+          128,
+          576,
+          7
+        ],
+        "attack_target_local_logits": [
+          128,
+          576,
+          49
+        ]
+      },
+      "action_type_distribution_all_cells": {
+        "total": 73728,
+        "counts": {
+          "0": 73476,
+          "1": 0,
+          "2": 125,
+          "3": 0,
+          "4": 127,
+          "5": 0
+        },
+        "shares": {
+          "0": 0.99658203125,
+          "1": 0.0,
+          "2": 0.0016954210069444445,
+          "3": 0.0,
+          "4": 0.0017225477430555555,
+          "5": 0.0
+        }
+      },
+      "action_type_distribution_actor_cells": {
+        "total": 252,
+        "counts": {
+          "0": 0,
+          "1": 0,
+          "2": 125,
+          "3": 0,
+          "4": 127,
+          "5": 0
+        },
+        "shares": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.49603174603174605,
+          "3": 0.0,
+          "4": 0.503968253968254,
+          "5": 0.0
+        }
+      },
+      "worker_harvest_proxy": {
+        "count": 125,
+        "predicted_harvest_count": 125,
+        "predicted_harvest_share": 1.0,
+        "action_type_distribution": {
+          "total": 125,
+          "counts": {
+            "0": 0,
+            "1": 0,
+            "2": 125,
+            "3": 0,
+            "4": 0,
+            "5": 0
+          },
+          "shares": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 1.0,
+            "3": 0.0,
+            "4": 0.0,
+            "5": 0.0
+          }
+        }
+      },
+      "base_produce_proxy": {
+        "count": 127,
+        "predicted_produce_count": 127,
+        "predicted_produce_share": 1.0,
+        "action_type_distribution": {
+          "total": 127,
+          "counts": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 127,
+            "5": 0
+          },
+          "shares": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 1.0,
+            "5": 0.0
+          }
+        }
+      },
+      "actor_cell_metrics": {
+        "actor_cell_count": 252,
+        "actor_cell_non_noop_pred_count": 252,
+        "actor_cell_noop_pred_share": 0.0
+      }
+    }
+  },
+  "unity_snapshot_probe": {
+    "status": "fail",
+    "hard_failures_count": 2,
+    "details": {
+      "checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+      "snapshot_json": "python/week6_student/reports/stage10r_noop_collapse_snapshot_step0001.json",
+      "snapshot_available": true,
+      "filled_cells": 2,
+      "input_mode": "sparse_snapshot_cells_into_24x24x27",
+      "strong_noop_threshold": 0.9,
+      "B2": {
+        "flat_index": 25,
+        "action_type_probabilities": [
+          0.9872944951057434,
+          0.00219834060408175,
+          0.0031037074513733387,
+          0.002562181791290641,
+          0.0026201196014881134,
+          0.0022211254108697176
+        ],
+        "action_type_top3": [
+          {
+            "class_id": 0,
+            "class_name": "NoOp",
+            "probability": 0.9872944951057434
+          },
+          {
+            "class_id": 2,
+            "class_name": "Harvest",
+            "probability": 0.0031037074513733387
+          },
+          {
+            "class_id": 4,
+            "class_name": "Produce",
+            "probability": 0.0026201196014881134
+          }
+        ]
+      },
+      "C3": {
+        "flat_index": 50,
+        "action_type_probabilities": [
+          0.9970993995666504,
+          0.0005075496737845242,
+          0.000649894995149225,
+          0.0006228730781003833,
+          0.0006213136366568506,
+          0.0004990481538698077
+        ],
+        "action_type_top3": [
+          {
+            "class_id": 0,
+            "class_name": "NoOp",
+            "probability": 0.9970993995666504
+          },
+          {
+            "class_id": 2,
+            "class_name": "Harvest",
+            "probability": 0.000649894995149225
+          },
+          {
+            "class_id": 3,
+            "class_name": "Return",
+            "probability": 0.0006228730781003833
+          }
+        ]
+      }
+    }
+  },
+  "remaining_risks": [
+    "Unity snapshot probe still indicates potential NoOp dominance on focus cells."
+  ],
+  "primary_classifications": [
+    "SEMANTIC_BC_TRAINING_COMPLETED",
+    "ACTOR_CELL_METRICS_PASSED",
+    "CHECKPOINT_INFERENCE_DRY_RUN_PASSED",
+    "UNITY_SNAPSHOT_PROBE_FAILED",
+    "READY_FOR_UNITY_STAGE10R_RERUN"
+  ],
+  "gate_decision": "GO_FOR_UNITY_STAGE10R_RERUN",
+  "unity_stage10r_rerun_authorized": true,
+  "explicit_non_claims": [
+    "No Unity runtime behavior changes were made in Stage10D.8.",
+    "No ActionApplier or MatchManager changes were made in Stage10D.8.",
+    "No forced non-NoOp fallback was introduced.",
+    "No semantic parity claim between Gym-microRTS and Unity is made.",
+    "Policy-level Unity success is not claimed until Stage10R/Stage10V rerun passes."
+  ]
+}

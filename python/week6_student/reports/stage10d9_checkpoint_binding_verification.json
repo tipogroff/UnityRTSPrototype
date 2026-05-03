@@ -1,0 +1,121 @@
+{
+  "stage": "10D.9",
+  "task": "checkpoint_binding_verification",
+  "generated_at_utc": "2026-05-03T10:26:21.676110+00:00",
+  "status": "pass",
+  "target_scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+  "new_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+  "old_checkpoint": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+  "scene_binding": {
+    "path": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "field": "_checkpointRelativePath",
+    "resolved_value": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt"
+  },
+  "checkpoint_metadata": {
+    "stage": "10D.8",
+    "scope": "semantic_bc_supervised_retraining_only",
+    "inferred_branch_sizes_by_head": {
+      "action_type": 6,
+      "move_dir": 4,
+      "harvest_dir": 4,
+      "return_dir": 4,
+      "produce_dir": 4,
+      "produce_unit_type": 7,
+      "attack_target_local": 49
+    }
+  },
+  "strict_load": {
+    "ok": true,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "error": null
+  },
+  "checks": [
+    {
+      "name": "scene_exists",
+      "ok": true,
+      "details": "Assets/Scenes/Week6_StudentVisualInspection.unity"
+    },
+    {
+      "name": "new_checkpoint_exists",
+      "ok": true,
+      "details": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt"
+    },
+    {
+      "name": "old_checkpoint_exists",
+      "ok": true,
+      "details": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+    },
+    {
+      "name": "scene_binding_points_to_new_checkpoint",
+      "ok": true,
+      "details": {
+        "scene_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+        "expected": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt"
+      }
+    },
+    {
+      "name": "old_checkpoint_not_active_in_scene",
+      "ok": true,
+      "details": {
+        "scene_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+        "old_checkpoint": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+      }
+    },
+    {
+      "name": "checkpoint_payload_loaded",
+      "ok": true,
+      "details": "ok"
+    },
+    {
+      "name": "checkpoint_stage_compatible_with_10D8",
+      "ok": true,
+      "details": {
+        "checkpoint_stage": "10D.8",
+        "expected_prefix": "10D.8"
+      }
+    },
+    {
+      "name": "branch_sizes_match_unity_v2_contract",
+      "ok": true,
+      "details": {
+        "actual": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "expected": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      }
+    },
+    {
+      "name": "model_state_dict_strict_load",
+      "ok": true,
+      "details": {
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "error": null
+      }
+    }
+  ],
+  "notes": [
+    "No retraining, no PPO, no checkpoint mutation.",
+    "Verification is read-only for checkpoint and model contract."
+  ],
+  "paths": {
+    "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "new_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "old_checkpoint": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+  }
+}

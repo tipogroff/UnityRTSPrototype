@@ -1,0 +1,200 @@
+{
+  "stage": "10D.9",
+  "task": "unity_stage10r_rerun_with_semantic_checkpoint",
+  "generated_at_utc": "2026-05-03T10:30:00.231217+00:00",
+  "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+  "checkpoint_binding": {
+    "new_checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "binding_verification_status": "pass",
+    "binding_verification_report": "python/week6_student/reports/stage10d9_checkpoint_binding_verification.json"
+  },
+  "runtime_observation": {
+    "shape": [
+      24,
+      24,
+      27
+    ],
+    "shape_ok": true,
+    "snapshot_generated_at_utc": "2026-05-03T10:26:48.7513993Z",
+    "input_mode": "full_unity_runtime_observation"
+  },
+  "runtime_inference": {
+    "inference_request_count": 0,
+    "python_bridge_checkpoint_path_used": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "logits_shapes_captured": false,
+    "logits_shape_lines": [],
+    "expected_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "expected_logits_shapes": {
+      "action_type_logits": [
+        1,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        1,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        1,
+        576,
+        49
+      ]
+    }
+  },
+  "focus_cells": {
+    "B2": {
+      "flat_index": 25,
+      "cell_observation_slice": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "action_type_probabilities": [],
+      "action_type_top3": [],
+      "predicted_action_type": "NoOp",
+      "command_built": false,
+      "decoder_or_applier_reason": "no_adapter_artifact"
+    },
+    "C3": {
+      "flat_index": 50,
+      "cell_observation_slice": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "action_type_probabilities": [],
+      "action_type_top3": [],
+      "predicted_action_type": "NoOp",
+      "command_built": false,
+      "decoder_or_applier_reason": "no_adapter_artifact"
+    }
+  },
+  "decoder_applier": {
+    "aggregate_student_action_type_distribution": [],
+    "commands_built": 0,
+    "commands_submitted": 0,
+    "accepted_meaningful_commands": 0,
+    "rejected_commands": 0,
+    "action_applier_reached": false,
+    "apply_command_reached": false
+  },
+  "terminal_outcome": {
+    "steps_run": 54,
+    "terminal_reason": "Loss",
+    "episode_generated_at_utc": "2026-05-03T10:27:23.8148714Z"
+  },
+  "old_vs_new_stage10r": {
+    "old": {
+      "snapshot": "python/week6_student/reports/stage10r_noop_collapse_snapshot_step0001.json",
+      "B2_predicted_action_type": "NoOp",
+      "C3_predicted_action_type": "NoOp",
+      "B2_command_built": false,
+      "C3_command_built": false
+    },
+    "new": {
+      "snapshot": "python/week6_student/reports/stage10d9_unity_stage10r_rerun_snapshot_step0001.json",
+      "B2_predicted_action_type": "NoOp",
+      "C3_predicted_action_type": "NoOp",
+      "B2_command_built": false,
+      "C3_command_built": false
+    },
+    "note": "Old Stage10R remained NoOp-only. New rerun missing bridge logits payload at step0001, so policy-level comparison is infra-limited."
+  },
+  "known_risks": [
+    "Stage10D.8 offline sparse snapshot probe failed (B2/C3 near NoOp-only); carried forward as known risk.",
+    "Stage10D.9 rerun step0001 has bridge payload missing, so B2/C3 top-3 probabilities are unavailable in this run.",
+    "Do not claim policy-level success until Unity runtime rerun with full bridge logits capture passes."
+  ],
+  "classifications": [
+    "CHECKPOINT_BINDING_VERIFIED",
+    "UNITY_STAGE10R_RERUN_INFRA_FAILURE",
+    "DECODER_APPLIER_NOT_REACHED",
+    "NOT_READY_FOR_UNITY_ANALYSIS"
+  ],
+  "gate_decision": "GO_FOR_UNITY_RERUN_INFRA_FIX",
+  "explicit_non_claims": [
+    "No retraining performed in Stage10D.9.",
+    "No PPO or teacher training performed in Stage10D.9.",
+    "No checkpoint mutation performed.",
+    "No ActionApplier or MatchManager behavioral patch applied.",
+    "No forced non-NoOp fallback added.",
+    "No policy-level success claim is made in this stage."
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "stage": "10D.8",
+  "diagnostic": "checkpoint_inference_dry_run",
+  "generated_at_utc": "2026-05-03T09:48:05Z",
+  "status": "pass",
+  "checks": {
+    "has_action_type_logits": true,
+    "shape_action_type_logits": true,
+    "has_move_dir_logits": true,
+    "shape_move_dir_logits": true,
+    "has_harvest_dir_logits": true,
+    "shape_harvest_dir_logits": true,
+    "has_return_dir_logits": true,
+    "shape_return_dir_logits": true,
+    "has_produce_dir_logits": true,
+    "shape_produce_dir_logits": true,
+    "has_produce_unit_type_logits": true,
+    "shape_produce_unit_type_logits": true,
+    "has_attack_target_local_logits": true,
+    "shape_attack_target_local_logits": true,
+    "actor_cell_count_gt_0": true,
+    "actor_cells_not_noop_only": true,
+    "some_harvest_pred_on_worker_proxy": true,
+    "some_produce_pred_on_base_proxy": true
+  },
+  "details": {
+    "checkpoint": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+    "bc_ready_dir": "python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+    "batch_size_used": 128,
+    "input_shape": [
+      128,
+      24,
+      24,
+      27
+    ],
+    "target_shape": [
+      128,
+      576,
+      7
+    ],
+    "logits_shapes": {
+      "action_type_logits": [
+        128,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        128,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        128,
+        576,
+        49
+      ]
+    },
+    "action_type_distribution_all_cells": {
+      "total": 73728,
+      "counts": {
+        "0": 73476,
+        "1": 0,
+        "2": 125,
+        "3": 0,
+        "4": 127,
+        "5": 0
+      },
+      "shares": {
+        "0": 0.99658203125,
+        "1": 0.0,
+        "2": 0.0016954210069444445,
+        "3": 0.0,
+        "4": 0.0017225477430555555,
+        "5": 0.0
+      }
+    },
+    "action_type_distribution_actor_cells": {
+      "total": 252,
+      "counts": {
+        "0": 0,
+        "1": 0,
+        "2": 125,
+        "3": 0,
+        "4": 127,
+        "5": 0
+      },
+      "shares": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.49603174603174605,
+        "3": 0.0,
+        "4": 0.503968253968254,
+        "5": 0.0
+      }
+    },
+    "worker_harvest_proxy": {
+      "count": 125,
+      "predicted_harvest_count": 125,
+      "predicted_harvest_share": 1.0,
+      "action_type_distribution": {
+        "total": 125,
+        "counts": {
+          "0": 0,
+          "1": 0,
+          "2": 125,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "shares": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 1.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0
+        }
+      }
+    },
+    "base_produce_proxy": {
+      "count": 127,
+      "predicted_produce_count": 127,
+      "predicted_produce_share": 1.0,
+      "action_type_distribution": {
+        "total": 127,
+        "counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 127,
+          "5": 0
+        },
+        "shares": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 1.0,
+          "5": 0.0
+        }
+      }
+    },
+    "actor_cell_metrics": {
+      "actor_cell_count": 252,
+      "actor_cell_non_noop_pred_count": 252,
+      "actor_cell_noop_pred_share": 0.0
+    }
+  },
+  "hard_failures": [],
+  "explicit_non_claims": [
+    "Dry-run only; no Unity runtime behavior claim.",
+    "No checkpoint mutation.",
+    "No PPO or retraining in this script."
+  ]
+}

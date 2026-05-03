@@ -1,0 +1,28 @@
+{
+  "stage": "10D.9",
+  "captured_at_utc": "2026-05-03T10:22:12.0998322Z",
+  "old_checkpoint_path": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+  "new_checkpoint_path": "python/week6_student/runs/legacy032_v2_semantic_bc_stage10d8_20260503T093718Z/student_bc_semantic_best.pt",
+  "binding_found_in": {
+    "scene": {
+      "path": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+      "component": "RTS.ML.Week6StudentPolicyAdapter",
+      "field": "_checkpointRelativePath",
+      "value_before_change": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt"
+    },
+    "runner": {
+      "path": "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+      "note": "Runner consumes adapter artifacts and does not own checkpoint path binding."
+    },
+    "python_bridge": {
+      "path": "python/week6_student/student_inference_server.py",
+      "note": "Checkpoint path is passed from Unity adapter field; no hardcoded override used for Stage10R scene binding."
+    }
+  },
+  "modification_status": {
+    "scene_modified": true,
+    "config_modified": false,
+    "runner_modified": false,
+    "notes": "Stage10D.9 changed only scene field _checkpointRelativePath; runner/config behavior unchanged."
+  }
+}
