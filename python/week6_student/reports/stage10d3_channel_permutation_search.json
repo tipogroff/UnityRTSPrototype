@@ -1,0 +1,534 @@
+{
+  "stage": "10D.3",
+  "diagnostic": "channel_permutation_search",
+  "unity_focus": {
+    "B2": [
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "C3": [
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "bc_population_means": {
+    "worker_label_proxy_action_type_harvest": [
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "base_label_proxy_action_type_produce": [
+      0.0,
+      0.00019396428251639009,
+      0.011649266816675663,
+      0.0046779620461165905,
+      0.9834787845611572,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "analysis": {
+    "B2_vs_worker_population": {
+      "unit_type": {
+        "unity_slice": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "unity_argmax": "Worker",
+        "bc_argmax": "Resource",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.7320508075688772,
+          "best_l2": 1.0,
+          "best_perm": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            3
+          ],
+          "improvement": 0.7320508075688772
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 2,
+            "end": 8,
+            "l2": 0.0
+          },
+          {
+            "start": 8,
+            "end": 14,
+            "l2": 0.0
+          },
+          {
+            "start": 14,
+            "end": 20,
+            "l2": 0.0
+          },
+          {
+            "start": 18,
+            "end": 24,
+            "l2": 0.0
+          },
+          {
+            "start": 3,
+            "end": 9,
+            "l2": 1.4142135623730951
+          },
+          {
+            "start": 4,
+            "end": 10,
+            "l2": 1.4142135623730951
+          }
+        ],
+        "pure_permutation_explains_gap": false,
+        "argmax_mismatch": true
+      },
+      "current_action": {
+        "unity_slice": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "unity_argmax": "NoOp",
+        "bc_argmax": "Attack",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.4142135623730951,
+          "best_l2": 0.0,
+          "best_perm": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            0
+          ],
+          "improvement": 1.4142135623730951
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 5,
+            "end": 10,
+            "l2": 0.0
+          },
+          {
+            "start": 11,
+            "end": 16,
+            "l2": 0.0
+          },
+          {
+            "start": 21,
+            "end": 26,
+            "l2": 0.0
+          },
+          {
+            "start": 1,
+            "end": 6,
+            "l2": 1.0
+          },
+          {
+            "start": 17,
+            "end": 22,
+            "l2": 1.0
+          },
+          {
+            "start": 2,
+            "end": 7,
+            "l2": 1.4142135623730951
+          }
+        ],
+        "pure_permutation_explains_gap": true,
+        "argmax_mismatch": true
+      },
+      "direction": {
+        "unity_slice": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "unity_argmax": "South",
+        "bc_argmax": "West",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.4142135623730951,
+          "best_l2": 0.0,
+          "best_perm": [
+            0,
+            1,
+            3,
+            2
+          ],
+          "improvement": 1.4142135623730951
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 3,
+            "end": 6,
+            "l2": 0.0
+          },
+          {
+            "start": 9,
+            "end": 12,
+            "l2": 0.0
+          },
+          {
+            "start": 15,
+            "end": 18,
+            "l2": 0.0
+          },
+          {
+            "start": 19,
+            "end": 22,
+            "l2": 0.0
+          },
+          {
+            "start": 6,
+            "end": 9,
+            "l2": 1.0
+          },
+          {
+            "start": 7,
+            "end": 10,
+            "l2": 1.0
+          }
+        ],
+        "pure_permutation_explains_gap": true,
+        "argmax_mismatch": true
+      }
+    },
+    "C3_vs_base_population": {
+      "unit_type": {
+        "unity_slice": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "unity_argmax": "Base",
+        "bc_argmax": "Resource",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.7320508075688772,
+          "best_l2": 1.0,
+          "best_perm": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            1
+          ],
+          "improvement": 0.7320508075688772
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 14,
+            "end": 20,
+            "l2": 0.0
+          },
+          {
+            "start": 20,
+            "end": 26,
+            "l2": 0.0
+          },
+          {
+            "start": 4,
+            "end": 10,
+            "l2": 0.9834787845611572
+          },
+          {
+            "start": 10,
+            "end": 16,
+            "l2": 1.0
+          },
+          {
+            "start": 3,
+            "end": 9,
+            "l2": 1.0001474060799647
+          },
+          {
+            "start": 6,
+            "end": 12,
+            "l2": 1.4142135623730951
+          }
+        ],
+        "pure_permutation_explains_gap": false,
+        "argmax_mismatch": true
+      },
+      "current_action": {
+        "unity_slice": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "unity_argmax": "NoOp",
+        "bc_argmax": "Return",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.4142135623730951,
+          "best_l2": 0.0,
+          "best_perm": [
+            1,
+            2,
+            3,
+            0,
+            4,
+            5
+          ],
+          "improvement": 1.4142135623730951
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 5,
+            "end": 10,
+            "l2": 0.0
+          },
+          {
+            "start": 15,
+            "end": 20,
+            "l2": 0.0
+          },
+          {
+            "start": 21,
+            "end": 26,
+            "l2": 0.0
+          },
+          {
+            "start": 11,
+            "end": 16,
+            "l2": 1.0
+          },
+          {
+            "start": 4,
+            "end": 9,
+            "l2": 1.000136465968308
+          },
+          {
+            "start": 6,
+            "end": 11,
+            "l2": 1.4142135623730951
+          }
+        ],
+        "pure_permutation_explains_gap": true,
+        "argmax_mismatch": true
+      },
+      "direction": {
+        "unity_slice": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "bc_mean_slice": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "unity_argmax": "South",
+        "bc_argmax": "West",
+        "best_within_group_permutation": {
+          "baseline_l2": 1.4142135623730951,
+          "best_l2": 0.0,
+          "best_perm": [
+            0,
+            1,
+            3,
+            2
+          ],
+          "improvement": 1.4142135623730951
+        },
+        "best_window_anywhere_in_27": [
+          {
+            "start": 9,
+            "end": 12,
+            "l2": 0.0
+          },
+          {
+            "start": 13,
+            "end": 16,
+            "l2": 0.0
+          },
+          {
+            "start": 19,
+            "end": 22,
+            "l2": 0.0
+          },
+          {
+            "start": 3,
+            "end": 6,
+            "l2": 0.9834899099689819
+          },
+          {
+            "start": 0,
+            "end": 3,
+            "l2": 0.988361822783065
+          },
+          {
+            "start": 6,
+            "end": 9,
+            "l2": 1.0
+          }
+        ],
+        "pure_permutation_explains_gap": true,
+        "argmax_mismatch": true
+      }
+    }
+  },
+  "findings": {
+    "worker_appears_as_resource_ranged_explained_by_permutation": false,
+    "base_appears_as_resource_ranged_explained_by_permutation": false,
+    "noop_vs_attack_return_produce_explained_by_permutation": true,
+    "south_vs_west_explained_by_permutation": true,
+    "diagnostic_only": true,
+    "note": "Search checks if simple channel permutations/group shifts can explain observed mismatch; no remap is applied."
+  }
+}

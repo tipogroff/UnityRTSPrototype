@@ -1,0 +1,851 @@
+{
+  "stage": "10D.3",
+  "diagnostic": "source_code_mapping_audit",
+  "audited_files": [
+    {
+      "file": "Assets/Scripts/ML/ObservationContract.cs",
+      "exists": true,
+      "line_count": 116,
+      "matches": [
+        {
+          "line": 26,
+          "text": "    /// [2\u20134]                  owner                 One-hot: [neutral, player1, player2]"
+        },
+        {
+          "line": 27,
+          "text": "    /// [5\u201311]                 unit_type             One-hot \u043f\u043e UnitType enum (Resource=5..Ranged=11)"
+        },
+        {
+          "line": 28,
+          "text": "    /// [12\u201317]                current_action        One-hot \u043f\u043e UnitActionType (NoOp=12..Attack=17)"
+        },
+        {
+          "line": 29,
+          "text": "    /// [18\u201321]                action_direction      One-hot \u043f\u043e Direction (North=18..West=21)"
+        },
+        {
+          "line": 30,
+          "text": "    /// [22\u201325]                produce_unit_type     One-hot \u043f\u043e ProducibleUnit (Worker=22..Ranged=25)"
+        },
+        {
+          "line": 49,
+          "text": "        // player1  = CH_OWNER_BASE + 1"
+        },
+        {
+          "line": 50,
+          "text": "        // player2  = CH_OWNER_BASE + 2"
+        },
+        {
+          "line": 54,
+          "text": "        public const int CH_UNIT_TYPE_BASE  = 5;   // Resource = CH_UNIT_TYPE_BASE + 0"
+        },
+        {
+          "line": 55,
+          "text": "        // Base     = CH_UNIT_TYPE_BASE + 1"
+        },
+        {
+          "line": 56,
+          "text": "        // Barracks = CH_UNIT_TYPE_BASE + 2"
+        },
+        {
+          "line": 57,
+          "text": "        // Worker   = CH_UNIT_TYPE_BASE + 3"
+        },
+        {
+          "line": 58,
+          "text": "        // Light    = CH_UNIT_TYPE_BASE + 4"
+        },
+        {
+          "line": 59,
+          "text": "        // Heavy    = CH_UNIT_TYPE_BASE + 5"
+        },
+        {
+          "line": 60,
+          "text": "        // Ranged   = CH_UNIT_TYPE_BASE + 6"
+        },
+        {
+          "line": 64,
+          "text": "        public const int CH_ACTION_BASE  = 12;  // NoOp    = CH_ACTION_BASE + 0"
+        },
+        {
+          "line": 65,
+          "text": "        // Move    = CH_ACTION_BASE + 1"
+        },
+        {
+          "line": 66,
+          "text": "        // Harvest = CH_ACTION_BASE + 2"
+        },
+        {
+          "line": 67,
+          "text": "        // Return  = CH_ACTION_BASE + 3"
+        },
+        {
+          "line": 68,
+          "text": "        // Produce = CH_ACTION_BASE + 4"
+        },
+        {
+          "line": 69,
+          "text": "        // Attack  = CH_ACTION_BASE + 5"
+        },
+        {
+          "line": 73,
+          "text": "        public const int CH_DIR_BASE  = 18;   // North = CH_DIR_BASE + 0"
+        },
+        {
+          "line": 74,
+          "text": "        // East  = CH_DIR_BASE + 1"
+        },
+        {
+          "line": 75,
+          "text": "        // South = CH_DIR_BASE + 2"
+        },
+        {
+          "line": 76,
+          "text": "        // West  = CH_DIR_BASE + 3"
+        }
+      ],
+      "classification": {
+        "file": "Assets/Scripts/ML/ObservationContract.cs",
+        "owner_semantics_declared": {
+          "absolute_player_channels": true,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": true,
+          "direction": true
+        },
+        "flatten_row_major_declared": false
+      }
+    },
+    {
+      "file": "Assets/Scripts/ML/ObservationBuilder.cs",
+      "exists": true,
+      "line_count": 927,
+      "matches": [
+        {
+          "line": 195,
+          "text": "            Owner enemyOwner = GetEnemyOwner(playerId);"
+        },
+        {
+          "line": 196,
+          "text": "            int enemyRes = enemyOwner == Owner.Neutral ? 0 : _matchManager.GetResources(enemyOwner);"
+        },
+        {
+          "line": 198,
+          "text": "            _globalFeaturesBuffer[GF_ENEMY_RESOURCES] = NormalizeResources(enemyRes);"
+        },
+        {
+          "line": 276,
+          "text": "        /// - owner \u043a\u043e\u0434\u0438\u0440\u0443\u0435\u0442\u0441\u044f \u043a\u0430\u043a [neutral, friendly, enemy] \u043e\u0442\u043d\u043e\u0441\u0438\u0442\u0435\u043b\u044c\u043d\u043e playerPerspective;"
+        },
+        {
+          "line": 277,
+          "text": "        /// - \u0440\u0435\u0441\u0443\u0440\u0441\u043d\u044b\u0439 \u043a\u0430\u043d\u0430\u043b \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u043e \u043e\u0442\u0440\u0430\u0436\u0430\u0435\u0442 \u043f\u0435\u0440\u0435\u043d\u043e\u0441\u0438\u043c\u044b\u0439 \u0440\u0435\u0441\u0443\u0440\u0441 friendly-worker;"
+        },
+        {
+          "line": 278,
+          "text": "        /// - current_action \u0434\u043b\u044f \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0434\u0430\u043d\u0438\u0439 \u043e\u0442\u0440\u0430\u0436\u0430\u0435\u0442 Produce;"
+        },
+        {
+          "line": 309,
+          "text": "                    // [1] Resources: patch + carried resources for friendly workers."
+        },
+        {
+          "line": 327,
+          "text": "                    // [2-4] Owner as perspective-based one-hot [neutral, friendly, enemy]."
+        },
+        {
+          "line": 329,
+          "text": "                    int ownerHotIndex = OwnerToPerspectiveOneHotIndex(cellOwner, playerPerspective);"
+        },
+        {
+          "line": 334,
+          "text": "                        ownerHotIndex);"
+        },
+        {
+          "line": 336,
+          "text": "                    // [5-11] Unit type"
+        },
+        {
+          "line": 340,
+          "text": "                        baseIndex + ObservationContract.CH_UNIT_TYPE_BASE,"
+        },
+        {
+          "line": 344,
+          "text": "                    // [12-17] Current action: \u0431\u0435\u0440\u0435\u043c \u0438\u0437 \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0435\u0439 \u043f\u0440\u0438\u043c\u0435\u043d\u0435\u043d\u043d\u043e\u0439 \u043a\u043e\u043c\u0430\u043d\u0434\u044b \u0442\u0435\u043a\u0443\u0449\u0435\u0433\u043e \u0448\u0430\u0433\u0430."
+        },
+        {
+          "line": 356,
+          "text": "                        baseIndex + ObservationContract.CH_ACTION_BASE,"
+        },
+        {
+          "line": 360,
+          "text": "                    // [18-21] Direction: \u043f\u0440\u0438\u043e\u0440\u0438\u0442\u0435\u0442 \u0443 \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0438\u0437 \u043f\u0440\u0438\u043c\u0435\u043d\u0435\u043d\u043d\u043e\u0439 \u043a\u043e\u043c\u0430\u043d\u0434\u044b."
+        },
+        {
+          "line": 361,
+          "text": "                    int directionHotIndex = -1;"
+        },
+        {
+          "line": 364,
+          "text": "                        directionHotIndex = hasTrackedCommand"
+        },
+        {
+          "line": 370,
+          "text": "                        baseIndex + ObservationContract.CH_DIR_BASE,"
+        },
+        {
+          "line": 372,
+          "text": "                        directionHotIndex);"
+        },
+        {
+          "line": 453,
+          "text": "                    // === \u041a\u0430\u043d\u0430\u043b\u044b [2\u20134]: owner (one-hot: neutral, player1, player2) ==="
+        },
+        {
+          "line": 456,
+          "text": "                    int ownerHotIndex = OwnerToOneHotIndex(cellOwner);"
+        },
+        {
+          "line": 458,
+          "text": "                        ObservationContract.CH_OWNER_COUNT, ownerHotIndex);"
+        },
+        {
+          "line": 460,
+          "text": "                    // === \u041a\u0430\u043d\u0430\u043b\u044b [5\u201311]: unit_type (one-hot \u043f\u043e 7 \u0442\u0438\u043f\u0430\u043c) ==="
+        },
+        {
+          "line": 466,
+          "text": "                    ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_UNIT_TYPE_BASE,"
+        },
+        {
+          "line": 469,
+          "text": "                    // === \u041a\u0430\u043d\u0430\u043b\u044b [12\u201317]: current_action (one-hot \u043f\u043e 6 \u0442\u0438\u043f\u0430\u043c \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0439) ==="
+        },
+        {
+          "line": 478,
+          "text": "                    ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_ACTION_BASE,"
+        },
+        {
+          "line": 481,
+          "text": "                    // === \u041a\u0430\u043d\u0430\u043b\u044b [18\u201321]: action_direction (one-hot \u043f\u043e 4 \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f\u043c) ==="
+        },
+        {
+          "line": 483,
+          "text": "                    int directionHotIndex = -1; // \u041d\u0435\u0442 \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e"
+        },
+        {
+          "line": 487,
+          "text": "                        directionHotIndex = hasTrackedCommand"
+        },
+        {
+          "line": 491,
+          "text": "                    ObservationContract.SetOneHot(obs, baseIndex + ObservationContract.CH_DIR_BASE,"
+        },
+        {
+          "line": 492,
+          "text": "                        ObservationContract.CH_DIR_COUNT, directionHotIndex);"
+        },
+        {
+          "line": 494,
+          "text": "                    // === \u041a\u0430\u043d\u0430\u043b\u044b [22\u201325]: produce_unit_type (one-hot \u043f\u043e 4 \u0442\u0438\u043f\u0430\u043c \u0434\u043b\u044f \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0441\u0442\u0432\u0430) ==="
+        },
+        {
+          "line": 580,
+          "text": "            // Observation-side representative: first valid enemy in scan order [0..8]."
+        },
+        {
+          "line": 678,
+          "text": "        /// neutral=0, player1=1, player2=2, \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u043e\u0435=-1."
+        },
+        {
+          "line": 680,
+          "text": "        private static int OwnerToOneHotIndex(Owner owner)"
+        },
+        {
+          "line": 682,
+          "text": "            switch (owner)"
+        },
+        {
+          "line": 692,
+          "text": "        /// \u0412\u0435\u0440\u043d\u0443\u0442\u044c one-hot \u0438\u043d\u0434\u0435\u043a\u0441 owner \u0432 MVP-\u043f\u0435\u0440\u0441\u043f\u0435\u043a\u0442\u0438\u0432\u0435: neutral/friendly/enemy."
+        },
+        {
+          "line": 694,
+          "text": "        private static int OwnerToPerspectiveOneHotIndex(Owner owner, Owner perspective)"
+        },
+        {
+          "line": 696,
+          "text": "            if (owner == Owner.Neutral) return 0;"
+        },
+        {
+          "line": 697,
+          "text": "            if (owner == perspective) return 1;"
+        },
+        {
+          "line": 702,
+          "text": "        /// \u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430, \u0447\u0442\u043e owner \u044f\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u0432\u0440\u0430\u0433\u043e\u043c \u0434\u043b\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0439 \u043f\u0435\u0440\u0441\u043f\u0435\u043a\u0442\u0438\u0432\u044b."
+        },
+        {
+          "line": 704,
+          "text": "        private static bool IsEnemyOwner(Owner owner, Owner perspective)"
+        },
+        {
+          "line": 706,
+          "text": "            return owner != Owner.Neutral && owner != perspective;"
+        },
+        {
+          "line": 779,
+          "text": "                        ObservationContract.CH_OWNER_COUNT, \"owner\", result);"
+        },
+        {
+          "line": 780,
+          "text": "                    CheckOneHotStructure(obs, baseIndex, ObservationContract.CH_UNIT_TYPE_BASE,"
+        },
+        {
+          "line": 781,
+          "text": "                        ObservationContract.CH_UNIT_TYPE_COUNT, \"unit_type\", result);"
+        },
+        {
+          "line": 782,
+          "text": "                    CheckOneHotStructure(obs, baseIndex, ObservationContract.CH_ACTION_BASE,"
+        },
+        {
+          "line": 783,
+          "text": "                        ObservationContract.CH_ACTION_COUNT, \"current_action\", result);"
+        },
+        {
+          "line": 784,
+          "text": "                    CheckOneHotStructure(obs, baseIndex, ObservationContract.CH_DIR_BASE,"
+        },
+        {
+          "line": 785,
+          "text": "                        ObservationContract.CH_DIR_COUNT, \"action_direction\", result);"
+        },
+        {
+          "line": 787,
+          "text": "                        ObservationContract.CH_PRODUCE_COUNT, \"produce_unit_type\", result);"
+        },
+        {
+          "line": 899,
+          "text": "            string owner = OneHotToString(obs, baseIndex + ObservationContract.CH_OWNER_BASE,"
+        },
+        {
+          "line": 901,
+          "text": "            sb.Append($\"Own:{owner} \");"
+        },
+        {
+          "line": 904,
+          "text": "            string unitType = OneHotToString(obs, baseIndex + ObservationContract.CH_UNIT_TYPE_BASE,"
+        }
+      ],
+      "classification": {
+        "file": "Assets/Scripts/ML/ObservationBuilder.cs",
+        "owner_semantics_declared": {
+          "absolute_player_channels": true,
+          "perspective_friendly_enemy": true
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": true,
+          "direction": true
+        },
+        "flatten_row_major_declared": false
+      }
+    },
+    {
+      "file": "python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py",
+      "exists": true,
+      "line_count": 995,
+      "matches": [
+        {
+          "line": 691,
+          "text": "                    raise ExportError(\"produce_unit_type exceeds allowed v2 range 0..6\")"
+        },
+        {
+          "line": 903,
+          "text": "        \"produce_unit_type_histogram\": _hist_to_sorted_dict(produce_type_hist),"
+        },
+        {
+          "line": 949,
+          "text": "    lines += [\"\", \"### produce_unit_type\"]"
+        },
+        {
+          "line": 950,
+          "text": "    if summary[\"produce_unit_type_histogram\"]:"
+        },
+        {
+          "line": 951,
+          "text": "        for k, v in summary[\"produce_unit_type_histogram\"].items():"
+        }
+      ],
+      "classification": {
+        "file": "python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py",
+        "owner_semantics_declared": {
+          "absolute_player_channels": false,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": false,
+          "direction": false
+        },
+        "flatten_row_major_declared": false
+      }
+    },
+    {
+      "file": "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2.py",
+      "exists": true,
+      "line_count": 588,
+      "matches": [
+        {
+          "line": 159,
+          "text": "        \"detected invalid produce_unit_type (>6); v1 remap path is forbidden\","
+        },
+        {
+          "line": 222,
+          "text": "    lines += [\"\", \"### produce_unit_type_histogram\"]"
+        },
+        {
+          "line": 223,
+          "text": "    if summary[\"produce_unit_type_histogram\"]:"
+        },
+        {
+          "line": 224,
+          "text": "        for k, v in summary[\"produce_unit_type_histogram\"].items():"
+        },
+        {
+          "line": 387,
+          "text": "    # Row-major flattening preserves flat_cell_index = row * 24 + col."
+        },
+        {
+          "line": 484,
+          "text": "        warnings.append(\"produce_unit_type diversity is low\")"
+        },
+        {
+          "line": 502,
+          "text": "        \"flat_cell_index_formula\": \"row * 24 + col\","
+        },
+        {
+          "line": 531,
+          "text": "        \"produce_unit_type_histogram\": _hist_to_sorted_dict(produce_type_hist),"
+        }
+      ],
+      "classification": {
+        "file": "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2.py",
+        "owner_semantics_declared": {
+          "absolute_player_channels": false,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": false,
+          "direction": false
+        },
+        "flatten_row_major_declared": true
+      }
+    },
+    {
+      "file": "python/week5_teacher_legacy032/scripts/build_bc_ready_dataset_legacy032_v2.py",
+      "exists": true,
+      "line_count": 528,
+      "matches": [
+        {
+          "line": 109,
+          "text": "            \"produce_unit_type_histogram\": {},"
+        },
+        {
+          "line": 147,
+          "text": "        \"produce_unit_type_histogram\": _hist_to_sorted_dict(produce_counter),"
+        },
+        {
+          "line": 452,
+          "text": "        \"flat_cell_index_formula\": \"row * 24 + col\","
+        }
+      ],
+      "classification": {
+        "file": "python/week5_teacher_legacy032/scripts/build_bc_ready_dataset_legacy032_v2.py",
+        "owner_semantics_declared": {
+          "absolute_player_channels": false,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": false,
+          "direction": false
+        },
+        "flatten_row_major_declared": true
+      }
+    },
+    {
+      "file": "python/week6_student/student_bc_loader.py",
+      "exists": true,
+      "line_count": 582,
+      "matches": [
+        {
+          "line": 101,
+          "text": "            \"produce_unit_type\","
+        },
+        {
+          "line": 163,
+          "text": "        \"produce_unit_type\","
+        }
+      ],
+      "classification": {
+        "file": "python/week6_student/student_bc_loader.py",
+        "owner_semantics_declared": {
+          "absolute_player_channels": false,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": false,
+          "direction": false
+        },
+        "flatten_row_major_declared": false
+      }
+    },
+    {
+      "file": "python/week6_student/stage10d1_observation_channel_comparison.py",
+      "exists": true,
+      "line_count": 359,
+      "matches": [
+        {
+          "line": 12,
+          "text": "from stage10d_owner_semantics import ("
+        },
+        {
+          "line": 13,
+          "text": "    normalize_owner_modes,"
+        },
+        {
+          "line": 14,
+          "text": "    owner_labels_for_mode,"
+        },
+        {
+          "line": 15,
+          "text": "    resolve_owner_mode_from_snapshot,"
+        },
+        {
+          "line": 21,
+          "text": "    \"owner\": (2, 5),"
+        },
+        {
+          "line": 22,
+          "text": "    \"unit_type\": (5, 12),"
+        },
+        {
+          "line": 23,
+          "text": "    \"current_action\": (12, 18),"
+        },
+        {
+          "line": 24,
+          "text": "    \"direction\": (18, 22),"
+        },
+        {
+          "line": 51,
+          "text": "        \"--owner-mode\","
+        },
+        {
+          "line": 54,
+          "text": "        choices=(\"absolute_player_channels\", \"perspective_friendly_enemy\", \"both\", \"auto\"),"
+        },
+        {
+          "line": 94,
+          "text": "def _collect_population(inputs: np.ndarray, targets: np.ndarray, selector: str, owner_mode: str) -> Tuple[np.ndarray, str]:"
+        },
+        {
+          "line": 99,
+          "text": "        obs_flat = inputs[i].reshape(576, 27)"
+        },
+        {
+          "line": 154,
+          "text": "def _interpret_focus(v: np.ndarray, owner_mode: str) -> Dict[str, Any]:"
+        },
+        {
+          "line": 155,
+          "text": "    owner_vals = v[2:5].astype(float).tolist()"
+        },
+        {
+          "line": 156,
+          "text": "    owner_labels = owner_labels_for_mode(owner_mode)  # type: ignore[arg-type]"
+        },
+        {
+          "line": 157,
+          "text": "    owner_idx = int(np.argmax(v[2:5]))"
+        },
+        {
+          "line": 163,
+          "text": "        \"owner\": owner_labels[owner_idx],"
+        },
+        {
+          "line": 164,
+          "text": "        \"owner_values\": owner_vals,"
+        },
+        {
+          "line": 165,
+          "text": "        \"unit_type\": unit_names[int(np.argmax(v[5:12]))],"
+        },
+        {
+          "line": 166,
+          "text": "        \"current_action\": action_names[int(np.argmax(v[12:18]))],"
+        },
+        {
+          "line": 167,
+          "text": "        \"direction\": dir_names[int(np.argmax(v[18:22]))],"
+        },
+        {
+          "line": 185,
+          "text": "        \"unit_type_mismatch\": not unit_match,"
+        },
+        {
+          "line": 186,
+          "text": "        \"current_action_mismatch\": not action_match,"
+        },
+        {
+          "line": 187,
+          "text": "        \"direction_mismatch\": not dir_match,"
+        },
+        {
+          "line": 199,
+          "text": "    inferred_owner_mode = resolve_owner_mode_from_snapshot(args.unity_snapshot)"
+        },
+        {
+          "line": 200,
+          "text": "    owner_modes = normalize_owner_modes(args.owner_mode, inferred_owner_mode)"
+        },
+        {
+          "line": 216,
+          "text": "    selected_owner_mode_for_population = owner_modes[0]"
+        },
+        {
+          "line": 217,
+          "text": "    for owner_mode in owner_modes:"
+        },
+        {
+          "line": 222,
+          "text": "            owner_mode,"
+        },
+        {
+          "line": 228,
+          "text": "            owner_mode,"
+        },
+        {
+          "line": 236,
+          "text": "            owner_mode,"
+        },
+        {
+          "line": 242,
+          "text": "            owner_mode,"
+        },
+        {
+          "line": 252,
+          "text": "        owner_idx = [2, 3, 4]"
+        },
+        {
+          "line": 253,
+          "text": "        sem_excluding_owner_b2 = _l2(_exclude_indices(b2, owner_idx), _exclude_indices(b2_mean, owner_idx))"
+        },
+        {
+          "line": 254,
+          "text": "        sem_excluding_owner_c3 = _l2(_exclude_indices(c3, owner_idx), _exclude_indices(c3_mean, owner_idx))"
+        },
+        {
+          "line": 255,
+          "text": "        sem_including_owner_b2 = _l2(b2, b2_mean)"
+        },
+        {
+          "line": 256,
+          "text": "        sem_including_owner_c3 = _l2(c3, c3_mean)"
+        },
+        {
+          "line": 258,
+          "text": "        b2_owner_z = b2_stats[\"owner\"].get(\"max_abs_z\")"
+        },
+        {
+          "line": 259,
+          "text": "        c3_owner_z = c3_stats[\"owner\"].get(\"max_abs_z\")"
+        },
+        {
+          "line": 260,
+          "text": "        b2_action_z = b2_stats[\"current_action\"].get(\"max_abs_z\")"
+        },
+        {
+          "line": 261,
+          "text": "        c3_action_z = c3_stats[\"current_action\"].get(\"max_abs_z\")"
+        },
+        {
+          "line": 279,
+          "text": "        by_mode[owner_mode] = {"
+        },
+        {
+          "line": 294,
+          "text": "                    \"raw_channel_distance\": sem_including_owner_b2,"
+        },
+        {
+          "line": 295,
+          "text": "                    \"semantic_interpretation_distance_excluding_owner\": sem_excluding_owner_b2,"
+        },
+        {
+          "line": 296,
+          "text": "                    \"semantic_interpretation_distance_including_owner\": sem_including_owner_b2,"
+        },
+        {
+          "line": 299,
+          "text": "                    \"raw_channel_distance\": sem_including_owner_c3,"
+        },
+        {
+          "line": 300,
+          "text": "                    \"semantic_interpretation_distance_excluding_owner\": sem_excluding_owner_c3,"
+        },
+        {
+          "line": 301,
+          "text": "                    \"semantic_interpretation_distance_including_owner\": sem_including_owner_c3,"
+        },
+        {
+          "line": 305,
+          "text": "                \"owner_labeling_conflict\": bool("
+        },
+        {
+          "line": 306,
+          "text": "                    (b2_owner_z is not None and b2_owner_z > 4.0) or (c3_owner_z is not None and c3_owner_z > 4.0)"
+        },
+        {
+          "line": 308,
+          "text": "                \"unit_type_mismatch\": bool(b2_compat[\"unit_type_mismatch\"] or c3_compat[\"unit_type_mismatch\"]),"
+        },
+        {
+          "line": 309,
+          "text": "                \"current_action_mismatch\": bool("
+        },
+        {
+          "line": 312,
+          "text": "                    or b2_compat[\"current_action_mismatch\"]"
+        },
+        {
+          "line": 313,
+          "text": "                    or c3_compat[\"current_action_mismatch\"]"
+        },
+        {
+          "line": 315,
+          "text": "                \"direction_mismatch\": bool(b2_compat[\"direction_mismatch\"] or c3_compat[\"direction_mismatch\"]),"
+        },
+        {
+          "line": 324,
+          "text": "            \"by_owner_mode\": {m: _interpret_focus(b2, m) for m in owner_modes},"
+        },
+        {
+          "line": 328,
+          "text": "            \"by_owner_mode\": {m: _interpret_focus(c3, m) for m in owner_modes},"
+        },
+        {
+          "line": 341,
+          "text": "        \"owner_mode_argument\": args.owner_mode,"
+        },
+        {
+          "line": 342,
+          "text": "        \"owner_mode_inferred_from_snapshot\": inferred_owner_mode,"
+        },
+        {
+          "line": 343,
+          "text": "        \"owner_modes_used\": owner_modes,"
+        },
+        {
+          "line": 344,
+          "text": "        \"selected_owner_mode_for_population\": selected_owner_mode_for_population,"
+        },
+        {
+          "line": 346,
+          "text": "        \"corrected_owner_semantics_applied\": True,"
+        },
+        {
+          "line": 347,
+          "text": "        \"stage10d1_original_owner_assumption_superseded\": True,"
+        },
+        {
+          "line": 349,
+          "text": "        \"owner_labeling_conflict_is_not_full_observation_corruption_by_itself\": True,"
+        }
+      ],
+      "classification": {
+        "file": "python/week6_student/stage10d1_observation_channel_comparison.py",
+        "owner_semantics_declared": {
+          "absolute_player_channels": false,
+          "perspective_friendly_enemy": false
+        },
+        "group_declarations_present": {
+          "unit_type": true,
+          "current_action": true,
+          "direction": true
+        },
+        "flatten_row_major_declared": true
+      }
+    }
+  ],
+  "declared_mapping_table": [
+    {
+      "source": "Assets/Scripts/ML/ObservationContract.cs",
+      "owner_declared": "absolute_player_channels",
+      "unit_type_declared": true,
+      "current_action_declared": true,
+      "direction_declared": true,
+      "flattening_declared": false
+    },
+    {
+      "source": "Assets/Scripts/ML/ObservationBuilder.cs",
+      "owner_declared": "mixed(abs+perspective)",
+      "unit_type_declared": true,
+      "current_action_declared": true,
+      "direction_declared": true,
+      "flattening_declared": false
+    },
+    {
+      "source": "python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py",
+      "owner_declared": "not_explicit",
+      "unit_type_declared": true,
+      "current_action_declared": false,
+      "direction_declared": false,
+      "flattening_declared": false
+    },
+    {
+      "source": "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2.py",
+      "owner_declared": "not_explicit",
+      "unit_type_declared": true,
+      "current_action_declared": false,
+      "direction_declared": false,
+      "flattening_declared": true
+    },
+    {
+      "source": "python/week5_teacher_legacy032/scripts/build_bc_ready_dataset_legacy032_v2.py",
+      "owner_declared": "not_explicit",
+      "unit_type_declared": true,
+      "current_action_declared": false,
+      "direction_declared": false,
+      "flattening_declared": true
+    },
+    {
+      "source": "python/week6_student/student_bc_loader.py",
+      "owner_declared": "not_explicit",
+      "unit_type_declared": true,
+      "current_action_declared": false,
+      "direction_declared": false,
+      "flattening_declared": false
+    },
+    {
+      "source": "python/week6_student/stage10d1_observation_channel_comparison.py",
+      "owner_declared": "not_explicit",
+      "unit_type_declared": true,
+      "current_action_declared": true,
+      "direction_declared": true,
+      "flattening_declared": true
+    }
+  ],
+  "cross_source_consistency": {
+    "owner_semantics_conflict_detected": true,
+    "unit_type_declared_in_all_core_sources": true,
+    "current_action_declared_in_all_core_sources": false,
+    "direction_declared_in_all_core_sources": false,
+    "flattening_row_major_declared_somewhere": true
+  }
+}

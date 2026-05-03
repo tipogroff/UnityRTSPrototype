@@ -31,6 +31,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("python/week6_student/reports/stage10d1_training_loss_audit.json"),
     )
+    parser.add_argument(
+        "--stage10d1r-output",
+        action="store_true",
+        help="Write Stage10D.1R artifact filename.",
+    )
     return parser.parse_args()
 
 
@@ -40,6 +45,9 @@ def _contains(text: str, needle: str) -> bool:
 
 def main() -> int:
     args = parse_args()
+    if args.stage10d1r_output:
+        args.output = Path("python/week6_student/reports/stage10d1r_training_loss_audit.json")
+
     train_text = args.train_script.read_text(encoding="utf-8")
     metrics_text = args.metrics_script.read_text(encoding="utf-8")
     run_metrics = json.loads(args.run_metrics.read_text(encoding="utf-8"))
@@ -69,13 +77,14 @@ def main() -> int:
         }
 
     payload: Dict[str, Any] = {
-        "stage": "10D.1",
+        "stage": "10D.1R" if args.stage10d1r_output else "10D.1",
         "diagnostic": "training_loss_audit",
         "inputs": {
             "train_script": str(args.train_script),
             "metrics_script": str(args.metrics_script),
             "run_metrics": str(args.run_metrics),
         },
+        "training_objective_audit_unaffected_by_owner_semantics": True,
         "audit": {
             "loss_computed_on_all_576_cells_or_not": {
                 "value": "YES_FOR_ACTION_TYPE_BRANCH",

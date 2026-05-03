@@ -1,0 +1,576 @@
+{
+  "stage": "10D.1R",
+  "diagnostic": "dataset_action_distribution_corrected",
+  "dataset_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "owner_semantics_not_used_for_actor_label_proxy": true,
+  "contract_check": {
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "observation_shape_per_sample": [
+      576,
+      27
+    ],
+    "action_shape_per_sample": [
+      576,
+      7
+    ],
+    "unity_v2_compatible": true
+  },
+  "group_definitions": {
+    "note": "Actor/eligibility masks are diagnostic-derived. If owner/unit channels are non-informative, label-proxy masks are used and reported explicitly.",
+    "all_576_cells": "Every grid cell in each sample.",
+    "own_actor_cells": "Primary: owner_player1 AND actor unit channels(base/barracks/worker/light/heavy/ranged). Fallback: label proxy action_type in {Harvest,Return,Produce,Attack}.",
+    "own_worker_cells": "Primary: owner_player1 AND unit_worker. Fallback: label proxy action_type==Harvest.",
+    "own_base_cells": "Primary: owner_player1 AND unit_base. Fallback: label proxy action_type==Produce.",
+    "worker_cells_near_resource": "own_worker cells with Manhattan distance <= 1 to any resource cell.",
+    "worker_cells_near_own_base": "own_worker cells with Manhattan distance <= 1 to any own_base cell.",
+    "base_cells_with_produce_like_possibility": "Diagnostic proxy: own_base cells where label action_type==Produce.",
+    "cells_with_non_noop_labels": "Cells where label action_type != NoOp.",
+    "active_eligible_actor_cells": "Primary: non-neutral owner AND actor unit channels. Fallback: same as label-proxy actor mask."
+  },
+  "mask_quality": {
+    "train": {
+      "sample_count": 74940,
+      "mask_mode_counts": {
+        "channel_derived": 0,
+        "label_proxy": 74940
+      }
+    },
+    "validation": {
+      "sample_count": 13225,
+      "mask_mode_counts": {
+        "channel_derived": 0,
+        "label_proxy": 13225
+      }
+    }
+  },
+  "split_stats": {
+    "train": {
+      "all_576_cells": {
+        "total_count": 43165440,
+        "action_type_count": {
+          "NoOp": 43017278,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 82
+        },
+        "action_type_share": {
+          "NoOp": 0.9965675781365834,
+          "Move": 0.0,
+          "Harvest": 0.0017050677579100318,
+          "Return": 0.0,
+          "Produce": 0.0017254544376241734,
+          "Attack": 1.8996678824541115e-06
+        }
+      },
+      "own_actor_cells": {
+        "total_count": 148162,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 82
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49675355354274375,
+          "Return": 0.0,
+          "Produce": 0.5026929982046678,
+          "Attack": 0.0005534482525883829
+        }
+      },
+      "own_worker_cells": {
+        "total_count": 73600,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "own_base_cells": {
+        "total_count": 74480,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_resource": {
+        "total_count": 73600,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_own_base": {
+        "total_count": 0,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "base_cells_with_produce_like_possibility": {
+        "total_count": 74480,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "cells_with_non_noop_labels": {
+        "total_count": 148162,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 82
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49675355354274375,
+          "Return": 0.0,
+          "Produce": 0.5026929982046678,
+          "Attack": 0.0005534482525883829
+        }
+      },
+      "active_eligible_actor_cells": {
+        "total_count": 148162,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 73600,
+          "Return": 0,
+          "Produce": 74480,
+          "Attack": 82
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49675355354274375,
+          "Return": 0.0,
+          "Produce": 0.5026929982046678,
+          "Attack": 0.0005534482525883829
+        }
+      }
+    },
+    "validation": {
+      "all_576_cells": {
+        "total_count": 7617600,
+        "action_type_count": {
+          "NoOp": 7591452,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 13
+        },
+        "action_type_share": {
+          "NoOp": 0.996567422810334,
+          "Move": 0.0,
+          "Harvest": 0.0017026360008401595,
+          "Return": 0.0,
+          "Produce": 0.0017282346145767696,
+          "Attack": 1.7065742491073305e-06
+        }
+      },
+      "own_actor_cells": {
+        "total_count": 26148,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 13
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49602264035490284,
+          "Return": 0.0,
+          "Produce": 0.50348018968946,
+          "Attack": 0.0004971699556371424
+        }
+      },
+      "own_worker_cells": {
+        "total_count": 12970,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "own_base_cells": {
+        "total_count": 13165,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_resource": {
+        "total_count": 12970,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_own_base": {
+        "total_count": 0,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "base_cells_with_produce_like_possibility": {
+        "total_count": 13165,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "cells_with_non_noop_labels": {
+        "total_count": 26148,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 13
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49602264035490284,
+          "Return": 0.0,
+          "Produce": 0.50348018968946,
+          "Attack": 0.0004971699556371424
+        }
+      },
+      "active_eligible_actor_cells": {
+        "total_count": 26148,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 12970,
+          "Return": 0,
+          "Produce": 13165,
+          "Attack": 13
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49602264035490284,
+          "Return": 0.0,
+          "Produce": 0.50348018968946,
+          "Attack": 0.0004971699556371424
+        }
+      }
+    },
+    "combined": {
+      "all_576_cells": {
+        "total_count": 50783040,
+        "action_type_count": {
+          "NoOp": 50608730,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95
+        },
+        "action_type_share": {
+          "NoOp": 0.9965675548372055,
+          "Move": 0.0,
+          "Harvest": 0.0017047029874540792,
+          "Return": 0.0,
+          "Produce": 0.0017258714720505114,
+          "Attack": 1.8707032899172637e-06
+        }
+      },
+      "own_actor_cells": {
+        "total_count": 174310,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49664391027479776,
+          "Return": 0.0,
+          "Produce": 0.5028110837014514,
+          "Attack": 0.0005450060237507888
+        }
+      },
+      "own_worker_cells": {
+        "total_count": 86570,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "own_base_cells": {
+        "total_count": 87645,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_resource": {
+        "total_count": 86570,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 1.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "worker_cells_near_own_base": {
+        "total_count": 0,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 0.0,
+          "Attack": 0.0
+        }
+      },
+      "base_cells_with_produce_like_possibility": {
+        "total_count": 87645,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 0
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.0,
+          "Return": 0.0,
+          "Produce": 1.0,
+          "Attack": 0.0
+        }
+      },
+      "cells_with_non_noop_labels": {
+        "total_count": 174310,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49664391027479776,
+          "Return": 0.0,
+          "Produce": 0.5028110837014514,
+          "Attack": 0.0005450060237507888
+        }
+      },
+      "active_eligible_actor_cells": {
+        "total_count": 174310,
+        "action_type_count": {
+          "NoOp": 0,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95
+        },
+        "action_type_share": {
+          "NoOp": 0.0,
+          "Move": 0.0,
+          "Harvest": 0.49664391027479776,
+          "Return": 0.0,
+          "Produce": 0.5028110837014514,
+          "Attack": 0.0005450060237507888
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2551 @@
+{
+  "stage": "10D.3",
+  "diagnostic": "raw_gym_observation_channel_probe",
+  "rollout_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+  "source_rollout_npz": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z/teacher_rollout_raw.npz",
+  "source_rollout_manifest": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z/teacher_rollout_manifest.json",
+  "manifest_contract": {
+    "observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "exported_per_cell_action_shape": [
+      576,
+      7
+    ],
+    "exported_per_cell_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "notes": "Raw rollout export only; Unity adaptation is not performed in this step."
+  },
+  "observations": {
+    "shape": [
+      88165,
+      24,
+      24,
+      27
+    ],
+    "dtype": "float32",
+    "flattened_shape": [
+      88165,
+      576,
+      27
+    ],
+    "channel_stats": [
+      {
+        "channel": 0,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9638519287109375,
+        "std": 0.18665851652622223,
+        "nonzero_share": 0.9638519287109375,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 1,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0326758474111557,
+        "std": 0.17778675258159637,
+        "nonzero_share": 0.032675849066840276,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 2,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 3,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 4,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0034722222480922937,
+        "std": 0.05882316455245018,
+        "nonzero_share": 0.003472222222222222,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 5,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9874928593635559,
+        "std": 0.11113369464874268,
+        "nonzero_share": 0.9874928792317709,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 6,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.00556267611682415,
+        "std": 0.07437559962272644,
+        "nonzero_share": 0.005562676323784722,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 7,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 8,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 9,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0069444444961845875,
+        "std": 0.0830434262752533,
+        "nonzero_share": 0.006944444444444444,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 10,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9707963466644287,
+        "std": 0.1683768928050995,
+        "nonzero_share": 0.9707963731553819,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 11,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0034722222480922937,
+        "std": 0.058823149651288986,
+        "nonzero_share": 0.003472222222222222,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 12,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.02573140524327755,
+        "std": 0.15833285450935364,
+        "nonzero_share": 0.025731404622395832,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 13,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9638519287109375,
+        "std": 0.18665851652622223,
+        "nonzero_share": 0.9638519287109375,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 14,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0069444444961845875,
+        "std": 0.0830434262752533,
+        "nonzero_share": 0.006944444444444444,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 15,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0034722222480922937,
+        "std": 0.05882316455245018,
+        "nonzero_share": 0.003472222222222222,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 16,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 17,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.02573140524327755,
+        "std": 0.15833285450935364,
+        "nonzero_share": 0.025731404622395832,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 18,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 19,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 20,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      },
+      {
+        "channel": 21,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9829966425895691,
+        "std": 0.12928366661071777,
+        "nonzero_share": 0.9829966227213541,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 22,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0156724713742733,
+        "std": 0.12420486658811569,
+        "nonzero_share": 0.015672471788194444,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 23,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0003365410666447133,
+        "std": 0.01834195666015148,
+        "nonzero_share": 0.00033654106987847225,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 24,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0001220703125,
+        "std": 0.011047868058085442,
+        "nonzero_share": 0.0001220703125,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 25,
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0008722941274754703,
+        "std": 0.02952173538506031,
+        "nonzero_share": 0.0008722941080729166,
+        "likely_binary": true,
+        "unique_values": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "channel": 26,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "nonzero_share": 0.0,
+        "likely_binary": true,
+        "unique_values": [
+          0.0
+        ]
+      }
+    ]
+  },
+  "actions": {
+    "shape": [
+      88165,
+      576,
+      7
+    ],
+    "dtype": "int16"
+  },
+  "sample_metadata": {
+    "num_samples": 88165,
+    "sampled_for_stats": 2048,
+    "first_episode_step_pairs": [
+      {
+        "sample_index": 0,
+        "episode_id": 0,
+        "step_id": 0
+      },
+      {
+        "sample_index": 1,
+        "episode_id": 0,
+        "step_id": 1
+      },
+      {
+        "sample_index": 2,
+        "episode_id": 0,
+        "step_id": 2
+      },
+      {
+        "sample_index": 3,
+        "episode_id": 0,
+        "step_id": 3
+      },
+      {
+        "sample_index": 4,
+        "episode_id": 0,
+        "step_id": 4
+      },
+      {
+        "sample_index": 5,
+        "episode_id": 0,
+        "step_id": 5
+      },
+      {
+        "sample_index": 6,
+        "episode_id": 0,
+        "step_id": 6
+      },
+      {
+        "sample_index": 7,
+        "episode_id": 0,
+        "step_id": 7
+      },
+      {
+        "sample_index": 8,
+        "episode_id": 0,
+        "step_id": 8
+      },
+      {
+        "sample_index": 9,
+        "episode_id": 0,
+        "step_id": 9
+      },
+      {
+        "sample_index": 10,
+        "episode_id": 0,
+        "step_id": 10
+      },
+      {
+        "sample_index": 11,
+        "episode_id": 0,
+        "step_id": 11
+      }
+    ]
+  },
+  "empirical_channel_map_inference": {
+    "candidate_one_hot_windows": {
+      "owner_width3": [
+        {
+          "range": [
+            10,
+            12
+          ],
+          "width": 3,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 10,
+          "end": 12
+        },
+        {
+          "range": [
+            21,
+            23
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9990056355794271,
+          "share_sum_eq_0": 0.0009943644205729167,
+          "share_sum_le_1": 1.0,
+          "start": 21,
+          "end": 23
+        },
+        {
+          "range": [
+            20,
+            22
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9986690945095487,
+          "share_sum_eq_0": 0.001330905490451389,
+          "share_sum_le_1": 1.0,
+          "start": 20,
+          "end": 22
+        },
+        {
+          "range": [
+            0,
+            2
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.003472222222222222,
+          "share_sum_le_1": 1.0,
+          "start": 0,
+          "end": 2
+        },
+        {
+          "range": [
+            12,
+            14
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.003472222222222222,
+          "share_sum_le_1": 1.0,
+          "start": 12,
+          "end": 14
+        },
+        {
+          "range": [
+            5,
+            7
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9930555555555556,
+          "share_sum_eq_0": 0.006944444444444444,
+          "share_sum_le_1": 1.0,
+          "start": 5,
+          "end": 7
+        },
+        {
+          "range": [
+            11,
+            13
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9930555555555556,
+          "share_sum_eq_0": 0.006944444444444444,
+          "share_sum_le_1": 1.0,
+          "start": 11,
+          "end": 13
+        },
+        {
+          "range": [
+            4,
+            6
+          ],
+          "width": 3,
+          "sum_min": 0.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9895833333333334,
+          "share_sum_eq_0": 0.006944444444444444,
+          "share_sum_le_1": 0.9965277777777778,
+          "start": 4,
+          "end": 6
+        }
+      ],
+      "unit_type_width7": [
+        {
+          "range": [
+            13,
+            19
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 13,
+          "end": 19
+        },
+        {
+          "range": [
+            19,
+            25
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 19,
+          "end": 25
+        },
+        {
+          "range": [
+            20,
+            26
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 20,
+          "end": 26
+        },
+        {
+          "range": [
+            18,
+            24
+          ],
+          "width": 7,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9991277058919271,
+          "share_sum_eq_0": 0.0008722941080729166,
+          "share_sum_le_1": 1.0,
+          "start": 18,
+          "end": 24
+        },
+        {
+          "range": [
+            3,
+            9
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9965277777777778,
+          "start": 3,
+          "end": 9
+        },
+        {
+          "range": [
+            2,
+            8
+          ],
+          "width": 7,
+          "sum_min": 0.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9895833333333334,
+          "share_sum_eq_0": 0.006944444444444444,
+          "share_sum_le_1": 0.9965277777777778,
+          "start": 2,
+          "end": 8
+        },
+        {
+          "range": [
+            15,
+            21
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9877997504340278,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9877997504340278,
+          "start": 15,
+          "end": 21
+        },
+        {
+          "range": [
+            6,
+            12
+          ],
+          "width": 7,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9874928792317709,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9874928792317709,
+          "start": 6,
+          "end": 12
+        }
+      ],
+      "current_action_width6": [
+        {
+          "range": [
+            13,
+            18
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 13,
+          "end": 18
+        },
+        {
+          "range": [
+            20,
+            25
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 20,
+          "end": 25
+        },
+        {
+          "range": [
+            21,
+            26
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 21,
+          "end": 26
+        },
+        {
+          "range": [
+            19,
+            24
+          ],
+          "width": 6,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9991277058919271,
+          "share_sum_eq_0": 0.0008722941080729166,
+          "share_sum_le_1": 1.0,
+          "start": 19,
+          "end": 24
+        },
+        {
+          "range": [
+            18,
+            23
+          ],
+          "width": 6,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9990056355794271,
+          "share_sum_eq_0": 0.0009943644205729167,
+          "share_sum_le_1": 1.0,
+          "start": 18,
+          "end": 23
+        },
+        {
+          "range": [
+            4,
+            9
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9965277777777778,
+          "start": 4,
+          "end": 9
+        },
+        {
+          "range": [
+            11,
+            16
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9965277777777778,
+          "start": 11,
+          "end": 16
+        },
+        {
+          "range": [
+            7,
+            12
+          ],
+          "width": 6,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9930555555555556,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9930555555555556,
+          "start": 7,
+          "end": 12
+        }
+      ],
+      "direction_width4": [
+        {
+          "range": [
+            11,
+            14
+          ],
+          "width": 4,
+          "sum_min": 1.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 1.0,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 1.0,
+          "start": 11,
+          "end": 14
+        },
+        {
+          "range": [
+            21,
+            24
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9991277058919271,
+          "share_sum_eq_0": 0.0008722941080729166,
+          "share_sum_le_1": 1.0,
+          "start": 21,
+          "end": 24
+        },
+        {
+          "range": [
+            20,
+            23
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9990056355794271,
+          "share_sum_eq_0": 0.0009943644205729167,
+          "share_sum_le_1": 1.0,
+          "start": 20,
+          "end": 23
+        },
+        {
+          "range": [
+            19,
+            22
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9986690945095487,
+          "share_sum_eq_0": 0.001330905490451389,
+          "share_sum_le_1": 1.0,
+          "start": 19,
+          "end": 22
+        },
+        {
+          "range": [
+            0,
+            3
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.003472222222222222,
+          "share_sum_le_1": 1.0,
+          "start": 0,
+          "end": 3
+        },
+        {
+          "range": [
+            12,
+            15
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9965277777777778,
+          "share_sum_eq_0": 0.001736111111111111,
+          "share_sum_le_1": 0.9982638888888888,
+          "start": 12,
+          "end": 15
+        },
+        {
+          "range": [
+            5,
+            8
+          ],
+          "width": 4,
+          "sum_min": 0.0,
+          "sum_max": 1.0,
+          "share_sum_eq_1": 0.9930555555555556,
+          "share_sum_eq_0": 0.006944444444444444,
+          "share_sum_le_1": 1.0,
+          "start": 5,
+          "end": 8
+        },
+        {
+          "range": [
+            9,
+            12
+          ],
+          "width": 4,
+          "sum_min": 1.0,
+          "sum_max": 2.0,
+          "share_sum_eq_1": 0.9930555555555556,
+          "share_sum_eq_0": 0.0,
+          "share_sum_le_1": 0.9930555555555556,
+          "start": 9,
+          "end": 12
+        }
+      ]
+    },
+    "declared_group_checks": {
+      "owner_2_4": {
+        "range": [
+          2,
+          4
+        ],
+        "width": 3,
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_1": 0.003472222222222222,
+        "share_sum_eq_0": 0.9965277777777778,
+        "share_sum_le_1": 1.0
+      },
+      "unit_type_5_11": {
+        "range": [
+          5,
+          11
+        ],
+        "width": 7,
+        "sum_min": 1.0,
+        "sum_max": 2.0,
+        "share_sum_eq_1": 0.025731404622395832,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 0.025731404622395832
+      },
+      "current_action_12_17": {
+        "range": [
+          12,
+          17
+        ],
+        "width": 6,
+        "sum_min": 1.0,
+        "sum_max": 2.0,
+        "share_sum_eq_1": 0.9742685953776041,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 0.9742685953776041
+      },
+      "direction_18_21": {
+        "range": [
+          18,
+          21
+        ],
+        "width": 4,
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_1": 0.9829966227213541,
+        "share_sum_eq_0": 0.017003377278645832,
+        "share_sum_le_1": 1.0
+      },
+      "produce_type_22_25": {
+        "range": [
+          22,
+          25
+        ],
+        "width": 4,
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_1": 0.017003377278645832,
+        "share_sum_eq_0": 0.9829966227213541,
+        "share_sum_le_1": 1.0
+      }
+    },
+    "interpretation_note": "Inference is empirical only. Candidate windows are ranked by one-hot behavior; this script does not enforce semantic parity with Unity contract."
+  },
+  "focus_cells": {
+    "flat_25": {
+      "flat_index": 25,
+      "row": 1,
+      "col": 1,
+      "count": 88165,
+      "mean_vector": [
+        0.01633301191031933,
+        0.9836670160293579,
+        0.0,
+        0.0,
+        0.0,
+        0.9993194341659546,
+        0.0006805421435274184,
+        0.0,
+        0.0,
+        0.0,
+        0.01633301191031933,
+        0.9829864501953125,
+        0.0006805421435274184,
+        0.01633301191031933,
+        0.0,
+        0.0,
+        0.0,
+        0.9836670160293579,
+        0.0,
+        0.0,
+        0.0,
+        0.999693751335144,
+        0.0003062439791392535,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "std_vector": [
+        0.12672051787376404,
+        0.12672051787376404,
+        0.0,
+        0.0,
+        0.0,
+        0.026073219254612923,
+        0.026073219254612923,
+        0.0,
+        0.0,
+        0.0,
+        0.12672051787376404,
+        0.12928229570388794,
+        0.026073219254612923,
+        0.12672051787376404,
+        0.0,
+        0.0,
+        0.0,
+        0.12672051787376404,
+        0.0,
+        0.0,
+        0.0,
+        0.01749560981988907,
+        0.01749560981988907,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "action_type_histogram": {
+        "0": 1500,
+        "1": 0,
+        "2": 86570,
+        "3": 0,
+        "4": 0,
+        "5": 95
+      },
+      "examples": [
+        {
+          "sample_index": 0,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 1,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 2,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 3,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 4,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 5,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 6,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 7,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 8,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 9,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 10,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 11,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 12,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 13,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 14,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "sample_index": 15,
+          "flat_index": 25,
+          "row": 1,
+          "col": 1,
+          "obs_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            2,
+            1,
+            3,
+            0,
+            1,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    "flat_50": {
+      "flat_index": 50,
+      "row": 2,
+      "col": 2,
+      "count": 88165,
+      "mean_vector": [
+        0.0039131175726652145,
+        0.001474507967941463,
+        0.011852775700390339,
+        0.0048205070197582245,
+        0.9779390692710876,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0039131175726652145,
+        0.995519757270813,
+        0.0005671184626407921,
+        0.0039131175726652145,
+        0.0,
+        0.995519757270813,
+        0.0,
+        0.0005671184626407921,
+        0.0,
+        0.0,
+        0.0,
+        0.9995916485786438,
+        0.000408325286116451,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "std_vector": [
+        0.06249799206852913,
+        0.03835853934288025,
+        0.10816431790590286,
+        0.06930240988731384,
+        0.1468881517648697,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.06249799206852913,
+        0.06681766360998154,
+        0.023801418021321297,
+        0.06249799206852913,
+        0.0,
+        0.06681766360998154,
+        0.0,
+        0.023801418021321297,
+        0.0,
+        0.0,
+        0.0,
+        0.02019922062754631,
+        0.02019922062754631,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "action_type_histogram": {
+        "0": 520,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 87645,
+        "5": 0
+      },
+      "examples": [
+        {
+          "sample_index": 0,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 1,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 2,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 3,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 4,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 5,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 6,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 7,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 8,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 9,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 10,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 11,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 12,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 13,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 14,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        },
+        {
+          "sample_index": 15,
+          "flat_index": 50,
+          "row": 2,
+          "col": 2,
+          "obs_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "label_branches": [
+            4,
+            0,
+            0,
+            0,
+            2,
+            3,
+            0
+          ]
+        }
+      ]
+    }
+  }
+}

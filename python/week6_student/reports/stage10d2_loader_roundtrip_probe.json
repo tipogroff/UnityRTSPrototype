@@ -1,0 +1,159 @@
+{
+  "stage": "10D.2",
+  "diagnostic": "loader_roundtrip_probe",
+  "dataset_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports_bc/day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "train": {
+    "raw_shape": [
+      74940,
+      576,
+      27
+    ],
+    "loader_shape": [
+      74940,
+      24,
+      24,
+      27
+    ],
+    "raw_dtype": "float32",
+    "loader_dtype": "float32",
+    "sampled_count": 32,
+    "sampled_indices": [
+      0,
+      2417,
+      4834,
+      7252,
+      9669,
+      12086,
+      14504,
+      16921,
+      19339,
+      21756,
+      24173,
+      26591,
+      29008,
+      31426,
+      33843,
+      36260,
+      38678,
+      41095,
+      43512,
+      45930,
+      48347,
+      50765,
+      53182,
+      55599,
+      58017,
+      60434,
+      62852,
+      65269,
+      67686,
+      70104,
+      72521,
+      74939
+    ],
+    "roundtrip_flat_equal": true,
+    "roundtrip_max_abs_diff": 0.0,
+    "transpose_hypothesis_max_abs_diff": 1.0,
+    "row_col_alignment_checks": [
+      {
+        "flat_index": 25,
+        "row": 1,
+        "col": 1,
+        "formula": "flat = row * 24 + col",
+        "equal_for_sample_subset": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "flat_index": 50,
+        "row": 2,
+        "col": 2,
+        "formula": "flat = row * 24 + col",
+        "equal_for_sample_subset": true,
+        "max_abs_diff": 0.0
+      }
+    ]
+  },
+  "validation": {
+    "raw_shape": [
+      13225,
+      576,
+      27
+    ],
+    "loader_shape": [
+      13225,
+      24,
+      24,
+      27
+    ],
+    "raw_dtype": "float32",
+    "loader_dtype": "float32",
+    "sampled_count": 32,
+    "sampled_indices": [
+      0,
+      426,
+      853,
+      1279,
+      1706,
+      2132,
+      2559,
+      2986,
+      3412,
+      3839,
+      4265,
+      4692,
+      5118,
+      5545,
+      5972,
+      6398,
+      6825,
+      7251,
+      7678,
+      8105,
+      8531,
+      8958,
+      9384,
+      9811,
+      10237,
+      10664,
+      11091,
+      11517,
+      11944,
+      12370,
+      12797,
+      13224
+    ],
+    "roundtrip_flat_equal": true,
+    "roundtrip_max_abs_diff": 0.0,
+    "transpose_hypothesis_max_abs_diff": 1.0,
+    "row_col_alignment_checks": [
+      {
+        "flat_index": 25,
+        "row": 1,
+        "col": 1,
+        "formula": "flat = row * 24 + col",
+        "equal_for_sample_subset": true,
+        "max_abs_diff": 0.0
+      },
+      {
+        "flat_index": 50,
+        "row": 2,
+        "col": 2,
+        "formula": "flat = row * 24 + col",
+        "equal_for_sample_subset": true,
+        "max_abs_diff": 0.0
+      }
+    ]
+  },
+  "explicit_answers": {
+    "does_flat_25_remain_b2": true,
+    "does_flat_50_remain_c3": true,
+    "is_there_row_column_transpose": false,
+    "is_there_channel_order_transpose": false,
+    "hidden_reshape_corruption_detected": false,
+    "loader_likely_responsible": false
+  },
+  "notes": [
+    "Probe is read-only and checks reshape/axis consistency only.",
+    "No model inference and no dataset mutation performed."
+  ]
+}
