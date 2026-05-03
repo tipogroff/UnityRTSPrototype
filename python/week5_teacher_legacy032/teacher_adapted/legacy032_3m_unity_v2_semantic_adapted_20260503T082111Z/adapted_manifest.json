@@ -1,0 +1,48 @@
+{
+  "generated_at_utc": "2026-05-03T08:21:54Z",
+  "teacher_lineage": "legacy032",
+  "observation_semantics_version": "unity_v2_runtime_stage10d4",
+  "source_observation_semantics": "legacy032_raw_empirical",
+  "target_observation_semantics": "unity_v2_runtime",
+  "mapping_file": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\observation_semantics\\legacy032_to_unity_v2_observation_mapping.json",
+  "mapping_file_hash": "c055a5012aaa8fc0d33eb382b180813457adbe20e21372e35b705a7e317cad36",
+  "conversion_timestamp": "2026-05-03T08:21:54Z",
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "explicit_non_claims": [
+    "No claim of exact Gym-microRTS to Unity semantic parity.",
+    "No retraining/PPO/checkpoint mutation performed.",
+    "No runtime semantic mutation in Unity ActionApplier/MatchManager."
+  ],
+  "critical_unavailable_channels": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "unavailable_channels": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ]
+}

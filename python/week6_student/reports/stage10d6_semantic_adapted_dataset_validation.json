@@ -1,0 +1,125 @@
+{
+  "stage": "10D.4",
+  "diagnostic": "semantic_adapted_dataset_validation",
+  "adapted_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "status": "pass",
+  "sample_count": 88165,
+  "core_checks": {
+    "shape_expected_[N,576,27]": true,
+    "dtype_float32": true,
+    "no_nan": true,
+    "no_inf": true,
+    "value_range_0_1": true
+  },
+  "group_metrics": {
+    "owner": {
+      "sum_min": 1.0,
+      "sum_max": 1.0,
+      "share_sum_eq_1": 1.0,
+      "share_sum_eq_0": 0.0,
+      "share_sum_le_1": 1.0,
+      "binary_values_only": true
+    },
+    "unit_type": {
+      "sum_min": 0.0,
+      "sum_max": 1.0,
+      "share_sum_eq_1": 0.055578791659577687,
+      "share_sum_eq_0": 0.9444212083404223,
+      "share_sum_le_1": 1.0,
+      "binary_values_only": true
+    },
+    "current_action": {
+      "sum_min": 1.0,
+      "sum_max": 1.0,
+      "share_sum_eq_1": 1.0,
+      "share_sum_eq_0": 0.0,
+      "share_sum_le_1": 1.0,
+      "binary_values_only": true
+    },
+    "direction": {
+      "sum_min": 0.0,
+      "sum_max": 1.0,
+      "share_sum_eq_1": 0.0034305744595045907,
+      "share_sum_eq_0": 0.9965694255404954,
+      "share_sum_le_1": 1.0,
+      "binary_values_only": true
+    },
+    "produce": {
+      "sum_min": 0.0,
+      "sum_max": 1.0,
+      "share_sum_eq_1": 0.0017258714720505114,
+      "share_sum_eq_0": 0.9982741285279495,
+      "share_sum_le_1": 1.0,
+      "binary_values_only": true
+    }
+  },
+  "focus_cells": {
+    "B2": {
+      "mean_owner": [
+        0.01633301191031933,
+        0.9829864501953125,
+        0.0006805421435274184
+      ],
+      "mean_unit_type": [
+        0.0,
+        0.0,
+        0.0,
+        0.9836670160293579,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "C3": {
+      "mean_owner": [
+        0.0039131175726652145,
+        0.995519757270813,
+        0.0005671184626407921
+      ],
+      "mean_unit_type": [
+        0.0,
+        0.995519757270813,
+        0.0,
+        0.0005671184626407921,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "actor_label_proxy_compatibility": {
+    "worker_harvest_proxy": {
+      "count": 86570,
+      "unit_type_mean": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected_unity_peak_index": 3,
+      "compatible": true,
+      "l2_from_legacy_wrong_pattern": 1.7320507764816284
+    },
+    "base_produce_proxy": {
+      "count": 87645,
+      "unit_type_mean": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected_unity_peak_index": 1,
+      "compatible": true,
+      "l2_from_legacy_wrong_pattern": 1.7320507764816284
+    }
+  },
+  "manifest_observation_semantics_version": "unity_v2_runtime_stage10d6",
+  "hard_failures": [],
+  "warnings": []
+}

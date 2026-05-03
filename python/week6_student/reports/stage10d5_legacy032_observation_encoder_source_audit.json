@@ -1,0 +1,434 @@
+{
+  "stage": "10D.5",
+  "diagnostic": "legacy032_observation_encoder_source_audit",
+  "status": "pass",
+  "site_packages_root": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages",
+  "audited_files": {
+    "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py": {
+      "exists": true,
+      "key_evidence": {
+        "num_planes": {
+          "line": 81,
+          "start_line": 80,
+          "end_line": 82,
+          "snippet": [
+            {
+              "line": 80,
+              "text": "        # num_planes_unit_type(z), num_planes_unit_action(6)]"
+            },
+            {
+              "line": 81,
+              "text": "        self.num_planes = [5, 5, 3, len(self.utt['unitTypes'])+1, 6]"
+            },
+            {
+              "line": 82,
+              "text": "        self.observation_space = gym.spaces.Box(low=0.0,"
+            }
+          ]
+        },
+        "observation_space": {
+          "line": 82,
+          "start_line": 81,
+          "end_line": 83,
+          "snippet": [
+            {
+              "line": 81,
+              "text": "        self.num_planes = [5, 5, 3, len(self.utt['unitTypes'])+1, 6]"
+            },
+            {
+              "line": 82,
+              "text": "        self.observation_space = gym.spaces.Box(low=0.0,"
+            },
+            {
+              "line": 83,
+              "text": "            high=1.0,"
+            }
+          ]
+        },
+        "encode_obs": {
+          "line": 117,
+          "start_line": 116,
+          "end_line": 118,
+          "snippet": [
+            {
+              "line": 116,
+              "text": ""
+            },
+            {
+              "line": 117,
+              "text": "    def _encode_obs(self, obs):"
+            },
+            {
+              "line": 118,
+              "text": "        obs = obs.reshape(len(obs), -1).clip(0, np.array([self.num_planes]).T-1)"
+            }
+          ]
+        },
+        "reshape_clip": {
+          "line": 118,
+          "start_line": 117,
+          "end_line": 119,
+          "snippet": [
+            {
+              "line": 117,
+              "text": "    def _encode_obs(self, obs):"
+            },
+            {
+              "line": 118,
+              "text": "        obs = obs.reshape(len(obs), -1).clip(0, np.array([self.num_planes]).T-1)"
+            },
+            {
+              "line": 119,
+              "text": "        obs_planes = np.zeros((self.height * self.width, "
+            }
+          ]
+        },
+        "one_hot_first_group": {
+          "line": 121,
+          "start_line": 120,
+          "end_line": 122,
+          "snippet": [
+            {
+              "line": 120,
+              "text": "                               sum(self.num_planes)), dtype=np.int32)"
+            },
+            {
+              "line": 121,
+              "text": "        obs_planes[np.arange(len(obs_planes)),obs[0]] = 1"
+            },
+            {
+              "line": 122,
+              "text": ""
+            }
+          ]
+        },
+        "one_hot_other_groups": {
+          "line": 124,
+          "start_line": 123,
+          "end_line": 125,
+          "snippet": [
+            {
+              "line": 123,
+              "text": "        for i in range(1, len(self.num_planes)):"
+            },
+            {
+              "line": 124,
+              "text": "            obs_planes[np.arange(len(obs_planes)),obs[i]+sum(self.num_planes[:i])] = 1"
+            },
+            {
+              "line": 125,
+              "text": "        return obs_planes.reshape(self.height, self.width, -1)"
+            }
+          ]
+        },
+        "grid_env_class": {
+          "line": 168,
+          "start_line": 167,
+          "end_line": 169,
+          "snippet": [
+            {
+              "line": 167,
+              "text": ""
+            },
+            {
+              "line": 168,
+              "text": "class MicroRTSGridModeVecEnv(MicroRTSVecEnv):"
+            },
+            {
+              "line": 169,
+              "text": ""
+            }
+          ]
+        },
+        "grid_step": {
+          "line": 195,
+          "start_line": 194,
+          "end_line": 196,
+          "snippet": [
+            {
+              "line": 194,
+              "text": "    def step_wait(self):"
+            },
+            {
+              "line": 195,
+              "text": "        responses = self.vec_client.gameStep(self.actions, [0 for _ in range(self.num_envs)])"
+            },
+            {
+              "line": 196,
+              "text": "        raw_obs, reward, done, info = np.array(responses.observation), np.array(responses.reward), np.array(responses.done), [{} for _ in range(self.num_selfplay_envs+self.num_envs)]"
+            }
+          ]
+        }
+      }
+    },
+    "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/global_agent_env.py": {
+      "exists": true,
+      "key_evidence": {
+        "mask_player_logic": {
+          "line": 27,
+          "start_line": 26,
+          "end_line": 28,
+          "snippet": [
+            {
+              "line": 26,
+              "text": "    # print(target_unit_location_mask.reshape(16,16))"
+            },
+            {
+              "line": 27,
+              "text": "    if player == 1:"
+            },
+            {
+              "line": 28,
+              "text": "        return target_unit_location_mask, action_mask"
+            }
+          ]
+        },
+        "mask_owner_values": {
+          "line": 20,
+          "start_line": 19,
+          "end_line": 21,
+          "snippet": [
+            {
+              "line": 19,
+              "text": "    # * np.where((obs[2])==2,0, (obs[2]))).flatten() means mask units not owned"
+            },
+            {
+              "line": 20,
+              "text": "    unit_location_mask = ((raw_obs[3].clip(max=1) - raw_obs[4].clip(max=1)) * np.where((raw_obs[2])==2,0, (raw_obs[2]))).flatten()"
+            },
+            {
+              "line": 21,
+              "text": "    target_unit_location_mask = ((raw_obs[3].clip(max=1) - raw_obs[4].clip(max=1)) * np.where((raw_obs[2])==1,0, (raw_obs[2]).clip(max=1))).flatten()"
+            }
+          ]
+        },
+        "num_planes": {
+          "line": 69,
+          "start_line": 68,
+          "end_line": 70,
+          "snippet": [
+            {
+              "line": 68,
+              "text": "        # num_planes_unit_type(z), num_planes_unit_action(6)]"
+            },
+            {
+              "line": 69,
+              "text": "        self.num_planes = [5, 5, 3, len(self.utt['unitTypes'])+1, 6]"
+            },
+            {
+              "line": 70,
+              "text": "        self.observation_space = spaces.Box(low=0.0,"
+            }
+          ]
+        }
+      }
+    },
+    "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py": {
+      "exists": true,
+      "key_evidence": {
+        "create_grid_env": {
+          "line": 317,
+          "start_line": 316,
+          "end_line": 318,
+          "snippet": [
+            {
+              "line": 316,
+              "text": ""
+            },
+            {
+              "line": 317,
+              "text": "def _create_target_24x24_gridmode_env(metadata: Dict[str, Any], max_steps: int):"
+            },
+            {
+              "line": 318,
+              "text": "    from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv"
+            }
+          ]
+        },
+        "env_step": {
+          "line": 667,
+          "start_line": 666,
+          "end_line": 668,
+          "snippet": [
+            {
+              "line": 666,
+              "text": ""
+            },
+            {
+              "line": 667,
+              "text": "                step_result = env.step(action_env)"
+            },
+            {
+              "line": 668,
+              "text": "                if len(step_result) == 4:"
+            }
+          ]
+        },
+        "append_observation": {
+          "line": 705,
+          "start_line": 704,
+          "end_line": 706,
+          "snippet": [
+            {
+              "line": 704,
+              "text": "                step_id_t.append(int(step))"
+            },
+            {
+              "line": 705,
+              "text": "                observation_t.append(obs_step.astype(np.float32, copy=False))"
+            },
+            {
+              "line": 706,
+              "text": "                raw_action_t.append(raw_action_step.astype(np.int32, copy=False))"
+            }
+          ]
+        },
+        "save_npz_observation": {
+          "line": 808,
+          "start_line": 807,
+          "end_line": 809,
+          "snippet": [
+            {
+              "line": 807,
+              "text": "        step_id=np.asarray(step_id_t, dtype=np.int32),"
+            },
+            {
+              "line": 808,
+              "text": "        observation_t=np.asarray(observation_t, dtype=np.float32),"
+            },
+            {
+              "line": 809,
+              "text": "        raw_action_t=raw_action_obj,"
+            }
+          ]
+        }
+      }
+    },
+    "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/scripts/ppo_gridnet_legacy032_24x24_local_save.py": {
+      "exists": true,
+      "key_evidence": {
+        "grid_env_import": {
+          "line": 18,
+          "start_line": 17,
+          "end_line": 19,
+          "snippet": [
+            {
+              "line": 17,
+              "text": "from gym.wrappers import TimeLimit, Monitor"
+            },
+            {
+              "line": 18,
+              "text": "from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv"
+            },
+            {
+              "line": 19,
+              "text": "from gym_microrts import microrts_ai"
+            }
+          ]
+        },
+        "grid_env_construction": {
+          "line": 197,
+          "start_line": 196,
+          "end_line": 198,
+          "snippet": [
+            {
+              "line": 196,
+              "text": "torch.backends.cudnn.deterministic = args.torch_deterministic"
+            },
+            {
+              "line": 197,
+              "text": "envs = MicroRTSGridModeVecEnv("
+            },
+            {
+              "line": 198,
+              "text": "    num_selfplay_envs=args.num_selfplay_envs,"
+            }
+          ]
+        },
+        "env_reset_obs": {
+          "line": 540,
+          "start_line": 539,
+          "end_line": 541,
+          "snippet": [
+            {
+              "line": 539,
+              "text": "# https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail/blob/84a7582477fb0d5c82ad6d850fe476829dddd2e1/a2c_ppo_acktr/storage.py#L60"
+            },
+            {
+              "line": 540,
+              "text": "next_obs = torch.Tensor(envs.reset()).to(device)"
+            },
+            {
+              "line": 541,
+              "text": "next_done = torch.zeros(args.num_envs).to(device)"
+            }
+          ]
+        },
+        "env_step_obs": {
+          "line": 615,
+          "start_line": 614,
+          "end_line": 616,
+          "snippet": [
+            {
+              "line": 614,
+              "text": "        try:"
+            },
+            {
+              "line": 615,
+              "text": "            next_obs, rs, ds, infos = envs.step(java_valid_actions)"
+            },
+            {
+              "line": 616,
+              "text": "            next_obs = torch.Tensor(next_obs).to(device)"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "answers": {
+    "which_source_file_defines_27_channel_observation": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+    "are_channels_0_to_26_named_anywhere": {
+      "value": false,
+      "note": "group-level planes are declared; per-channel names 0..26 are not explicitly enumerated in source"
+    },
+    "are_owner_unit_type_channels_directly_declared": {
+      "owner_declared_group_level": true,
+      "unit_type_declared_group_level": true,
+      "note": "declared as grouped planes via num_planes, not as explicit Unity target channel IDs"
+    },
+    "is_observation_perspective_relative_or_absolute": {
+      "value": "mixed: encoded observation uses absolute player planes; action-mask utilities include player-dependent logic",
+      "player_dependent_logic_detected": true
+    },
+    "does_encoding_depend_on_player_perspective": true,
+    "is_raw_observation_transformed_by_wrappers_before_export": true
+  },
+  "channel_count_evidence": [
+    {
+      "file": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+      "evidence": {
+        "line": 81,
+        "start_line": 80,
+        "end_line": 82,
+        "snippet": [
+          {
+            "line": 80,
+            "text": "        # num_planes_unit_type(z), num_planes_unit_action(6)]"
+          },
+          {
+            "line": 81,
+            "text": "        self.num_planes = [5, 5, 3, len(self.utt['unitTypes'])+1, 6]"
+          },
+          {
+            "line": 82,
+            "text": "        self.observation_space = gym.spaces.Box(low=0.0,"
+          }
+        ]
+      },
+      "derived_channel_formula": "sum([5,5,3,len(unitTypes)+1,6])"
+    }
+  ],
+  "hard_failures": [],
+  "warnings": []
+}

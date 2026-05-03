@@ -1,0 +1,50 @@
+{
+  "stage": "10D.6",
+  "diagnostic": "unity_vs_bc_nearest_neighbors_corrected",
+  "generated_at_utc": "2026-05-03T08:55:53Z",
+  "adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "unity_snapshot": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\stage10r_noop_collapse_snapshot_step0001.json",
+  "status": "pass",
+  "unity_comparison": {
+    "B2": {
+      "label": "B2",
+      "cos_sim_worker_mean": 0.3999999999999999,
+      "cos_sim_base_mean": 0.22671159103164037,
+      "cos_sim_resource_ranged_wrong_pattern": 0.0,
+      "unit_type_peak_index": 3,
+      "unit_type_peak_name": "Worker",
+      "owner_peak_index": 1,
+      "owner_peak_name": "Friendly"
+    },
+    "C3": {
+      "label": "C3",
+      "cos_sim_worker_mean": 0.19999999999999996,
+      "cos_sim_base_mean": 0.4308470514353961,
+      "cos_sim_resource_ranged_wrong_pattern": 0.0,
+      "unit_type_peak_index": 1,
+      "unit_type_peak_name": "Base",
+      "owner_peak_index": 1,
+      "owner_peak_name": "Friendly"
+    }
+  },
+  "worker_harvest_mean_unit_type": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "base_produce_mean_unit_type": [
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "hard_failures": [],
+  "warnings": []
+}

@@ -1,0 +1,24 @@
+{
+  "stage": "10D.6",
+  "diagnostic": "dataset_action_distribution_corrected",
+  "generated_at_utc": "2026-05-03T08:55:53Z",
+  "adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "status": "pass",
+  "total_cells": 50783040,
+  "action_type_distribution": {
+    "NoOp": 50608730,
+    "Move": 0,
+    "Harvest": 86570,
+    "Return": 0,
+    "Produce": 87645,
+    "Attack": 95
+  },
+  "action_type_share": {
+    "NoOp": 0.9965675548372055,
+    "Move": 0.0,
+    "Harvest": 0.0017047029874540792,
+    "Return": 0.0,
+    "Produce": 0.0017258714720505114,
+    "Attack": 1.8707032899172637e-06
+  }
+}

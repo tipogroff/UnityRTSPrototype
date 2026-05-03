@@ -1,0 +1,172 @@
+{
+  "generated_at_utc": "2026-05-03T08:53:04Z",
+  "status": "success",
+  "source_rollout_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "mapping_file": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\observation_semantics\\legacy032_to_unity_v2_observation_mapping.json",
+  "mapping_file_hash": "b9ba571ba0456dd939e183f15e25f9d5d4d7916bc979f89d285211563532f617",
+  "observation_semantics_version": "unity_v2_runtime_stage10d6",
+  "source_observation_semantics": "legacy032_raw_empirical",
+  "target_observation_semantics": "unity_v2_runtime",
+  "sample_count": 88165,
+  "raw_observation_shape": [
+    88165,
+    24,
+    24,
+    27
+  ],
+  "adapted_observation_shape": [
+    88165,
+    576,
+    27
+  ],
+  "actions_shape": [
+    88165,
+    576,
+    7
+  ],
+  "channels_applied_count": 27,
+  "channel_application": {
+    "0": {
+      "kind": "unavailable",
+      "reason": "raw channel identity for normalized HP remains unresolved from empirical evidence"
+    },
+    "1": {
+      "kind": "raw_channel",
+      "raw_channel": 1
+    },
+    "2": {
+      "kind": "raw_channel",
+      "raw_channel": 10
+    },
+    "3": {
+      "kind": "raw_channel",
+      "raw_channel": 11
+    },
+    "4": {
+      "kind": "raw_channel",
+      "raw_channel": 12
+    },
+    "5": {
+      "kind": "raw_channel",
+      "raw_channel": 14
+    },
+    "6": {
+      "kind": "raw_channel",
+      "raw_channel": 15
+    },
+    "7": {
+      "kind": "raw_channel",
+      "raw_channel": 16
+    },
+    "8": {
+      "kind": "raw_channel",
+      "raw_channel": 17
+    },
+    "9": {
+      "kind": "raw_channel",
+      "raw_channel": 18
+    },
+    "10": {
+      "kind": "raw_channel",
+      "raw_channel": 19
+    },
+    "11": {
+      "kind": "raw_channel",
+      "raw_channel": 20
+    },
+    "12": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 0
+    },
+    "13": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 1
+    },
+    "14": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 2
+    },
+    "15": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 3
+    },
+    "16": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 4
+    },
+    "17": {
+      "kind": "derived_action_type_one_hot",
+      "class_index": 5
+    },
+    "18": {
+      "kind": "derived_direction_one_hot",
+      "class_index": 0
+    },
+    "19": {
+      "kind": "derived_direction_one_hot",
+      "class_index": 1
+    },
+    "20": {
+      "kind": "derived_direction_one_hot",
+      "class_index": 2
+    },
+    "21": {
+      "kind": "derived_direction_one_hot",
+      "class_index": 3
+    },
+    "22": {
+      "kind": "derived_produce_type_one_hot",
+      "class_index": 0,
+      "raw_produce_to_unity_map": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3
+      }
+    },
+    "23": {
+      "kind": "derived_produce_type_one_hot",
+      "class_index": 1,
+      "raw_produce_to_unity_map": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3
+      }
+    },
+    "24": {
+      "kind": "derived_produce_type_one_hot",
+      "class_index": 2,
+      "raw_produce_to_unity_map": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3
+      }
+    },
+    "25": {
+      "kind": "derived_produce_type_one_hot",
+      "class_index": 3,
+      "raw_produce_to_unity_map": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3
+      }
+    },
+    "26": {
+      "kind": "derived_attack_target_scalar"
+    }
+  },
+  "unavailable_channels": [
+    0
+  ],
+  "critical_unavailable_channels": [],
+  "adapted_has_nan": false,
+  "adapted_has_inf": false,
+  "adapted_min": 0.0,
+  "adapted_max": 1.0,
+  "warnings": [],
+  "hard_failures": []
+}

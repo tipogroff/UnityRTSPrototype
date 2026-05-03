@@ -1,0 +1,1150 @@
+{
+  "mapping_spec_version": "stage10d6_v1",
+  "observation_semantics_version": "unity_v2_runtime_stage10d6",
+  "source_observation_semantics": "legacy032_raw_source_plus_controlled_probe",
+  "target_observation_semantics": "unity_v2_runtime",
+  "owner_mode_target": "perspective_friendly_enemy",
+  "owner_mode_ambiguous": false,
+  "notes": [
+    "This mapping is explicit and versioned.",
+    "No silent channel remap is allowed.",
+    "Unknown channels are represented explicitly as unavailable with fallback behavior.",
+    "owner/unit_type mapping recovered in Stage10D.5 from source-code encoder audit and controlled raw observation probe",
+    "raw channel 13 is empty/no-unit slot and is intentionally not mapped to Unity unit_type",
+    "mapping spec patched in Stage10D.6 from Stage10D.5 candidate; archived pre-patch spec at observation_semantics/archive/legacy032_to_unity_v2_observation_mapping.stage10d4_before_stage10d6_patch.json",
+    "patch applied at 2026-05-03T08:51:02Z",
+    "owner/unit_type mapping recovered in Stage10D.5 from source-code encoder audit and controlled raw observation probe",
+    "raw channel 13 is empty/no-unit slot and is intentionally not mapped to Unity unit_type",
+    "mapping spec patched in Stage10D.6 from Stage10D.5 candidate; archived pre-patch spec at observation_semantics/archive/legacy032_to_unity_v2_observation_mapping.stage10d4_before_stage10d6_patch.json",
+    "patch applied at 2026-05-03T08:52:02Z"
+  ],
+  "channels": [
+    {
+      "target_channel": 0,
+      "target_name": "hit_points",
+      "source": {
+        "type": "unavailable",
+        "reason": "raw channel identity for normalized HP remains unresolved from empirical evidence"
+      },
+      "confidence": "unavailable",
+      "validation_rule": "range_0_1_scalar",
+      "fallback_behavior": "set_zero_and_flag_unavailable"
+    },
+    {
+      "target_channel": 1,
+      "target_name": "resources",
+      "source": {
+        "type": "raw_channel",
+        "index": 1
+      },
+      "confidence": "empirical",
+      "validation_rule": "range_0_1_scalar",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 2,
+      "target_name": "owner_neutral",
+      "source": {
+        "type": "raw_channel",
+        "index": 10
+      },
+      "confidence": "exact",
+      "validation_rule": "owner_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
+        "controlled_state_evidence": {
+          "raw_owner_neutral": 10,
+          "raw_owner_player0": 11,
+          "raw_owner_player1": 12,
+          "proxy_agreement": true
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            10,
+            12
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 1.0,
+            "share_sum_eq_0": 0.0,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "actor_dominant_local": 1,
+          "actor_margin": 1.0,
+          "player0_peak_local": 1,
+          "player1_peak_local": 2,
+          "player_peaks_distinct": true,
+          "means": {
+            "actor_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player0_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player1_cells": [
+              0.32666015625,
+              0.0,
+              0.67333984375
+            ]
+          },
+          "score": 2.8
+        },
+        "confidence": "exact"
+      }
+    },
+    {
+      "target_channel": 3,
+      "target_name": "owner_friendly",
+      "source": {
+        "type": "raw_channel",
+        "index": 11
+      },
+      "confidence": "exact",
+      "validation_rule": "owner_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
+        "controlled_state_evidence": {
+          "raw_owner_neutral": 10,
+          "raw_owner_player0": 11,
+          "raw_owner_player1": 12,
+          "proxy_agreement": true
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            10,
+            12
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 1.0,
+            "share_sum_eq_0": 0.0,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "actor_dominant_local": 1,
+          "actor_margin": 1.0,
+          "player0_peak_local": 1,
+          "player1_peak_local": 2,
+          "player_peaks_distinct": true,
+          "means": {
+            "actor_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player0_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player1_cells": [
+              0.32666015625,
+              0.0,
+              0.67333984375
+            ]
+          },
+          "score": 2.8
+        },
+        "confidence": "exact"
+      }
+    },
+    {
+      "target_channel": 4,
+      "target_name": "owner_enemy",
+      "source": {
+        "type": "raw_channel",
+        "index": 12
+      },
+      "confidence": "exact",
+      "validation_rule": "owner_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
+        "controlled_state_evidence": {
+          "raw_owner_neutral": 10,
+          "raw_owner_player0": 11,
+          "raw_owner_player1": 12,
+          "proxy_agreement": true
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            10,
+            12
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 1.0,
+            "share_sum_eq_0": 0.0,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "actor_dominant_local": 1,
+          "actor_margin": 1.0,
+          "player0_peak_local": 1,
+          "player1_peak_local": 2,
+          "player_peaks_distinct": true,
+          "means": {
+            "actor_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player0_cells": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player1_cells": [
+              0.32666015625,
+              0.0,
+              0.67333984375
+            ]
+          },
+          "score": 2.8
+        },
+        "confidence": "exact"
+      }
+    },
+    {
+      "target_channel": 5,
+      "target_name": "unit_type_resource",
+      "source": {
+        "type": "raw_channel",
+        "index": 14
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 6,
+      "target_name": "unit_type_base",
+      "source": {
+        "type": "raw_channel",
+        "index": 15
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 7,
+      "target_name": "unit_type_barracks",
+      "source": {
+        "type": "raw_channel",
+        "index": 16
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 8,
+      "target_name": "unit_type_worker",
+      "source": {
+        "type": "raw_channel",
+        "index": 17
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 9,
+      "target_name": "unit_type_light",
+      "source": {
+        "type": "raw_channel",
+        "index": 18
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 10,
+      "target_name": "unit_type_heavy",
+      "source": {
+        "type": "raw_channel",
+        "index": 19
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 11,
+      "target_name": "unit_type_ranged",
+      "source": {
+        "type": "raw_channel",
+        "index": 20
+      },
+      "confidence": "exact",
+      "validation_rule": "unit_type_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
+      "evidence": {
+        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
+        "controlled_state_evidence": {
+          "raw_unit_type_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Barracks": 16,
+            "Worker": 17,
+            "Light": 18,
+            "Heavy": 19,
+            "Ranged": 20
+          },
+          "controlled_observed_channels": {
+            "Resource": 14,
+            "Base": 15,
+            "Worker": 17
+          },
+          "controlled_observed_agree_with_source_exact": true,
+          "proxy_window_agree_with_source_exact_start13": false
+        },
+        "rollout_proxy_evidence": {
+          "window": [
+            18,
+            24
+          ],
+          "onehot_metrics": {
+            "share_sum_eq_1": 0.9991917080349393,
+            "share_sum_eq_0": 0.0008082919650607639,
+            "share_sum_le_1": 1.0,
+            "share_sum_gt_1": 0.0
+          },
+          "worker_proxy_peak_local": 3,
+          "base_proxy_peak_local": 3,
+          "combat_proxy_peak_local": 0,
+          "resource_proxy_peak_local": 3,
+          "worker_proxy_margin": 1.0,
+          "base_proxy_margin": 1.0,
+          "resource_proxy_margin": 0.97711181640625,
+          "means": {
+            "harvest_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "produce_actor": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "attack_actor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "resource_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.98565673828125,
+              0.008544921875,
+              0.00579833984375,
+              0.0
+            ],
+            "empty_cells": [
+              0.0,
+              0.0,
+              0.0,
+              0.994140625,
+              0.005859375,
+              0.0,
+              0.0
+            ]
+          },
+          "score": 3.6862670898437497
+        },
+        "confidence": "empirical_high"
+      }
+    },
+    {
+      "target_channel": 12,
+      "target_name": "current_action_noop",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 0
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 13,
+      "target_name": "current_action_move",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 1
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 14,
+      "target_name": "current_action_harvest",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 2
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 15,
+      "target_name": "current_action_return",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 3
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 16,
+      "target_name": "current_action_produce",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 4
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 17,
+      "target_name": "current_action_attack",
+      "source": {
+        "type": "derived_action_type_one_hot",
+        "class_index": 5
+      },
+      "confidence": "derived",
+      "validation_rule": "current_action_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 18,
+      "target_name": "direction_north",
+      "source": {
+        "type": "derived_direction_one_hot",
+        "class_index": 0
+      },
+      "confidence": "derived",
+      "validation_rule": "direction_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 19,
+      "target_name": "direction_east",
+      "source": {
+        "type": "derived_direction_one_hot",
+        "class_index": 1
+      },
+      "confidence": "derived",
+      "validation_rule": "direction_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 20,
+      "target_name": "direction_south",
+      "source": {
+        "type": "derived_direction_one_hot",
+        "class_index": 2
+      },
+      "confidence": "derived",
+      "validation_rule": "direction_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 21,
+      "target_name": "direction_west",
+      "source": {
+        "type": "derived_direction_one_hot",
+        "class_index": 3
+      },
+      "confidence": "derived",
+      "validation_rule": "direction_one_hot_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 22,
+      "target_name": "produce_worker",
+      "source": {
+        "type": "derived_produce_type_one_hot",
+        "class_index": 0,
+        "raw_produce_to_unity_map": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3
+        }
+      },
+      "confidence": "derived",
+      "validation_rule": "produce_one_hot_or_zero_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 23,
+      "target_name": "produce_light",
+      "source": {
+        "type": "derived_produce_type_one_hot",
+        "class_index": 1,
+        "raw_produce_to_unity_map": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3
+        }
+      },
+      "confidence": "derived",
+      "validation_rule": "produce_one_hot_or_zero_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 24,
+      "target_name": "produce_heavy",
+      "source": {
+        "type": "derived_produce_type_one_hot",
+        "class_index": 2,
+        "raw_produce_to_unity_map": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3
+        }
+      },
+      "confidence": "derived",
+      "validation_rule": "produce_one_hot_or_zero_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 25,
+      "target_name": "produce_ranged",
+      "source": {
+        "type": "derived_produce_type_one_hot",
+        "class_index": 3,
+        "raw_produce_to_unity_map": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3
+        }
+      },
+      "confidence": "derived",
+      "validation_rule": "produce_one_hot_or_zero_group",
+      "fallback_behavior": "set_zero_and_flag"
+    },
+    {
+      "target_channel": 26,
+      "target_name": "attack_target",
+      "source": {
+        "type": "derived_attack_target_scalar",
+        "formula": "if action_type==attack then (attack_target_local+1)/49 else 0"
+      },
+      "confidence": "derived",
+      "validation_rule": "range_0_1_scalar",
+      "fallback_behavior": "set_zero_and_flag"
+    }
+  ],
+  "group_validation": {
+    "owner": {
+      "target_range": [
+        2,
+        4
+      ],
+      "rule": "sum in {0,1}; values in {0,1}",
+      "multi_hot_forbidden": true
+    },
+    "unit_type": {
+      "target_range": [
+        5,
+        11
+      ],
+      "rule": "sum in {0,1}; values in {0,1}",
+      "multi_hot_forbidden": true
+    },
+    "current_action": {
+      "target_range": [
+        12,
+        17
+      ],
+      "rule": "sum in {0,1}; values in {0,1}",
+      "multi_hot_forbidden": true
+    },
+    "direction": {
+      "target_range": [
+        18,
+        21
+      ],
+      "rule": "sum in {0,1}; values in {0,1}",
+      "multi_hot_forbidden": true
+    },
+    "produce": {
+      "target_range": [
+        22,
+        25
+      ],
+      "rule": "sum in {0,1}; values in {0,1}",
+      "multi_hot_forbidden": true
+    }
+  },
+  "critical_target_groups": [
+    "owner",
+    "unit_type",
+    "current_action",
+    "direction"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "stage": "10D.5",
+  "diagnostic": "owner_unit_mapping_candidate_builder",
+  "status": "pass",
+  "base_mapping": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.json",
+  "candidate_mapping_output": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.stage10d5_candidate.json",
+  "owner_candidate": {
+    "raw_owner_neutral": 10,
+    "raw_owner_player0": 11,
+    "raw_owner_player1": 12,
+    "proxy_agreement": true
+  },
+  "unit_type_candidate": {
+    "raw_unit_type_channels": {
+      "Resource": 14,
+      "Base": 15,
+      "Barracks": 16,
+      "Worker": 17,
+      "Light": 18,
+      "Heavy": 19,
+      "Ranged": 20
+    },
+    "controlled_observed_channels": {
+      "Resource": 14,
+      "Base": 15,
+      "Worker": 17
+    },
+    "controlled_observed_agree_with_source_exact": true,
+    "proxy_window_agree_with_source_exact_start13": false
+  },
+  "critical_unavailable_after_candidate": [],
+  "mapping_complete_for_critical_groups": true,
+  "hard_failures": []
+}

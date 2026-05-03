@@ -1,0 +1,19 @@
+{
+  "stage": "10D.6",
+  "diagnostic": "adapter_rebuild_run",
+  "started_at_utc": "2026-05-03T08:52:17Z",
+  "finished_at_utc": "2026-05-03T08:53:04Z",
+  "returncode": 0,
+  "run_label": "legacy032_3m_unity_v2_semantic_adapted_stage10d6",
+  "mapping_spec_version": "stage10d6_v1",
+  "adapter_script": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\adapt_legacy032_to_unity_v2_observation_semantics.py",
+  "mapping_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\observation_semantics\\legacy032_to_unity_v2_observation_mapping.json",
+  "raw_rollout_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted",
+  "status": "success",
+  "explicit_non_claims": [
+    "No retraining, PPO, or checkpoint mutation performed.",
+    "No raw rollout overwrite.",
+    "No old adapted dataset overwrite."
+  ]
+}

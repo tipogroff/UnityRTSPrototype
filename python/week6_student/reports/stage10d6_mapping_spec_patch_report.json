@@ -1,0 +1,133 @@
+{
+  "stage": "10D.6",
+  "diagnostic": "mapping_spec_patch",
+  "generated_at_utc": "2026-05-03T08:52:02Z",
+  "base_spec_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.json",
+  "candidate_spec_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.stage10d5_candidate.json",
+  "patched_channels": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "pre_check_errors": [],
+  "patch_log": [
+    {
+      "target_channel": 2,
+      "target_name": "owner_neutral",
+      "old_confidence": "exact",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 10,
+      "patched": true
+    },
+    {
+      "target_channel": 3,
+      "target_name": "owner_friendly",
+      "old_confidence": "exact",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 11,
+      "patched": true
+    },
+    {
+      "target_channel": 4,
+      "target_name": "owner_enemy",
+      "old_confidence": "exact",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 12,
+      "patched": true
+    },
+    {
+      "target_channel": 5,
+      "target_name": "unit_type_resource",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 14,
+      "patched": true
+    },
+    {
+      "target_channel": 6,
+      "target_name": "unit_type_base",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 15,
+      "patched": true
+    },
+    {
+      "target_channel": 7,
+      "target_name": "unit_type_barracks",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 16,
+      "patched": true
+    },
+    {
+      "target_channel": 8,
+      "target_name": "unit_type_worker",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 17,
+      "patched": true
+    },
+    {
+      "target_channel": 9,
+      "target_name": "unit_type_light",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 18,
+      "patched": true
+    },
+    {
+      "target_channel": 10,
+      "target_name": "unit_type_heavy",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 19,
+      "patched": true
+    },
+    {
+      "target_channel": 11,
+      "target_name": "unit_type_ranged",
+      "old_confidence": "empirical_high",
+      "old_source_type": "raw_channel",
+      "new_confidence": "exact",
+      "new_source_type": "raw_channel",
+      "new_raw_index": 20,
+      "patched": true
+    }
+  ],
+  "new_mapping_spec_version": "stage10d6_v1",
+  "new_observation_semantics_version": "unity_v2_runtime_stage10d6",
+  "status": "success",
+  "explicit_non_claims": [
+    "No retraining, PPO, or checkpoint mutation performed.",
+    "No raw rollout overwrite.",
+    "No adapted dataset overwrite.",
+    "No BC-ready dataset overwrite.",
+    "No silent channel remap.",
+    "No claim of exact Gym-microRTS to Unity semantic parity beyond owner/unit_type channels."
+  ]
+}

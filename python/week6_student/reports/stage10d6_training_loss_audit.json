@@ -1,0 +1,10 @@
+{
+  "stage": "10D.6",
+  "diagnostic": "training_loss_audit",
+  "generated_at_utc": "2026-05-03T08:55:54Z",
+  "adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+  "status": "skipped_no_bc_ready_dataset",
+  "note": "Training loss audit requires BC-ready dataset. Stage10D.6 does not build a BC-ready dataset. Loss audit will be performed in Stage10D.7.",
+  "worker_harvest_proxy_compatible": true,
+  "base_produce_proxy_compatible": true
+}

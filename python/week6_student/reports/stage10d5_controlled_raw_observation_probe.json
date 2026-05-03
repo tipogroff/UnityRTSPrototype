@@ -1,0 +1,1095 @@
+{
+  "stage": "10D.5",
+  "diagnostic": "controlled_raw_observation_probe",
+  "status": "pass",
+  "env_id": "MicrortsDefeatCoacAIShaped-v3",
+  "map_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/maps/24x24/basesWorkers24x24.xml",
+  "seed": 17,
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "env_num_selfplay_envs": 0,
+  "env_num_bot_envs": 6,
+  "utt_unit_types": [
+    "Resource",
+    "Base",
+    "Barracks",
+    "Worker",
+    "Light",
+    "Heavy",
+    "Ranged"
+  ],
+  "candidate_raw_vectors_for_known_cells": [
+    {
+      "entity_type": "Resource",
+      "player": -1,
+      "x": 0,
+      "y": 0,
+      "flat_index": 0,
+      "active_channels_gt_0_5": [
+        1,
+        9,
+        10,
+        14,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Resource",
+      "player": -1,
+      "x": 0,
+      "y": 1,
+      "flat_index": 24,
+      "active_channels_gt_0_5": [
+        1,
+        9,
+        10,
+        14,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Resource",
+      "player": -1,
+      "x": 23,
+      "y": 22,
+      "flat_index": 551,
+      "active_channels_gt_0_5": [
+        1,
+        9,
+        10,
+        14,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Resource",
+      "player": -1,
+      "x": 23,
+      "y": 23,
+      "flat_index": 575,
+      "active_channels_gt_0_5": [
+        1,
+        9,
+        10,
+        14,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Base",
+      "player": 0,
+      "x": 2,
+      "y": 2,
+      "flat_index": 50,
+      "active_channels_gt_0_5": [
+        4,
+        5,
+        11,
+        15,
+        21
+      ],
+      "vector": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Base",
+      "player": 1,
+      "x": 21,
+      "y": 21,
+      "flat_index": 525,
+      "active_channels_gt_0_5": [
+        4,
+        5,
+        12,
+        15,
+        21
+      ],
+      "vector": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Worker",
+      "player": 0,
+      "x": 1,
+      "y": 1,
+      "flat_index": 25,
+      "active_channels_gt_0_5": [
+        1,
+        5,
+        11,
+        17,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Worker",
+      "player": 1,
+      "x": 22,
+      "y": 22,
+      "flat_index": 550,
+      "active_channels_gt_0_5": [
+        1,
+        5,
+        12,
+        17,
+        21
+      ],
+      "vector": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "entity_type": "Empty",
+      "player": -999,
+      "x": 12,
+      "y": 12,
+      "flat_index": 300,
+      "active_channels_gt_0_5": [
+        0,
+        5,
+        10,
+        13,
+        21
+      ],
+      "vector": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "inferred_owner_channel_candidates": {
+    "owner_neutral_channel": 10,
+    "owner_player0_channel": 11,
+    "owner_player1_channel": 12,
+    "confidence": "high",
+    "full_analysis": {
+      "top_windows": [
+        {
+          "window": [
+            10,
+            12
+          ],
+          "neutral_argmax_local": 0,
+          "player0_argmax_local": 1,
+          "player1_argmax_local": 2,
+          "distinct_triplet": true,
+          "separation_margin_sum": 3.0,
+          "score": 4.0,
+          "means": {
+            "neutral": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player0": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player1": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "window": [
+            19,
+            21
+          ],
+          "neutral_argmax_local": 2,
+          "player0_argmax_local": 2,
+          "player1_argmax_local": 2,
+          "distinct_triplet": false,
+          "separation_margin_sum": 3.0,
+          "score": 3.0,
+          "means": {
+            "neutral": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "player0": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "player1": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "window": [
+            20,
+            22
+          ],
+          "neutral_argmax_local": 1,
+          "player0_argmax_local": 1,
+          "player1_argmax_local": 1,
+          "distinct_triplet": false,
+          "separation_margin_sum": 3.0,
+          "score": 3.0,
+          "means": {
+            "neutral": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player0": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player1": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            21,
+            23
+          ],
+          "neutral_argmax_local": 0,
+          "player0_argmax_local": 0,
+          "player1_argmax_local": 0,
+          "distinct_triplet": false,
+          "separation_margin_sum": 3.0,
+          "score": 3.0,
+          "means": {
+            "neutral": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player0": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player1": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            0,
+            2
+          ],
+          "neutral_argmax_local": 1,
+          "player0_argmax_local": 1,
+          "player1_argmax_local": 1,
+          "distinct_triplet": false,
+          "separation_margin_sum": 2.0,
+          "score": 2.0,
+          "means": {
+            "neutral": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "player0": [
+              0.0,
+              0.5,
+              0.0
+            ],
+            "player1": [
+              0.0,
+              0.5,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            1,
+            3
+          ],
+          "neutral_argmax_local": 0,
+          "player0_argmax_local": 0,
+          "player1_argmax_local": 0,
+          "distinct_triplet": false,
+          "separation_margin_sum": 2.0,
+          "score": 2.0,
+          "means": {
+            "neutral": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player0": [
+              0.5,
+              0.0,
+              0.0
+            ],
+            "player1": [
+              0.5,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            5,
+            7
+          ],
+          "neutral_argmax_local": 0,
+          "player0_argmax_local": 0,
+          "player1_argmax_local": 0,
+          "distinct_triplet": false,
+          "separation_margin_sum": 2.0,
+          "score": 2.0,
+          "means": {
+            "neutral": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "player0": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player1": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            11,
+            13
+          ],
+          "neutral_argmax_local": 0,
+          "player0_argmax_local": 0,
+          "player1_argmax_local": 1,
+          "distinct_triplet": false,
+          "separation_margin_sum": 2.0,
+          "score": 2.0,
+          "means": {
+            "neutral": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "player0": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "player1": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "best": {
+        "window": [
+          10,
+          12
+        ],
+        "neutral_argmax_local": 0,
+        "player0_argmax_local": 1,
+        "player1_argmax_local": 2,
+        "distinct_triplet": true,
+        "separation_margin_sum": 3.0,
+        "score": 4.0,
+        "means": {
+          "neutral": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "player0": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "player1": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "inferred": {
+        "owner_neutral_channel": 10,
+        "owner_player0_channel": 11,
+        "owner_player1_channel": 12,
+        "confidence": "high"
+      }
+    }
+  },
+  "inferred_unit_type_channel_candidates": {
+    "unit_type_observed_raw_channels": {
+      "Resource": 14,
+      "Base": 15,
+      "Worker": 17
+    },
+    "confidence": "high",
+    "full_analysis": {
+      "top_windows": [
+        {
+          "window": [
+            13,
+            19
+          ],
+          "score": 3.0,
+          "observed_type_to_local_index": {
+            "Resource": 1,
+            "Base": 2,
+            "Worker": 4
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            14,
+            20
+          ],
+          "score": 3.0,
+          "observed_type_to_local_index": {
+            "Resource": 0,
+            "Base": 1,
+            "Worker": 3
+          },
+          "means": {
+            "Resource": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            3,
+            9
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 6,
+            "Base": 1,
+            "Worker": 2
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "Base": [
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            11,
+            17
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 3,
+            "Base": 4,
+            "Worker": 6
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.5,
+              0.5,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.5,
+              0.5,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        {
+          "window": [
+            12,
+            18
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 2,
+            "Base": 3,
+            "Worker": 5
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.5,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.5,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            18,
+            24
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 3,
+            "Base": 3,
+            "Worker": 3
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            19,
+            25
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 2,
+            "Base": 2,
+            "Worker": 2
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        {
+          "window": [
+            20,
+            26
+          ],
+          "score": 2.0,
+          "observed_type_to_local_index": {
+            "Resource": 1,
+            "Base": 1,
+            "Worker": 1
+          },
+          "means": {
+            "Resource": [
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Base": [
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Worker": [
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "best": {
+        "window": [
+          13,
+          19
+        ],
+        "score": 3.0,
+        "observed_type_to_local_index": {
+          "Resource": 1,
+          "Base": 2,
+          "Worker": 4
+        },
+        "means": {
+          "Resource": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Base": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Worker": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "inferred": {
+        "unit_type_observed_raw_channels": {
+          "Resource": 14,
+          "Base": 15,
+          "Worker": 17
+        },
+        "confidence": "high"
+      },
+      "tracked_types": [
+        "Resource",
+        "Base",
+        "Barracks",
+        "Worker",
+        "Light",
+        "Heavy",
+        "Ranged"
+      ]
+    }
+  },
+  "confidence_per_candidate": {
+    "owner": "high",
+    "unit_type": "high"
+  },
+  "controlled_probe_runtime_error": null,
+  "hard_failures": [],
+  "warnings": []
+}

@@ -1,0 +1,1040 @@
+{
+  "stage": "10D.5",
+  "diagnostic": "rollout_entity_proxy_crosscheck",
+  "status": "pass",
+  "raw_rollout_npz": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z/teacher_rollout_raw.npz",
+  "sample_n": 4096,
+  "proxy_definitions": {
+    "worker_proxy": "action_type == harvest (2)",
+    "base_proxy": "action_type == produce (4)",
+    "combat_proxy": "action_type == attack (5)",
+    "resource_proxy": "known map resource cells from 24x24 basesWorkers map",
+    "empty_proxy": "known empty map cells"
+  },
+  "owner_candidate_windows": [
+    {
+      "window": [
+        10,
+        12
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 1.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 1,
+      "actor_margin": 1.0,
+      "player0_peak_local": 1,
+      "player1_peak_local": 2,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "player0_cells": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.32666015625,
+          0.0,
+          0.67333984375
+        ]
+      },
+      "score": 2.8
+    },
+    {
+      "window": [
+        11,
+        13
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9934607611762153,
+        "share_sum_eq_0": 0.006539238823784722,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 0,
+      "actor_margin": 1.0,
+      "player0_peak_local": 0,
+      "player1_peak_local": 1,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player0_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.0,
+          0.67333984375,
+          0.32666015625
+        ]
+      },
+      "score": 2.8
+    },
+    {
+      "window": [
+        9,
+        11
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9536819458007812,
+        "share_sum_eq_0": 0.040007697211371526,
+        "share_sum_le_1": 0.9936896430121528,
+        "share_sum_gt_1": 0.006310356987847222
+      },
+      "actor_dominant_local": 2,
+      "actor_margin": 1.0,
+      "player0_peak_local": 2,
+      "player1_peak_local": 1,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "player0_cells": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "player1_cells": [
+          0.0,
+          0.32666015625,
+          0.0
+        ]
+      },
+      "score": 2.7798068576388886
+    },
+    {
+      "window": [
+        0,
+        2
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9965277777777778,
+        "share_sum_eq_0": 0.003472222222222222,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 1,
+      "actor_margin": 0.5,
+      "player0_peak_local": 1,
+      "player1_peak_local": 0,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "player0_cells": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "player1_cells": [
+          0.32666015625,
+          0.17333984375,
+          0.0
+        ]
+      },
+      "score": 2.4000000000000004
+    },
+    {
+      "window": [
+        5,
+        7
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9936769273546007,
+        "share_sum_eq_0": 0.006323072645399306,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 0,
+      "actor_margin": 1.0,
+      "player0_peak_local": 0,
+      "player1_peak_local": 0,
+      "player_peaks_distinct": false,
+      "means": {
+        "actor_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player0_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.89990234375,
+          0.10009765625,
+          0.0
+        ]
+      },
+      "score": 2.0
+    },
+    {
+      "window": [
+        19,
+        21
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9740244547526041,
+        "share_sum_eq_0": 0.025975545247395832,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 2,
+      "actor_margin": 1.0,
+      "player0_peak_local": 2,
+      "player1_peak_local": 2,
+      "player_peaks_distinct": false,
+      "means": {
+        "actor_cells": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "player0_cells": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "player1_cells": [
+          0.0,
+          0.0,
+          0.6622314453125
+        ]
+      },
+      "score": 2.0
+    },
+    {
+      "window": [
+        20,
+        22
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9987318250868056,
+        "share_sum_eq_0": 0.0012681749131944445,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 1,
+      "actor_margin": 1.0,
+      "player0_peak_local": 1,
+      "player1_peak_local": 1,
+      "player_peaks_distinct": false,
+      "means": {
+        "actor_cells": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "player0_cells": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.0,
+          0.6622314453125,
+          0.072509765625
+        ]
+      },
+      "score": 2.0
+    },
+    {
+      "window": [
+        21,
+        23
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.999062008327908,
+        "share_sum_eq_0": 0.0009379916720920139,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 0,
+      "actor_margin": 1.0,
+      "player0_peak_local": 0,
+      "player1_peak_local": 0,
+      "player_peaks_distinct": false,
+      "means": {
+        "actor_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player0_cells": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.6622314453125,
+          0.072509765625,
+          0.032470703125
+        ]
+      },
+      "score": 2.0
+    },
+    {
+      "window": [
+        23,
+        25
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.0012681749131944445,
+        "share_sum_eq_0": 0.9987318250868056,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 0,
+      "actor_margin": 0.0,
+      "player0_peak_local": 0,
+      "player1_peak_local": 2,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "player0_cells": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.032470703125,
+          0.0,
+          0.2327880859375
+        ]
+      },
+      "score": 2.0
+    },
+    {
+      "window": [
+        24,
+        26
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.0009379916720920139,
+        "share_sum_eq_0": 0.999062008327908,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "actor_dominant_local": 0,
+      "actor_margin": 0.0,
+      "player0_peak_local": 0,
+      "player1_peak_local": 1,
+      "player_peaks_distinct": true,
+      "means": {
+        "actor_cells": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "player0_cells": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "player1_cells": [
+          0.0,
+          0.2327880859375,
+          0.0
+        ]
+      },
+      "score": 2.0
+    }
+  ],
+  "unit_type_candidate_windows": [
+    {
+      "window": [
+        18,
+        24
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9991917080349393,
+        "share_sum_eq_0": 0.0008082919650607639,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "worker_proxy_peak_local": 3,
+      "base_proxy_peak_local": 3,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 3,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.97711181640625,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0,
+          0.0,
+          0.0,
+          0.98565673828125,
+          0.008544921875,
+          0.00579833984375,
+          0.0
+        ],
+        "empty_cells": [
+          0.0,
+          0.0,
+          0.0,
+          0.994140625,
+          0.005859375,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 3.6862670898437497
+    },
+    {
+      "window": [
+        19,
+        25
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 1.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "worker_proxy_peak_local": 2,
+      "base_proxy_peak_local": 2,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 2,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.97711181640625,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0,
+          0.0,
+          0.98565673828125,
+          0.008544921875,
+          0.00579833984375,
+          0.0,
+          0.0
+        ],
+        "empty_cells": [
+          0.0,
+          0.0,
+          0.994140625,
+          0.005859375,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 3.6862670898437497
+    },
+    {
+      "window": [
+        20,
+        26
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 1.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "worker_proxy_peak_local": 1,
+      "base_proxy_peak_local": 1,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 1,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.97711181640625,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0,
+          0.98565673828125,
+          0.008544921875,
+          0.00579833984375,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "empty_cells": [
+          0.0,
+          0.994140625,
+          0.005859375,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 3.6862670898437497
+    },
+    {
+      "window": [
+        14,
+        20
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.050019158257378474,
+        "share_sum_eq_0": 0.9499808417426215,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "worker_proxy_peak_local": 3,
+      "base_proxy_peak_local": 1,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 0,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.9132080078125,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.941650390625,
+          0.0,
+          0.0,
+          0.0284423828125,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "empty_cells": [
+          0.0,
+          0.0,
+          0.0,
+          0.010579426772892475,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 3.6479248046874995
+    },
+    {
+      "window": [
+        13,
+        19
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 1.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 1.0,
+        "share_sum_gt_1": 0.0
+      },
+      "worker_proxy_peak_local": 4,
+      "base_proxy_peak_local": 2,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 1,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.9117431640625,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0299072265625,
+          0.941650390625,
+          0.0,
+          0.0,
+          0.0284423828125,
+          0.0,
+          0.0
+        ],
+        "empty_cells": [
+          0.9894205927848816,
+          0.0,
+          0.0,
+          0.0,
+          0.010579426772892475,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 3.6470458984375
+    },
+    {
+      "window": [
+        12,
+        18
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9599923027886285,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 0.9599923027886285,
+        "share_sum_gt_1": 0.040007697211371526
+      },
+      "worker_proxy_peak_local": 5,
+      "base_proxy_peak_local": 3,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 2,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.9117431640625,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0284423828125,
+          0.0299072265625,
+          0.941650390625,
+          0.0,
+          0.0,
+          0.0284423828125,
+          0.0
+        ],
+        "empty_cells": [
+          0.010579426772892475,
+          0.9894205927848816,
+          0.0,
+          0.0,
+          0.0,
+          0.010579426772892475,
+          0.0
+        ]
+      },
+      "score": 3.5070189581977003
+    },
+    {
+      "window": [
+        6,
+        12
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9854702419704862,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 0.9854702419704862,
+        "share_sum_gt_1": 0.014529758029513888
+      },
+      "worker_proxy_peak_local": 5,
+      "base_proxy_peak_local": 5,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 4,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.0628662109375,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0247802734375,
+          0.028076171875,
+          0.0018310546875,
+          0.90869140625,
+          0.9715576171875,
+          0.0,
+          0.0284423828125
+        ],
+        "empty_cells": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.9894205927848816,
+          0.0,
+          0.010579426772892475
+        ]
+      },
+      "score": 3.0868655734592014
+    },
+    {
+      "window": [
+        3,
+        9
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9965277777777778,
+        "share_sum_eq_0": 0.0,
+        "share_sum_le_1": 0.9965277777777778,
+        "share_sum_gt_1": 0.003472222222222222
+      },
+      "worker_proxy_peak_local": 2,
+      "base_proxy_peak_local": 1,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 6,
+      "worker_proxy_margin": 1.0,
+      "base_proxy_margin": 0.0,
+      "resource_proxy_margin": 0.8720703125,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0,
+          0.0,
+          0.03662109375,
+          0.0247802734375,
+          0.028076171875,
+          0.0018310546875,
+          0.90869140625
+        ],
+        "empty_cells": [
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "score": 2.8110894097222223
+    },
+    {
+      "window": [
+        16,
+        22
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.9596438937717013,
+        "share_sum_eq_0": 0.0008082919650607639,
+        "share_sum_le_1": 0.9604521857367622,
+        "share_sum_gt_1": 0.03954781426323785
+      },
+      "worker_proxy_peak_local": 1,
+      "base_proxy_peak_local": 5,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 5,
+      "worker_proxy_margin": 0.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.95721435546875,
+      "means": {
+        "harvest_actor": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0,
+          0.0284423828125,
+          0.0,
+          0.0,
+          0.0,
+          0.98565673828125,
+          0.008544921875
+        ],
+        "empty_cells": [
+          0.0,
+          0.010579426772892475,
+          0.0,
+          0.0,
+          0.0,
+          0.994140625,
+          0.005859375
+        ]
+      },
+      "score": 2.7359112633599176
+    },
+    {
+      "window": [
+        17,
+        23
+      ],
+      "onehot_metrics": {
+        "share_sum_eq_1": 0.959313710530599,
+        "share_sum_eq_0": 0.0008082919650607639,
+        "share_sum_le_1": 0.9601220024956597,
+        "share_sum_gt_1": 0.039877997504340276
+      },
+      "worker_proxy_peak_local": 0,
+      "base_proxy_peak_local": 4,
+      "combat_proxy_peak_local": 0,
+      "resource_proxy_peak_local": 4,
+      "worker_proxy_margin": 0.0,
+      "base_proxy_margin": 1.0,
+      "resource_proxy_margin": 0.95721435546875,
+      "means": {
+        "harvest_actor": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "produce_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "attack_actor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "resource_cells": [
+          0.0284423828125,
+          0.0,
+          0.0,
+          0.0,
+          0.98565673828125,
+          0.008544921875,
+          0.00579833984375
+        ],
+        "empty_cells": [
+          0.010579426772892475,
+          0.0,
+          0.0,
+          0.0,
+          0.994140625,
+          0.005859375,
+          0.0
+        ]
+      },
+      "score": 2.734755622016059
+    }
+  ],
+  "supporting_evidence_only": true,
+  "note": "Proxy-only crosscheck is not sufficient for final authorization without source/controlled evidence agreement."
+}
