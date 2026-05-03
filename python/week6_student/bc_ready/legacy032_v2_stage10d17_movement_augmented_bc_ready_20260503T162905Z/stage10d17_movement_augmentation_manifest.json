@@ -1,0 +1,65 @@
+{
+  "stage": "10D.17",
+  "task": "movement_label_augmentation",
+  "generated_at_utc": "2026-05-03T16:30:37Z",
+  "base_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T145301Z",
+  "stage10d7_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+  "stage10d16_trace_jsonl": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d16_extended_runtime_trace.jsonl",
+  "stage10d16_lifecycle_json": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d16_produced_unit_lifecycle.json",
+  "output_dataset_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+  "output_files": {
+    "bc_train": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/bc_train.npz",
+    "bc_validation": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/bc_validation.npz",
+    "bc_debug": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/bc_debug.npz",
+    "metadata_train_jsonl": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/stage10d17_augmented_sample_metadata_train.jsonl",
+    "metadata_validation_jsonl": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z/stage10d17_augmented_sample_metadata_validation.jsonl"
+  },
+  "counts": {
+    "original_train": 80692,
+    "original_validation": 8985,
+    "augmented_train": 2121,
+    "augmented_validation": 521,
+    "merged_train": 82813,
+    "merged_validation": 9506,
+    "family1_runtime_added": 1042,
+    "family2_move_reference_added": 0,
+    "family3_4_synthetic_added": 1200,
+    "family5_negative_control_added": 400
+  },
+  "family_counts": {
+    "family1_stage10d16_runtime": 1042,
+    "family3_synthetic_rule_valid_move": 601,
+    "family4_rally_advance_from_base": 599,
+    "family5_negative_controls": 400
+  },
+  "move_counts": {
+    "by_unit_type": {
+      "Worker": 2242
+    },
+    "by_direction": {
+      "east": 2053,
+      "north": 1,
+      "south": 187,
+      "west": 1
+    },
+    "before_train_move_actor": 0,
+    "after_train_move_actor": 841,
+    "before_val_move_actor": 0,
+    "after_val_move_actor": 201
+  },
+  "negative_control_count": 400,
+  "skipped_samples": {
+    "family2_move_labels_absent": 1
+  },
+  "explicit_non_claims": [
+    "No PPO.",
+    "No teacher checkpoint mutation.",
+    "No runtime movement forcing.",
+    "No ActionDecoder/ActionApplier/MatchManager semantic changes.",
+    "No runtime action remap fallback."
+  ],
+  "notes": [
+    "Family1 uses Stage10D16 trace/lifecycle-derived runtime proxy because raw per-step full observation snapshots are not available under reports/tmp.",
+    "Observation/action contract kept at [24,24,27] and [576,7] with branch sizes [6,4,4,4,4,7,49]."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "stage": "10D.17",
+  "task": "stage10d16_snapshot_replay_report",
+  "generated_at_utc": "2026-05-03T16:52:03Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "validation": {
+    "sample_count": 201,
+    "move_target_count": 201,
+    "move_recall": 1.0,
+    "move_dir_accuracy": 0.9950248756218906,
+    "produced_unit_move_success_rate": 1.0,
+    "off_actor_non_noop_count": 0
+  },
+  "train": {
+    "sample_count": 841,
+    "move_target_count": 841,
+    "move_recall": 0.9881093935790726,
+    "move_dir_accuracy": 0.9987966305655837,
+    "produced_unit_move_success_rate": 0.9881093935790726,
+    "off_actor_non_noop_count": 2
+  },
+  "notes": [
+    "Replay uses Stage10D17 runtime-proxy rows sourced from Stage10D16 trace/lifecycle metadata."
+  ]
+}

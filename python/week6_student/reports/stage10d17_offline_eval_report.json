@@ -1,0 +1,94 @@
+{
+  "stage": "10D.17",
+  "task": "offline_eval_movement_augmented_student",
+  "generated_at_utc": "2026-05-03T16:52:03Z",
+  "checkpoint": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/runs/legacy032_v2_stage10d17_movement_augmented_bc_20260503T164734Z/student_bc_stage10d17_movement_augmented_best.pt",
+  "augmented_bc_ready_dir": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/bc_ready/legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+  "block_a_original_validation": {
+    "actor_action_type_accuracy": 1.0,
+    "actor_non_noop_recall": 1.0,
+    "worker_harvest_recall": 1.0,
+    "base_produce_recall": 1.0
+  },
+  "block_b_true_raw": {
+    "B2": {
+      "flat_index": 25,
+      "predicted_action": "harvest",
+      "p_noop": 9.743956071547992e-29,
+      "p_move": 0.006538700312376022,
+      "p_harvest": 0.9899958372116089,
+      "p_return": 8.134354720823467e-05,
+      "p_produce": 0.0022491835989058018,
+      "p_attack": 0.001134936697781086,
+      "full_probabilities": [
+        9.743956071547992e-29,
+        0.006538700312376022,
+        0.9899958372116089,
+        8.134354720823467e-05,
+        0.0022491835989058018,
+        0.001134936697781086
+      ]
+    },
+    "C3": {
+      "flat_index": 50,
+      "predicted_action": "produce",
+      "p_noop": 4.747002236492922e-26,
+      "p_move": 0.010416178964078426,
+      "p_harvest": 0.0019502780633047223,
+      "p_return": 0.0003938638838008046,
+      "p_produce": 0.987174928188324,
+      "p_attack": 6.470988591900095e-05,
+      "full_probabilities": [
+        4.747002236492922e-26,
+        0.010416178964078426,
+        0.0019502780633047223,
+        0.0003938638838008046,
+        0.987174928188324,
+        6.470988591900095e-05
+      ]
+    },
+    "off_actor_non_noop_count": 0,
+    "off_actor_non_noop_cells": 0
+  },
+  "block_c_movement_augmented_subset": {
+    "train": {
+      "sample_count": 2121,
+      "move_target_count": 1811,
+      "move_recall": 0.45886250690226393,
+      "move_dir_accuracy": 0.9987966305655837,
+      "produced_unit_move_success_rate": 0.9881093935790726,
+      "off_actor_non_noop_count": 4
+    },
+    "validation": {
+      "sample_count": 521,
+      "move_target_count": 431,
+      "move_recall": 0.46635730858468677,
+      "move_dir_accuracy": 0.9950248756218906,
+      "produced_unit_move_success_rate": 1.0,
+      "off_actor_non_noop_count": 1
+    }
+  },
+  "block_d_stage10d16_replay": {
+    "train": {
+      "sample_count": 841,
+      "move_target_count": 841,
+      "move_recall": 0.9881093935790726,
+      "move_dir_accuracy": 0.9987966305655837,
+      "produced_unit_move_success_rate": 0.9881093935790726,
+      "off_actor_non_noop_count": 2
+    },
+    "validation": {
+      "sample_count": 201,
+      "move_target_count": 201,
+      "move_recall": 1.0,
+      "move_dir_accuracy": 0.9950248756218906,
+      "produced_unit_move_success_rate": 1.0,
+      "off_actor_non_noop_count": 0
+    }
+  },
+  "classification_labels": [
+    "STAGE10D17_OFFLINE_EVAL_COMPLETE",
+    "MOVEMENT_REPLAY_COVERED",
+    "TRUE_RAW_B2_C3_EVALUATED"
+  ]
+}
