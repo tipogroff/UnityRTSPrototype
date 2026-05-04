@@ -1,0 +1,125 @@
+{
+  "generated_at_utc": "2026-05-04T05:40:28.448947+00:00",
+  "stage": "Stage10D22B",
+  "source_run_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/stage10d22_run_manifest.json",
+  "FULL_TRI_MODE": true,
+  "required_modes": [
+    "student_live_policy",
+    "heuristic_baseline",
+    "scripted_deterministic_commands"
+  ],
+  "mode_status": {
+    "student_live_policy": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 0,
+      "scripted_accepted": 0,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/student_live_policy/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/student_live_policy"
+    },
+    "heuristic_baseline": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 0,
+      "scripted_accepted": 0,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/heuristic_baseline/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/heuristic_baseline"
+    },
+    "scripted_deterministic_commands": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 80,
+      "scripted_accepted": 65,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/scripted_deterministic_commands/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/scripted_deterministic_commands"
+    }
+  },
+  "scripted_mode_details": {
+    "scripted_attempted": 80,
+    "scripted_accepted": 65,
+    "scripted_per_action": [
+      {
+        "action": "Move",
+        "attempted": 38,
+        "accepted": 33
+      },
+      {
+        "action": "Harvest",
+        "attempted": 23,
+        "accepted": 23
+      },
+      {
+        "action": "Return",
+        "attempted": 2,
+        "accepted": 2
+      },
+      {
+        "action": "Produce",
+        "attempted": 7,
+        "accepted": 7
+      },
+      {
+        "action": "Attack",
+        "attempted": 10,
+        "accepted": 0
+      }
+    ],
+    "scripted_direct_per_action": [
+      {
+        "action": "Move",
+        "attempted": 19,
+        "accepted": 19
+      },
+      {
+        "action": "Harvest",
+        "attempted": 12,
+        "accepted": 12
+      },
+      {
+        "action": "Return",
+        "attempted": 2,
+        "accepted": 2
+      },
+      {
+        "action": "Produce",
+        "attempted": 7,
+        "accepted": 7
+      }
+    ],
+    "scripted_canonical_per_action": [
+      {
+        "action": "Move",
+        "attempted": 19,
+        "accepted": 14
+      },
+      {
+        "action": "Harvest",
+        "attempted": 11,
+        "accepted": 11
+      },
+      {
+        "action": "Attack",
+        "attempted": 10,
+        "accepted": 0
+      }
+    ],
+    "scripted_move_attempted": 38,
+    "scripted_move_accepted": 33,
+    "scripted_move_caused_position_delta": true,
+    "scripted_move_delta_evidence": "step=71, from=(2,1), to=(3,1), path=scripted_canonical_actionapplier",
+    "scripted_direct_matchmanager_bypasses_decoder_actionapplier": true,
+    "scripted_canonical_uses_actionapplier": true
+  },
+  "success_gate": {
+    "run_manifest_exists": true,
+    "full_tri_mode": true,
+    "scripted_completed": true,
+    "independent_counters": true,
+    "move_boundary_from_raw_action_counters": true
+  },
+  "diagnostic_valid": true,
+  "go_no_go_verdict": "GO"
+}

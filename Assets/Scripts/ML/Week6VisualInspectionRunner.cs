@@ -134,6 +134,12 @@ namespace RTS.ML
         private AdapterArtifactSnapshot _latestArtifact;
         private ObservationSnapshot _latestObservation;
         private StudentInferenceDiagnosticsSnapshot _latestInferenceDiagnostics;
+
+        // Mode-isolation context (set by Stage10D25 capture sessions)
+        private string _captureModeName = string.Empty;
+        private Week6PlayerControlMode _capturePlayer1Mode = Week6PlayerControlMode.StudentInference;
+        private Week6PlayerControlMode _capturePlayer2Mode = Week6PlayerControlMode.HeuristicBaseline;
+        private bool _captureModeContextSet;
         private float[] _latestObservationValues = Array.Empty<float>();
         private int _noOpActorCells;
         private int _nonNoOpActorCells;
@@ -342,8 +348,11 @@ namespace RTS.ML
         [Serializable]
         private sealed class UnitSnapshot
         {
+            public string unit_name;
             public string owner;
             public string unit_type;
+            public int hp;
+            public int carried_resources;
             public int x;
             public int y;
             public string logical_cell;
@@ -358,6 +367,16 @@ namespace RTS.ML
             public string scene;
             public string checkpoint;
             public string checkpoint_path_used_at_inference;
+            // Mode-isolation telemetry (Stage10D25)
+            public string mode;
+            public string policy_source;
+            public string inference_source;
+            public bool uses_student_checkpoint;
+            public bool uses_python_adapter;
+            public bool uses_heuristic_policy;
+            public string action_buffer_source;
+            public int player1_resources;
+            public int player2_resources;
             public UnitSnapshot[] unit_positions;
             public ActorCellSnapshot[] actor_cells;
             public int[] observation_shape;
@@ -1190,6 +1209,21 @@ namespace RTS.ML
         }
 #endif
 
+        /// <summary>
+        /// Sets mode-isolation context for snapshot telemetry (Stage10D25).
+        /// Call before RunSingleMode to correctly attribute policy source.
+        /// </summary>
+        public void SetCurrentCaptureModeContext(
+            string modeName,
+            Week6PlayerControlMode player1Mode,
+            Week6PlayerControlMode player2Mode)
+        {
+            _captureModeName = modeName ?? string.Empty;
+            _capturePlayer1Mode = player1Mode;
+            _capturePlayer2Mode = player2Mode;
+            _captureModeContextSet = true;
+        }
+
         public void StartVisualInspectionMatch(bool pauseBeforeFirstDecision = false)
         {
             ResolveReferences();
@@ -1334,6 +1368,16 @@ namespace RTS.ML
                 checkpoint_path_used_at_inference = _latestInferenceDiagnostics != null
                     ? _latestInferenceDiagnostics.checkpoint_path_used_at_inference
                     : string.Empty,
+                // Mode-isolation telemetry (Stage10D25)
+                mode = _captureModeContextSet ? _captureModeName : "unset",
+                policy_source = ResolvePolicySource(),
+                inference_source = ResolveInferenceSource(),
+                uses_student_checkpoint = ResolveUsesStudentCheckpoint(),
+                uses_python_adapter = ResolveUsesPythonAdapter(),
+                uses_heuristic_policy = ResolveUsesHeuristicPolicy(),
+                action_buffer_source = ResolveActionBufferSource(),
+                player1_resources = _matchManager != null ? _matchManager.GetResources(Owner.Player1) : 0,
+                player2_resources = _matchManager != null ? _matchManager.GetResources(Owner.Player2) : 0,
                 unit_positions = unitSnapshots.ToArray(),
                 actor_cells = actorSnapshots.ToArray(),
                 observation_shape = new[] { 24, 24, 27 },
@@ -1354,7 +1398,7 @@ namespace RTS.ML
                 controlled_player = _latestBridgeDebug != null && !string.IsNullOrWhiteSpace(_latestBridgeDebug.controlled_player)
                     ? _latestBridgeDebug.controlled_player
                     : _studentControlledPlayer.ToString(),
-                adapter_invoked = _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.adapter_invoked,
+                adapter_invoked = ResolveAdapterInvoked(),
                 inference_request_count = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.inference_request_count : 0,
                 last_inference_call_utc = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.last_inference_call_utc : string.Empty,
                 candidate_actor_cells_submitted = _latestInferenceDiagnostics != null ? _latestInferenceDiagnostics.candidate_actor_cells_submitted : 0,
@@ -1641,7 +1685,8 @@ namespace RTS.ML
 
                 bool applierAccepted = selectedTelemetry != null && selectedTelemetry.AcceptedSeen;
                 bool applierRejected = selectedTelemetry != null && selectedTelemetry.RejectedSeen;
-                bool applierSubmitted = commandBuilt;
+                bool hasCommandEvent = selectedTelemetry != null;
+                bool applierSubmitted = commandBuilt || hasCommandEvent;
                 string applierRejectReason = string.Empty;
                 if (applierRejected)
                 {
@@ -1664,7 +1709,7 @@ namespace RTS.ML
                 bool decoderReceivedMoveDirLegal = decoderReceivedActionTypeValue != UnitActionType.Move
                     || IsMoveDirLegal(legalMoveDirMask, decoderReceivedMoveDir);
 
-                bool commandSubmitted = commandBuilt;
+                bool commandSubmitted = commandBuilt || hasCommandEvent;
                 bool sameCommandConflict = selectedTelemetry != null && selectedTelemetry.HasConflictingTerminalEvents;
                 bool differentCommandConflict = telemetrySelection.DifferentCommandConflict;
                 bool legacyConflict = sameCommandConflict || differentCommandConflict;
@@ -1678,17 +1723,7 @@ namespace RTS.ML
                 string rejectReasonNormalized = selectedTelemetry != null ? selectedTelemetry.RejectReason : string.Empty;
                 string commandEventConflict = string.Empty;
 
-                if (!predictedNonNoOp)
-                {
-                    commandResultStatus = "not_submitted";
-                }
-                else if (!commandBuilt)
-                {
-                    commandResultStatus = "decoder_rejected";
-                    rejectStage = "decoder";
-                    rejectReason = decoderRejectReason;
-                }
-                else if (sameCommandConflict)
+                if (sameCommandConflict)
                 {
                     commandResultStatus = "telemetry_conflict";
                     rejectStage = "telemetry";
@@ -1703,6 +1738,41 @@ namespace RTS.ML
                     rejectStage = "telemetry";
                     rejectReason = "different_commands_same_flat";
                     commandEventConflict = "different_commands_same_flat";
+                }
+                else if (!predictedNonNoOp && !hasCommandEvent)
+                {
+                    commandResultStatus = "not_submitted";
+                }
+                else if (!commandBuilt)
+                {
+                    if (hasCommandEvent)
+                    {
+                        if (applierRejected)
+                        {
+                            commandResultStatus = "matchmanager_rejected";
+                            rejectStage = "matchmanager";
+                            rejectReason = applierRejectReason;
+                            if (string.IsNullOrWhiteSpace(rejectReasonRaw))
+                            {
+                                rejectReasonRaw = applierRejectReason;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(rejectReasonNormalized))
+                            {
+                                rejectReasonNormalized = applierRejectReason;
+                            }
+                        }
+                        else
+                        {
+                            commandResultStatus = "accepted_pending";
+                        }
+                    }
+                    else
+                    {
+                        commandResultStatus = "decoder_rejected";
+                        rejectStage = "decoder";
+                        rejectReason = decoderRejectReason;
+                    }
                 }
                 else if (applierRejected)
                 {
@@ -1779,7 +1849,9 @@ namespace RTS.ML
                     decoder_received_action_type = decoderReceivedActionTypeValue.ToString(),
                     decoder_received_move_dir = decoderReceivedMoveDir,
                     decoder_received_move_dir_legal = decoderReceivedMoveDirLegal,
-                    decoder_result_if_predicted_non_noop = decoderResult,
+                    decoder_result_if_predicted_non_noop = hasCommandEvent && !predictedNonNoOp
+                        ? "external_command_submission"
+                        : decoderResult,
                     command_built = commandBuilt,
                     command_submitted = commandSubmitted,
                     command_result_status = commandResultStatus,
@@ -3040,8 +3112,11 @@ namespace RTS.ML
 
                 units.Add(new UnitSnapshot
                 {
+                    unit_name = unit.name,
                     owner = unit.Owner.ToString(),
                     unit_type = unit.Type.ToString(),
+                    hp = unit.HP,
+                    carried_resources = unit.CarriedResources,
                     x = unit.GridPos.X,
                     y = unit.GridPos.Y,
                     logical_cell = ToCellLabel(unit.GridPos),
@@ -4278,6 +4353,113 @@ namespace RTS.ML
             }
 
             return "adapter_artifact_missing_after_inference";
+        }
+
+        private string ResolveAdapterArtifactMissingReason()
+        {
+            if (_latestArtifact.IsAvailable)
+            {
+                return string.Empty;
+            }
+
+            if (_latestInferenceDiagnostics == null)
+            {
+                return "adapter_diagnostics_unavailable";
+            }
+
+            if (_latestInferenceDiagnostics.inference_request_count <= 0)
+            {
+                return "no_inference_requests_yet";
+            }
+
+            if (!string.IsNullOrWhiteSpace(_latestInferenceDiagnostics.adapter_artifact_missing_reason))
+            {
+                return _latestInferenceDiagnostics.adapter_artifact_missing_reason;
+            }
+
+            return "adapter_artifact_missing_after_inference";
+        }
+
+        // Mode-isolation telemetry helpers (Stage10D25)
+        private bool IsHeuristicOnlyMode()
+        {
+            if (!_captureModeContextSet)
+            {
+                return false;
+            }
+            return _capturePlayer1Mode == Week6PlayerControlMode.HeuristicBaseline
+                && _capturePlayer2Mode == Week6PlayerControlMode.HeuristicBaseline;
+        }
+
+        private bool ResolveAdapterInvoked()
+        {
+            if (IsHeuristicOnlyMode())
+            {
+                return false;
+            }
+            return _latestInferenceDiagnostics != null && _latestInferenceDiagnostics.adapter_invoked;
+        }
+
+        private string ResolvePolicySource()
+        {
+            if (!_captureModeContextSet)
+            {
+                return "unknown";
+            }
+            if (_capturePlayer1Mode == Week6PlayerControlMode.StudentInference)
+            {
+                return "student_checkpoint";
+            }
+            if (_capturePlayer1Mode == Week6PlayerControlMode.HeuristicBaseline)
+            {
+                return "heuristic_policy";
+            }
+            return _capturePlayer1Mode.ToString().ToLowerInvariant();
+        }
+
+        private string ResolveInferenceSource()
+        {
+            if (IsHeuristicOnlyMode())
+            {
+                return "heuristic_policy";
+            }
+            if (_captureModeContextSet && _capturePlayer1Mode == Week6PlayerControlMode.StudentInference)
+            {
+                return "python_adapter_bridge";
+            }
+            return "unknown";
+        }
+
+        private bool ResolveUsesStudentCheckpoint()
+        {
+            if (IsHeuristicOnlyMode())
+            {
+                return false;
+            }
+            return _captureModeContextSet && _capturePlayer1Mode == Week6PlayerControlMode.StudentInference;
+        }
+
+        private bool ResolveUsesPythonAdapter()
+        {
+            return ResolveUsesStudentCheckpoint();
+        }
+
+        private bool ResolveUsesHeuristicPolicy()
+        {
+            return _captureModeContextSet && _capturePlayer1Mode == Week6PlayerControlMode.HeuristicBaseline;
+        }
+
+        private string ResolveActionBufferSource()
+        {
+            if (IsHeuristicOnlyMode())
+            {
+                return "heuristic_policy_adapter";
+            }
+            if (_captureModeContextSet && _capturePlayer1Mode == Week6PlayerControlMode.StudentInference)
+            {
+                return "student_week6_python_bridge";
+            }
+            return "unknown";
         }
 
         private void ExtractBranchValues(

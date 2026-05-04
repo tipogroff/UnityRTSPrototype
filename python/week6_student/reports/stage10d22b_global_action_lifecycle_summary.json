@@ -1,0 +1,382 @@
+{
+  "generated_at_utc": "2026-05-04T05:40:28.448947+00:00",
+  "stage": "Stage10D22B",
+  "FULL_TRI_MODE": true,
+  "source_run_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/stage10d22_run_manifest.json",
+  "mode_status": {
+    "student_live_policy": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 0,
+      "scripted_accepted": 0,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/student_live_policy/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/student_live_policy"
+    },
+    "heuristic_baseline": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 0,
+      "scripted_accepted": 0,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/heuristic_baseline/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/heuristic_baseline"
+    },
+    "scripted_deterministic_commands": {
+      "steps_completed": 80,
+      "target_steps": 80,
+      "scripted_attempted": 80,
+      "scripted_accepted": 65,
+      "scripted_completed": true,
+      "mode_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/scripted_deterministic_commands/stage10d22_mode_manifest.json",
+      "mode_dir": "python/week6_student/tmp/stage10d22_global_lifecycle/scripted_deterministic_commands"
+    }
+  },
+  "raw_action_distribution_by_mode": {
+    "student_live_policy": {
+      "NoOp": 272,
+      "Move": 0,
+      "Harvest": 124,
+      "Return": 0,
+      "Produce": 86,
+      "Attack": 0
+    },
+    "heuristic_baseline": {
+      "NoOp": 272,
+      "Move": 0,
+      "Harvest": 124,
+      "Return": 0,
+      "Produce": 86,
+      "Attack": 0
+    },
+    "scripted_deterministic_commands": {
+      "NoOp": 313,
+      "Move": 0,
+      "Harvest": 93,
+      "Return": 0,
+      "Produce": 108,
+      "Attack": 0
+    }
+  },
+  "raw_selected_by_action": {
+    "NoOp": 857,
+    "Move": 0,
+    "Harvest": 341,
+    "Return": 0,
+    "Produce": 280,
+    "Attack": 0
+  },
+  "mask_allowed_by_raw_action": {
+    "NoOp": 800,
+    "Move": 0,
+    "Harvest": 209,
+    "Return": 0,
+    "Produce": 81,
+    "Attack": 0
+  },
+  "post_mask_by_action": {
+    "NoOp": 1196,
+    "Move": 0,
+    "Harvest": 208,
+    "Return": 0,
+    "Produce": 74,
+    "Attack": 0
+  },
+  "decoded_by_action": {
+    "NoOp": 1146,
+    "Move": 33,
+    "Harvest": 220,
+    "Return": 2,
+    "Produce": 77,
+    "Attack": 0
+  },
+  "submitted_by_action": {
+    "NoOp": 1382,
+    "Move": 33,
+    "Harvest": 23,
+    "Return": 2,
+    "Produce": 38,
+    "Attack": 0
+  },
+  "applier_accepted_by_action": {
+    "NoOp": 0,
+    "Move": 33,
+    "Harvest": 23,
+    "Return": 2,
+    "Produce": 36,
+    "Attack": 0
+  },
+  "runtime_applied_by_action": {
+    "NoOp": 0,
+    "Move": 33,
+    "Harvest": 23,
+    "Return": 2,
+    "Produce": 36,
+    "Attack": 0
+  },
+  "state_delta_by_action": {
+    "NoOp": 0,
+    "Move": 0,
+    "Harvest": 5,
+    "Return": 0,
+    "Produce": 3,
+    "Attack": 0
+  },
+  "state_delta_1_step_by_action": {
+    "NoOp": 0,
+    "Move": 0,
+    "Harvest": 5,
+    "Return": 0,
+    "Produce": 3,
+    "Attack": 0
+  },
+  "state_delta_5_step_by_action": {
+    "NoOp": 0,
+    "Move": 0,
+    "Harvest": 5,
+    "Return": 0,
+    "Produce": 27,
+    "Attack": 0
+  },
+  "state_delta_20_step_by_action": {
+    "NoOp": 0,
+    "Move": 0,
+    "Harvest": 5,
+    "Return": 0,
+    "Produce": 24,
+    "Attack": 0
+  },
+  "transitions": {
+    "raw_to_post_mask": {
+      "NoOp": {
+        "NoOp->NoOp": 857
+      },
+      "Move": {},
+      "Harvest": {
+        "Harvest->Harvest": 208,
+        "Harvest->NoOp": 133
+      },
+      "Return": {},
+      "Produce": {
+        "Produce->Produce": 74,
+        "Produce->NoOp": 206
+      },
+      "Attack": {}
+    },
+    "post_mask_to_decoded": {
+      "NoOp": {
+        "NoOp->NoOp": 837,
+        "NoOp->Move": 19,
+        "NoOp->Harvest": 1
+      },
+      "Move": {},
+      "Harvest": {
+        "Harvest->Harvest": 206,
+        "NoOp->NoOp": 114,
+        "NoOp->Move": 5,
+        "Harvest->NoOp": 1,
+        "Harvest->Move": 1,
+        "NoOp->Harvest": 13,
+        "NoOp->Return": 1
+      },
+      "Return": {},
+      "Produce": {
+        "Produce->Produce": 72,
+        "NoOp->NoOp": 194,
+        "Produce->Move": 1,
+        "NoOp->Move": 7,
+        "NoOp->Produce": 5,
+        "Produce->Return": 1
+      },
+      "Attack": {}
+    },
+    "decoded_to_submitted": {
+      "NoOp": {
+        "NoOp->NoOp": 837,
+        "Move->Move": 19,
+        "Harvest->Harvest": 1
+      },
+      "Move": {},
+      "Harvest": {
+        "Harvest->NoOp": 197,
+        "NoOp->NoOp": 115,
+        "Move->Move": 6,
+        "Harvest->Harvest": 22,
+        "Return->Return": 1
+      },
+      "Return": {},
+      "Produce": {
+        "Produce->Produce": 38,
+        "NoOp->NoOp": 194,
+        "Produce->NoOp": 39,
+        "Move->Move": 8,
+        "Return->Return": 1
+      },
+      "Attack": {}
+    },
+    "submitted_to_applier": {
+      "NoOp": {
+        "NoOp->not_submitted": 837,
+        "Move->accepted": 19,
+        "Harvest->accepted": 1
+      },
+      "Move": {},
+      "Harvest": {
+        "NoOp->not_accepted": 312,
+        "Move->accepted": 6,
+        "Harvest->accepted": 22,
+        "Return->accepted": 1
+      },
+      "Return": {},
+      "Produce": {
+        "Produce->accepted": 36,
+        "NoOp->not_accepted": 233,
+        "Move->accepted": 8,
+        "Produce->not_accepted": 2,
+        "Return->accepted": 1
+      },
+      "Attack": {}
+    },
+    "applier_to_runtime_state_delta": {
+      "NoOp": {
+        "applier_not_accepted": 837,
+        "runtime_applied_no_state_delta": 19,
+        "runtime_applied_with_state_delta": 1
+      },
+      "Move": {},
+      "Harvest": {
+        "applier_not_accepted": 312,
+        "runtime_applied_no_state_delta": 25,
+        "runtime_applied_with_state_delta": 4
+      },
+      "Return": {},
+      "Produce": {
+        "runtime_applied_no_state_delta": 42,
+        "applier_not_accepted": 235,
+        "runtime_applied_with_state_delta": 3
+      },
+      "Attack": {}
+    }
+  },
+  "first_failing_boundaries": {
+    "NoOp": "applier_accepted",
+    "Move": "raw_selected",
+    "Harvest": "none",
+    "Return": "raw_selected",
+    "Produce": "none",
+    "Attack": "raw_selected"
+  },
+  "move_boundary_computation_basis": "raw_selected_by_action",
+  "clean_lifecycle_examples_by_action": {
+    "NoOp": [],
+    "Move": [],
+    "Harvest": [
+      {
+        "mode": "scripted_deterministic_commands",
+        "step": 36,
+        "cell_index": 25,
+        "logical_cell": "B2"
+      },
+      {
+        "mode": "scripted_deterministic_commands",
+        "step": 39,
+        "cell_index": 25,
+        "logical_cell": "B2"
+      },
+      {
+        "mode": "scripted_deterministic_commands",
+        "step": 75,
+        "cell_index": 25,
+        "logical_cell": "B2"
+      }
+    ],
+    "Return": [],
+    "Produce": [],
+    "Attack": []
+  },
+  "scripted_mode_details": {
+    "scripted_attempted": 80,
+    "scripted_accepted": 65,
+    "scripted_per_action": [
+      {
+        "action": "Move",
+        "attempted": 38,
+        "accepted": 33
+      },
+      {
+        "action": "Harvest",
+        "attempted": 23,
+        "accepted": 23
+      },
+      {
+        "action": "Return",
+        "attempted": 2,
+        "accepted": 2
+      },
+      {
+        "action": "Produce",
+        "attempted": 7,
+        "accepted": 7
+      },
+      {
+        "action": "Attack",
+        "attempted": 10,
+        "accepted": 0
+      }
+    ],
+    "scripted_direct_per_action": [
+      {
+        "action": "Move",
+        "attempted": 19,
+        "accepted": 19
+      },
+      {
+        "action": "Harvest",
+        "attempted": 12,
+        "accepted": 12
+      },
+      {
+        "action": "Return",
+        "attempted": 2,
+        "accepted": 2
+      },
+      {
+        "action": "Produce",
+        "attempted": 7,
+        "accepted": 7
+      }
+    ],
+    "scripted_canonical_per_action": [
+      {
+        "action": "Move",
+        "attempted": 19,
+        "accepted": 14
+      },
+      {
+        "action": "Harvest",
+        "attempted": 11,
+        "accepted": 11
+      },
+      {
+        "action": "Attack",
+        "attempted": 10,
+        "accepted": 0
+      }
+    ],
+    "scripted_move_attempted": 38,
+    "scripted_move_accepted": 33,
+    "scripted_move_caused_position_delta": true,
+    "scripted_move_delta_evidence": "step=71, from=(2,1), to=(3,1), path=scripted_canonical_actionapplier",
+    "scripted_direct_matchmanager_bypasses_decoder_actionapplier": true,
+    "scripted_canonical_uses_actionapplier": true
+  },
+  "success_gate": {
+    "run_manifest_exists": true,
+    "full_tri_mode": true,
+    "scripted_completed": true,
+    "independent_counters": true,
+    "move_boundary_from_raw_action_counters": true
+  },
+  "diagnostic_valid": true,
+  "go_no_go_verdict": "GO"
+}

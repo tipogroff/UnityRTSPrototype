@@ -1,0 +1,81 @@
+{
+  "generated_at_utc": "2026-05-04T02:21:46.678617+00:00",
+  "stage": "Stage10D22",
+  "source_run_manifest": "(auto-discovered)",
+  "action_lifecycle_summary": {
+    "NoOp": {
+      "raw_selected_count": 283,
+      "mask_allowed_count": 270,
+      "post_mask_count": 402,
+      "decoded_count": 402,
+      "applier_accepted_count": 0,
+      "runtime_applied_count": 0,
+      "state_delta_count": 0,
+      "rejections_by_reason": {
+        "NOT_EXPOSED": 402
+      }
+    },
+    "Move": {
+      "raw_selected_count": 0,
+      "mask_allowed_count": 0,
+      "post_mask_count": 0,
+      "decoded_count": 0,
+      "applier_accepted_count": 0,
+      "runtime_applied_count": 0,
+      "state_delta_count": 0,
+      "rejections_by_reason": {}
+    },
+    "Harvest": {
+      "raw_selected_count": 92,
+      "mask_allowed_count": 92,
+      "post_mask_count": 92,
+      "decoded_count": 92,
+      "applier_accepted_count": 0,
+      "runtime_applied_count": 0,
+      "state_delta_count": 0,
+      "rejections_by_reason": {
+        "NOT_EXPOSED": 92
+      }
+    },
+    "Return": {
+      "raw_selected_count": 0,
+      "mask_allowed_count": 0,
+      "post_mask_count": 0,
+      "decoded_count": 0,
+      "applier_accepted_count": 0,
+      "runtime_applied_count": 0,
+      "state_delta_count": 0,
+      "rejections_by_reason": {}
+    },
+    "Produce": {
+      "raw_selected_count": 23,
+      "mask_allowed_count": 23,
+      "post_mask_count": 23,
+      "decoded_count": 23,
+      "applier_accepted_count": 14,
+      "runtime_applied_count": 14,
+      "state_delta_count": 0,
+      "rejections_by_reason": {
+        "NOT_EXPOSED": 23
+      }
+    },
+    "Attack": {
+      "raw_selected_count": 0,
+      "mask_allowed_count": 0,
+      "post_mask_count": 0,
+      "decoded_count": 0,
+      "applier_accepted_count": 0,
+      "runtime_applied_count": 0,
+      "state_delta_count": 0,
+      "rejections_by_reason": {}
+    }
+  },
+  "first_failing_boundaries": {
+    "move": "raw_selected",
+    "attack": "raw_selected",
+    "harvest_return": "applier_accepted",
+    "produce": "applier_accepted"
+  },
+  "clean_move_lifecycle_examples": [],
+  "go_no_go_verdict": "NO-GO"
+}

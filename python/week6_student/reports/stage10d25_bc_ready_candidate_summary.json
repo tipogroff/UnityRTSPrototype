@@ -1,0 +1,36 @@
+{
+  "part": "D",
+  "title": "Movement-Positive BC Dataset Candidate",
+  "source": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v2_20260428T150608Z",
+  "episodes_loaded": 4,
+  "total_steps": 2048,
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\bc_ready\\stage10d25_movement_positive_candidate_20260504T201410Z",
+  "train_samples": 1639,
+  "val_samples": 409,
+  "train_move_count": 157180,
+  "val_move_count": 39181,
+  "train_move_rate_actor": 0.20000025448562728,
+  "val_move_rate_actor": 0.19986635107837336,
+  "per_unit_type_move_stats": {
+    "Worker": {
+      "unit_cells": 1166233,
+      "actor_cells": 971034,
+      "move_cells": 194007,
+      "move_rate_of_actor": 0.1997942399545227
+    },
+    "Base": {
+      "unit_cells": 5223,
+      "actor_cells": 4066,
+      "move_cells": 989,
+      "move_rate_of_actor": 0.24323659616330545
+    },
+    "Barracks": {
+      "unit_cells": 0,
+      "actor_cells": 0,
+      "move_cells": 0,
+      "move_rate_of_actor": 0.0
+    }
+  },
+  "status": "OK",
+  "error": ""
+}

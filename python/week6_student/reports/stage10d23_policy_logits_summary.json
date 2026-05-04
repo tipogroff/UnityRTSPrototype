@@ -1,0 +1,276 @@
+{
+  "generated_at_utc": "2026-05-04T06:48:49.527547+00:00",
+  "stage": "Stage10D23",
+  "source_run_manifest": "python/week6_student/tmp/stage10d22_global_lifecycle/stage10d22_run_manifest.json",
+  "required_action_type_mapping": {
+    "0": "NoOp",
+    "1": "Move",
+    "2": "Harvest",
+    "3": "Return",
+    "4": "Produce",
+    "5": "Attack"
+  },
+  "student_action_type_topk_summary": {
+    "friendly_actor_rows": 482,
+    "top1_counts": {
+      "NoOp": 272,
+      "Move": 0,
+      "Harvest": 124,
+      "Return": 0,
+      "Produce": 86,
+      "Attack": 0
+    },
+    "top2_counts": {
+      "NoOp": 23,
+      "Move": 0,
+      "Harvest": 134,
+      "Return": 0,
+      "Produce": 261,
+      "Attack": 64
+    },
+    "top3_counts": {
+      "NoOp": 2,
+      "Move": 27,
+      "Harvest": 217,
+      "Return": 49,
+      "Produce": 103,
+      "Attack": 84
+    },
+    "average_probability_per_action_type": {
+      "NoOp": 0.527293963978319,
+      "Move": 0.026521695516597926,
+      "Harvest": 0.2068954846703495,
+      "Return": 0.025662112420217136,
+      "Produce": 0.17887604842757415,
+      "Attack": 0.034750696434902806
+    },
+    "average_logit_per_action_type": {
+      "NoOp": -1.096164248636402,
+      "Move": -0.569501408851122,
+      "Harvest": 0.76208477777997,
+      "Return": -0.5535541680869472,
+      "Produce": 0.7718354241914769,
+      "Attack": -0.3661194222813078
+    },
+    "average_move_rank": 4.83402489626556,
+    "average_attack_rank": 4.238589211618257,
+    "move_top2_count": 0,
+    "move_top3_count": 27,
+    "attack_top2_count": 64,
+    "attack_top3_count": 148,
+    "move_legal_but_not_selected_count": 391,
+    "attack_legal_but_not_selected_count": 20
+  },
+  "student_vs_heuristic_comparison": {
+    "raw_distributions_identical": true,
+    "student_raw_distribution": {
+      "NoOp": 45867,
+      "Move": 0,
+      "Harvest": 125,
+      "Return": 0,
+      "Produce": 88,
+      "Attack": 0
+    },
+    "heuristic_raw_distribution": {
+      "NoOp": 45867,
+      "Move": 0,
+      "Harvest": 125,
+      "Return": 0,
+      "Produce": 88,
+      "Attack": 0
+    },
+    "trace_rows_identical_on_friendly_actor_cells": true,
+    "trace_rows_identical_on_all_cells": true,
+    "policy_sources_identical": false,
+    "student_policy_source": "student_live_policy",
+    "heuristic_policy_source": "heuristic_baseline",
+    "student_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
+    "heuristic_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
+    "same_checkpoint_path_used": true,
+    "heuristic_calls_student_inference_likely": true,
+    "heuristic_writes_raw_action_type_from_student_likely": true,
+    "heuristic_reuses_student_action_buffer_likely": true,
+    "identical_due_to_shared_mask_decoder_fields_only": false,
+    "comparison_basis": "pre-mask logits + top1 + masks + decoder/runtime fields"
+  },
+  "branch_index_mapping_validation": {
+    "expected": {
+      "0": "NoOp",
+      "1": "Move",
+      "2": "Harvest",
+      "3": "Return",
+      "4": "Produce",
+      "5": "Attack"
+    },
+    "observed_from_top3_class_name": {
+      "1": [
+        "Move"
+      ],
+      "2": [
+        "Harvest"
+      ],
+      "3": [
+        "Return"
+      ],
+      "4": [
+        "Produce"
+      ],
+      "5": [
+        "Attack"
+      ]
+    },
+    "mismatch": {},
+    "matches_expected": true,
+    "action_type_index_0_label": "NoOp",
+    "action_type_index_1_label": "Move",
+    "action_type_index_2_label": "Harvest",
+    "action_type_index_3_label": "Return",
+    "action_type_index_4_label": "Produce",
+    "action_type_index_5_label": "Attack"
+  },
+  "checkpoint_binding": {
+    "checkpoint_path_loaded": "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
+    "model_class": "unknown_not_emitted",
+    "model_variant": "unknown",
+    "checkpoint_epoch": 1,
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "logits_tensor_keys": [
+      "action_type_logits",
+      "move_dir_logits",
+      "harvest_dir_logits",
+      "return_dir_logits",
+      "produce_dir_logits",
+      "produce_unit_type_logits",
+      "attack_target_local_logits"
+    ],
+    "action_type_logits_shape": [
+      1,
+      576,
+      6
+    ],
+    "all_logits_shapes": {
+      "action_type_logits": [
+        1,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        1,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        1,
+        576,
+        49
+      ]
+    },
+    "device": "unknown_not_emitted",
+    "fallback_used": false,
+    "fake_logits_used": false,
+    "heuristic_policy_path_used": false,
+    "python_request_status": "completed",
+    "python_response_status": "ok",
+    "parsed_logits_available": true,
+    "adapter_artifact_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\tmp\\day5_sanity\\day5_sanity_player1_slot00_adapter.json",
+    "raw_adapter_response_keys": [
+      "status",
+      "action_contract_version",
+      "observation_shape",
+      "observation_dtype",
+      "branch_order",
+      "branch_sizes",
+      "logits_keys",
+      "checkpoint_epoch",
+      "checkpoint_model_variant",
+      "checkpoint_metrics",
+      "train_total_loss",
+      "train_action_type_loss",
+      "train_move_dir_loss",
+      "train_harvest_dir_loss",
+      "train_return_dir_loss",
+      "train_produce_dir_loss",
+      "train_produce_unit_type_loss",
+      "train_attack_target_local_loss",
+      "train_action_type_accuracy_all_cells",
+      "train_noop_share_pred_all_cells",
+      "train_noop_share_target_all_cells",
+      "train_actor_cell_count",
+      "train_actor_cell_action_type_accuracy",
+      "train_actor_cell_non_noop_recall",
+      "train_actor_cell_noop_pred_share",
+      "train_worker_harvest_proxy_count",
+      "train_worker_harvest_proxy_accuracy",
+      "train_base_produce_proxy_count",
+      "train_base_produce_proxy_accuracy",
+      "train_attack_proxy_count",
+      "train_attack_proxy_accuracy",
+      "val_total_loss",
+      "val_action_type_loss",
+      "val_move_dir_loss",
+      "val_harvest_dir_loss",
+      "val_return_dir_loss",
+      "val_produce_dir_loss",
+      "val_produce_unit_type_loss",
+      "val_attack_target_local_loss",
+      "val_action_type_accuracy_all_cells",
+      "val_noop_share_pred_all_cells",
+      "val_noop_share_target_all_cells",
+      "val_actor_cell_count",
+      "val_actor_cell_action_type_accuracy",
+      "val_actor_cell_non_noop_recall",
+      "val_actor_cell_noop_pred_share",
+      "val_worker_harvest_proxy_count",
+      "val_worker_harvest_proxy_accuracy",
+      "val_base_produce_proxy_count",
+      "val_base_produce_proxy_accuracy",
+      "val_attack_proxy_count",
+      "val_attack_proxy_accuracy",
+      "original_val_actor_action_accuracy",
+      "original_val_actor_non_noop_recall",
+      "original_val_worker_harvest_recall",
+      "original_val_base_produce_recall",
+      "original_val_predicted_noop_share_all_cells",
+      "augmented_val_actor_action_accuracy",
+      "augmented_val_actor_non_noop_recall",
+      "augmented_target_B2_success_rate",
+      "augmented_target_C3_success_rate",
+      "true_raw_B2_p_noop",
+      "true_raw_B2_p_harvest",
+      "true_raw_B2_p_produce"
+    ]
+  },
+  "first_failing_boundary_update": {
+    "Move": "raw_selected",
+    "Attack": "raw_selected"
+  },
+  "go_no_go_verdict": "GO"
+}

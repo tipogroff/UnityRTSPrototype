@@ -1,0 +1,496 @@
+{
+  "generated_at_utc": "20260504T201410Z",
+  "part_a": {
+    "part": "A",
+    "title": "Heuristic Mode Isolation Audit",
+    "snapshot_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\tmp\\stage10d22_global_lifecycle\\heuristic_baseline",
+    "snapshots_found": 80,
+    "snapshots_with_adapter_invoked_true": 0,
+    "snapshots_with_adapter_invoked_false": 0,
+    "sample_steps": [],
+    "root_cause": "All snapshots show adapter_invoked=false (already fixed or not yet run).",
+    "csharp_fix_applied": {
+      "file1": "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+      "change1": "Added SetCurrentCaptureModeContext(modeName, player1Mode, player2Mode) public method. Added 7 new fields to Stage10VisualSnapshot: mode, policy_source, inference_source, uses_student_checkpoint, uses_python_adapter, uses_heuristic_policy, action_buffer_source. Added IsHeuristicOnlyMode() helper: returns true when both players are HeuristicBaseline. ResolveAdapterInvoked() returns false when IsHeuristicOnlyMode(). Policy-source helpers populate correct telemetry per-mode.",
+      "file2": "Assets/Scripts/ML/Editor/Week6Stage10D22GlobalActionLifecycleMenu.cs",
+      "change2": "RunSingleMode now accepts Week6StudentPolicyAdapter adapter parameter. Before each run: runner.SetCurrentCaptureModeContext(modeName, p1Mode, p2Mode). Before heuristic_baseline run: adapter.ResetEpisodeState() to clear stale diagnostics. All three RunSingleMode call-sites updated to pass adapter."
+    },
+    "isolation_verdict_before_fix": "ISOLATED",
+    "isolation_verdict_after_fix": "ISOLATED — after applying the C# fix above and re-running D22 capture, heuristic snapshots will show adapter_invoked=false, uses_heuristic_policy=true, policy_source=heuristic_policy, action_buffer_source=heuristic_policy_adapter."
+  },
+  "part_b": {
+    "part": "B",
+    "title": "Action Label Flow Audit",
+    "stages": [
+      {
+        "stage": 0,
+        "label": "legacy032_3m_raw_rollout",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_unity_v2_rollout_export_20260501T125015Z\\teacher_rollout_raw.npz",
+        "key_used": "per_cell_action_t (branch 0)",
+        "shape": [
+          88165,
+          576,
+          7
+        ],
+        "action_type_counts": {
+          "NoOp": 50608730,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95,
+          "total": 50783040
+        },
+        "move_rate_of_actor_cells": 0.0,
+        "move_present": false
+      },
+      {
+        "stage": 1,
+        "label": "legacy032_3m_semantic_adapted",
+        "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z\\adapted_dataset.npz",
+        "key_used": "actions (branch 0)",
+        "shape": [
+          88165,
+          576,
+          7
+        ],
+        "action_type_counts": {
+          "NoOp": 50608730,
+          "Move": 0,
+          "Harvest": 86570,
+          "Return": 0,
+          "Produce": 87645,
+          "Attack": 95,
+          "total": 50783040
+        },
+        "move_rate_of_actor_cells": 0.0,
+        "move_present": false
+      },
+      {
+        "stage": 2,
+        "label": "bc_ready_d7",
+        "dir": "legacy032_3m_unity_v2_semantic_bc_ready_stage10d7_20260503T090659Z",
+        "train_keys": [
+          "observations",
+          "actions",
+          "episode_id",
+          "step_id",
+          "reward_t",
+          "done_t",
+          "terminated_t",
+          "truncated_t",
+          "action_mask_available_t"
+        ],
+        "train_error": "target_action_branches_missing",
+        "val_keys": [
+          "observations",
+          "actions",
+          "episode_id",
+          "step_id",
+          "reward_t",
+          "done_t",
+          "terminated_t",
+          "truncated_t",
+          "action_mask_available_t"
+        ],
+        "val_error": "target_action_branches_missing"
+      },
+      {
+        "stage": 3,
+        "label": "bc_ready_d14a",
+        "dir": "legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T142914Z",
+        "train_shape": [
+          79394,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 45573993,
+          "Move": 0,
+          "Harvest": 77948,
+          "Return": 0,
+          "Produce": 78915,
+          "Attack": 88,
+          "total": 45730944
+        },
+        "train_move_present": false,
+        "train_move_rate_actor": 0.0,
+        "val_shape": [
+          8830,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 5068609,
+          "Move": 0,
+          "Harvest": 8678,
+          "Return": 0,
+          "Produce": 8786,
+          "Attack": 7,
+          "total": 5086080
+        },
+        "val_move_present": false,
+        "val_move_rate_actor": 0.0
+      },
+      {
+        "stage": 4,
+        "label": "bc_ready_d14b",
+        "dir": "legacy032_3m_unity_v2_stage10d14_unity_like_augmented_bc_ready_20260503T145301Z",
+        "train_shape": [
+          80692,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 46319123,
+          "Move": 0,
+          "Harvest": 79198,
+          "Return": 0,
+          "Produce": 80183,
+          "Attack": 88,
+          "total": 46478592
+        },
+        "train_move_present": false,
+        "train_move_rate_actor": 0.0,
+        "val_shape": [
+          8985,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 5157585,
+          "Move": 0,
+          "Harvest": 8830,
+          "Return": 0,
+          "Produce": 8938,
+          "Attack": 7,
+          "total": 5175360
+        },
+        "val_move_present": false,
+        "val_move_rate_actor": 0.0
+      },
+      {
+        "stage": 5,
+        "label": "bc_ready_d17",
+        "dir": "legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+        "train_shape": [
+          82813,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 47535736,
+          "Move": 841,
+          "Harvest": 81319,
+          "Return": 0,
+          "Produce": 82304,
+          "Attack": 88,
+          "total": 47700288
+        },
+        "train_move_present": true,
+        "train_move_rate_actor": 0.005110846419368953,
+        "val_shape": [
+          9506,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 5456438,
+          "Move": 201,
+          "Harvest": 9351,
+          "Return": 0,
+          "Produce": 9459,
+          "Attack": 7,
+          "total": 5475456
+        },
+        "val_move_present": true,
+        "val_move_rate_actor": 0.010568934693448313
+      },
+      {
+        "stage": 6,
+        "label": "bc_ready_d19b_a",
+        "dir": "legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191804Z",
+        "train_error": "[Errno 13] Permission denied: '.'",
+        "val_error": "[Errno 13] Permission denied: '.'"
+      },
+      {
+        "stage": 7,
+        "label": "bc_ready_d19b_b",
+        "dir": "legacy032_v2_stage10d19b_valid_move_augmented_bc_ready_20260503T191829Z",
+        "train_shape": [
+          87552,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 50253293,
+          "Move": 3470,
+          "Harvest": 86058,
+          "Return": 0,
+          "Produce": 87043,
+          "Attack": 88,
+          "total": 50429952
+        },
+        "train_move_present": true,
+        "train_move_rate_actor": 0.01964236183834393,
+        "val_shape": [
+          10737,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 6162350,
+          "Move": 883,
+          "Harvest": 10582,
+          "Return": 0,
+          "Produce": 10690,
+          "Attack": 7,
+          "total": 6184512
+        },
+        "val_move_present": true,
+        "val_move_rate_actor": 0.03984297446078874
+      },
+      {
+        "stage": 8,
+        "label": "bc_ready_d19c_a",
+        "dir": "legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200611Z",
+        "train_shape": [
+          91953,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 52778297,
+          "Move": 4657,
+          "Harvest": 90444,
+          "Return": 0,
+          "Produce": 91441,
+          "Attack": 89,
+          "total": 52964928
+        },
+        "train_move_present": true,
+        "train_move_rate_actor": 0.02495298208764889,
+        "val_shape": [
+          11992,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 6882340,
+          "Move": 1266,
+          "Harvest": 11834,
+          "Return": 0,
+          "Produce": 11945,
+          "Attack": 7,
+          "total": 6907392
+        },
+        "val_move_present": true,
+        "val_move_rate_actor": 0.050534887434137
+      },
+      {
+        "stage": 9,
+        "label": "bc_ready_d19c_b",
+        "dir": "legacy032_v2_stage10d19c_mask_aware_failure_augmented_bc_ready_20260503T200935Z",
+        "train_shape": [
+          92132,
+          576,
+          7
+        ],
+        "train_action_type_counts": {
+          "NoOp": 52881037,
+          "Move": 4663,
+          "Harvest": 90623,
+          "Return": 0,
+          "Produce": 91620,
+          "Attack": 89,
+          "total": 53068032
+        },
+        "train_move_present": true,
+        "train_move_rate_actor": 0.024936495628225353,
+        "val_shape": [
+          12035,
+          576,
+          7
+        ],
+        "val_action_type_counts": {
+          "NoOp": 6907017,
+          "Move": 1271,
+          "Harvest": 11877,
+          "Return": 0,
+          "Produce": 11988,
+          "Attack": 7,
+          "total": 6932160
+        },
+        "val_move_present": true,
+        "val_move_rate_actor": 0.050550849142902594
+      },
+      {
+        "stage": 10,
+        "label": "gridnet_stoch_adapted_episodes",
+        "dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v2_20260428T150608Z",
+        "episode_count": 4,
+        "combined_action_type_counts": {
+          "NoOp": 197713,
+          "Move": 196361,
+          "Harvest": 196013,
+          "Return": 196232,
+          "Produce": 196576,
+          "Attack": 196753,
+          "total": 1179648
+        },
+        "move_rate_actor": 0.19997352166894958,
+        "move_present": true
+      }
+    ],
+    "summary": [
+      "  Stage  0 [legacy032_3m_raw_rollout]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  1 [legacy032_3m_semantic_adapted]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  2 [bc_ready_d7]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  3 [bc_ready_d14a]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  4 [bc_ready_d14b]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  5 [bc_ready_d17]: Move=      841  actor_rate=0.005  ✓ MOVE_PRESENT",
+      "  Stage  6 [bc_ready_d19b_a]: Move=        0  actor_rate=0.000  ✗ ZERO_MOVE",
+      "  Stage  7 [bc_ready_d19b_b]: Move=    3,470  actor_rate=0.020  ✓ MOVE_PRESENT",
+      "  Stage  8 [bc_ready_d19c_a]: Move=    4,657  actor_rate=0.025  ✓ MOVE_PRESENT",
+      "  Stage  9 [bc_ready_d19c_b]: Move=    4,663  actor_rate=0.025  ✓ MOVE_PRESENT",
+      "  Stage 10 [gridnet_stoch_adapted_episodes]: Move=  196,361  actor_rate=0.200  ✓ MOVE_PRESENT"
+    ]
+  },
+  "part_c": {
+    "part": "C",
+    "title": "Action Target Encoding Validation",
+    "branch_spec": {
+      "branch_0": "action_type (0=NoOp,1=Move,2=Harvest,3=Return,4=Produce,5=Attack)",
+      "branch_1": "move_dir (0-3: N/E/S/W or similar; 4 classes)",
+      "branch_2": "harvest_dir (4 classes)",
+      "branch_3": "return_dir (4 classes)",
+      "branch_4": "produce_dir (4 classes)",
+      "branch_5": "produce_unit_type (7 classes)",
+      "branch_6": "attack_target (49 classes)"
+    },
+    "move_label_idx": 1,
+    "datasets_checked": [
+      {
+        "dataset": "legacy032_v2_stage10d17_movement_augmented_bc_ready_20260503T162905Z",
+        "split": "train",
+        "total_samples": 82813,
+        "total_cells": 47700288,
+        "move_cells": 841,
+        "move_dir_unique_values_on_move_cells": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "move_dir_in_valid_range_0_3": true,
+        "noop_cells_with_nonzero_move_dir": 0,
+        "move_label_is_index_1": true,
+        "branch_0_min": 0,
+        "branch_0_max": 5
+      },
+      {
+        "dataset": "stoch_episode_00000",
+        "split": "episode",
+        "shape": [
+          512,
+          576,
+          7
+        ],
+        "move_cells": 49308,
+        "move_dir_unique_values_on_move_cells": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "move_dir_in_valid_range_0_3": true,
+        "branch_0_min": 0,
+        "branch_0_max": 5
+      }
+    ],
+    "encoding_verdict": "VALID — Move=1 in branch 0; move_dir in [0,3]; branch spec confirmed (N=7 branches, 576 cells)."
+  },
+  "part_d": {
+    "part": "D",
+    "title": "Movement-Positive BC Dataset Candidate",
+    "source": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\WEEK5R\\teacher_exports_v2\\teacher_adapted_gridnet_100k_stoch_ab_v2_20260428T150608Z",
+    "episodes_loaded": 4,
+    "total_steps": 2048,
+    "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\bc_ready\\stage10d25_movement_positive_candidate_20260504T201410Z",
+    "train_samples": 1639,
+    "val_samples": 409,
+    "train_move_count": 157180,
+    "val_move_count": 39181,
+    "train_move_rate_actor": 0.20000025448562728,
+    "val_move_rate_actor": 0.19986635107837336,
+    "per_unit_type_move_stats": {
+      "Worker": {
+        "unit_cells": 1166233,
+        "actor_cells": 971034,
+        "move_cells": 194007,
+        "move_rate_of_actor": 0.1997942399545227
+      },
+      "Base": {
+        "unit_cells": 5223,
+        "actor_cells": 4066,
+        "move_cells": 989,
+        "move_rate_of_actor": 0.24323659616330545
+      },
+      "Barracks": {
+        "unit_cells": 0,
+        "actor_cells": 0,
+        "move_cells": 0,
+        "move_rate_of_actor": 0.0
+      }
+    },
+    "status": "OK",
+    "error": ""
+  },
+  "part_e": {
+    "part": "E",
+    "title": "Acceptance Gate",
+    "gates": [
+      {
+        "gate": "TRAIN_MOVE_GT_ZERO",
+        "pass": true,
+        "value": 157180,
+        "required": "> 0",
+        "note": "train_move_count=157180"
+      },
+      {
+        "gate": "VAL_MOVE_GT_ZERO",
+        "pass": true,
+        "value": 39181,
+        "required": "> 0",
+        "note": "val_move_count=39181"
+      },
+      {
+        "gate": "MOVE_LABEL_IS_INDEX_1",
+        "pass": true,
+        "value": 1,
+        "required": "== 1",
+        "note": "ACTION_TYPES[1] = 'Move' by spec; verified in Part C encoding check."
+      },
+      {
+        "gate": "ENCODING_LEGAL",
+        "pass": true,
+        "value": "VALID — Move=1 in branch 0; move_dir in [0,3]; branch spec confirmed (N=7 branches, 576 cells).",
+        "required": "VALID",
+        "note": "Part C encoding validation verdict"
+      },
+      {
+        "gate": "HEURISTIC_ISOLATED",
+        "pass": false,
+        "value": "ISOLATED",
+        "required": "ISOLATED",
+        "note": "C# fix applied to Week6VisualInspectionRunner.cs and D22 menu. However existing D22 snapshots were captured PRE-FIX. Status will become PASS after D22 is re-run in Unity."
+      }
+    ],
+    "all_pass": false,
+    "blocking_gates": [
+      "HEURISTIC_ISOLATED"
+    ],
+    "overall_verdict": "NO_GO — 1 gate(s) blocking: HEURISTIC_ISOLATED",
+    "next_step": "Re-run Stage10D22 capture in Unity after C# fix compiles, then re-run this script to confirm HEURISTIC_ISOLATED=PASS."
+  }
+}
