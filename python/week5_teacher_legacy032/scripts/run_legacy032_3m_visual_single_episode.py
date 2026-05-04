@@ -192,6 +192,15 @@ def json_line(payload: Dict[str, Any]) -> str:
     return json.dumps(payload, ensure_ascii=True, sort_keys=True)
 
 
+def parse_bool(value: str) -> bool:
+    v = str(value).strip().lower()
+    if v in {"1", "true", "yes", "y", "on"}:
+        return True
+    if v in {"0", "false", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError(f"Invalid boolean value: {value}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Stage10D27A Legacy032 3M visual single-episode eval")
     parser.add_argument("--checkpoint-path", default=CHECKPOINT_REL)
@@ -206,6 +215,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fps", type=int, default=8)
     parser.add_argument("--frame-every", type=int, default=1)
     parser.add_argument("--write-video", action="store_true")
+    parser.add_argument("--strict-load", type=parse_bool, default=True)
     return parser.parse_args()
 
 
@@ -216,15 +226,28 @@ def load_metadata(path: Path) -> Dict[str, Any]:
         raise Stage10D27AError(f"Failed to load metadata: {path} ({exc})") from exc
 
 
-def load_checkpoint(path: Path, device: torch.device) -> Dict[str, Any]:
+def load_legacy032_policy_checkpoint(path: Path, device: torch.device, strict_load: bool = True) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     try:
         payload = torch.load(str(path), map_location=device)
     except Exception as exc:
         raise Stage10D27AError(f"Failed to load checkpoint: {path} ({exc})") from exc
+    details = {
+        "checkpoint_format": None,
+        "strict_load": bool(strict_load),
+        "strict_load_status": "STRICT_LOAD_ENFORCED" if strict_load else "STRICT_LOAD_OPT_OUT",
+    }
+    if isinstance(payload, dict) and payload.get("checkpoint_kind") == "full_training_state":
+        state_dict = payload.get("agent_state_dict")
+        if not isinstance(state_dict, dict):
+            raise Stage10D27AError("Full training checkpoint is missing agent_state_dict")
+        details["checkpoint_format"] = "full_training_checkpoint"
+        return state_dict, details
     if isinstance(payload, dict) and "state_dict" in payload and isinstance(payload["state_dict"], dict):
-        return payload["state_dict"]
+        details["checkpoint_format"] = "wrapped_state_dict"
+        return payload["state_dict"], details
     if isinstance(payload, dict):
-        return payload
+        details["checkpoint_format"] = "weights_only_state_dict"
+        return payload, details
     raise Stage10D27AError("Checkpoint payload is not state_dict-compatible.")
 
 
@@ -527,7 +550,11 @@ def main() -> int:
     torch.manual_seed(int(args.seed))
     np.random.seed(int(args.seed))
 
-    state_dict = load_checkpoint(checkpoint_path, device)
+    state_dict, checkpoint_details = load_legacy032_policy_checkpoint(
+        checkpoint_path,
+        device,
+        strict_load=bool(args.strict_load),
+    )
     policy = Legacy032Policy(
         obs_channels=EXPECTED_OBS_SHAPE[2],
         nvec=nvec,
@@ -535,7 +562,11 @@ def main() -> int:
         obs_hw=(EXPECTED_OBS_SHAPE[0], EXPECTED_OBS_SHAPE[1]),
         architecture_name=str(metadata.get("architecture_name", "")),
     ).to(device)
-    missing, unexpected = policy.load_state_dict(state_dict, strict=False)
+    if args.strict_load:
+        policy.load_state_dict(state_dict, strict=True)
+        missing, unexpected = [], []
+    else:
+        missing, unexpected = policy.load_state_dict(state_dict, strict=False)
     policy.eval()
 
     env = None
@@ -557,6 +588,8 @@ def main() -> int:
     snapshot_paths: List[str] = []
     warnings: List[str] = []
 
+    if not args.strict_load:
+        warnings.append(f"STRICT_LOAD_STATUS=STRICT_LOAD_OPT_OUT missing={len(missing)} unexpected={len(unexpected)}")
     if missing:
         warnings.append(f"Missing checkpoint keys: {len(missing)}")
     if unexpected:

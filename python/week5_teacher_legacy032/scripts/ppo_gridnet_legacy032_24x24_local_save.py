@@ -21,9 +21,13 @@ from gym.spaces import Discrete, Box, MultiBinary, MultiDiscrete, Space
 import time
 import random
 import os
+from datetime import datetime, timezone
 from stable_baselines3.common.vec_env import VecEnvWrapper, VecVideoRecorder
 
 ARCHITECTURE_NAME = "legacy032_resolution_aware_gridnet_v1"
+FULL_CHECKPOINT_SCHEMA_VERSION = "legacy032.full_training_checkpoint.v1"
+EXPECTED_OBS_CONTRACT = [24, 24, 27]
+EXPECTED_ACTION_NVEC_CONTRACT = [576, 6, 4, 4, 4, 4, 7, 49]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PPO agent')
@@ -56,6 +60,20 @@ if __name__ == "__main__":
                         help='directory to save local model artifacts')
     parser.add_argument('--local-save-every', type=int, default=0,
                         help='if > 0, save intermediate checkpoints every N global steps')
+    parser.add_argument('--save-full-training-state', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
+                        help='save full training checkpoints with optimizer/RNG/update state for local resume')
+    parser.add_argument('--resume-from-local-checkpoint', type=str, default=None,
+                        help='path to trainer_state_final.pt or trainer_state_step_<step>.pt')
+    parser.add_argument('--resume-required', type=lambda x: bool(strtobool(x)), default=False, nargs='?', const=True,
+                        help='if true, fail when resume checkpoint is missing or invalid')
+    parser.add_argument('--strict-resume-config', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
+                        help='if true, enforce strict map/contract compatibility for resume checkpoint')
+    parser.add_argument('--schedule-total-timesteps', type=int, default=None,
+                        help='training horizon used for LR schedule; defaults to total-timesteps')
+    parser.add_argument('--resume-allow-total-timesteps-increase', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
+                        help='allow resuming from lower-step checkpoint into a higher target total timesteps')
+    parser.add_argument('--resume-allow-save-dir-change', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
+                        help='allow resume when local-save-dir differs from checkpoint metadata')
     parser.add_argument('--map-path', type=str, default='maps/24x24/basesWorkers24x24.xml',
                         help='map path passed to MicroRTSGridModeVecEnv')
     parser.add_argument('--max-steps', type=int, default=2000,
@@ -109,6 +127,9 @@ if __name__ == "__main__":
 args.num_envs = args.num_selfplay_envs + args.num_bot_envs
 args.batch_size = int(args.num_envs * args.num_steps)
 args.minibatch_size = int(args.batch_size // args.n_minibatch)
+args.schedule_total_timesteps = int(args.schedule_total_timesteps) if args.schedule_total_timesteps else int(args.total_timesteps)
+if args.schedule_total_timesteps <= 0:
+    raise ValueError("--schedule-total-timesteps must be positive")
 
 
 class VecMonitor(VecEnvWrapper):
@@ -258,13 +279,42 @@ def _get_local_save_dir():
     return os.path.join("models", experiment_name)
 
 
-def save_local_model(agent, global_step, save_dir, checkpoint_paths):
-    os.makedirs(save_dir, exist_ok=True)
-    model_path = os.path.join(save_dir, "agent_final.pt")
-    torch.save(agent.state_dict(), model_path)
+def _utc_now_iso():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    metadata = {
-        "args": vars(args),
+
+def _training_config_snapshot():
+    return {
+        "total_timesteps": int(args.total_timesteps),
+        "schedule_total_timesteps": int(args.schedule_total_timesteps),
+        "num_envs": int(args.num_envs),
+        "num_steps": int(args.num_steps),
+        "batch_size": int(args.batch_size),
+        "minibatch_size": int(args.minibatch_size),
+        "learning_rate": float(args.learning_rate),
+        "anneal_lr": bool(args.anneal_lr),
+        "gamma": float(args.gamma),
+        "gae_lambda": float(args.gae_lambda),
+        "clip_coef": float(args.clip_coef),
+        "vf_coef": float(args.vf_coef),
+        "ent_coef": float(args.ent_coef),
+        "max_grad_norm": float(args.max_grad_norm),
+    }
+
+
+def _environment_contract_snapshot():
+    return {
+        "map_path": args.map_path,
+        "expected_map_size": int(args.expected_map_size),
+        "max_steps": int(args.max_steps),
+        "observation_space": [int(v) for v in envs.observation_space.shape],
+        "action_space_nvec": [int(x) for x in envs.action_space.nvec.tolist()],
+        "architecture_name": ARCHITECTURE_NAME,
+    }
+
+
+def _device_info_snapshot():
+    return {
         "requested_device": requested_device,
         "effective_device": effective_device,
         "torch_version": torch.__version__,
@@ -272,6 +322,85 @@ def save_local_model(agent, global_step, save_dir, checkpoint_paths):
         "cuda_available": bool(torch.cuda.is_available()),
         "cuda_device_count": int(torch.cuda.device_count()),
         "cuda_device_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NO CUDA",
+    }
+
+
+def _capture_rng_state():
+    return {
+        "python_random_state": random.getstate(),
+        "numpy_random_state": np.random.get_state(),
+        "torch_rng_state": torch.get_rng_state(),
+        "torch_cuda_rng_state_all": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+    }
+
+
+def _write_latest_trainer_state_index(save_dir, trainer_state_path, global_step, update):
+    index_payload = {
+        "checkpoint_schema_version": FULL_CHECKPOINT_SCHEMA_VERSION,
+        "checkpoint_kind": "full_training_state_index",
+        "created_at_utc": _utc_now_iso(),
+        "latest_trainer_state_path": trainer_state_path,
+        "global_step": int(global_step),
+        "update": int(update),
+    }
+    index_path = os.path.join(save_dir, "latest_trainer_state.json")
+    with open(index_path, "w", encoding="utf-8") as f:
+        json.dump(index_payload, f, indent=2)
+    return index_path
+
+
+def save_local_checkpoint(agent, global_step, save_dir):
+    os.makedirs(save_dir, exist_ok=True)
+    checkpoint_path = os.path.join(save_dir, f"agent_step_{int(global_step):09d}.pt")
+    torch.save(agent.state_dict(), checkpoint_path)
+    return checkpoint_path
+
+
+def save_full_training_checkpoint(agent, optimizer, global_step, update, num_updates_completed, save_dir, kind):
+    os.makedirs(save_dir, exist_ok=True)
+    if kind == "final":
+        trainer_state_path = os.path.join(save_dir, "trainer_state_final.pt")
+    else:
+        trainer_state_path = os.path.join(save_dir, f"trainer_state_step_{int(global_step):09d}.pt")
+
+    payload = {
+        "checkpoint_schema_version": FULL_CHECKPOINT_SCHEMA_VERSION,
+        "checkpoint_kind": "full_training_state",
+        "created_at_utc": _utc_now_iso(),
+        "global_step": int(global_step),
+        "update": int(update),
+        "num_updates_completed": int(num_updates_completed),
+        "agent_state_dict": agent.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "args": vars(args),
+        "training_config": _training_config_snapshot(),
+        "environment_contract": _environment_contract_snapshot(),
+        "rng_state": _capture_rng_state(),
+        "device_info": _device_info_snapshot(),
+        "source_script": os.path.basename(__file__),
+        "notes": [
+            "Full training checkpoint for local resume.",
+            "Environment internal Java state is not serialized; resume is training-state continuation, not guaranteed bitwise mid-episode replay.",
+        ],
+    }
+    torch.save(payload, trainer_state_path)
+    index_path = _write_latest_trainer_state_index(
+        save_dir=save_dir,
+        trainer_state_path=trainer_state_path,
+        global_step=global_step,
+        update=update,
+    )
+    return trainer_state_path, index_path
+
+
+def save_local_model(agent, global_step, save_dir, checkpoint_paths, trainer_state_paths, latest_trainer_state_index_path, resume_context):
+    os.makedirs(save_dir, exist_ok=True)
+    model_path = os.path.join(save_dir, "agent_final.pt")
+    torch.save(agent.state_dict(), model_path)
+
+    metadata = {
+        "args": vars(args),
+        **_device_info_snapshot(),
         "global_step": int(global_step),
         "env_id": args.gym_id,
         "gym_id": args.gym_id,
@@ -296,7 +425,18 @@ def save_local_model(agent, global_step, save_dir, checkpoint_paths):
         "source_note": "Stage 4 patched 24x24 legacy032 training script; not proof of direct Unity compatibility.",
         "experiment_name": experiment_name,
         "checkpoint_paths": checkpoint_paths,
+        "trainer_state_paths": trainer_state_paths,
         "final_model_path": model_path,
+        "weights_snapshot_kind": "inference_weights_only",
+        "full_training_checkpoint_available": bool(trainer_state_paths),
+        "full_training_checkpoint_path": trainer_state_paths[-1] if trainer_state_paths else None,
+        "latest_trainer_state_index_path": latest_trainer_state_index_path,
+        "resume_supported": bool(trainer_state_paths),
+        "resume_schema_version": FULL_CHECKPOINT_SCHEMA_VERSION,
+        "resume_semantics": "training_state_resume_without_java_env_state_serialization",
+        "schedule_total_timesteps": int(args.schedule_total_timesteps),
+        "stage_target_total_timesteps": int(args.total_timesteps),
+        "resumed_from": resume_context,
     }
     metadata_path = os.path.join(save_dir, "model_metadata.json")
     with open(metadata_path, "w", encoding="utf-8") as f:
@@ -304,11 +444,11 @@ def save_local_model(agent, global_step, save_dir, checkpoint_paths):
     return model_path, metadata_path
 
 
-def save_local_checkpoint(agent, global_step, save_dir):
-    os.makedirs(save_dir, exist_ok=True)
-    checkpoint_path = os.path.join(save_dir, f"agent_step_{int(global_step):09d}.pt")
-    torch.save(agent.state_dict(), checkpoint_path)
-    return checkpoint_path
+def save_training_machine_report(save_dir, payload):
+    out_path = os.path.join(save_dir, "training_machine_report.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    return out_path
 
 
 # ALGO LOGIC: initialize agent here:
@@ -471,6 +611,69 @@ class Agent(nn.Module):
         return self.critic(self.forward(x))
 
 
+def _restore_rng_state(rng_state):
+    if not isinstance(rng_state, dict):
+        return False
+    try:
+        if rng_state.get("python_random_state") is not None:
+            random.setstate(rng_state["python_random_state"])
+        if rng_state.get("numpy_random_state") is not None:
+            np.random.set_state(tuple(rng_state["numpy_random_state"]))
+        if rng_state.get("torch_rng_state") is not None:
+            torch.set_rng_state(rng_state["torch_rng_state"])
+        if torch.cuda.is_available() and rng_state.get("torch_cuda_rng_state_all") is not None:
+            torch.cuda.set_rng_state_all(rng_state["torch_cuda_rng_state_all"])
+        return True
+    except Exception:
+        return False
+
+
+def _validate_resume_checkpoint(payload):
+    if not isinstance(payload, dict):
+        raise RuntimeError("Resume checkpoint payload must be a dictionary")
+    if payload.get("checkpoint_schema_version") != FULL_CHECKPOINT_SCHEMA_VERSION:
+        raise RuntimeError("Resume checkpoint schema mismatch")
+    if payload.get("checkpoint_kind") != "full_training_state":
+        raise RuntimeError("Resume checkpoint kind mismatch")
+    if "agent_state_dict" not in payload:
+        raise RuntimeError("Resume checkpoint missing agent_state_dict")
+    if "optimizer_state_dict" not in payload:
+        raise RuntimeError("Resume checkpoint missing optimizer_state_dict")
+    if "global_step" not in payload:
+        raise RuntimeError("Resume checkpoint missing global_step")
+
+    env_contract = payload.get("environment_contract") or {}
+    if env_contract.get("architecture_name") != ARCHITECTURE_NAME:
+        raise RuntimeError("Resume checkpoint architecture mismatch")
+
+    obs_contract = [int(v) for v in env_contract.get("observation_space") or []]
+    if obs_contract != EXPECTED_OBS_CONTRACT:
+        raise RuntimeError(f"Resume checkpoint observation contract mismatch: {obs_contract}")
+
+    action_contract = [int(v) for v in env_contract.get("action_space_nvec") or []]
+    if action_contract != EXPECTED_ACTION_NVEC_CONTRACT:
+        raise RuntimeError(f"Resume checkpoint action contract mismatch: {action_contract}")
+
+    if args.strict_resume_config:
+        ckpt_map_path = str(env_contract.get("map_path") or "")
+        if ckpt_map_path and ckpt_map_path != str(args.map_path):
+            raise RuntimeError(f"Resume checkpoint map_path mismatch: {ckpt_map_path} != {args.map_path}")
+        ckpt_expected_size = env_contract.get("expected_map_size")
+        if ckpt_expected_size is not None and int(ckpt_expected_size) != int(args.expected_map_size):
+            raise RuntimeError("Resume checkpoint expected_map_size mismatch")
+        ckpt_max_steps = env_contract.get("max_steps")
+        if ckpt_max_steps is not None and int(ckpt_max_steps) != int(args.max_steps):
+            raise RuntimeError("Resume checkpoint max_steps mismatch")
+
+    ckpt_args = payload.get("args") or {}
+    if not args.resume_allow_save_dir_change:
+        ckpt_save_dir = ckpt_args.get("local_save_dir")
+        if ckpt_save_dir and args.local_save_dir and str(ckpt_save_dir) != str(args.local_save_dir):
+            raise RuntimeError("Resume checkpoint local_save_dir mismatch and save-dir change is disallowed")
+
+    return payload
+
+
 map_h, map_w, _ = envs.observation_space.shape
 mapsize = int(map_h * map_w)
 
@@ -534,16 +737,63 @@ values = torch.zeros((args.num_steps, args.num_envs)).to(device)
 invalid_action_masks = torch.zeros((args.num_steps, args.num_envs) + invalid_action_shape).to(device)
 # TRY NOT TO MODIFY: start the game
 global_step = 0
+global_step_start = 0
 start_time = time.time()
 # Note how `next_obs` and `next_done` are used; their usage is equivalent to
 # https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail/blob/84a7582477fb0d5c82ad6d850fe476829dddd2e1/a2c_ppo_acktr/storage.py#L60
 next_obs = torch.Tensor(envs.reset()).to(device)
 next_done = torch.zeros(args.num_envs).to(device)
 num_updates = args.total_timesteps // args.batch_size
+schedule_num_updates = max(1, args.schedule_total_timesteps // args.batch_size)
 
 ## CRASH AND RESUME LOGIC:
 starting_update = 1
+num_updates_completed = 0
+resume_context = None
+resume_status = "STARTED_FROM_SCRATCH"
+optimizer_state_restored = False
+rng_state_restored = False
+strict_agent_load = False
+resumed_from_checkpoint = None
 from jpype.types import JArray, JInt
+
+if args.resume_required and not args.resume_from_local_checkpoint:
+    raise RuntimeError("--resume-required true requires --resume-from-local-checkpoint")
+
+if args.resume_from_local_checkpoint:
+    resumed_from_checkpoint = os.path.abspath(args.resume_from_local_checkpoint)
+    if not os.path.exists(resumed_from_checkpoint):
+        resume_status = "RESUME_REQUIRED_BUT_MISSING"
+        if args.resume_required:
+            raise RuntimeError(f"Resume checkpoint not found: {resumed_from_checkpoint}")
+        print(f"[resume] checkpoint not found, fallback to scratch: {resumed_from_checkpoint}")
+    else:
+        resume_payload = torch.load(resumed_from_checkpoint, map_location=device)
+        resume_payload = _validate_resume_checkpoint(resume_payload)
+
+        agent.load_state_dict(resume_payload["agent_state_dict"], strict=True)
+        strict_agent_load = True
+        optimizer.load_state_dict(resume_payload["optimizer_state_dict"])
+        optimizer_state_restored = True
+
+        rng_state_restored = _restore_rng_state(resume_payload.get("rng_state"))
+        global_step = int(resume_payload["global_step"])
+        global_step_start = int(global_step)
+        num_updates_completed = int(resume_payload.get("num_updates_completed", resume_payload.get("update", 0)))
+        starting_update = int(num_updates_completed) + 1
+
+        if args.total_timesteps <= global_step:
+            raise RuntimeError(
+                f"Target total timesteps ({args.total_timesteps}) must be greater than resume global_step ({global_step})"
+            )
+        if not args.resume_allow_total_timesteps_increase and args.total_timesteps > global_step:
+            raise RuntimeError("Resuming to higher total timesteps is disallowed by --resume-allow-total-timesteps-increase false")
+        resume_status = "RESUMED_FROM_FULL_CHECKPOINT"
+        resume_context = {
+            "checkpoint_path": resumed_from_checkpoint,
+            "global_step": int(global_step),
+            "update": int(num_updates_completed),
+        }
 
 if args.prod_mode and wandb.run.resumed:
     starting_update = run.summary.get('charts/update') + 1
@@ -564,12 +814,16 @@ print("Model's total parameters:", total_params)
 
 local_save_dir = _get_local_save_dir()
 local_checkpoint_paths = []
+trainer_state_paths = []
+latest_trainer_state_index_path = None
+checkpoint_status = "WEIGHTS_ONLY_SAVED"
 next_local_save_step = args.local_save_every if args.local_save_every and args.local_save_every > 0 else None
 
 for update in range(starting_update, num_updates + 1):
     # Annealing the rate if instructed to do so.
     if args.anneal_lr:
-        frac = 1.0 - (update - 1.0) / num_updates
+        frac = 1.0 - (update - 1.0) / float(schedule_num_updates)
+        frac = max(0.0, min(1.0, frac))
         lrnow = lr(frac)
         optimizer.param_groups[0]['lr'] = lrnow
 
@@ -710,6 +964,8 @@ for update in range(starting_update, num_updates + 1):
             nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
             optimizer.step()
 
+    num_updates_completed = int(update)
+
     ## CRASH AND RESUME LOGIC:
     if args.prod_mode:
         if not os.path.exists(f"models/{experiment_name}"):
@@ -735,14 +991,73 @@ for update in range(starting_update, num_updates + 1):
     if args.local_save_model and next_local_save_step is not None:
         while global_step >= next_local_save_step:
             local_checkpoint_paths += [save_local_checkpoint(agent, next_local_save_step, local_save_dir)]
+            if args.save_full_training_state:
+                trainer_state_path, latest_index_path = save_full_training_checkpoint(
+                    agent=agent,
+                    optimizer=optimizer,
+                    global_step=next_local_save_step,
+                    update=update,
+                    num_updates_completed=num_updates_completed,
+                    save_dir=local_save_dir,
+                    kind="step",
+                )
+                trainer_state_paths += [trainer_state_path]
+                latest_trainer_state_index_path = latest_index_path
+                checkpoint_status = "FULL_CHECKPOINT_SAVED"
             next_local_save_step += args.local_save_every
 
 final_model_path = None
 final_metadata_path = None
+training_report_path = None
 if args.local_save_model:
-    final_model_path, final_metadata_path = save_local_model(agent, global_step, local_save_dir, local_checkpoint_paths)
+    if args.save_full_training_state:
+        final_trainer_state_path, latest_index_path = save_full_training_checkpoint(
+            agent=agent,
+            optimizer=optimizer,
+            global_step=global_step,
+            update=num_updates_completed,
+            num_updates_completed=num_updates_completed,
+            save_dir=local_save_dir,
+            kind="final",
+        )
+        trainer_state_paths += [final_trainer_state_path]
+        latest_trainer_state_index_path = latest_index_path
+        checkpoint_status = "FULL_CHECKPOINT_SAVED"
+    elif args.save_full_training_state and not trainer_state_paths:
+        checkpoint_status = "FULL_CHECKPOINT_MISSING"
+
+    final_model_path, final_metadata_path = save_local_model(
+        agent=agent,
+        global_step=global_step,
+        save_dir=local_save_dir,
+        checkpoint_paths=local_checkpoint_paths,
+        trainer_state_paths=trainer_state_paths,
+        latest_trainer_state_index_path=latest_trainer_state_index_path,
+        resume_context=resume_context,
+    )
+
+    report_payload = {
+        "checkpoint_schema_version": FULL_CHECKPOINT_SCHEMA_VERSION,
+        "source_script": os.path.basename(__file__),
+        "created_at_utc": _utc_now_iso(),
+        "RESUME_STATUS": resume_status,
+        "CHECKPOINT_STATUS": checkpoint_status,
+        "global_step_start": int(global_step_start),
+        "global_step_end": int(global_step),
+        "target_total_timesteps": int(args.total_timesteps),
+        "schedule_total_timesteps": int(args.schedule_total_timesteps),
+        "resumed_from_checkpoint": resumed_from_checkpoint,
+        "optimizer_state_restored": bool(optimizer_state_restored),
+        "rng_state_restored": bool(rng_state_restored),
+        "strict_agent_load": bool(strict_agent_load),
+        "weights_only_paths": local_checkpoint_paths,
+        "full_training_checkpoint_paths": trainer_state_paths,
+        "latest_trainer_state_index_path": latest_trainer_state_index_path,
+    }
+    training_report_path = save_training_machine_report(local_save_dir, report_payload)
     print(f"Local final model saved: {final_model_path}")
     print(f"Local model metadata saved: {final_metadata_path}")
+    print(f"Training machine report saved: {training_report_path}")
 
 envs.close()
 writer.close()

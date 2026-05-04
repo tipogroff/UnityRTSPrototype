@@ -245,12 +245,25 @@ def _load_metadata(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _load_checkpoint(path: Path, device: torch.device) -> Dict[str, Any]:
+def load_legacy032_policy_checkpoint(path: Path, device: torch.device, strict_load: bool = True) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     payload = torch.load(str(path), map_location=device)
+    details: Dict[str, Any] = {
+        "checkpoint_format": None,
+        "strict_load": bool(strict_load),
+        "strict_load_status": "STRICT_LOAD_ENFORCED" if strict_load else "STRICT_LOAD_OPT_OUT",
+    }
+    if isinstance(payload, dict) and payload.get("checkpoint_kind") == "full_training_state":
+        state_dict = payload.get("agent_state_dict")
+        if not isinstance(state_dict, dict):
+            raise ValueError("Full training checkpoint is missing agent_state_dict")
+        details["checkpoint_format"] = "full_training_checkpoint"
+        return state_dict, details
     if isinstance(payload, dict) and "state_dict" in payload and isinstance(payload["state_dict"], dict):
-        return payload["state_dict"]
+        details["checkpoint_format"] = "wrapped_state_dict"
+        return payload["state_dict"], details
     if isinstance(payload, dict):
-        return payload
+        details["checkpoint_format"] = "weights_only_state_dict"
+        return payload, details
     raise ValueError("Checkpoint payload is not a state_dict-compatible dictionary.")
 
 
@@ -1004,6 +1017,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--eval-mode", default="both", choices=["deterministic", "stochastic", "both"])
     parser.add_argument("--write-action-trace", action="store_true", default=False)
     parser.add_argument("--sample-frame-interval", type=int, default=25)
+    parser.add_argument("--strict-load", type=_parse_bool, default=True)
     return parser.parse_args()
 
 
@@ -1121,6 +1135,8 @@ def main() -> int:
         "env_matches_target_24x24": None,
         "mask_used_during_eval": None,
         "manual_visual_observation_cross_check": None,
+        "strict_load": bool(args.strict_load),
+        "strict_load_status": "STRICT_LOAD_ENFORCED" if args.strict_load else "STRICT_LOAD_OPT_OUT",
     }
 
     warn = EvalWarnings(warnings=[])
@@ -1158,7 +1174,13 @@ def main() -> int:
 
     if not run["errors"]:
         try:
-            state_dict = _load_checkpoint(checkpoint_path, device)
+            state_dict, checkpoint_details = load_legacy032_policy_checkpoint(
+                checkpoint_path,
+                device,
+                strict_load=bool(args.strict_load),
+            )
+            run["checkpoint_format"] = checkpoint_details.get("checkpoint_format")
+            run["strict_load_status"] = checkpoint_details.get("strict_load_status")
             run["checkpoint_load_ok"] = True
         except Exception as exc:
             run["errors"].append(f"Failed to load checkpoint: {exc}")
@@ -1176,7 +1198,11 @@ def main() -> int:
                 obs_hw=(int(md_obs[0]), int(md_obs[1])),
                 architecture_name=architecture_name,
             ).to(device)
-            policy.load_state_dict(state_dict, strict=False)
+            if args.strict_load:
+                policy.load_state_dict(state_dict, strict=True)
+            else:
+                missing, unexpected = policy.load_state_dict(state_dict, strict=False)
+                warn.add(f"STRICT_LOAD_STATUS=STRICT_LOAD_OPT_OUT missing={len(missing)} unexpected={len(unexpected)}")
             run["policy_architecture_load_ok"] = True
 
             env = _create_target_24x24_gridmode_env(metadata, int(args.max_steps_per_episode))

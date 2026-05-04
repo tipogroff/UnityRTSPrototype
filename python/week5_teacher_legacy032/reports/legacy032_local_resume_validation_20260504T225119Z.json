@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-05-04T23:03:30.705865+00:00",
+  "classification": "LOCAL_RESUME_VALIDATED",
+  "run_label": "legacy032_local_resume_validation",
+  "python_exe": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe",
+  "stage1_timesteps": 25000,
+  "stage2_timesteps": 50000,
+  "stage1_exit_code": 0,
+  "stage2_exit_code": 0,
+  "stage1_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_1",
+  "stage2_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_2",
+  "stage1_trainer_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_1\\training_machine_report.json",
+  "stage2_trainer_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_2\\training_machine_report.json",
+  "checks": {
+    "stage1_exit_zero": true,
+    "stage2_exit_zero": true,
+    "stage1_full_checkpoint_exists": true,
+    "stage2_full_checkpoint_exists": true,
+    "stage2_resume_status_resumed": true,
+    "stage2_optimizer_restored": true,
+    "stage2_rng_restored": true,
+    "stage2_strict_agent_load": true,
+    "stage2_global_step_increased": true,
+    "stage2_no_scratch_fallback": true
+  },
+  "stage1_report": {
+    "checkpoint_schema_version": "legacy032.full_training_checkpoint.v1",
+    "source_script": "ppo_gridnet_legacy032_24x24_local_save.py",
+    "created_at_utc": "2026-05-04T22:58:44Z",
+    "RESUME_STATUS": "STARTED_FROM_SCRATCH",
+    "CHECKPOINT_STATUS": "FULL_CHECKPOINT_SAVED",
+    "global_step_start": 0,
+    "global_step_end": 24576,
+    "target_total_timesteps": 25000,
+    "schedule_total_timesteps": 50000,
+    "resumed_from_checkpoint": null,
+    "optimizer_state_restored": false,
+    "rng_state_restored": false,
+    "strict_agent_load": false,
+    "weights_only_paths": [],
+    "full_training_checkpoint_paths": [
+      "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_1\\trainer_state_final.pt"
+    ],
+    "latest_trainer_state_index_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_1\\latest_trainer_state.json"
+  },
+  "stage2_report": {
+    "checkpoint_schema_version": "legacy032.full_training_checkpoint.v1",
+    "source_script": "ppo_gridnet_legacy032_24x24_local_save.py",
+    "created_at_utc": "2026-05-04T23:03:29Z",
+    "RESUME_STATUS": "RESUMED_FROM_FULL_CHECKPOINT",
+    "CHECKPOINT_STATUS": "FULL_CHECKPOINT_SAVED",
+    "global_step_start": 24576,
+    "global_step_end": 49152,
+    "target_total_timesteps": 50000,
+    "schedule_total_timesteps": 50000,
+    "resumed_from_checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_1\\trainer_state_final.pt",
+    "optimizer_state_restored": true,
+    "rng_state_restored": true,
+    "strict_agent_load": true,
+    "weights_only_paths": [],
+    "full_training_checkpoint_paths": [
+      "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_2\\trainer_state_final.pt"
+    ],
+    "latest_trainer_state_index_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_2\\latest_trainer_state.json"
+  }
+}

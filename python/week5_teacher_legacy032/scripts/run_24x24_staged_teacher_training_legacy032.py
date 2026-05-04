@@ -147,6 +147,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--continue-on-gate-warning", action="store_true", default=False)
     parser.add_argument("--stop-on-gate-fail", action="store_true", default=False)
     parser.add_argument("--require-contract-check", nargs="?", const="true", default="true", type=_parse_bool)
+    parser.add_argument("--local-resume-mode", default="auto", choices=["none", "auto", "required"])
+    parser.add_argument("--full-checkpoint-required", nargs="?", const="true", default=None, type=_parse_bool)
+    parser.add_argument("--schedule-total-timesteps", default="auto")
+    parser.add_argument("--save-full-training-state", nargs="?", const="true", default="true", type=_parse_bool)
     return parser.parse_args()
 
 
@@ -218,6 +222,16 @@ def main() -> int:
             preflight_errors.append("Contract probe JSON missing or unreadable")
 
     stages: List[int] = list(args.stages)
+    stage_schedule_total = max(stages)
+    if str(args.schedule_total_timesteps).strip().lower() != "auto":
+        stage_schedule_total = int(args.schedule_total_timesteps)
+    if stage_schedule_total <= 0:
+        raise ValueError("--schedule-total-timesteps must be positive or 'auto'")
+
+    full_checkpoint_required = args.full_checkpoint_required
+    if full_checkpoint_required is None:
+        full_checkpoint_required = bool(args.local_resume_mode in {"auto", "required"} and len(stages) > 1)
+
     stage_rows: List[Dict[str, Any]] = []
     fatal_errors: List[str] = []
 
@@ -236,10 +250,24 @@ def main() -> int:
             "stage_name": stage_name,
             "training_exit_code": None,
             "training_status": "SKIPPED",
+            "RESUME_STATUS": None,
+            "CHECKPOINT_STATUS": None,
+            "global_step_start": None,
+            "global_step_end": None,
+            "target_total_timesteps": int(stage),
+            "schedule_total_timesteps": int(stage_schedule_total),
+            "resumed_from_checkpoint": None,
+            "optimizer_state_restored": None,
+            "rng_state_restored": None,
+            "strict_agent_load": None,
             "checkpoint_path": None,
             "metadata_path": None,
+            "full_checkpoint_path": None,
+            "full_checkpoint_step_path": None,
+            "latest_trainer_state_index_path": None,
             "checkpoint_saved": False,
             "metadata_saved": False,
+            "full_checkpoint_saved": False,
             "metadata_contract_ok": False,
             "metadata_contract": {},
             "device_diagnostics": {},
@@ -270,6 +298,29 @@ def main() -> int:
             stage_rows.append(stage_row)
             continue
 
+        prev_stage_row = stage_rows[-1] if stage_rows else None
+        resume_checkpoint = None
+        resume_required_for_stage = False
+        if prev_stage_row is not None and args.local_resume_mode in {"auto", "required"}:
+            resume_checkpoint = prev_stage_row.get("full_checkpoint_path")
+            resume_required_for_stage = bool(args.local_resume_mode == "required" or full_checkpoint_required)
+            if not resume_checkpoint:
+                stage_row["RESUME_STATUS"] = "RESUME_REQUIRED_BUT_MISSING"
+                if resume_required_for_stage:
+                    stage_row["errors"].append("Previous stage full checkpoint missing for resume")
+                    stage_rows.append(stage_row)
+                    fatal_errors.append(f"Missing full checkpoint before stage {stage}")
+                    continue
+                stage_row["warnings"].append("Previous full checkpoint missing; continuing from scratch because full-checkpoint-required=false")
+                stage_row["RESUME_STATUS"] = "STARTED_FROM_SCRATCH"
+            if resume_checkpoint:
+                stage_row["resumed_from_checkpoint"] = str(resume_checkpoint)
+
+        if prev_stage_row is None and args.local_resume_mode == "none":
+            stage_row["RESUME_STATUS"] = "RESUME_DISABLED_FROM_SCRATCH_STAGE"
+        elif prev_stage_row is None:
+            stage_row["RESUME_STATUS"] = "STARTED_FROM_SCRATCH"
+
         train_cmd = [
             sys.executable,
             str(train_script),
@@ -277,6 +328,8 @@ def main() -> int:
             run_id,
             "--total-timesteps",
             str(stage),
+            "--schedule-total-timesteps",
+            str(stage_schedule_total),
             "--map-path",
             args.map_path,
             "--expected-map-size",
@@ -291,6 +344,8 @@ def main() -> int:
             str(stage_model_dir),
             "--local-save-every",
             str(stage),
+            "--save-full-training-state",
+            "true" if args.save_full_training_state else "false",
             "--num-bot-envs",
             "6",
             "--num-selfplay-envs",
@@ -298,6 +353,15 @@ def main() -> int:
             "--seed",
             str(args.seed),
         ]
+        if resume_checkpoint:
+            train_cmd += [
+                "--resume-from-local-checkpoint",
+                str(resume_checkpoint),
+                "--resume-required",
+                "true" if resume_required_for_stage else "false",
+                "--strict-resume-config",
+                "true",
+            ]
         train_cmd += ["--cuda", "false" if args.device == "cpu" else "true"]
 
         train_stdout = stage_log_dir / "training_stdout.log"
@@ -322,18 +386,49 @@ def main() -> int:
 
         step_ckpt = stage_model_dir / f"agent_step_{stage:09d}.pt"
         final_ckpt = stage_model_dir / "agent_final.pt"
+        full_step_ckpt = stage_model_dir / f"trainer_state_step_{stage:09d}.pt"
+        full_final_ckpt = stage_model_dir / "trainer_state_final.pt"
+        latest_index_path = stage_model_dir / "latest_trainer_state.json"
         metadata_path = stage_model_dir / "model_metadata.json"
+        training_report_path = stage_model_dir / "training_machine_report.json"
 
         chosen_checkpoint = step_ckpt if step_ckpt.exists() else final_ckpt
         stage_row["checkpoint_path"] = str(chosen_checkpoint) if chosen_checkpoint.exists() else None
         stage_row["metadata_path"] = str(metadata_path) if metadata_path.exists() else None
+        stage_row["full_checkpoint_path"] = str(full_final_ckpt) if full_final_ckpt.exists() else None
+        stage_row["full_checkpoint_step_path"] = str(full_step_ckpt) if full_step_ckpt.exists() else None
+        stage_row["latest_trainer_state_index_path"] = str(latest_index_path) if latest_index_path.exists() else None
         stage_row["checkpoint_saved"] = bool(chosen_checkpoint.exists())
         stage_row["metadata_saved"] = bool(metadata_path.exists())
+        stage_row["full_checkpoint_saved"] = bool(full_final_ckpt.exists())
 
         if not stage_row["checkpoint_saved"]:
             stage_row["errors"].append("Checkpoint not found (agent_step or agent_final)")
         if not stage_row["metadata_saved"]:
             stage_row["errors"].append("model_metadata.json not found")
+        if args.save_full_training_state and full_checkpoint_required and not stage_row["full_checkpoint_saved"]:
+            stage_row["errors"].append("trainer_state_final.pt not found")
+
+        training_report = _read_json(training_report_path) if training_report_path.exists() else None
+        if isinstance(training_report, dict):
+            stage_row["RESUME_STATUS"] = training_report.get("RESUME_STATUS")
+            stage_row["CHECKPOINT_STATUS"] = training_report.get("CHECKPOINT_STATUS")
+            stage_row["global_step_start"] = training_report.get("global_step_start")
+            stage_row["global_step_end"] = training_report.get("global_step_end")
+            stage_row["target_total_timesteps"] = training_report.get("target_total_timesteps", stage_row["target_total_timesteps"])
+            stage_row["schedule_total_timesteps"] = training_report.get("schedule_total_timesteps", stage_row["schedule_total_timesteps"])
+            stage_row["resumed_from_checkpoint"] = training_report.get("resumed_from_checkpoint", stage_row["resumed_from_checkpoint"])
+            stage_row["optimizer_state_restored"] = training_report.get("optimizer_state_restored")
+            stage_row["rng_state_restored"] = training_report.get("rng_state_restored")
+            stage_row["strict_agent_load"] = training_report.get("strict_agent_load")
+        else:
+            if stage_row.get("RESUME_STATUS") is None:
+                if prev_stage_row is None:
+                    stage_row["RESUME_STATUS"] = "STARTED_FROM_SCRATCH"
+                elif args.local_resume_mode == "none":
+                    stage_row["RESUME_STATUS"] = "RESUME_DISABLED_FROM_SCRATCH_STAGE"
+            if stage_row.get("CHECKPOINT_STATUS") is None:
+                stage_row["CHECKPOINT_STATUS"] = "FULL_CHECKPOINT_SAVED" if stage_row["full_checkpoint_saved"] else "FULL_CHECKPOINT_MISSING"
 
         metadata = _read_json(metadata_path) if metadata_path.exists() else None
         if isinstance(metadata, dict):
@@ -530,6 +625,10 @@ def main() -> int:
             "continue_on_gate_warning": bool(args.continue_on_gate_warning),
             "stop_on_gate_fail": bool(args.stop_on_gate_fail),
             "require_contract_check": bool(args.require_contract_check),
+            "local_resume_mode": args.local_resume_mode,
+            "full_checkpoint_required": bool(full_checkpoint_required),
+            "save_full_training_state": bool(args.save_full_training_state),
+            "schedule_total_timesteps": int(stage_schedule_total),
         },
         "preflight": {
             "status": preflight_status,
@@ -555,16 +654,19 @@ def main() -> int:
         "",
         "## Stage Results",
         "",
-        "| stage | training | checkpoint | metadata | metadata_contract | gate | gate_decision | mean_return | effective_activity_share |",
-        "|---|---|---|---|---|---|---|---:|---:|",
+        "| stage | training | resume_status | checkpoint_status | full_ckpt | checkpoint | metadata | metadata_contract | gate | gate_decision | mean_return | effective_activity_share |",
+        "|---|---|---|---|---|---|---|---|---|---|---:|---:|",
     ]
 
     for row in stage_rows:
         gate_checks = row.get("gate_checks", {}) if isinstance(row, dict) else {}
         md_lines.append(
-            "| {stage} | {tr} | {ckpt} | {md} | {mco} | {gs} | {gd} | {mr} | {ea} |".format(
+            "| {stage} | {tr} | {rs} | {cs} | {fckpt} | {ckpt} | {md} | {mco} | {gs} | {gd} | {mr} | {ea} |".format(
                 stage=row.get("stage"),
                 tr=row.get("training_status"),
+                rs=row.get("RESUME_STATUS") or "-",
+                cs=row.get("CHECKPOINT_STATUS") or "-",
+                fckpt=_bool_status(bool(row.get("full_checkpoint_saved"))),
                 ckpt=_bool_status(bool(row.get("checkpoint_saved"))),
                 md=_bool_status(bool(row.get("metadata_saved"))),
                 mco=_bool_status(bool(row.get("metadata_contract_ok"))),

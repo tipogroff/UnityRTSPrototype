@@ -322,7 +322,8 @@ Stage 5B result (2026-04-29):
 - gate report: `reports/stage5_gate_000500000_20260429T190313Z.json` (`PASS`)
 - comparison report: `reports/STAGE5_100K_VS_500K_COMPARISON.md`
 - baseline used: `legacy032_24x24_teacher_main_20260429T162331Z / stage_000100000`
-- run interpretation: `500k is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 100k.`
+- historical run interpretation: `500k was from-scratch in the pre-resume pipeline.`
+- current rule for new full-checkpoint runs: `500k is a cumulative continuation target resumed from 100k when local-resume-mode is auto|required.`
 
 Stage 5B acceptance checklist:
 
@@ -351,7 +352,8 @@ Stage 5C result (2026-04-30):
 - gate report: `reports/stage5_gate_001000000_20260429T232455Z.json` (`PASS`)
 - gate horizon config: `max_steps_per_episode=6000`, `env_max_steps=6000`
 - metadata max-step fields: `training_max_steps=6000`, `env_max_steps=6000`, `max_steps=6000`
-- run interpretation: `1M is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 500k.`
+- historical run interpretation: `1M was from-scratch in the pre-resume pipeline.`
+- current rule for new full-checkpoint runs: `1M is a cumulative continuation target resumed from 500k when local-resume-mode is auto|required.`
 
 Stage 5C status class:
 
@@ -369,7 +371,8 @@ Stage 5C final decision:
 
 Stage 5C exact next action:
 
-- Run Stage 5D 3M from-scratch on corrected 24x24 GridMode path with `training_max_steps=6000` and `max_steps_per_gate=6000`.
+- Historical caveat: earlier 3M runs may be from-scratch.
+- Current canonical flow: run Stage 5D 3M as cumulative continuation from previous stage using full local resume checkpoints.
 - Require extended large-map diagnostics after 3M before any 5M decision.
 - Do not proceed to 5M unless 3M improves return/contact/behavior or diagnostics justify continuation.
 
@@ -387,7 +390,8 @@ Stage 5D result (2026-05-01):
 - completion report: `reports/STAGE5D_3M_TRAINING_COMPLETION_REPORT.md`
 - gate horizon config: `max_steps_per_episode=6000`, `env_max_steps=6000`
 - trainer config: `training_max_steps=6000`
-- run interpretation: `3M is a from-scratch staged checkpoint with larger total_timesteps, not a resumed continuation from 1M.`
+- historical run interpretation: `3M was from-scratch in the pre-resume pipeline.`
+- current rule for new full-checkpoint runs: `3M is a cumulative continuation target resumed from 1M/500k according to configured stage chain.`
 
 Stage 5D key observations:
 

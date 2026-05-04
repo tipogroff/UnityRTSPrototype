@@ -288,16 +288,30 @@ def _validate_metadata_contract(metadata: Dict[str, Any]) -> Tuple[str, str, Lis
     return run_id, architecture_name, raw_nvec
 
 
-def _load_checkpoint_state_dict(path: Path, device: torch.device) -> Dict[str, Any]:
+def load_legacy032_policy_checkpoint(path: Path, device: torch.device, strict_load: bool = True) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     try:
         payload = torch.load(str(path), map_location=device)
     except Exception as exc:
         raise ExportError(f"Failed to load checkpoint: {path} ({exc})") from exc
 
+    details: Dict[str, Any] = {
+        "checkpoint_format": None,
+        "strict_load": bool(strict_load),
+        "strict_load_status": "STRICT_LOAD_ENFORCED" if strict_load else "STRICT_LOAD_OPT_OUT",
+    }
+
+    if isinstance(payload, dict) and payload.get("checkpoint_kind") == "full_training_state":
+        state_dict = payload.get("agent_state_dict")
+        if not isinstance(state_dict, dict):
+            raise ExportError("Full training checkpoint is missing agent_state_dict")
+        details["checkpoint_format"] = "full_training_checkpoint"
+        return state_dict, details
     if isinstance(payload, dict) and "state_dict" in payload and isinstance(payload["state_dict"], dict):
-        return payload["state_dict"]
+        details["checkpoint_format"] = "wrapped_state_dict"
+        return payload["state_dict"], details
     if isinstance(payload, dict):
-        return payload
+        details["checkpoint_format"] = "weights_only_state_dict"
+        return payload, details
     raise ExportError("Checkpoint payload is not state_dict-compatible.")
 
 
@@ -499,6 +513,7 @@ def parse_args() -> argparse.Namespace:
         choices=("debug", "never"),
         help="Write teacher_rollout_debug.jsonl when set to debug.",
     )
+    p.add_argument("--strict-load", type=_parse_bool, default=True)
     return p.parse_args()
 
 
@@ -532,7 +547,11 @@ def main() -> int:
     _apply_reproducibility_seed(seed=int(args.seed), use_cuda=bool(use_cuda))
 
     # Build policy and load checkpoint.
-    state_dict = _load_checkpoint_state_dict(checkpoint_path, device)
+    state_dict, checkpoint_details = load_legacy032_policy_checkpoint(
+        checkpoint_path,
+        device,
+        strict_load=bool(args.strict_load),
+    )
     policy = Legacy032Policy(
         obs_channels=EXPECTED_OBS_SHAPE[2],
         nvec=raw_nvec,
@@ -540,10 +559,16 @@ def main() -> int:
         obs_hw=(EXPECTED_OBS_SHAPE[0], EXPECTED_OBS_SHAPE[1]),
         architecture_name=architecture_name,
     ).to(device)
-    missing, unexpected = policy.load_state_dict(state_dict, strict=False)
+    if args.strict_load:
+        policy.load_state_dict(state_dict, strict=True)
+        missing, unexpected = [], []
+    else:
+        missing, unexpected = policy.load_state_dict(state_dict, strict=False)
     policy.eval()
 
     warnings: List[str] = []
+    if not args.strict_load:
+        warnings.append(f"STRICT_LOAD_STATUS=STRICT_LOAD_OPT_OUT missing={len(missing)} unexpected={len(unexpected)}")
     if missing or unexpected:
         warnings.append(
             f"Checkpoint loaded with non-strict key diff: missing={len(missing)}, unexpected={len(unexpected)}"

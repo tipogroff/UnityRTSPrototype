@@ -24,6 +24,48 @@ This directory contains scripts for the `gym_microrts==0.3.2` legacy teacher pip
 
 ---
 
+## Local Resume Support (Current)
+
+The 24x24 local trainer now writes both:
+
+- weights-only snapshots for inference/export (`agent_final.pt`, `agent_step_*.pt`)
+- full training checkpoints for resume (`trainer_state_final.pt`, `trainer_state_step_*.pt`, `latest_trainer_state.json`)
+
+Historical note:
+
+- The old limitation "treat 500k as from-scratch if resume is not implemented/validated" applies to pre-resume, weights-only artifacts.
+- For new runs with full checkpoints and `--local-resume-mode auto|required`, staged targets are cumulative continuation stages.
+
+Reference doc:
+
+- `python/week5_teacher_legacy032/LEGACY032_LOCAL_RESUME_AND_CHECKPOINTING.md`
+
+Canonical staged command:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot'
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+
+c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe `
+	python/week5_teacher_legacy032/scripts/run_24x24_staged_teacher_training_legacy032.py `
+	--run-label legacy032_24x24_teacher_resume_main `
+	--stages 100000,500000,3000000 `
+	--seed 17 `
+	--device cpu `
+	--map-path maps/24x24/basesWorkers24x24.xml `
+	--training-max-steps 6000 `
+	--episodes-per-gate 8 `
+	--max-steps-per-gate 6000 `
+	--evaluate-after-each `
+	--no-wandb `
+	--require-contract-check true `
+	--local-resume-mode required `
+	--save-full-training-state true `
+	--schedule-total-timesteps auto
+```
+
+---
+
 ## `train_teacher_legacy032.py` — Stage 2 smoke wrapper
 
 ### Purpose
@@ -373,7 +415,8 @@ Stage 5B comparison rule:
 
 - Stage 5B (500k) must be compared against Stage 5A 100k baseline gate report:
 	`python/week5_teacher_legacy032/reports/stage5_gate_000100000_20260429T164521Z.json`.
-- If resume is not explicitly implemented/validated, treat 500k as from-scratch with larger `--total-timesteps`, not as resumed continuation from 100k.
+- Historical caveat (pre-resume checkpoints only): if full local resume is unavailable, treat 500k as from-scratch with larger `--total-timesteps`.
+- Current rule for new runs with full checkpoints and `--local-resume-mode auto|required`: stages are cumulative continuation targets.
 - Use corrected 24x24 GridMode path only for transfer-readiness decisions.
 
 Stage 5C final decision flow:

@@ -1,0 +1,8 @@
+{
+  "checkpoint_schema_version": "legacy032.full_training_checkpoint.v1",
+  "checkpoint_kind": "full_training_state_index",
+  "created_at_utc": "2026-05-04T23:03:29Z",
+  "latest_trainer_state_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\legacy032_local_resume_validation_work_20260504T225119Z\\stage_2\\trainer_state_final.pt",
+  "global_step": 49152,
+  "update": 32
+}

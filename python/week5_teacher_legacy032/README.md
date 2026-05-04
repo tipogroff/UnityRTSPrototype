@@ -71,6 +71,19 @@ can be made.
 
 See `LEGACY032_TEACHER_TRAINING_PLAN.md` for planned stages.
 
+## Local Resume And Full Checkpointing
+
+Current local trainer supports full training checkpoints for staged continuation.
+
+See:
+
+- `LEGACY032_LOCAL_RESUME_AND_CHECKPOINTING.md`
+
+Historical caveat:
+
+- Older weights-only checkpoints remain valid inference snapshots.
+- That old limitation ("treat later stages as from-scratch if resume is not implemented") applies only to pre-resume artifacts.
+
 ---
 
 > **WARNING**: Do not mix v0.6.1 artifacts and legacy032 artifacts in the same
