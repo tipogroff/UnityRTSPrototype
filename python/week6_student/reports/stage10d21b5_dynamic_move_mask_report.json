@@ -1,0 +1,78 @@
+{
+  "generated_at_utc": "2026-05-04T00:16:42.169094+00:00",
+  "stage": "Stage10D.21B5",
+  "objective": "Dynamic occupancy-aware move mask enrichment evidence audit",
+  "inputs": {
+    "baseline_stage10d20_trace": "python/week6_student/reports/stage10d21b5_baseline_stage10d20_masked_runtime_trace_20260504T000853Z.jsonl",
+    "baseline_stage10d20s_trace": "python/week6_student/reports/stage10d21b5_baseline_stage10d20s_mask_move_trace_20260504T000853Z.jsonl",
+    "fresh_stage10d20_trace": "python/week6_student/reports/stage10d20_masked_runtime_trace.jsonl",
+    "fresh_stage10d20s_trace": "python/week6_student/reports/stage10d20s_mask_move_trace.jsonl",
+    "manifest": "python/week6_student/reports/stage10d20s_unity_rerun_manifest.json"
+  },
+  "timing_audit_part_a": {
+    "move_candidates_before_enrichment": 12,
+    "move_candidates_after_enrichment": 12,
+    "selected_masked_move_commands_before_enrichment": 4,
+    "selected_masked_move_commands_after_enrichment": 0,
+    "selected_masked_move_command_delta": -4,
+    "selected_masked_move_command_reduction_percent": 100.0
+  },
+  "legality_enrichment_part_b": {
+    "additional_dynamic_masks_vs_static": 4,
+    "occupied_move_target_count_before": 10,
+    "occupied_move_target_count_after": 10,
+    "target_occupied_rejections_before": 4,
+    "target_occupied_rejections_after": 0
+  },
+  "clean_move_lifecycle": {
+    "baseline_clean_accepted_moves": 0,
+    "fresh_clean_accepted_moves": 0,
+    "baseline_displaced_to_target": 0,
+    "fresh_displaced_to_target": 0,
+    "baseline_movement_completed": 0,
+    "fresh_movement_completed": 0
+  },
+  "required_patterns": {
+    "42->43": {
+      "baseline_selected_masked_move_count": 1,
+      "fresh_selected_masked_move_count": 0,
+      "outcome": "suppressed"
+    },
+    "41->42": {
+      "baseline_selected_masked_move_count": 1,
+      "fresh_selected_masked_move_count": 0,
+      "outcome": "suppressed"
+    },
+    "38->39": {
+      "baseline_selected_masked_move_count": 1,
+      "fresh_selected_masked_move_count": 0,
+      "outcome": "suppressed"
+    },
+    "45->46": {
+      "baseline_selected_masked_move_count": 1,
+      "fresh_selected_masked_move_count": 0,
+      "outcome": "suppressed"
+    }
+  },
+  "guardrails": {
+    "no_training_executed": true,
+    "checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
+    "stage10d19c_not_used": true,
+    "mask_enabled_manifest": true,
+    "off_actor_masked_non_noop_after": 0,
+    "off_actor_raw_non_noop_before": 171,
+    "off_actor_raw_non_noop_after": 171,
+    "b2_c3_guard": {
+      "b2_present_somewhere": true,
+      "c3_present_somewhere": true,
+      "b2_c3_guard_pass": true
+    },
+    "fake_logits_detected": false,
+    "fallback_policy_detected": false,
+    "heuristic_shortcut_detected": false
+  },
+  "stage10d21c_gate": {
+    "decision": "NO-GO",
+    "reason": "No clean accepted/applied/completed Move command present in fresh trace."
+  }
+}

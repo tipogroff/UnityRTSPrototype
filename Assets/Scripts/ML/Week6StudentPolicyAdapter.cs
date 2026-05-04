@@ -491,6 +491,7 @@ namespace RTS.ML
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
         [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt";
         [SerializeField] private bool _enableLegalActionMaskForSelection = false;
+        [SerializeField] private bool _enableDynamicOccupancyMoveMaskEnrichment = true;
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
         [SerializeField] private string _artifactFilePrefix = "day5_sanity";
         [SerializeField] private int _artifactRingSlots = 4;
@@ -767,6 +768,11 @@ namespace RTS.ML
                 ActionMaskSet mask = canUseCanonical
                     ? stepInput.CanonicalMask
                     : _policyPipeline.BuildTransferCompatibleMask(playerId);
+
+                if (_enableLegalActionMaskForSelection && _enableDynamicOccupancyMoveMaskEnrichment)
+                {
+                    ApplyDynamicOccupancyMoveMaskEnrichment(mask, playerId);
+                }
 
                 StudentLiveFilterDiagnostics filterDiagnostics = BuildStudentFilterDiagnostics(playerId, mask, out List<int> eligibleCellIndices);
                 _inferenceDiagnostics.candidate_actor_cells_submitted = eligibleCellIndices.Count;
@@ -1759,6 +1765,104 @@ namespace RTS.ML
             }
 
             return result;
+        }
+
+        private void ApplyDynamicOccupancyMoveMaskEnrichment(ActionMaskSet mask, Owner playerId)
+        {
+            if (mask == null || _gridManager == null)
+            {
+                return;
+            }
+
+            var friendlyReservedTargetCells = new HashSet<int>();
+            var enemyReservedTargetCells = new HashSet<int>();
+
+            if (_matchManager != null)
+            {
+                var reservations = new List<PendingMoveReservation>(64);
+                _matchManager.GetKnownMoveReservations(reservations);
+                for (int i = 0; i < reservations.Count; i++)
+                {
+                    PendingMoveReservation reservation = reservations[i];
+                    int targetFlat = reservation.Target.ToFlatIndex();
+                    if (targetFlat < 0 || targetFlat >= ActionContract.TotalCells)
+                    {
+                        continue;
+                    }
+
+                    if (reservation.Owner == playerId)
+                    {
+                        friendlyReservedTargetCells.Add(targetFlat);
+                    }
+                    else if (reservation.Owner == Owner.Player1 || reservation.Owner == Owner.Player2)
+                    {
+                        enemyReservedTargetCells.Add(targetFlat);
+                    }
+                }
+            }
+
+            for (int flat = 0; flat < ActionContract.TotalCells; flat++)
+            {
+                if (mask.ActorCellMask == null
+                    || flat < 0
+                    || flat >= mask.ActorCellMask.Length
+                    || !mask.ActorCellMask[flat])
+                {
+                    continue;
+                }
+
+                ActorActionMask actorMask = mask.GetActorMaskByFlatIndex(flat);
+                if (actorMask == null || actorMask.MoveDirectionMask == null)
+                {
+                    continue;
+                }
+
+                bool anyMoveDirection = false;
+                for (int d = 0; d < actorMask.MoveDirectionMask.Length; d++)
+                {
+                    if (!actorMask.MoveDirectionMask[d])
+                    {
+                        continue;
+                    }
+
+                    GridPosition target = actorMask.ActorPosition.Neighbour((Direction)d);
+                    bool keepLegal = true;
+
+                    if (!_gridManager.IsInside(target))
+                    {
+                        keepLegal = false;
+                    }
+                    else
+                    {
+                        int targetFlat = target.ToFlatIndex();
+
+                        // Authoritative current occupancy (decision-time observable).
+                        if (_gridManager.IsCellOccupied(target))
+                        {
+                            keepLegal = false;
+                        }
+
+                        // Evidence-backed command-ledger reservations only; no prediction.
+                        if (keepLegal && (friendlyReservedTargetCells.Contains(targetFlat) || enemyReservedTargetCells.Contains(targetFlat)))
+                        {
+                            keepLegal = false;
+                        }
+                    }
+
+                    actorMask.MoveDirectionMask[d] = keepLegal;
+                    if (keepLegal)
+                    {
+                        anyMoveDirection = true;
+                    }
+                }
+
+                if (actorMask.ActionTypeMask != null
+                    && (int)UnitActionType.Move >= 0
+                    && (int)UnitActionType.Move < actorMask.ActionTypeMask.Length)
+                {
+                    actorMask.ActionTypeMask[(int)UnitActionType.Move] = anyMoveDirection;
+                }
+            }
         }
 
         private StudentLiveFilterDiagnostics BuildStudentFilterDiagnostics(

@@ -203,6 +203,7 @@ namespace RTS.ML
             postMaskHistogram = new Dictionary<UnitActionType, int>();
             cellTelemetryByFlat = new Dictionary<int, MaskAwareCellTelemetry>();
             var results = new List<AgentAction>();
+            var reservedMoveTargetsThisDecode = new HashSet<int>();
 
             if (actionFlat == null || eligibleCellIndices == null || eligibleCellIndices.Count == 0)
                 return results;
@@ -335,6 +336,33 @@ namespace RTS.ML
                             continue;
                         }
 
+                        if (TryGetMoveTargetFlat(actorMask, rawMoveDir, out int selectedMoveTargetFlat)
+                            && reservedMoveTargetsThisDecode.Contains(selectedMoveTargetFlat))
+                        {
+                            // Same execution window safety gate: do not submit another Move into an
+                            // already-reserved target cell from a previously selected Move this tick.
+                            maskedOutChoicesCount++;
+                            fallbackToNoopCount++;
+                            maskedActionType = UnitActionType.NoOp;
+                            maskedMoveDirLegal = false;
+                            moveDirFallbackReason = "target_reserved_by_friendly_command_same_tick";
+                            cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                                cellIndex,
+                                rawActionTypeTop1,
+                                rawMoveDir,
+                                maskedActionType,
+                                maskedMoveDir,
+                                legalActionTypeMask,
+                                legalMoveDirMask,
+                                false,
+                                branchMaskAppliedForMove,
+                                moveDirFallbackReason,
+                                UnitActionType.NoOp,
+                                0,
+                                true);
+                            continue;
+                        }
+
                         maskedMoveDirLegal = true;
                     }
                 }
@@ -360,6 +388,13 @@ namespace RTS.ML
 
                 // Action type passes the mask — include it in the submission
                 results.Add(action);
+                if (action.ActionType == UnitActionType.Move
+                    && maskSet != null
+                    && maskSet.GetActorMaskByFlatIndex(cellIndex) is ActorActionMask selectedActorMask
+                    && TryGetMoveTargetFlat(selectedActorMask, rawMoveDir, out int selectedTargetFlat))
+                {
+                    reservedMoveTargetsThisDecode.Add(selectedTargetFlat);
+                }
                 IncrementActionDict(postMaskHistogram, action.ActionType);
                 cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
                     cellIndex,
@@ -378,6 +413,24 @@ namespace RTS.ML
             }
 
             return results;
+        }
+
+        private static bool TryGetMoveTargetFlat(ActorActionMask actorMask, int rawMoveDir, out int targetFlat)
+        {
+            targetFlat = -1;
+            if (actorMask == null || rawMoveDir < 0 || rawMoveDir >= ActionContract.SIZE_DIRECTION)
+            {
+                return false;
+            }
+
+            GridPosition target = actorMask.ActorPosition.Neighbour((Direction)rawMoveDir);
+            if (!target.IsInsideMap())
+            {
+                return false;
+            }
+
+            targetFlat = target.ToFlatIndex();
+            return targetFlat >= 0 && targetFlat < ActionContract.TotalCells;
         }
 
         private static bool[] BuildLegalActionTypeMask(ActionMaskSet maskSet, int cellIndex)

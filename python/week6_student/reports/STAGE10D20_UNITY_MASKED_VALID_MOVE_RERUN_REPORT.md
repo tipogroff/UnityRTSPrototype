@@ -21,11 +21,11 @@
 
 ## 4. Runtime masked move efficiency
 - total_raw_unmasked_move_predictions: 12
-- total_masked_move_predictions: 4
-- total_masked_valid_target_moves: 0
-- total_masked_invalid_or_occupied_target_moves: 4
-- total_move_commands_built: 4
-- total_move_commands_accepted: 4
+- total_masked_move_predictions: 12
+- total_masked_valid_target_moves: 2
+- total_masked_invalid_or_occupied_target_moves: 10
+- total_move_commands_built: 12
+- total_move_commands_accepted: 0
 - total_units_that_changed_position_after_move: 0
 - build_rate_masked: 1.000000
 - build_rate_stage10d18rr: 0.003131
@@ -37,8 +37,8 @@
 - off_actor_submission_count: 0
 
 ## 6. Mask action delta audit
-- number_of_actions_changed_by_mask: 314
-- invalid_move_to_noop: 8
+- number_of_actions_changed_by_mask: 171
+- invalid_move_to_noop: 0
 - off_actor_non_noop_to_noop: 171
 - mask_causes_action_starvation: False
 
@@ -68,7 +68,6 @@
 - STAGE10D20_CHECKPOINT_BINDING_CONFIRMED
 - STAGE10D20_FALLBACK_NOT_USED
 - STAGE10D20_MASKED_INVALID_MOVES_REDUCED
-- STAGE10D20_MASKED_MOVE_COMMANDS_ACCEPTED
 - STAGE10D20_MASKED_MOVE_COMMAND_BUILD_RATE_IMPROVED
 - STAGE10D20_MASK_CHANGES_INVALID_ACTIONS_ONLY_OR_MOSTLY
 - STAGE10D20_MASK_DELTA_AUDIT_COMPLETED
@@ -77,7 +76,6 @@
 - STAGE10D20_MASK_PRESERVES_PRODUCTION
 - STAGE10D20_MASK_SHAPES_VALID
 - STAGE10D20_MOVE_EFFICIENCY_AUDIT_COMPLETED
-- STAGE10D20_MOVE_SUPPRESSED_BY_MASK
 - STAGE10D20_OFF_ACTOR_MASKED_SAFE
 - STAGE10D20_OFF_ACTOR_MASK_REDUCED_NONNOOP
 - STAGE10D20_OFF_ACTOR_SAFETY_AUDIT_COMPLETED
@@ -89,7 +87,7 @@
 - STAGE10D20_VISUAL_SUMMARY_COMPLETED
 
 ## 11. Primary next gate
-- GO_FOR_STAGE10D20_MASK_LOGIC_FIX
+- GO_FOR_STAGE10D20_DECODER_OR_APPLIER_AUDIT
 
 ## 12. What not to do next
 - Do not run PPO.

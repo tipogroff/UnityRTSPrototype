@@ -1,0 +1,89 @@
+{
+  "generated_at_utc": "2026-05-03T23:41:45.189110+00:00",
+  "stage": "Stage10D.21B3",
+  "source_manifest": "python/week6_student/tmp/stage10d20_masked_runtime_rerun/stage10d20_run_manifest.json",
+  "source_stage10d21b2_report": "python/week6_student/reports/stage10d21b2_same_command_conflict_report.json",
+  "counts": {
+    "trace_rows": 4,
+    "real_cmd_ids": 4,
+    "legacy_cmd_ids": 0,
+    "previously_conflicting_commands": 4,
+    "matchmanager_rejected_commands": 4,
+    "telemetry_conflict_commands": 0,
+    "clean_accepted_move_commands": 0,
+    "clean_applied_move_commands": 0,
+    "terminal_rejected_move_commands": 4,
+    "rejected_but_clean_accepted": 0
+  },
+  "ratios": {
+    "authoritative_status_ratio": 1.0,
+    "mutually_exclusive_final_status_ratio": 1.0
+  },
+  "final_status_counts": {
+    "matchmanager_rejected": 4
+  },
+  "final_status_source_stage_counts": {
+    "matchmanager": 4
+  },
+  "checks": {
+    "same_command_both_events_no_longer_final_conflict": true,
+    "four_previous_conflicts_matchmanager_rejected": true,
+    "previously_rejected_not_clean_accepted": true,
+    "mask_legality_preserved": true,
+    "decoder_mask_legality_preserved": true,
+    "off_actor_masked_non_noop_zero": true,
+    "b2_harvest_preserved": true,
+    "c3_produce_preserved": true,
+    "same_stage10d19b_checkpoint": true,
+    "stage10d19c_not_used": true,
+    "fake_logits_not_used": true,
+    "fallback_policy_not_used": true
+  },
+  "previously_conflicting_commands": [
+    {
+      "command_id": "cmd:78",
+      "final_command_result_status": "matchmanager_rejected",
+      "clean_accepted": false,
+      "terminal_rejected": true,
+      "terminal_reject_stage": "matchmanager",
+      "ordered_lifecycle_reclassified": true
+    },
+    {
+      "command_id": "cmd:106",
+      "final_command_result_status": "matchmanager_rejected",
+      "clean_accepted": false,
+      "terminal_rejected": true,
+      "terminal_reject_stage": "matchmanager",
+      "ordered_lifecycle_reclassified": true
+    },
+    {
+      "command_id": "cmd:120",
+      "final_command_result_status": "matchmanager_rejected",
+      "clean_accepted": false,
+      "terminal_rejected": true,
+      "terminal_reject_stage": "matchmanager",
+      "ordered_lifecycle_reclassified": true
+    },
+    {
+      "command_id": "cmd:142",
+      "final_command_result_status": "matchmanager_rejected",
+      "clean_accepted": false,
+      "terminal_rejected": true,
+      "terminal_reject_stage": "matchmanager",
+      "ordered_lifecycle_reclassified": true
+    }
+  ],
+  "required_answers": {
+    "q1_conflicts_converted_to_ordered_lifecycle_statuses": true,
+    "q2_how_many_became_matchmanager_rejected": 4,
+    "q3_any_commands_still_telemetry_conflict": false,
+    "q4_any_rejected_commands_incorrectly_clean_accepted": false,
+    "q5_direct_evidence_of_clean_accepted_or_applied_move": false,
+    "q6_is_stage10d21c_allowed": false,
+    "q7_next_blocker_if_no_go": "No clean accepted/applied Move commands exist after authoritative remapping; movement application evidence is still absent."
+  },
+  "go_no_go": {
+    "stage10d21b3_authoritative_status_mapping_fix": "PASS",
+    "stage10d21c_movement_application_audit": "NO-GO"
+  }
+}

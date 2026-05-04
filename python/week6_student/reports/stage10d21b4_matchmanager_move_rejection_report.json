@@ -1,0 +1,264 @@
+{
+  "generated_at_utc": "2026-05-03T23:18:08.477074+00:00",
+  "stage": "Stage10D.21B4",
+  "source_stage10d21b3_report": "python/week6_student/reports/stage10d21b3_status_mapping_report.json",
+  "counts": {
+    "commands_analyzed": 4,
+    "bucket_counts": {
+      "target_occupied": 4
+    },
+    "phase_counts": {
+      "movement_execution_phase": 4
+    }
+  },
+  "commands": [
+    {
+      "command_id": "cmd:78",
+      "command_event_key": "29|Player1|45|Move|East|Ranged|-1|0",
+      "command_event_sequence": 79,
+      "command_event_step": 29,
+      "source_cell": 45,
+      "source_x": 21,
+      "source_y": 1,
+      "target_cell": 46,
+      "target_x": 22,
+      "target_y": 1,
+      "move_dir": 1,
+      "unit_ref": "Worker_003",
+      "unit_type": "Worker",
+      "owner": "Player1",
+      "unit_position_before_command": {
+        "x": 21,
+        "y": 1,
+        "cell": 45
+      },
+      "unit_position_at_matchmanager_apply": {
+        "x": 21,
+        "y": 1,
+        "cell": 45
+      },
+      "unit_position_at_reject": {
+        "x": 21,
+        "y": 1,
+        "cell": 45
+      },
+      "unit_current_action_before_command": "not_exposed",
+      "unit_current_action_at_reject": "not_exposed",
+      "unit_busy_or_locked_state": "not_exposed",
+      "target_in_bounds": true,
+      "target_passable": "not_exposed",
+      "target_occupied_before_command": false,
+      "target_occupied_at_matchmanager_apply": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_before_command": null,
+      "target_occupied_by_at_reject": "W2",
+      "target_occupied_owner_at_reject": "Player2",
+      "target_occupied_unit_type_at_reject": "Light",
+      "reject_stage": "matchmanager",
+      "reject_substage": "ExecuteMovementPhase/TryExecuteMove",
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "target_occupied"
+    },
+    {
+      "command_id": "cmd:106",
+      "command_event_key": "36|Player1|42|Move|East|Ranged|-1|0",
+      "command_event_sequence": 108,
+      "command_event_step": 36,
+      "source_cell": 42,
+      "source_x": 18,
+      "source_y": 1,
+      "target_cell": 43,
+      "target_x": 19,
+      "target_y": 1,
+      "move_dir": 1,
+      "unit_ref": "Worker_005",
+      "unit_type": "Worker",
+      "owner": "Player1",
+      "unit_position_before_command": {
+        "x": 18,
+        "y": 1,
+        "cell": 42
+      },
+      "unit_position_at_matchmanager_apply": {
+        "x": 18,
+        "y": 1,
+        "cell": 42
+      },
+      "unit_position_at_reject": {
+        "x": 18,
+        "y": 1,
+        "cell": 42
+      },
+      "unit_current_action_before_command": "not_exposed",
+      "unit_current_action_at_reject": "not_exposed",
+      "unit_busy_or_locked_state": "not_exposed",
+      "target_in_bounds": true,
+      "target_passable": "not_exposed",
+      "target_occupied_before_command": false,
+      "target_occupied_at_matchmanager_apply": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_before_command": null,
+      "target_occupied_by_at_reject": "T2",
+      "target_occupied_owner_at_reject": "Player2",
+      "target_occupied_unit_type_at_reject": "Light",
+      "reject_stage": "matchmanager",
+      "reject_substage": "ExecuteMovementPhase/TryExecuteMove",
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "target_occupied"
+    },
+    {
+      "command_id": "cmd:120",
+      "command_event_key": "40|Player1|41|Move|East|Ranged|-1|0",
+      "command_event_sequence": 124,
+      "command_event_step": 40,
+      "source_cell": 41,
+      "source_x": 17,
+      "source_y": 1,
+      "target_cell": 42,
+      "target_x": 18,
+      "target_y": 1,
+      "move_dir": 1,
+      "unit_ref": "Worker_006",
+      "unit_type": "Worker",
+      "owner": "Player1",
+      "unit_position_before_command": {
+        "x": 17,
+        "y": 1,
+        "cell": 41
+      },
+      "unit_position_at_matchmanager_apply": {
+        "x": 17,
+        "y": 1,
+        "cell": 41
+      },
+      "unit_position_at_reject": {
+        "x": 17,
+        "y": 1,
+        "cell": 41
+      },
+      "unit_current_action_before_command": "not_exposed",
+      "unit_current_action_at_reject": "not_exposed",
+      "unit_busy_or_locked_state": "not_exposed",
+      "target_in_bounds": true,
+      "target_passable": "not_exposed",
+      "target_occupied_before_command": false,
+      "target_occupied_at_matchmanager_apply": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_before_command": null,
+      "target_occupied_by_at_reject": "S2",
+      "target_occupied_owner_at_reject": "Player2",
+      "target_occupied_unit_type_at_reject": "Light",
+      "reject_stage": "matchmanager",
+      "reject_substage": "ExecuteMovementPhase/TryExecuteMove",
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "target_occupied"
+    },
+    {
+      "command_id": "cmd:142",
+      "command_event_key": "47|Player1|38|Move|East|Ranged|-1|0",
+      "command_event_sequence": 146,
+      "command_event_step": 47,
+      "source_cell": 38,
+      "source_x": 14,
+      "source_y": 1,
+      "target_cell": 39,
+      "target_x": 15,
+      "target_y": 1,
+      "move_dir": 1,
+      "unit_ref": "Worker_008",
+      "unit_type": "Worker",
+      "owner": "Player1",
+      "unit_position_before_command": {
+        "x": 14,
+        "y": 1,
+        "cell": 38
+      },
+      "unit_position_at_matchmanager_apply": {
+        "x": 14,
+        "y": 1,
+        "cell": 38
+      },
+      "unit_position_at_reject": {
+        "x": 14,
+        "y": 1,
+        "cell": 38
+      },
+      "unit_current_action_before_command": "not_exposed",
+      "unit_current_action_at_reject": "not_exposed",
+      "unit_busy_or_locked_state": "not_exposed",
+      "target_in_bounds": true,
+      "target_passable": "not_exposed",
+      "target_occupied_before_command": false,
+      "target_occupied_at_matchmanager_apply": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_before_command": null,
+      "target_occupied_by_at_reject": "P2",
+      "target_occupied_owner_at_reject": "Player2",
+      "target_occupied_unit_type_at_reject": "Light",
+      "reject_stage": "matchmanager",
+      "reject_substage": "ExecuteMovementPhase/TryExecuteMove",
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "target_occupied"
+    }
+  ],
+  "checks": {
+    "all_4_commands_traced": true,
+    "exactly_one_bucket_each": true,
+    "all_real_cmd_ids": true,
+    "no_clean_accepted": true,
+    "mask_legality_preserved": true,
+    "decoder_mask_legality_preserved": true,
+    "off_actor_masked_non_noop_zero": true,
+    "b2_harvest_preserved": true,
+    "c3_produce_preserved": true,
+    "no_fake_logits": true,
+    "no_fallback": true,
+    "no_heuristic": true
+  },
+  "required_answers": {
+    "q1_exact_command_ids_analyzed": [
+      "cmd:78",
+      "cmd:106",
+      "cmd:120",
+      "cmd:142"
+    ],
+    "q2_source_and_target_cells": [
+      {
+        "command_id": "cmd:78",
+        "source_cell": 45,
+        "target_cell": 46
+      },
+      {
+        "command_id": "cmd:106",
+        "source_cell": 42,
+        "target_cell": 43
+      },
+      {
+        "command_id": "cmd:120",
+        "source_cell": 41,
+        "target_cell": 42
+      },
+      {
+        "command_id": "cmd:142",
+        "source_cell": 38,
+        "target_cell": 39
+      }
+    ],
+    "q3_rejected_because_target_occupied": true,
+    "q4_rejected_because_unit_busy_or_already_had_action": false,
+    "q5_rejected_during_command_or_later_execution_phase": "later_movement_execution_phase",
+    "q6_policy_bad_mask_legal_or_runtime_state_semantics": "runtime_state_semantics_not_represented_in_mask",
+    "q7_what_should_be_fixed_next": "legal mask enrichment",
+    "q8_gate_stage10d21b5_targeted_fix": "GO_FOR_STAGE10D21B5_TARGETED_FIX",
+    "q9_gate_stage10d21c_movement_application_audit": "NO-GO"
+  },
+  "go_no_go": {
+    "stage10d21b4_matchmanager_move_rejection_reason_audit": "PASS",
+    "stage10d21b5_targeted_fix": "GO",
+    "stage10d21c_movement_application_audit": "NO-GO"
+  }
+}

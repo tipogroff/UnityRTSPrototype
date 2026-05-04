@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-03T22:11:52.3414988Z",
+  "generated_at_utc": "2026-05-04T00:10:45.6963530Z",
   "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
   "output_relative_dir": "python/week6_student/tmp/stage10d20_masked_runtime_rerun",
   "snapshot_prefix": "stage10d20_snapshot_step",
@@ -10,6 +10,6 @@
   "terminal_reason": "Loss",
   "configured_checkpoint_relative_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",
   "configured_legal_mask_enabled": true,
-  "stage10d20s_generated_at_utc": "2026-05-03T22:12:10.086108+00:00",
+  "stage10d20s_generated_at_utc": "2026-05-04T00:11:21.748580+00:00",
   "stage10d20s_trace_path": "python/week6_student/reports/stage10d20s_mask_move_trace.jsonl"
 }

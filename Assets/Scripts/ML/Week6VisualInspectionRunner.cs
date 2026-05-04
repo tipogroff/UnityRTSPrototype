@@ -115,8 +115,12 @@ namespace RTS.ML
         private readonly Dictionary<int, ActorCellDiagnosticRow> _latestActorRowsByFlatIndex = new Dictionary<int, ActorCellDiagnosticRow>();
         private readonly List<ActorCellDiagnosticRow> _latestActorRows = new List<ActorCellDiagnosticRow>();
         private readonly List<string> _statusLines = new List<string>(12);
-        private readonly Dictionary<int, MatchCommand> _lastAcceptedByActor = new Dictionary<int, MatchCommand>();
-        private readonly Dictionary<int, RuntimeRejectionInfo> _lastRejectedByActor = new Dictionary<int, RuntimeRejectionInfo>();
+        private readonly Dictionary<string, CommandEventTelemetry> _commandTelemetryByKey =
+            new Dictionary<string, CommandEventTelemetry>(StringComparer.Ordinal);
+        private readonly Dictionary<int, List<CommandEventTelemetry>> _commandTelemetryByFlat =
+            new Dictionary<int, List<CommandEventTelemetry>>();
+        private int _commandTelemetryIdSequence;
+        private int _commandTelemetryEventSequence;
         private readonly Dictionary<int, MatchCommand> _lastBaselineAcceptedByActor = new Dictionary<int, MatchCommand>();
         private readonly Dictionary<int, RuntimeRejectionInfo> _lastBaselineRejectedByActor = new Dictionary<int, RuntimeRejectionInfo>();
         private readonly Dictionary<int, ActionDecoder.MaskAwareCellTelemetry> _latestMaskAwareCellTelemetryByFlat =
@@ -469,8 +473,19 @@ namespace RTS.ML
             public bool command_built;
             public bool command_submitted;
             public string command_result_status;
+            public long command_id;
+            public int command_event_step;
+            public int command_event_sequence;
+            public string command_event_source;
+            public string command_event_key;
+            public bool command_event_accepted;
+            public bool command_event_rejected;
+            public string command_event_conflict;
             public string reject_stage;
+            public string reject_callsite;
             public string reject_reason;
+            public string reject_reason_raw;
+            public string reject_reason_normalized;
             public bool legacy_status_conflict;
             public string decoder_reject_reason;
             public bool applier_submission_reached;
@@ -478,6 +493,60 @@ namespace RTS.ML
             public bool applier_accepted;
             public bool applier_rejected;
             public string applier_reject_reason;
+            public string action_type;
+            public int source_cell_from_command;
+            public int source_x_from_command;
+            public int source_y_from_command;
+            public int target_cell_from_command;
+            public int target_x_from_command;
+            public int target_y_from_command;
+            public string unit_id;
+            public string unit_owner;
+            public string unit_type;
+            public int unit_position_x_at_reject;
+            public int unit_position_y_at_reject;
+            public int unit_cell_at_reject;
+            public string occupant_exists_at_target;
+            public string occupant_id_at_target;
+            public string occupant_owner_at_target;
+            public string occupant_type_at_target;
+            public int occupant_x_at_target;
+            public int occupant_y_at_target;
+            public int occupant_cell_at_target;
+            public int occupancy_lookup_key_cell;
+            public int occupancy_lookup_key_x;
+            public int occupancy_lookup_key_y;
+            public string try_get_occupant_result;
+            public string occupant_ref_exists;
+            public int occupant_instance_id;
+            public string occupant_name;
+            public int occupant_logical_x;
+            public int occupant_logical_y;
+            public int occupant_logical_cell;
+            public string occupant_logical_cell_roundtrip_ok;
+            public string occupant_logical_cell_matches_lookup_key;
+            public string occupant_logical_cell_matches_target_cell;
+            public float occupant_transform_x;
+            public float occupant_transform_y;
+            public int occupant_visual_grid_x;
+            public int occupant_visual_grid_y;
+            public int occupant_visual_cell;
+            public string occupant_visual_cell_matches_logical_cell;
+            public string grid_lookup_by_target_returns_occupant;
+            public string grid_lookup_by_occupant_logical_cell_returns_same_occupant;
+            public string grid_lookup_by_occupant_visual_cell_returns_same_occupant;
+            public string occupancy_map_key_matches_occupant_logical_position;
+            public int occupant_cell_reported_previous;
+            public string occupancy_lookup_method;
+            public string occupancy_lookup_source;
+            public string target_in_bounds_at_reject;
+            public string target_passable_at_reject;
+            public string target_occupied_at_reject;
+            public string target_occupied_by_runtime_lookup;
+            public string target_occupied_by_snapshot_lookup;
+            public int snapshot_step_used_for_attribution;
+            public string direct_runtime_lookup_matches_snapshot_lookup;
+            public string direct_runtime_target_matches_reconstructed_target;
         }
 
         [Serializable]
@@ -539,6 +608,220 @@ namespace RTS.ML
             public bool HasCommand { get; }
             public UnitActionType ActionType { get; }
             public Direction Direction { get; }
+        }
+
+        private readonly struct DirectRuntimeRejectTrace
+        {
+            public DirectRuntimeRejectTrace(MatchCommandRejectionDiagnostics diagnostics)
+            {
+                HasTrace = diagnostics.HasDiagnostics;
+                RejectCallsite = string.IsNullOrWhiteSpace(diagnostics.RejectCallsite)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.RejectCallsite;
+                RejectReasonRaw = string.IsNullOrWhiteSpace(diagnostics.RejectReasonRaw)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.RejectReasonRaw;
+                RejectReasonNormalized = string.IsNullOrWhiteSpace(diagnostics.RejectReasonNormalized)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.RejectReasonNormalized;
+                ActionType = diagnostics.ActionType.ToString();
+                MoveDir = (int)diagnostics.MoveDir;
+                SourceCellFromCommand = diagnostics.SourceCellFromCommand;
+                SourceXFromCommand = diagnostics.SourceXFromCommand;
+                SourceYFromCommand = diagnostics.SourceYFromCommand;
+                TargetCellFromCommand = diagnostics.TargetCellFromCommand;
+                TargetXFromCommand = diagnostics.TargetXFromCommand;
+                TargetYFromCommand = diagnostics.TargetYFromCommand;
+                UnitId = string.IsNullOrWhiteSpace(diagnostics.UnitId) ? "NOT_EXPOSED" : diagnostics.UnitId;
+                UnitOwner = string.IsNullOrWhiteSpace(diagnostics.UnitOwner) ? "NOT_EXPOSED" : diagnostics.UnitOwner;
+                UnitType = string.IsNullOrWhiteSpace(diagnostics.UnitType) ? "NOT_EXPOSED" : diagnostics.UnitType;
+                UnitPositionXAtReject = diagnostics.UnitPositionXAtReject;
+                UnitPositionYAtReject = diagnostics.UnitPositionYAtReject;
+                UnitCellAtReject = diagnostics.UnitCellAtReject;
+                OccupantExistsAtTarget = diagnostics.OccupantExistsAtTarget;
+                OccupantIdAtTarget = string.IsNullOrWhiteSpace(diagnostics.OccupantIdAtTarget) ? "NOT_EXPOSED" : diagnostics.OccupantIdAtTarget;
+                OccupantOwnerAtTarget = string.IsNullOrWhiteSpace(diagnostics.OccupantOwnerAtTarget) ? "NOT_EXPOSED" : diagnostics.OccupantOwnerAtTarget;
+                OccupantTypeAtTarget = string.IsNullOrWhiteSpace(diagnostics.OccupantTypeAtTarget) ? "NOT_EXPOSED" : diagnostics.OccupantTypeAtTarget;
+                OccupantXAtTarget = diagnostics.OccupantXAtTarget;
+                OccupantYAtTarget = diagnostics.OccupantYAtTarget;
+                OccupantCellAtTarget = diagnostics.OccupantCellAtTarget;
+                OccupancyLookupKeyCell = diagnostics.OccupancyLookupKeyCell;
+                OccupancyLookupKeyX = diagnostics.OccupancyLookupKeyX;
+                OccupancyLookupKeyY = diagnostics.OccupancyLookupKeyY;
+                TryGetOccupantResult = diagnostics.TryGetOccupantResult;
+                OccupantRefExists = diagnostics.OccupantRefExists;
+                OccupantInstanceId = diagnostics.OccupantInstanceId;
+                OccupantName = string.IsNullOrWhiteSpace(diagnostics.OccupantName)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.OccupantName;
+                OccupantLogicalX = diagnostics.OccupantLogicalX;
+                OccupantLogicalY = diagnostics.OccupantLogicalY;
+                OccupantLogicalCell = diagnostics.OccupantLogicalCell;
+                OccupantLogicalCellRoundtripOk = diagnostics.OccupantLogicalCellRoundtripOk;
+                OccupantLogicalCellMatchesLookupKey = diagnostics.OccupantLogicalCellMatchesLookupKey;
+                OccupantLogicalCellMatchesTargetCell = diagnostics.OccupantLogicalCellMatchesTargetCell;
+                OccupantTransformX = diagnostics.OccupantTransformX;
+                OccupantTransformY = diagnostics.OccupantTransformY;
+                OccupantVisualGridX = diagnostics.OccupantVisualGridX;
+                OccupantVisualGridY = diagnostics.OccupantVisualGridY;
+                OccupantVisualCell = diagnostics.OccupantVisualCell;
+                OccupantVisualCellMatchesLogicalCell = diagnostics.OccupantVisualCellMatchesLogicalCell;
+                GridLookupByTargetReturnsOccupant = diagnostics.GridLookupByTargetReturnsOccupant;
+                GridLookupByOccupantLogicalCellReturnsSameOccupant = diagnostics.GridLookupByOccupantLogicalCellReturnsSameOccupant;
+                GridLookupByOccupantVisualCellReturnsSameOccupant = diagnostics.GridLookupByOccupantVisualCellReturnsSameOccupant;
+                OccupancyMapKeyMatchesOccupantLogicalPosition = diagnostics.OccupancyMapKeyMatchesOccupantLogicalPosition;
+                OccupantCellReportedPrevious = diagnostics.OccupantCellReportedPrevious;
+                OccupancyLookupMethod = string.IsNullOrWhiteSpace(diagnostics.OccupancyLookupMethod)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.OccupancyLookupMethod;
+                OccupancyLookupSource = string.IsNullOrWhiteSpace(diagnostics.OccupancyLookupSource)
+                    ? "NOT_EXPOSED"
+                    : diagnostics.OccupancyLookupSource;
+                TargetInBoundsAtReject = diagnostics.TargetInBoundsAtReject;
+                TargetPassableAtReject = diagnostics.TargetPassableAtReject;
+                TargetOccupiedAtReject = diagnostics.TargetOccupiedAtReject;
+                TargetOccupiedByRuntimeLookup = diagnostics.TargetOccupiedByRuntimeLookup;
+                DirectRuntimeTargetMatchesReconstructedTarget = diagnostics.DirectRuntimeTargetMatchesReconstructedTarget;
+            }
+
+            public bool HasTrace { get; }
+            public string RejectCallsite { get; }
+            public string RejectReasonRaw { get; }
+            public string RejectReasonNormalized { get; }
+            public string ActionType { get; }
+            public int MoveDir { get; }
+            public int SourceCellFromCommand { get; }
+            public int SourceXFromCommand { get; }
+            public int SourceYFromCommand { get; }
+            public int TargetCellFromCommand { get; }
+            public int TargetXFromCommand { get; }
+            public int TargetYFromCommand { get; }
+            public string UnitId { get; }
+            public string UnitOwner { get; }
+            public string UnitType { get; }
+            public int UnitPositionXAtReject { get; }
+            public int UnitPositionYAtReject { get; }
+            public int UnitCellAtReject { get; }
+            public bool OccupantExistsAtTarget { get; }
+            public string OccupantIdAtTarget { get; }
+            public string OccupantOwnerAtTarget { get; }
+            public string OccupantTypeAtTarget { get; }
+            public int OccupantXAtTarget { get; }
+            public int OccupantYAtTarget { get; }
+            public int OccupantCellAtTarget { get; }
+            public int OccupancyLookupKeyCell { get; }
+            public int OccupancyLookupKeyX { get; }
+            public int OccupancyLookupKeyY { get; }
+            public bool TryGetOccupantResult { get; }
+            public bool OccupantRefExists { get; }
+            public int OccupantInstanceId { get; }
+            public string OccupantName { get; }
+            public int OccupantLogicalX { get; }
+            public int OccupantLogicalY { get; }
+            public int OccupantLogicalCell { get; }
+            public bool OccupantLogicalCellRoundtripOk { get; }
+            public bool OccupantLogicalCellMatchesLookupKey { get; }
+            public bool OccupantLogicalCellMatchesTargetCell { get; }
+            public float OccupantTransformX { get; }
+            public float OccupantTransformY { get; }
+            public int OccupantVisualGridX { get; }
+            public int OccupantVisualGridY { get; }
+            public int OccupantVisualCell { get; }
+            public bool OccupantVisualCellMatchesLogicalCell { get; }
+            public bool GridLookupByTargetReturnsOccupant { get; }
+            public bool GridLookupByOccupantLogicalCellReturnsSameOccupant { get; }
+            public bool GridLookupByOccupantVisualCellReturnsSameOccupant { get; }
+            public bool OccupancyMapKeyMatchesOccupantLogicalPosition { get; }
+            public int OccupantCellReportedPrevious { get; }
+            public string OccupancyLookupMethod { get; }
+            public string OccupancyLookupSource { get; }
+            public bool TargetInBoundsAtReject { get; }
+            public bool TargetPassableAtReject { get; }
+            public bool TargetOccupiedAtReject { get; }
+            public bool TargetOccupiedByRuntimeLookup { get; }
+            public bool DirectRuntimeTargetMatchesReconstructedTarget { get; }
+        }
+
+        private sealed class CommandEventTelemetry
+        {
+            public CommandEventTelemetry(long commandId, int step, int flat, string key, MatchCommand command)
+            {
+                CommandId = commandId;
+                Step = step;
+                Flat = flat;
+                Key = key ?? string.Empty;
+                Command = command;
+                RejectReason = string.Empty;
+                RejectReasonRaw = string.Empty;
+                ConflictType = string.Empty;
+                DirectRuntimeRejectTrace = default;
+            }
+
+            public long CommandId { get; }
+            public int Step { get; }
+            public int Flat { get; }
+            public string Key { get; }
+            public MatchCommand Command { get; }
+            public bool AcceptedSeen { get; private set; }
+            public bool RejectedSeen { get; private set; }
+            public string RejectReason { get; private set; }
+            public string RejectReasonRaw { get; private set; }
+            public int LastEventSequence { get; private set; }
+            public string LastEventSource { get; private set; }
+            public string ConflictType { get; private set; }
+            public DirectRuntimeRejectTrace DirectRuntimeRejectTrace { get; private set; }
+            public bool HasDirectRuntimeRejectTrace => DirectRuntimeRejectTrace.HasTrace;
+
+            public bool HasConflictingTerminalEvents => AcceptedSeen && RejectedSeen;
+
+            public void MarkAccepted(int eventSequence)
+            {
+                AcceptedSeen = true;
+                LastEventSequence = Mathf.Max(LastEventSequence, eventSequence);
+                LastEventSource = "matchmanager.accepted";
+                if (RejectedSeen)
+                {
+                    ConflictType = "same_command_both_events";
+                }
+            }
+
+            public void MarkRejected(string reason, string reasonRaw, DirectRuntimeRejectTrace trace, int eventSequence)
+            {
+                RejectedSeen = true;
+                RejectReason = string.IsNullOrWhiteSpace(reason) ? string.Empty : reason;
+                RejectReasonRaw = string.IsNullOrWhiteSpace(reasonRaw) ? string.Empty : reasonRaw;
+                DirectRuntimeRejectTrace = trace;
+                LastEventSequence = Mathf.Max(LastEventSequence, eventSequence);
+                LastEventSource = "matchmanager.rejected";
+                if (AcceptedSeen)
+                {
+                    ConflictType = "same_command_both_events";
+                }
+            }
+        }
+
+        private readonly struct CommandTelemetrySelection
+        {
+            public CommandTelemetrySelection(
+                CommandEventTelemetry selected,
+                int candidateCount,
+                bool anyAcceptedSeen,
+                bool anyRejectedSeen,
+                bool differentCommandConflict)
+            {
+                Selected = selected;
+                CandidateCount = candidateCount;
+                AnyAcceptedSeen = anyAcceptedSeen;
+                AnyRejectedSeen = anyRejectedSeen;
+                DifferentCommandConflict = differentCommandConflict;
+            }
+
+            public CommandEventTelemetry Selected { get; }
+            public int CandidateCount { get; }
+            public bool AnyAcceptedSeen { get; }
+            public bool AnyRejectedSeen { get; }
+            public bool DifferentCommandConflict { get; }
+            public bool HasAny => CandidateCount > 0;
         }
 
         private readonly struct AdapterArtifactSnapshot
@@ -977,8 +1260,8 @@ namespace RTS.ML
             _episodeController.AutoStepInFixedUpdate = false;
             _simulationPaused = true;
             _lastStepApplyCommandCalled = false;
-            _lastAcceptedByActor.Clear();
-            _lastRejectedByActor.Clear();
+            _commandTelemetryByKey.Clear();
+            _commandTelemetryByFlat.Clear();
             _latestMaskAwareCellTelemetryByFlat.Clear();
             _latestLegalMaskByFlat.Clear();
 
@@ -1164,6 +1447,8 @@ namespace RTS.ML
         private List<Stage10D10CellRow> BuildStage10D10CellRows()
         {
             var rows = new List<Stage10D10CellRow>(ActionContract.TotalCells);
+            int currentStep = _matchManager != null ? _matchManager.Step : 0;
+            PruneCommandTelemetry(currentStep);
             var runtimeByFlat = new Dictionary<int, UnitRuntime>(ActionContract.TotalCells);
             var maskTelemetryByFlat = new Dictionary<int, ActionDecoder.MaskAwareCellTelemetry>();
             var legalMaskByFlat = new Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry>();
@@ -1296,9 +1581,7 @@ namespace RTS.ML
                     out attackTargetLocalFinal);
 
                 bool predictedNonNoOp = predictedActionType != UnitActionType.NoOp;
-                bool hasAcceptedCommand = _lastAcceptedByActor.TryGetValue(flat, out MatchCommand acceptedCommand);
-                bool hasRejectedCommand = _lastRejectedByActor.TryGetValue(flat, out RuntimeRejectionInfo rejInfo);
-                bool commandBuilt = hasAcceptedCommand || hasRejectedCommand;
+                bool commandBuilt = predictedNonNoOp && runtimeIsFriendlyActor;
                 string decoderRejectReason = string.Empty;
                 string decoderResult = "predicted_noop";
                 if (predictedNonNoOp)
@@ -1309,24 +1592,10 @@ namespace RTS.ML
                         decoderResult = "predicted_non_noop_on_non_actor_cell";
                         commandBuilt = false;
                     }
-                    else if (commandBuilt)
+                    else
                     {
                         decoderResult = "command_built";
                     }
-                    else
-                    {
-                        decoderRejectReason = ResolveCommandNotBuiltReason(flat, predictedActionType, false);
-                        decoderResult = "decoder_blocked";
-                    }
-                }
-
-                bool applierAccepted = hasAcceptedCommand;
-                bool applierRejected = hasRejectedCommand;
-                bool applierSubmitted = commandBuilt;
-                string applierRejectReason = string.Empty;
-                if (applierRejected)
-                {
-                    applierRejectReason = rejInfo.Reason;
                 }
 
                 bool hasMaskTelemetry = maskTelemetryByFlat.TryGetValue(flat, out ActionDecoder.MaskAwareCellTelemetry maskTelemetry);
@@ -1367,17 +1636,24 @@ namespace RTS.ML
                     }
                 }
 
+                CommandTelemetrySelection telemetrySelection = SelectCommandTelemetry(flat, currentStep, maskedActionType, maskedMoveDir, predictedActionType);
+                CommandEventTelemetry selectedTelemetry = telemetrySelection.Selected;
+
+                bool applierAccepted = selectedTelemetry != null && selectedTelemetry.AcceptedSeen;
+                bool applierRejected = selectedTelemetry != null && selectedTelemetry.RejectedSeen;
+                bool applierSubmitted = commandBuilt;
+                string applierRejectReason = string.Empty;
+                if (applierRejected)
+                {
+                    applierRejectReason = selectedTelemetry.RejectReason;
+                }
+
                 UnitActionType decoderReceivedActionTypeValue = UnitActionType.NoOp;
                 int decoderReceivedMoveDir = 0;
-                if (hasAcceptedCommand)
+                if (selectedTelemetry != null)
                 {
-                    decoderReceivedActionTypeValue = acceptedCommand.ActionType;
-                    decoderReceivedMoveDir = (int)acceptedCommand.Direction;
-                }
-                else if (hasRejectedCommand && rejInfo.HasCommand)
-                {
-                    decoderReceivedActionTypeValue = rejInfo.ActionType;
-                    decoderReceivedMoveDir = (int)rejInfo.Direction;
+                    decoderReceivedActionTypeValue = selectedTelemetry.Command.ActionType;
+                    decoderReceivedMoveDir = (int)selectedTelemetry.Command.Direction;
                 }
                 else if (hasMaskTelemetry)
                 {
@@ -1389,10 +1665,18 @@ namespace RTS.ML
                     || IsMoveDirLegal(legalMoveDirMask, decoderReceivedMoveDir);
 
                 bool commandSubmitted = commandBuilt;
-                bool legacyConflict = applierAccepted && applierRejected;
+                bool sameCommandConflict = selectedTelemetry != null && selectedTelemetry.HasConflictingTerminalEvents;
+                bool differentCommandConflict = telemetrySelection.DifferentCommandConflict;
+                bool legacyConflict = sameCommandConflict || differentCommandConflict;
+                DirectRuntimeRejectTrace directRejectTrace = selectedTelemetry != null
+                    ? selectedTelemetry.DirectRuntimeRejectTrace
+                    : default;
                 string commandResultStatus;
                 string rejectStage = string.Empty;
                 string rejectReason = string.Empty;
+                string rejectReasonRaw = selectedTelemetry != null ? selectedTelemetry.RejectReasonRaw : string.Empty;
+                string rejectReasonNormalized = selectedTelemetry != null ? selectedTelemetry.RejectReason : string.Empty;
+                string commandEventConflict = string.Empty;
 
                 if (!predictedNonNoOp)
                 {
@@ -1404,21 +1688,44 @@ namespace RTS.ML
                     rejectStage = "decoder";
                     rejectReason = decoderRejectReason;
                 }
-                else if (legacyConflict)
+                else if (sameCommandConflict)
                 {
-                    commandResultStatus = "accepted";
-                    rejectStage = "legacy_conflict";
-                    rejectReason = applierRejectReason;
+                    commandResultStatus = "telemetry_conflict";
+                    rejectStage = "telemetry";
+                    rejectReason = string.IsNullOrWhiteSpace(applierRejectReason)
+                        ? "same_command_both_events"
+                        : applierRejectReason;
+                    commandEventConflict = "same_command_both_events";
+                }
+                else if (differentCommandConflict)
+                {
+                    commandResultStatus = "telemetry_conflict";
+                    rejectStage = "telemetry";
+                    rejectReason = "different_commands_same_flat";
+                    commandEventConflict = "different_commands_same_flat";
                 }
                 else if (applierRejected)
                 {
-                    commandResultStatus = "applier_rejected";
-                    rejectStage = "applier";
+                    commandResultStatus = "matchmanager_rejected";
+                    rejectStage = "matchmanager";
                     rejectReason = applierRejectReason;
+                    if (string.IsNullOrWhiteSpace(rejectReasonRaw))
+                    {
+                        rejectReasonRaw = applierRejectReason;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(rejectReasonNormalized))
+                    {
+                        rejectReasonNormalized = applierRejectReason;
+                    }
                 }
                 else if (applierAccepted)
                 {
-                    commandResultStatus = "accepted";
+                    commandResultStatus = "accepted_pending";
+                }
+                else if (commandBuilt)
+                {
+                    commandResultStatus = "accepted_pending";
                 }
                 else
                 {
@@ -1476,8 +1783,21 @@ namespace RTS.ML
                     command_built = commandBuilt,
                     command_submitted = commandSubmitted,
                     command_result_status = commandResultStatus,
+                    command_id = selectedTelemetry != null ? selectedTelemetry.CommandId : 0L,
+                    command_event_step = selectedTelemetry != null ? selectedTelemetry.Step : -1,
+                    command_event_sequence = selectedTelemetry != null ? selectedTelemetry.LastEventSequence : 0,
+                    command_event_source = selectedTelemetry != null
+                        ? (selectedTelemetry.LastEventSource ?? string.Empty)
+                        : "none",
+                    command_event_key = selectedTelemetry != null ? selectedTelemetry.Key : string.Empty,
+                    command_event_accepted = selectedTelemetry != null && selectedTelemetry.AcceptedSeen,
+                    command_event_rejected = selectedTelemetry != null && selectedTelemetry.RejectedSeen,
+                    command_event_conflict = commandEventConflict,
                     reject_stage = rejectStage,
+                    reject_callsite = directRejectTrace.HasTrace ? directRejectTrace.RejectCallsite : "NOT_EXPOSED",
                     reject_reason = rejectReason,
+                    reject_reason_raw = string.IsNullOrWhiteSpace(rejectReasonRaw) ? "NOT_EXPOSED" : rejectReasonRaw,
+                    reject_reason_normalized = string.IsNullOrWhiteSpace(rejectReasonNormalized) ? "NOT_EXPOSED" : rejectReasonNormalized,
                     legacy_status_conflict = legacyConflict,
                     decoder_reject_reason = decoderRejectReason,
                     applier_submission_reached = applierSubmitted,
@@ -1485,6 +1805,64 @@ namespace RTS.ML
                     applier_accepted = applierAccepted,
                     applier_rejected = applierRejected,
                     applier_reject_reason = applierRejectReason,
+                    action_type = selectedTelemetry != null
+                        ? selectedTelemetry.Command.ActionType.ToString()
+                        : "NOT_EXPOSED",
+                    source_cell_from_command = directRejectTrace.HasTrace ? directRejectTrace.SourceCellFromCommand : -1,
+                    source_x_from_command = directRejectTrace.HasTrace ? directRejectTrace.SourceXFromCommand : -1,
+                    source_y_from_command = directRejectTrace.HasTrace ? directRejectTrace.SourceYFromCommand : -1,
+                    target_cell_from_command = directRejectTrace.HasTrace ? directRejectTrace.TargetCellFromCommand : -1,
+                    target_x_from_command = directRejectTrace.HasTrace ? directRejectTrace.TargetXFromCommand : -1,
+                    target_y_from_command = directRejectTrace.HasTrace ? directRejectTrace.TargetYFromCommand : -1,
+                    unit_id = directRejectTrace.HasTrace ? directRejectTrace.UnitId : "NOT_EXPOSED",
+                    unit_owner = directRejectTrace.HasTrace ? directRejectTrace.UnitOwner : "NOT_EXPOSED",
+                    unit_type = directRejectTrace.HasTrace ? directRejectTrace.UnitType : "NOT_EXPOSED",
+                    unit_position_x_at_reject = directRejectTrace.HasTrace ? directRejectTrace.UnitPositionXAtReject : -1,
+                    unit_position_y_at_reject = directRejectTrace.HasTrace ? directRejectTrace.UnitPositionYAtReject : -1,
+                    unit_cell_at_reject = directRejectTrace.HasTrace ? directRejectTrace.UnitCellAtReject : -1,
+                    occupant_exists_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantExistsAtTarget.ToString() : "NOT_EXPOSED",
+                    occupant_id_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantIdAtTarget : "NOT_EXPOSED",
+                    occupant_owner_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantOwnerAtTarget : "NOT_EXPOSED",
+                    occupant_type_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantTypeAtTarget : "NOT_EXPOSED",
+                    occupant_x_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantXAtTarget : -1,
+                    occupant_y_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantYAtTarget : -1,
+                    occupant_cell_at_target = directRejectTrace.HasTrace ? directRejectTrace.OccupantCellAtTarget : -1,
+                    occupancy_lookup_key_cell = directRejectTrace.HasTrace ? directRejectTrace.OccupancyLookupKeyCell : -1,
+                    occupancy_lookup_key_x = directRejectTrace.HasTrace ? directRejectTrace.OccupancyLookupKeyX : -1,
+                    occupancy_lookup_key_y = directRejectTrace.HasTrace ? directRejectTrace.OccupancyLookupKeyY : -1,
+                    try_get_occupant_result = directRejectTrace.HasTrace ? directRejectTrace.TryGetOccupantResult.ToString() : "NOT_EXPOSED",
+                    occupant_ref_exists = directRejectTrace.HasTrace ? directRejectTrace.OccupantRefExists.ToString() : "NOT_EXPOSED",
+                    occupant_instance_id = directRejectTrace.HasTrace ? directRejectTrace.OccupantInstanceId : 0,
+                    occupant_name = directRejectTrace.HasTrace ? directRejectTrace.OccupantName : "NOT_EXPOSED",
+                    occupant_logical_x = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalX : -1,
+                    occupant_logical_y = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalY : -1,
+                    occupant_logical_cell = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalCell : -1,
+                    occupant_logical_cell_roundtrip_ok = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalCellRoundtripOk.ToString() : "NOT_EXPOSED",
+                    occupant_logical_cell_matches_lookup_key = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalCellMatchesLookupKey.ToString() : "NOT_EXPOSED",
+                    occupant_logical_cell_matches_target_cell = directRejectTrace.HasTrace ? directRejectTrace.OccupantLogicalCellMatchesTargetCell.ToString() : "NOT_EXPOSED",
+                    occupant_transform_x = directRejectTrace.HasTrace ? directRejectTrace.OccupantTransformX : float.NaN,
+                    occupant_transform_y = directRejectTrace.HasTrace ? directRejectTrace.OccupantTransformY : float.NaN,
+                    occupant_visual_grid_x = directRejectTrace.HasTrace ? directRejectTrace.OccupantVisualGridX : -1,
+                    occupant_visual_grid_y = directRejectTrace.HasTrace ? directRejectTrace.OccupantVisualGridY : -1,
+                    occupant_visual_cell = directRejectTrace.HasTrace ? directRejectTrace.OccupantVisualCell : -1,
+                    occupant_visual_cell_matches_logical_cell = directRejectTrace.HasTrace ? directRejectTrace.OccupantVisualCellMatchesLogicalCell.ToString() : "NOT_EXPOSED",
+                    grid_lookup_by_target_returns_occupant = directRejectTrace.HasTrace ? directRejectTrace.GridLookupByTargetReturnsOccupant.ToString() : "NOT_EXPOSED",
+                    grid_lookup_by_occupant_logical_cell_returns_same_occupant = directRejectTrace.HasTrace ? directRejectTrace.GridLookupByOccupantLogicalCellReturnsSameOccupant.ToString() : "NOT_EXPOSED",
+                    grid_lookup_by_occupant_visual_cell_returns_same_occupant = directRejectTrace.HasTrace ? directRejectTrace.GridLookupByOccupantVisualCellReturnsSameOccupant.ToString() : "NOT_EXPOSED",
+                    occupancy_map_key_matches_occupant_logical_position = directRejectTrace.HasTrace ? directRejectTrace.OccupancyMapKeyMatchesOccupantLogicalPosition.ToString() : "NOT_EXPOSED",
+                    occupant_cell_reported_previous = directRejectTrace.HasTrace ? directRejectTrace.OccupantCellReportedPrevious : -1,
+                    occupancy_lookup_method = directRejectTrace.HasTrace ? directRejectTrace.OccupancyLookupMethod : "NOT_EXPOSED",
+                    occupancy_lookup_source = directRejectTrace.HasTrace ? directRejectTrace.OccupancyLookupSource : "NOT_EXPOSED",
+                    target_in_bounds_at_reject = directRejectTrace.HasTrace ? directRejectTrace.TargetInBoundsAtReject.ToString() : "NOT_EXPOSED",
+                    target_passable_at_reject = directRejectTrace.HasTrace ? directRejectTrace.TargetPassableAtReject.ToString() : "NOT_EXPOSED",
+                    target_occupied_at_reject = directRejectTrace.HasTrace ? directRejectTrace.TargetOccupiedAtReject.ToString() : "NOT_EXPOSED",
+                    target_occupied_by_runtime_lookup = directRejectTrace.HasTrace ? directRejectTrace.TargetOccupiedByRuntimeLookup.ToString() : "NOT_EXPOSED",
+                    target_occupied_by_snapshot_lookup = "INFERENCE_ONLY_NOT_FROM_MATCHMANAGER",
+                    snapshot_step_used_for_attribution = -1,
+                    direct_runtime_lookup_matches_snapshot_lookup = "NOT_COMPUTED_RUNTIME",
+                    direct_runtime_target_matches_reconstructed_target = directRejectTrace.HasTrace
+                        ? directRejectTrace.DirectRuntimeTargetMatchesReconstructedTarget.ToString()
+                        : "NOT_EXPOSED",
                 };
 
                 rows.Add(row);
@@ -2027,8 +2405,10 @@ namespace RTS.ML
             _runtimeRejectionReasons.Clear();
             _latestActorRowsByFlatIndex.Clear();
             _latestActorRows.Clear();
-            _lastAcceptedByActor.Clear();
-            _lastRejectedByActor.Clear();
+            _commandTelemetryByKey.Clear();
+            _commandTelemetryByFlat.Clear();
+            _commandTelemetryIdSequence = 0;
+            _commandTelemetryEventSequence = 0;
             _latestMaskAwareCellTelemetryByFlat.Clear();
             _latestLegalMaskByFlat.Clear();
             _lastBaselineAcceptedByActor.Clear();
@@ -2057,8 +2437,8 @@ namespace RTS.ML
                 return;
             }
 
-            _matchManager.OnCommandRejected -= HandleCommandRejected;
-            _matchManager.OnCommandRejected += HandleCommandRejected;
+            _matchManager.OnCommandRejectedDetailed -= HandleCommandRejectedDetailed;
+            _matchManager.OnCommandRejectedDetailed += HandleCommandRejectedDetailed;
 
             _matchManager.OnCommandAccepted -= HandleCommandAccepted;
             _matchManager.OnCommandAccepted += HandleCommandAccepted;
@@ -2074,7 +2454,7 @@ namespace RTS.ML
                 return;
             }
 
-            _matchManager.OnCommandRejected -= HandleCommandRejected;
+            _matchManager.OnCommandRejectedDetailed -= HandleCommandRejectedDetailed;
             _matchManager.OnCommandAccepted -= HandleCommandAccepted;
             _matchManager.OnMatchEnded -= HandleMatchEnded;
         }
@@ -2117,8 +2497,7 @@ namespace RTS.ML
 
             if (command.Owner == _studentControlledPlayer)
             {
-                int flat = ToFlatIndex(command.UnitPosition);
-                _lastAcceptedByActor[flat] = command;
+                RecordCommandTelemetry(command, accepted: true, reason: string.Empty);
                 _lastStepApplyCommandCalled = true;
             }
             else
@@ -2131,6 +2510,16 @@ namespace RTS.ML
         }
 
         private void HandleCommandRejected(MatchCommand command, string reason)
+        {
+            HandleCommandRejectedInternal(command, reason, MatchCommandRejectionDiagnostics.None);
+        }
+
+        private void HandleCommandRejectedDetailed(MatchCommand command, string reason, MatchCommandRejectionDiagnostics diagnostics)
+        {
+            HandleCommandRejectedInternal(command, reason, diagnostics);
+        }
+
+        private void HandleCommandRejectedInternal(MatchCommand command, string reason, MatchCommandRejectionDiagnostics diagnostics)
         {
             if (!_sessionActive)
             {
@@ -2152,9 +2541,9 @@ namespace RTS.ML
             _ignoredStudentCommands = _runtimeRejectedStudentCommands;
             _lastStepApplyCommandCalled = true;
 
-            int flat = ToFlatIndex(command.UnitPosition);
-            _lastRejectedByActor[flat] = new RuntimeRejectionInfo(NormalizeReason(reason), command);
-            IncrementStringCount(_runtimeRejectionReasons, NormalizeReason(reason));
+            string normalizedReason = NormalizeReason(reason);
+            RecordCommandTelemetry(command, accepted: false, reason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
+            IncrementStringCount(_runtimeRejectionReasons, normalizedReason);
         }
 
         private void HandleHeuristicActionEvaluated(HeuristicActionEvaluation evaluation)
@@ -2447,6 +2836,8 @@ namespace RTS.ML
         {
             _latestActorRowsByFlatIndex.Clear();
             _latestActorRows.Clear();
+            int currentStep = _matchManager != null ? _matchManager.Step : 0;
+            PruneCommandTelemetry(currentStep);
 
             _noOpActorCells = 0;
             _nonNoOpActorCells = 0;
@@ -2486,10 +2877,11 @@ namespace RTS.ML
                         ? "model_action_flat_argmax"
                         : "fallback_no_adapter_artifact";
 
-                    bool commandBuilt = _lastAcceptedByActor.ContainsKey(flat) || _lastRejectedByActor.ContainsKey(flat);
+                    CommandTelemetrySelection commandSelection = SelectCommandTelemetry(flat, currentStep, predicted.ToString(), move, predicted);
+                    bool commandBuilt = commandSelection.HasAny;
                     bool actionApplierReached = commandBuilt;
                     bool applyCommandReached = commandBuilt;
-                    string reason = ResolveCommandNotBuiltReason(flat, predicted, commandBuilt);
+                    string reason = ResolveCommandNotBuiltReason(flat, predicted, commandBuilt, commandSelection.Selected);
                     string top3 = "unavailable";
                     bool logitsAvailable = false;
                     string logitsUnavailableReason = "bridge payload missing";
@@ -3625,9 +4017,16 @@ namespace RTS.ML
         {
             if (commandBuilt)
             {
-                if (_lastRejectedByActor.TryGetValue(flatIndex, out RuntimeRejectionInfo runtimeRejected))
+                CommandTelemetrySelection selection = SelectCommandTelemetry(
+                    flatIndex,
+                    _matchManager != null ? _matchManager.Step : 0,
+                    predictedActionType.ToString(),
+                    0,
+                    predictedActionType);
+
+                if (selection.Selected != null && selection.Selected.RejectedSeen)
                 {
-                    return "runtime_rejected:" + runtimeRejected.Reason;
+                    return "runtime_rejected:" + selection.Selected.RejectReason;
                 }
 
                 return "built_and_submitted";
@@ -3648,12 +4047,212 @@ namespace RTS.ML
                 return "predicted_noop";
             }
 
-            if (_lastRejectedByActor.TryGetValue(flatIndex, out RuntimeRejectionInfo rejected))
+            return "not_built_in_decoder_or_filter";
+        }
+
+        private string ResolveCommandNotBuiltReason(
+            int flatIndex,
+            UnitActionType predictedActionType,
+            bool commandBuilt,
+            CommandEventTelemetry selectedTelemetry)
+        {
+            if (commandBuilt && selectedTelemetry != null && selectedTelemetry.RejectedSeen)
             {
-                return "runtime_rejected:" + rejected.Reason;
+                return "runtime_rejected:" + selectedTelemetry.RejectReason;
             }
 
-            return "not_built_in_decoder_or_filter";
+            return ResolveCommandNotBuiltReason(flatIndex, predictedActionType, commandBuilt);
+        }
+
+        private void RecordCommandTelemetry(
+            MatchCommand command,
+            bool accepted,
+            string reason,
+            string rawReason = "",
+            MatchCommandRejectionDiagnostics diagnostics = default)
+        {
+            int step = _matchManager != null ? _matchManager.Step : 0;
+            int flat = ToFlatIndex(command.UnitPosition);
+            string key = BuildCommandTelemetryKey(step, command);
+
+            if (!_commandTelemetryByKey.TryGetValue(key, out CommandEventTelemetry telemetry))
+            {
+                long commandId = ++_commandTelemetryIdSequence;
+                telemetry = new CommandEventTelemetry(commandId, step, flat, key, command);
+                _commandTelemetryByKey[key] = telemetry;
+
+                if (!_commandTelemetryByFlat.TryGetValue(flat, out List<CommandEventTelemetry> byFlat))
+                {
+                    byFlat = new List<CommandEventTelemetry>();
+                    _commandTelemetryByFlat[flat] = byFlat;
+                }
+
+                byFlat.Add(telemetry);
+            }
+
+            int eventSequence = ++_commandTelemetryEventSequence;
+            if (accepted)
+            {
+                telemetry.MarkAccepted(eventSequence);
+            }
+            else
+            {
+                string normalized = string.IsNullOrWhiteSpace(reason) ? NormalizeReason(rawReason) : reason;
+                string raw = string.IsNullOrWhiteSpace(rawReason) ? reason : rawReason;
+                telemetry.MarkRejected(normalized, raw, new DirectRuntimeRejectTrace(diagnostics), eventSequence);
+            }
+        }
+
+        private static string BuildCommandTelemetryKey(int step, MatchCommand command)
+        {
+            int unitFlat = ToFlatIndex(command.UnitPosition);
+            int attackFlat = command.HasAttackTarget ? ToFlatIndex(command.AttackTarget) : -1;
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                step,
+                command.Owner,
+                unitFlat,
+                command.ActionType,
+                command.Direction,
+                command.ProduceUnitType,
+                attackFlat,
+                command.HasAttackTarget ? 1 : 0);
+        }
+
+        private void PruneCommandTelemetry(int currentStep)
+        {
+            int minStepToKeep = Mathf.Max(0, currentStep - 2);
+            var removeKeys = new List<string>();
+
+            foreach (KeyValuePair<string, CommandEventTelemetry> kvp in _commandTelemetryByKey)
+            {
+                if (kvp.Value.Step < minStepToKeep)
+                {
+                    removeKeys.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < removeKeys.Count; i++)
+            {
+                _commandTelemetryByKey.Remove(removeKeys[i]);
+            }
+
+            var flatKeys = new List<int>(_commandTelemetryByFlat.Keys);
+            for (int i = 0; i < flatKeys.Count; i++)
+            {
+                int flat = flatKeys[i];
+                List<CommandEventTelemetry> items = _commandTelemetryByFlat[flat];
+                items.RemoveAll(item => item.Step < minStepToKeep);
+                if (items.Count == 0)
+                {
+                    _commandTelemetryByFlat.Remove(flat);
+                }
+            }
+        }
+
+        private CommandTelemetrySelection SelectCommandTelemetry(
+            int flat,
+            int currentStep,
+            string maskedActionType,
+            int maskedMoveDir,
+            UnitActionType predictedActionType)
+        {
+            if (!_commandTelemetryByFlat.TryGetValue(flat, out List<CommandEventTelemetry> items) || items == null || items.Count == 0)
+            {
+                return default;
+            }
+
+            UnitActionType expectedActionType = ParseActionTypeOrFallback(maskedActionType, predictedActionType);
+            int minStep = Mathf.Max(0, currentStep - 1);
+
+            int candidateCount = 0;
+            bool anyAcceptedSeen = false;
+            bool anyRejectedSeen = false;
+            bool differentCommandConflict = false;
+
+            CommandEventTelemetry selected = null;
+            CommandEventTelemetry acceptedRecord = null;
+            CommandEventTelemetry rejectedRecord = null;
+            int bestScore = int.MinValue;
+            int bestSequence = int.MinValue;
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                CommandEventTelemetry item = items[i];
+                if (item == null || item.Step < minStep || item.Step > currentStep)
+                {
+                    continue;
+                }
+
+                candidateCount++;
+
+                if (item.AcceptedSeen)
+                {
+                    anyAcceptedSeen = true;
+                    acceptedRecord = acceptedRecord ?? item;
+                }
+
+                if (item.RejectedSeen)
+                {
+                    anyRejectedSeen = true;
+                    rejectedRecord = rejectedRecord ?? item;
+                }
+
+                int score = 0;
+                if (item.Command.ActionType == expectedActionType)
+                {
+                    score += 8;
+                    if (expectedActionType == UnitActionType.Move && (int)item.Command.Direction == maskedMoveDir)
+                    {
+                        score += 8;
+                    }
+                }
+
+                if (item.Step == currentStep)
+                {
+                    score += 4;
+                }
+                else if (item.Step == currentStep - 1)
+                {
+                    score += 2;
+                }
+
+                int sequence = item.LastEventSequence;
+                if (score > bestScore || (score == bestScore && sequence > bestSequence))
+                {
+                    bestScore = score;
+                    bestSequence = sequence;
+                    selected = item;
+                }
+            }
+
+            if (acceptedRecord != null && rejectedRecord != null && acceptedRecord.CommandId != rejectedRecord.CommandId)
+            {
+                differentCommandConflict = true;
+            }
+
+            return new CommandTelemetrySelection(
+                selected,
+                candidateCount,
+                anyAcceptedSeen,
+                anyRejectedSeen,
+                differentCommandConflict);
+        }
+
+        private static UnitActionType ParseActionTypeOrFallback(string actionTypeText, UnitActionType fallback)
+        {
+            if (string.IsNullOrWhiteSpace(actionTypeText))
+            {
+                return fallback;
+            }
+
+            if (Enum.TryParse(actionTypeText, ignoreCase: true, out UnitActionType parsed))
+            {
+                return parsed;
+            }
+
+            return fallback;
         }
 
         private string ResolveAdapterArtifactMissingReason()

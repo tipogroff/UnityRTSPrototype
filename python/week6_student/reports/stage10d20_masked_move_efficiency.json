@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-03T21:31:55.391914+00:00",
+  "generated_at_utc": "2026-05-04T00:11:19.976884+00:00",
   "baseline_stage10d18rr": {
     "total_move_predictions": 1597,
     "total_move_commands_built": 5,
@@ -10,34 +10,28 @@
     "produced_units_count": 59
   },
   "total_raw_unmasked_move_predictions": 12,
-  "total_masked_move_predictions": 4,
-  "total_masked_valid_target_moves": 0,
-  "total_masked_invalid_or_occupied_target_moves": 4,
+  "total_masked_move_predictions": 12,
+  "total_masked_valid_target_moves": 2,
+  "total_masked_invalid_or_occupied_target_moves": 10,
   "raw_unmasked_invalid_or_occupied_target_moves": 10,
-  "total_move_commands_built": 4,
-  "total_move_commands_submitted_to_action_applier": 4,
-  "total_move_commands_reached_match_manager": 4,
-  "total_move_commands_accepted": 4,
+  "total_move_commands_built": 12,
+  "total_move_commands_submitted_to_action_applier": 12,
+  "total_move_commands_reached_match_manager": 12,
+  "total_move_commands_accepted": 0,
   "total_units_that_changed_position_after_move": 0,
   "move_prediction_to_build_rate_masked": 1.0,
-  "move_prediction_to_accept_rate_masked": 1.0,
-  "masked_valid_target_share": 0.0,
-  "masked_invalid_target_share": 1.0,
-  "mask_changed_invalid_move_to_noop_count": 8,
+  "move_prediction_to_accept_rate_masked": 0.0,
+  "masked_valid_target_share": 0.16666666666666666,
+  "masked_invalid_target_share": 0.8333333333333334,
+  "mask_changed_invalid_move_to_noop_count": 0,
   "mask_changed_invalid_move_to_valid_move_count": 0,
   "mask_changed_off_actor_nonnoop_to_noop_count": 171,
   "decoder_reject_counts_by_reason": {},
-  "applier_reject_counts_by_reason": {
-    "other": 4
-  },
-  "matchmanager_reject_counts_by_reason": {
-    "other": 4
-  },
+  "applier_reject_counts_by_reason": {},
+  "matchmanager_reject_counts_by_reason": {},
   "labels": [
     "STAGE10D20_MOVE_EFFICIENCY_AUDIT_COMPLETED",
     "STAGE10D20_MASKED_MOVE_COMMAND_BUILD_RATE_IMPROVED",
-    "STAGE10D20_MASKED_INVALID_MOVES_REDUCED",
-    "STAGE10D20_MASKED_MOVE_COMMANDS_ACCEPTED",
-    "STAGE10D20_MOVE_SUPPRESSED_BY_MASK"
+    "STAGE10D20_MASKED_INVALID_MOVES_REDUCED"
   ]
 }

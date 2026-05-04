@@ -86,6 +86,258 @@ namespace RTS.Gameplay
         public int PendingCommands { get; }
     }
 
+    public readonly struct PendingMoveReservation
+    {
+        public PendingMoveReservation(Owner owner, GridPosition source, GridPosition target, Direction direction, string sourceType)
+        {
+            Owner = owner;
+            Source = source;
+            Target = target;
+            Direction = direction;
+            SourceType = sourceType ?? string.Empty;
+        }
+
+        public Owner Owner { get; }
+        public GridPosition Source { get; }
+        public GridPosition Target { get; }
+        public Direction Direction { get; }
+        public string SourceType { get; }
+    }
+
+    public readonly struct MatchCommandRejectionDiagnostics
+    {
+        public MatchCommandRejectionDiagnostics(
+            bool hasDiagnostics,
+            string rejectCallsite,
+            string rejectReasonRaw,
+            string rejectReasonNormalized,
+            UnitActionType actionType,
+            Direction moveDir,
+            int sourceCellFromCommand,
+            int sourceXFromCommand,
+            int sourceYFromCommand,
+            int targetCellFromCommand,
+            int targetXFromCommand,
+            int targetYFromCommand,
+            string unitId,
+            string unitOwner,
+            string unitType,
+            int unitPositionXAtReject,
+            int unitPositionYAtReject,
+            int unitCellAtReject,
+            bool occupantExistsAtTarget,
+            string occupantIdAtTarget,
+            string occupantOwnerAtTarget,
+            string occupantTypeAtTarget,
+            int occupantXAtTarget,
+            int occupantYAtTarget,
+            int occupantCellAtTarget,
+            int occupancyLookupKeyCell,
+            int occupancyLookupKeyX,
+            int occupancyLookupKeyY,
+            bool tryGetOccupantResult,
+            bool occupantRefExists,
+            int occupantInstanceId,
+            string occupantName,
+            int occupantLogicalX,
+            int occupantLogicalY,
+            int occupantLogicalCell,
+            bool occupantLogicalCellRoundtripOk,
+            bool occupantLogicalCellMatchesLookupKey,
+            bool occupantLogicalCellMatchesTargetCell,
+            float occupantTransformX,
+            float occupantTransformY,
+            int occupantVisualGridX,
+            int occupantVisualGridY,
+            int occupantVisualCell,
+            bool occupantVisualCellMatchesLogicalCell,
+            bool gridLookupByTargetReturnsOccupant,
+            bool gridLookupByOccupantLogicalCellReturnsSameOccupant,
+            bool gridLookupByOccupantVisualCellReturnsSameOccupant,
+            bool occupancyMapKeyMatchesOccupantLogicalPosition,
+            int occupantCellReportedPrevious,
+            string occupancyLookupMethod,
+            string occupancyLookupSource,
+            bool targetInBoundsAtReject,
+            bool targetPassableAtReject,
+            bool targetOccupiedAtReject,
+            bool targetOccupiedByRuntimeLookup,
+            bool directRuntimeTargetMatchesReconstructedTarget)
+        {
+            HasDiagnostics = hasDiagnostics;
+            RejectCallsite = rejectCallsite ?? string.Empty;
+            RejectReasonRaw = rejectReasonRaw ?? string.Empty;
+            RejectReasonNormalized = rejectReasonNormalized ?? string.Empty;
+            ActionType = actionType;
+            MoveDir = moveDir;
+            SourceCellFromCommand = sourceCellFromCommand;
+            SourceXFromCommand = sourceXFromCommand;
+            SourceYFromCommand = sourceYFromCommand;
+            TargetCellFromCommand = targetCellFromCommand;
+            TargetXFromCommand = targetXFromCommand;
+            TargetYFromCommand = targetYFromCommand;
+            UnitId = unitId ?? "NOT_EXPOSED";
+            UnitOwner = unitOwner ?? "NOT_EXPOSED";
+            UnitType = unitType ?? "NOT_EXPOSED";
+            UnitPositionXAtReject = unitPositionXAtReject;
+            UnitPositionYAtReject = unitPositionYAtReject;
+            UnitCellAtReject = unitCellAtReject;
+            OccupantExistsAtTarget = occupantExistsAtTarget;
+            OccupantIdAtTarget = occupantIdAtTarget ?? "NOT_EXPOSED";
+            OccupantOwnerAtTarget = occupantOwnerAtTarget ?? "NOT_EXPOSED";
+            OccupantTypeAtTarget = occupantTypeAtTarget ?? "NOT_EXPOSED";
+            OccupantXAtTarget = occupantXAtTarget;
+            OccupantYAtTarget = occupantYAtTarget;
+            OccupantCellAtTarget = occupantCellAtTarget;
+            OccupancyLookupKeyCell = occupancyLookupKeyCell;
+            OccupancyLookupKeyX = occupancyLookupKeyX;
+            OccupancyLookupKeyY = occupancyLookupKeyY;
+            TryGetOccupantResult = tryGetOccupantResult;
+            OccupantRefExists = occupantRefExists;
+            OccupantInstanceId = occupantInstanceId;
+            OccupantName = occupantName ?? "NOT_EXPOSED";
+            OccupantLogicalX = occupantLogicalX;
+            OccupantLogicalY = occupantLogicalY;
+            OccupantLogicalCell = occupantLogicalCell;
+            OccupantLogicalCellRoundtripOk = occupantLogicalCellRoundtripOk;
+            OccupantLogicalCellMatchesLookupKey = occupantLogicalCellMatchesLookupKey;
+            OccupantLogicalCellMatchesTargetCell = occupantLogicalCellMatchesTargetCell;
+            OccupantTransformX = occupantTransformX;
+            OccupantTransformY = occupantTransformY;
+            OccupantVisualGridX = occupantVisualGridX;
+            OccupantVisualGridY = occupantVisualGridY;
+            OccupantVisualCell = occupantVisualCell;
+            OccupantVisualCellMatchesLogicalCell = occupantVisualCellMatchesLogicalCell;
+            GridLookupByTargetReturnsOccupant = gridLookupByTargetReturnsOccupant;
+            GridLookupByOccupantLogicalCellReturnsSameOccupant = gridLookupByOccupantLogicalCellReturnsSameOccupant;
+            GridLookupByOccupantVisualCellReturnsSameOccupant = gridLookupByOccupantVisualCellReturnsSameOccupant;
+            OccupancyMapKeyMatchesOccupantLogicalPosition = occupancyMapKeyMatchesOccupantLogicalPosition;
+            OccupantCellReportedPrevious = occupantCellReportedPrevious;
+            OccupancyLookupMethod = occupancyLookupMethod ?? string.Empty;
+            OccupancyLookupSource = occupancyLookupSource ?? string.Empty;
+            TargetInBoundsAtReject = targetInBoundsAtReject;
+            TargetPassableAtReject = targetPassableAtReject;
+            TargetOccupiedAtReject = targetOccupiedAtReject;
+            TargetOccupiedByRuntimeLookup = targetOccupiedByRuntimeLookup;
+            DirectRuntimeTargetMatchesReconstructedTarget = directRuntimeTargetMatchesReconstructedTarget;
+        }
+
+        public static MatchCommandRejectionDiagnostics None => new MatchCommandRejectionDiagnostics(
+            false,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            UnitActionType.NoOp,
+            Direction.North,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            "NOT_EXPOSED",
+            "NOT_EXPOSED",
+            "NOT_EXPOSED",
+            -1,
+            -1,
+            -1,
+            false,
+            "NOT_EXPOSED",
+            "NOT_EXPOSED",
+            "NOT_EXPOSED",
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            false,
+            false,
+            0,
+            "NOT_EXPOSED",
+            -1,
+            -1,
+            -1,
+            false,
+            false,
+            false,
+            float.NaN,
+            float.NaN,
+            -1,
+            -1,
+            -1,
+            false,
+            false,
+            false,
+            false,
+            false,
+            -1,
+            string.Empty,
+            string.Empty,
+            false,
+            false,
+            false,
+            false,
+            false);
+
+        public bool HasDiagnostics { get; }
+        public string RejectCallsite { get; }
+        public string RejectReasonRaw { get; }
+        public string RejectReasonNormalized { get; }
+        public UnitActionType ActionType { get; }
+        public Direction MoveDir { get; }
+        public int SourceCellFromCommand { get; }
+        public int SourceXFromCommand { get; }
+        public int SourceYFromCommand { get; }
+        public int TargetCellFromCommand { get; }
+        public int TargetXFromCommand { get; }
+        public int TargetYFromCommand { get; }
+        public string UnitId { get; }
+        public string UnitOwner { get; }
+        public string UnitType { get; }
+        public int UnitPositionXAtReject { get; }
+        public int UnitPositionYAtReject { get; }
+        public int UnitCellAtReject { get; }
+        public bool OccupantExistsAtTarget { get; }
+        public string OccupantIdAtTarget { get; }
+        public string OccupantOwnerAtTarget { get; }
+        public string OccupantTypeAtTarget { get; }
+        public int OccupantXAtTarget { get; }
+        public int OccupantYAtTarget { get; }
+        public int OccupantCellAtTarget { get; }
+        public int OccupancyLookupKeyCell { get; }
+        public int OccupancyLookupKeyX { get; }
+        public int OccupancyLookupKeyY { get; }
+        public bool TryGetOccupantResult { get; }
+        public bool OccupantRefExists { get; }
+        public int OccupantInstanceId { get; }
+        public string OccupantName { get; }
+        public int OccupantLogicalX { get; }
+        public int OccupantLogicalY { get; }
+        public int OccupantLogicalCell { get; }
+        public bool OccupantLogicalCellRoundtripOk { get; }
+        public bool OccupantLogicalCellMatchesLookupKey { get; }
+        public bool OccupantLogicalCellMatchesTargetCell { get; }
+        public float OccupantTransformX { get; }
+        public float OccupantTransformY { get; }
+        public int OccupantVisualGridX { get; }
+        public int OccupantVisualGridY { get; }
+        public int OccupantVisualCell { get; }
+        public bool OccupantVisualCellMatchesLogicalCell { get; }
+        public bool GridLookupByTargetReturnsOccupant { get; }
+        public bool GridLookupByOccupantLogicalCellReturnsSameOccupant { get; }
+        public bool GridLookupByOccupantVisualCellReturnsSameOccupant { get; }
+        public bool OccupancyMapKeyMatchesOccupantLogicalPosition { get; }
+        public int OccupantCellReportedPrevious { get; }
+        public string OccupancyLookupMethod { get; }
+        public string OccupancyLookupSource { get; }
+        public bool TargetInBoundsAtReject { get; }
+        public bool TargetPassableAtReject { get; }
+        public bool TargetOccupiedAtReject { get; }
+        public bool TargetOccupiedByRuntimeLookup { get; }
+        public bool DirectRuntimeTargetMatchesReconstructedTarget { get; }
+    }
+
     [DisallowMultipleComponent]
     public class MatchManager : MonoBehaviour
     {
@@ -132,6 +384,7 @@ namespace RTS.Gameplay
         public System.Action<MatchStateSnapshot> OnStepCompleted;
         public System.Action<MatchCommand> OnCommandAccepted;
         public System.Action<MatchCommand, string> OnCommandRejected;
+        public System.Action<MatchCommand, string, MatchCommandRejectionDiagnostics> OnCommandRejectedDetailed;
 
         private void Awake()
         {
@@ -501,6 +754,57 @@ namespace RTS.Gameplay
             return false;
         }
 
+        /// <summary>
+        /// Returns known Move targets that are already visible in the command ledger for the current step.
+        /// This is a read-only diagnostic/introspection helper for pre-submit mask enrichment.
+        /// </summary>
+        public void GetKnownMoveReservations(List<PendingMoveReservation> output)
+        {
+            if (output == null)
+            {
+                return;
+            }
+
+            output.Clear();
+            var seen = new HashSet<string>();
+
+            for (int i = 0; i < _movementCommands.Count; i++)
+            {
+                MatchCommand command = _movementCommands[i].Command;
+                if (command.ActionType != UnitActionType.Move)
+                {
+                    continue;
+                }
+
+                GridPosition target = command.UnitPosition.Neighbour(command.Direction);
+                string key = command.Owner + "|" + command.UnitPosition.ToFlatIndex() + "|" + target.ToFlatIndex() + "|" + (int)command.Direction;
+                if (!seen.Add(key))
+                {
+                    continue;
+                }
+
+                output.Add(new PendingMoveReservation(command.Owner, command.UnitPosition, target, command.Direction, "movement_commands"));
+            }
+
+            for (int i = 0; i < _pendingCommands.Count; i++)
+            {
+                MatchCommand command = _pendingCommands[i];
+                if (command.ActionType != UnitActionType.Move)
+                {
+                    continue;
+                }
+
+                GridPosition target = command.UnitPosition.Neighbour(command.Direction);
+                string key = command.Owner + "|" + command.UnitPosition.ToFlatIndex() + "|" + target.ToFlatIndex() + "|" + (int)command.Direction;
+                if (!seen.Add(key))
+                {
+                    continue;
+                }
+
+                output.Add(new PendingMoveReservation(command.Owner, command.UnitPosition, target, command.Direction, "pending_commands"));
+            }
+        }
+
         private void ExecuteMovementPhase()
         {
             if (_gridManager == null || _movementCommands.Count == 0)
@@ -511,28 +815,106 @@ namespace RTS.Gameplay
             for (int i = 0; i < _movementCommands.Count; i++)
             {
                 ResolvedCommand command = _movementCommands[i];
-                if (!TryExecuteMove(command))
+                if (!TryExecuteMove(command, out MatchCommandRejectionDiagnostics diagnostics))
                 {
-                    RejectCommand(command.Command, "Move command cannot be executed.");
+                    RejectCommand(command.Command, "Move command cannot be executed.", diagnostics);
                 }
             }
         }
 
-        private bool TryExecuteMove(ResolvedCommand command)
+        private bool TryExecuteMove(ResolvedCommand command, out MatchCommandRejectionDiagnostics diagnostics)
         {
+            diagnostics = MatchCommandRejectionDiagnostics.None;
+
             UnitRuntime unit = command.Unit;
-            if (unit == null || !unit.IsAlive || unit.IsBuilding)
+            GridPosition sourceFromCommand = command.Command.UnitPosition;
+            GridPosition sourceAtReject = unit != null ? unit.GridPos : sourceFromCommand;
+            GridPosition targetFromCommand = sourceFromCommand.Neighbour(command.Command.Direction);
+            GridPosition targetFromRuntime = sourceAtReject.Neighbour(command.Command.Direction);
+            bool runtimeTargetMatchesCommandTarget = targetFromRuntime == targetFromCommand;
+
+            if (unit == null || !unit.IsAlive || unit.IsBuilding || _gridManager == null)
             {
+                diagnostics = BuildMoveRejectionDiagnostics(
+                    command,
+                    unit,
+                    sourceFromCommand,
+                    sourceAtReject,
+                    targetFromCommand,
+                    targetFromRuntime,
+                    occupancyLookupAttempted: false,
+                    occupancyLookupMethod: "not_executed",
+                    occupancyLookupSource: "MatchManager.TryExecuteMove",
+                    targetInBounds: false,
+                    targetPassable: false,
+                    targetOccupied: false,
+                    tryGetOccupantResult: false,
+                    occupant: null,
+                    normalizedReason: "unit_unavailable_or_grid_missing",
+                    runtimeTargetMatchesCommandTarget: runtimeTargetMatchesCommandTarget);
                 return false;
             }
 
-            GridPosition target = unit.GridPos.Neighbour(command.Command.Direction);
-            if (!_gridManager.IsInside(target) || _gridManager.IsCellOccupied(target))
+            bool targetInBounds = _gridManager.IsInside(targetFromRuntime);
+            UnitRuntime occupant = null;
+            bool targetOccupied = false;
+            bool targetPassable = false;
+            bool occupancyLookupAttempted = false;
+            bool tryGetOccupantResult = false;
+
+            if (targetInBounds)
             {
+                occupancyLookupAttempted = true;
+                tryGetOccupantResult = _gridManager.TryGetOccupant(targetFromRuntime, out occupant);
+                targetOccupied = tryGetOccupantResult && occupant != null;
+                targetPassable = !targetOccupied;
+            }
+
+            if (!targetInBounds || targetOccupied)
+            {
+                diagnostics = BuildMoveRejectionDiagnostics(
+                    command,
+                    unit,
+                    sourceFromCommand,
+                    sourceAtReject,
+                    targetFromCommand,
+                    targetFromRuntime,
+                    occupancyLookupAttempted,
+                    "GridManager.TryGetOccupant",
+                    "MatchManager.TryExecuteMove",
+                    targetInBounds,
+                    targetPassable,
+                    targetOccupied,
+                    tryGetOccupantResult,
+                    occupant,
+                    !targetInBounds ? "target_out_of_bounds" : "target_occupied",
+                    runtimeTargetMatchesCommandTarget);
                 return false;
             }
 
-            return unit.MoveTo(target, _gridManager);
+            bool moved = unit.MoveTo(targetFromRuntime, _gridManager);
+            if (!moved)
+            {
+                diagnostics = BuildMoveRejectionDiagnostics(
+                    command,
+                    unit,
+                    sourceFromCommand,
+                    sourceAtReject,
+                    targetFromCommand,
+                    targetFromRuntime,
+                    occupancyLookupAttempted,
+                    "GridManager.TryGetOccupant",
+                    "MatchManager.TryExecuteMove",
+                    targetInBounds,
+                    targetPassable,
+                    targetOccupied,
+                        tryGetOccupantResult,
+                    occupant,
+                    "move_apply_failed",
+                    runtimeTargetMatchesCommandTarget);
+            }
+
+            return moved;
         }
 
         private void ExecuteHarvestDepositPhase()
@@ -902,7 +1284,7 @@ namespace RTS.Gameplay
             return true;
         }
 
-        private void RejectCommand(MatchCommand command, string reason)
+        private void RejectCommand(MatchCommand command, string reason, MatchCommandRejectionDiagnostics diagnostics = default)
         {
             _invalidCommandsThisStep++;
             TotalInvalidCommands++;
@@ -913,6 +1295,185 @@ namespace RTS.Gameplay
             }
 
             OnCommandRejected?.Invoke(command, reason);
+            MatchCommandRejectionDiagnostics details = diagnostics.HasDiagnostics
+                ? diagnostics
+                : MatchCommandRejectionDiagnostics.None;
+            OnCommandRejectedDetailed?.Invoke(command, reason, details);
+        }
+
+        private static MatchCommandRejectionDiagnostics BuildMoveRejectionDiagnostics(
+            ResolvedCommand command,
+            UnitRuntime unit,
+            GridPosition sourceFromCommand,
+            GridPosition sourceAtReject,
+            GridPosition targetFromCommand,
+            GridPosition targetFromRuntime,
+            bool occupancyLookupAttempted,
+            string occupancyLookupMethod,
+            string occupancyLookupSource,
+            bool targetInBounds,
+            bool targetPassable,
+            bool targetOccupied,
+            bool tryGetOccupantResult,
+            UnitRuntime occupant,
+            string normalizedReason,
+            bool runtimeTargetMatchesCommandTarget)
+        {
+            int occupancyLookupKeyCell = ToFlatIndex(targetFromRuntime);
+            int occupancyLookupKeyX = targetFromRuntime.X;
+            int occupancyLookupKeyY = targetFromRuntime.Y;
+
+            bool occupantRefExists = occupant != null;
+            int occupantInstanceId = occupantRefExists ? occupant.GetInstanceID() : 0;
+            string occupantName = occupantRefExists ? occupant.name : "NOT_EXPOSED";
+
+            GridPosition occupantLogicalPos = occupantRefExists ? occupant.GridPos : GridPosition.Zero;
+            int occupantLogicalX = occupantRefExists ? occupantLogicalPos.X : -1;
+            int occupantLogicalY = occupantRefExists ? occupantLogicalPos.Y : -1;
+            int occupantLogicalCell = occupantRefExists ? ToFlatIndex(occupantLogicalPos) : -1;
+            bool occupantLogicalCellRoundtripOk = occupantRefExists
+                && occupantLogicalPos.IsInsideMap()
+                && GridPosition.FromFlatIndex(occupantLogicalCell) == occupantLogicalPos;
+            bool occupantLogicalCellMatchesLookupKey = occupantRefExists && occupantLogicalCell == occupancyLookupKeyCell;
+            bool occupantLogicalCellMatchesTargetCell = occupantRefExists && occupantLogicalCell == ToFlatIndex(targetFromCommand);
+
+            float occupantTransformX = occupantRefExists ? occupant.transform.position.x : float.NaN;
+            float occupantTransformY = occupantRefExists ? occupant.transform.position.z : float.NaN;
+            int occupantVisualGridX = -1;
+            int occupantVisualGridY = -1;
+            int occupantVisualCell = -1;
+            bool occupantVisualCellMatchesLogicalCell = false;
+            GridPosition occupantVisualPos = GridPosition.Zero;
+            bool hasVisualCell = false;
+            if (occupantRefExists)
+            {
+                occupantVisualPos = GridPosition.FromWorldPosition(occupant.transform.position);
+                hasVisualCell = occupantVisualPos.IsInsideMap();
+                if (hasVisualCell)
+                {
+                    occupantVisualGridX = occupantVisualPos.X;
+                    occupantVisualGridY = occupantVisualPos.Y;
+                    occupantVisualCell = ToFlatIndex(occupantVisualPos);
+                    occupantVisualCellMatchesLogicalCell = occupantVisualCell == occupantLogicalCell;
+                }
+            }
+
+            bool gridLookupByTargetReturnsOccupant = false;
+            bool gridLookupByOccupantLogicalCellReturnsSameOccupant = false;
+            bool gridLookupByOccupantVisualCellReturnsSameOccupant = false;
+            bool occupancyMapKeyMatchesOccupantLogicalPosition = false;
+            if (command.Unit != null && command.Unit.IsAlive && command.Unit.Owner != Owner.Neutral)
+            {
+                // no-op: keeps method pure wrt gameplay state; diagnostics only below use provided references.
+            }
+
+            GridManager grid = GridManager.Instance;
+            if (grid != null)
+            {
+                if (grid.TryGetOccupant(targetFromRuntime, out UnitRuntime atTarget) && atTarget != null && occupantRefExists)
+                {
+                    gridLookupByTargetReturnsOccupant = ReferenceEquals(atTarget, occupant);
+                }
+
+                if (occupantRefExists && occupantLogicalPos.IsInsideMap()
+                    && grid.TryGetOccupant(occupantLogicalPos, out UnitRuntime atLogical)
+                    && atLogical != null)
+                {
+                    gridLookupByOccupantLogicalCellReturnsSameOccupant = ReferenceEquals(atLogical, occupant);
+                }
+
+                if (occupantRefExists && hasVisualCell
+                    && grid.TryGetOccupant(occupantVisualPos, out UnitRuntime atVisual)
+                    && atVisual != null)
+                {
+                    gridLookupByOccupantVisualCellReturnsSameOccupant = ReferenceEquals(atVisual, occupant);
+                }
+
+                if (occupantRefExists)
+                {
+                    foreach (KeyValuePair<GridPosition, UnitRuntime> kv in grid.Occupancy)
+                    {
+                        if (!ReferenceEquals(kv.Value, occupant))
+                        {
+                            continue;
+                        }
+
+                        occupancyMapKeyMatchesOccupantLogicalPosition = kv.Key == occupantLogicalPos;
+                        break;
+                    }
+                }
+            }
+
+            return new MatchCommandRejectionDiagnostics(
+                hasDiagnostics: true,
+                rejectCallsite: "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+                rejectReasonRaw: "Move command cannot be executed.",
+                rejectReasonNormalized: normalizedReason,
+                actionType: command.Command.ActionType,
+                moveDir: command.Command.Direction,
+                sourceCellFromCommand: ToFlatIndex(sourceFromCommand),
+                sourceXFromCommand: sourceFromCommand.X,
+                sourceYFromCommand: sourceFromCommand.Y,
+                targetCellFromCommand: ToFlatIndex(targetFromCommand),
+                targetXFromCommand: targetFromCommand.X,
+                targetYFromCommand: targetFromCommand.Y,
+                unitId: GetUnitId(unit),
+                unitOwner: unit != null ? unit.Owner.ToString() : "NOT_EXPOSED",
+                unitType: unit != null ? unit.Type.ToString() : "NOT_EXPOSED",
+                unitPositionXAtReject: sourceAtReject.X,
+                unitPositionYAtReject: sourceAtReject.Y,
+                unitCellAtReject: ToFlatIndex(sourceAtReject),
+                occupantExistsAtTarget: targetOccupied,
+                occupantIdAtTarget: GetUnitId(occupant),
+                occupantOwnerAtTarget: occupant != null ? occupant.Owner.ToString() : "NOT_EXPOSED",
+                occupantTypeAtTarget: occupant != null ? occupant.Type.ToString() : "NOT_EXPOSED",
+                occupantXAtTarget: occupant != null ? occupant.GridPos.X : -1,
+                occupantYAtTarget: occupant != null ? occupant.GridPos.Y : -1,
+                occupantCellAtTarget: occupant != null ? ToFlatIndex(occupant.GridPos) : -1,
+                occupancyLookupKeyCell: occupancyLookupKeyCell,
+                occupancyLookupKeyX: occupancyLookupKeyX,
+                occupancyLookupKeyY: occupancyLookupKeyY,
+                tryGetOccupantResult: tryGetOccupantResult,
+                occupantRefExists: occupantRefExists,
+                occupantInstanceId: occupantInstanceId,
+                occupantName: occupantName,
+                occupantLogicalX: occupantLogicalX,
+                occupantLogicalY: occupantLogicalY,
+                occupantLogicalCell: occupantLogicalCell,
+                occupantLogicalCellRoundtripOk: occupantLogicalCellRoundtripOk,
+                occupantLogicalCellMatchesLookupKey: occupantLogicalCellMatchesLookupKey,
+                occupantLogicalCellMatchesTargetCell: occupantLogicalCellMatchesTargetCell,
+                occupantTransformX: occupantTransformX,
+                occupantTransformY: occupantTransformY,
+                occupantVisualGridX: occupantVisualGridX,
+                occupantVisualGridY: occupantVisualGridY,
+                occupantVisualCell: occupantVisualCell,
+                occupantVisualCellMatchesLogicalCell: occupantVisualCellMatchesLogicalCell,
+                gridLookupByTargetReturnsOccupant: gridLookupByTargetReturnsOccupant,
+                gridLookupByOccupantLogicalCellReturnsSameOccupant: gridLookupByOccupantLogicalCellReturnsSameOccupant,
+                gridLookupByOccupantVisualCellReturnsSameOccupant: gridLookupByOccupantVisualCellReturnsSameOccupant,
+                occupancyMapKeyMatchesOccupantLogicalPosition: occupancyMapKeyMatchesOccupantLogicalPosition,
+                occupantCellReportedPrevious: occupant != null ? ToFlatIndex(occupant.GridPos) : -1,
+                occupancyLookupMethod: occupancyLookupAttempted ? occupancyLookupMethod : "not_executed",
+                occupancyLookupSource: occupancyLookupSource,
+                targetInBoundsAtReject: targetInBounds,
+                targetPassableAtReject: targetPassable,
+                targetOccupiedAtReject: targetOccupied,
+                targetOccupiedByRuntimeLookup: targetOccupied,
+                directRuntimeTargetMatchesReconstructedTarget: runtimeTargetMatchesCommandTarget);
+        }
+
+        private static int ToFlatIndex(GridPosition pos)
+            => pos.Y * GameConstants.MapWidth + pos.X;
+
+        private static string GetUnitId(UnitRuntime unit)
+        {
+            if (unit == null)
+            {
+                return "NOT_EXPOSED";
+            }
+
+            return unit.name + "#" + unit.GetInstanceID();
         }
 
         private void ResolveReferences()

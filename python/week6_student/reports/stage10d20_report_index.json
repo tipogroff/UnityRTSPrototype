@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-03T21:31:55.404663+00:00",
+  "generated_at_utc": "2026-05-04T00:11:19.986427+00:00",
   "preflight": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_preflight_snapshot.json",
   "binding": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_checkpoint_binding.json",
   "runtime_trace": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_runtime_trace.jsonl",
@@ -8,6 +8,6 @@
   "mask_action_delta": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_action_delta_audit.json",
   "visual_summary": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage10d20_masked_visual_behavior_summary.json",
   "report_markdown": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/STAGE10D20_UNITY_MASKED_VALID_MOVE_RERUN_REPORT.md",
-  "primary_next_gate": "GO_FOR_STAGE10D20_MASK_LOGIC_FIX",
+  "primary_next_gate": "GO_FOR_STAGE10D20_DECODER_OR_APPLIER_AUDIT",
   "stage10d20_status": "PARTIAL"
 }

@@ -1,0 +1,481 @@
+{
+  "generated_at_utc": "2026-05-03T23:41:56.177811+00:00",
+  "stage": "Stage10D.21B4R",
+  "counts": {
+    "commands_analyzed": 4,
+    "occupancy_outcome_counts": {
+      "A_RUNTIME_OCCUPIED_WITH_DIRECT_OCCUPANT": 4
+    }
+  },
+  "checks": {
+    "all_4_commands_traced": true,
+    "acceptance_gate": "PASS",
+    "no_unsupported_player2_claims": true
+  },
+  "commands": [
+    {
+      "command_id": "cmd:106",
+      "command_event_key": "36|Player1|42|Move|East|Ranged|-1|0",
+      "command_event_sequence": 108,
+      "command_event_step": 36,
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "other",
+      "action_type": "Move",
+      "move_dir": 1,
+      "source_cell_from_command": 42,
+      "source_x_from_command": 18,
+      "source_y_from_command": 1,
+      "target_cell_from_command": 43,
+      "target_x_from_command": 19,
+      "target_y_from_command": 1,
+      "unit_id": "Player1_Worker_(2, 1)#-121890",
+      "unit_owner": "Player1",
+      "unit_type": "Worker",
+      "unit_position_x_at_reject": 18,
+      "unit_position_y_at_reject": 1,
+      "unit_cell_at_reject": 42,
+      "occupant_exists_at_target": true,
+      "occupant_id_at_target": "Player2_Light_(23, 21)#-121806",
+      "occupant_owner_at_target": "Player2",
+      "occupant_type_at_target": "Light",
+      "occupant_x_at_target": 19,
+      "occupant_y_at_target": 1,
+      "occupant_cell_at_target": 43,
+      "occupancy_lookup_method": "GridManager.TryGetOccupant",
+      "occupancy_lookup_source": "MatchManager.TryExecuteMove",
+      "target_in_bounds_at_reject": true,
+      "target_passable_at_reject": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_runtime_lookup": true,
+      "target_occupied_by_snapshot_lookup": "NOT_EXPOSED",
+      "snapshot_step_used_for_attribution": -1,
+      "direct_runtime_lookup_matches_snapshot_lookup": true,
+      "direct_runtime_target_matches_reconstructed_target": true,
+      "flat_to_xy_source_cell": {
+        "x": 18,
+        "y": 1
+      },
+      "flat_to_xy_target_cell": {
+        "x": 19,
+        "y": 1
+      },
+      "xy_to_flat_source": 42,
+      "xy_to_flat_target": 43,
+      "source_flat_roundtrip_ok": true,
+      "target_flat_roundtrip_ok": true,
+      "move_dir_delta_used": {
+        "dx": 1,
+        "dy": 0
+      },
+      "reconstructed_target_from_source_and_move_dir": 43,
+      "reconstructed_target_matches_command_target": true,
+      "unity_runtime_target_matches_report_target": true,
+      "snapshot_comparison": {
+        "command_decision_step_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "immediately_before_reject_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "at_reject_step_target_occupancy": {
+          "available": true,
+          "occupied": true,
+          "occupant_id": "T2",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 43
+        },
+        "direct_runtime_lookup_at_reject": {
+          "occupied": true,
+          "occupant_id": "Player2_Light_(23, 21)#-121806",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 43
+        }
+      },
+      "occupancy_outcome": "A_RUNTIME_OCCUPIED_WITH_DIRECT_OCCUPANT"
+    },
+    {
+      "command_id": "cmd:120",
+      "command_event_key": "40|Player1|41|Move|East|Ranged|-1|0",
+      "command_event_sequence": 124,
+      "command_event_step": 40,
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "other",
+      "action_type": "Move",
+      "move_dir": 1,
+      "source_cell_from_command": 41,
+      "source_x_from_command": 17,
+      "source_y_from_command": 1,
+      "target_cell_from_command": 42,
+      "target_x_from_command": 18,
+      "target_y_from_command": 1,
+      "unit_id": "Player1_Worker_(2, 1)#-121914",
+      "unit_owner": "Player1",
+      "unit_type": "Worker",
+      "unit_position_x_at_reject": 17,
+      "unit_position_y_at_reject": 1,
+      "unit_cell_at_reject": 41,
+      "occupant_exists_at_target": true,
+      "occupant_id_at_target": "Player2_Light_(22, 21)#-121842",
+      "occupant_owner_at_target": "Player2",
+      "occupant_type_at_target": "Light",
+      "occupant_x_at_target": 18,
+      "occupant_y_at_target": 1,
+      "occupant_cell_at_target": 42,
+      "occupancy_lookup_method": "GridManager.TryGetOccupant",
+      "occupancy_lookup_source": "MatchManager.TryExecuteMove",
+      "target_in_bounds_at_reject": true,
+      "target_passable_at_reject": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_runtime_lookup": true,
+      "target_occupied_by_snapshot_lookup": "NOT_EXPOSED",
+      "snapshot_step_used_for_attribution": -1,
+      "direct_runtime_lookup_matches_snapshot_lookup": true,
+      "direct_runtime_target_matches_reconstructed_target": true,
+      "flat_to_xy_source_cell": {
+        "x": 17,
+        "y": 1
+      },
+      "flat_to_xy_target_cell": {
+        "x": 18,
+        "y": 1
+      },
+      "xy_to_flat_source": 41,
+      "xy_to_flat_target": 42,
+      "source_flat_roundtrip_ok": true,
+      "target_flat_roundtrip_ok": true,
+      "move_dir_delta_used": {
+        "dx": 1,
+        "dy": 0
+      },
+      "reconstructed_target_from_source_and_move_dir": 42,
+      "reconstructed_target_matches_command_target": true,
+      "unity_runtime_target_matches_report_target": true,
+      "snapshot_comparison": {
+        "command_decision_step_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "immediately_before_reject_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "at_reject_step_target_occupancy": {
+          "available": true,
+          "occupied": true,
+          "occupant_id": "S2",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 42
+        },
+        "direct_runtime_lookup_at_reject": {
+          "occupied": true,
+          "occupant_id": "Player2_Light_(22, 21)#-121842",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 42
+        }
+      },
+      "occupancy_outcome": "A_RUNTIME_OCCUPIED_WITH_DIRECT_OCCUPANT"
+    },
+    {
+      "command_id": "cmd:142",
+      "command_event_key": "47|Player1|38|Move|East|Ranged|-1|0",
+      "command_event_sequence": 146,
+      "command_event_step": 47,
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "other",
+      "action_type": "Move",
+      "move_dir": 1,
+      "source_cell_from_command": 38,
+      "source_x_from_command": 14,
+      "source_y_from_command": 1,
+      "target_cell_from_command": 39,
+      "target_x_from_command": 15,
+      "target_y_from_command": 1,
+      "unit_id": "Player1_Worker_(2, 1)#-121974",
+      "unit_owner": "Player1",
+      "unit_type": "Worker",
+      "unit_position_x_at_reject": 14,
+      "unit_position_y_at_reject": 1,
+      "unit_cell_at_reject": 38,
+      "occupant_exists_at_target": true,
+      "occupant_id_at_target": "Player2_Light_(22, 21)#-121842",
+      "occupant_owner_at_target": "Player2",
+      "occupant_type_at_target": "Light",
+      "occupant_x_at_target": 15,
+      "occupant_y_at_target": 1,
+      "occupant_cell_at_target": 39,
+      "occupancy_lookup_method": "GridManager.TryGetOccupant",
+      "occupancy_lookup_source": "MatchManager.TryExecuteMove",
+      "target_in_bounds_at_reject": true,
+      "target_passable_at_reject": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_runtime_lookup": true,
+      "target_occupied_by_snapshot_lookup": "NOT_EXPOSED",
+      "snapshot_step_used_for_attribution": -1,
+      "direct_runtime_lookup_matches_snapshot_lookup": true,
+      "direct_runtime_target_matches_reconstructed_target": true,
+      "flat_to_xy_source_cell": {
+        "x": 14,
+        "y": 1
+      },
+      "flat_to_xy_target_cell": {
+        "x": 15,
+        "y": 1
+      },
+      "xy_to_flat_source": 38,
+      "xy_to_flat_target": 39,
+      "source_flat_roundtrip_ok": true,
+      "target_flat_roundtrip_ok": true,
+      "move_dir_delta_used": {
+        "dx": 1,
+        "dy": 0
+      },
+      "reconstructed_target_from_source_and_move_dir": 39,
+      "reconstructed_target_matches_command_target": true,
+      "unity_runtime_target_matches_report_target": true,
+      "snapshot_comparison": {
+        "command_decision_step_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "immediately_before_reject_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "at_reject_step_target_occupancy": {
+          "available": true,
+          "occupied": true,
+          "occupant_id": "P2",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 39
+        },
+        "direct_runtime_lookup_at_reject": {
+          "occupied": true,
+          "occupant_id": "Player2_Light_(22, 21)#-121842",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 39
+        }
+      },
+      "occupancy_outcome": "A_RUNTIME_OCCUPIED_WITH_DIRECT_OCCUPANT"
+    },
+    {
+      "command_id": "cmd:78",
+      "command_event_key": "29|Player1|45|Move|East|Ranged|-1|0",
+      "command_event_sequence": 79,
+      "command_event_step": 29,
+      "reject_callsite": "MatchManager.ExecuteMovementPhase -> TryExecuteMove -> RejectCommand",
+      "reject_reason_raw": "Move command cannot be executed.",
+      "reject_reason_normalized": "other",
+      "action_type": "Move",
+      "move_dir": 1,
+      "source_cell_from_command": 45,
+      "source_x_from_command": 21,
+      "source_y_from_command": 1,
+      "target_cell_from_command": 46,
+      "target_x_from_command": 22,
+      "target_y_from_command": 1,
+      "unit_id": "Player1_Worker_(2, 1)#-121818",
+      "unit_owner": "Player1",
+      "unit_type": "Worker",
+      "unit_position_x_at_reject": 21,
+      "unit_position_y_at_reject": 1,
+      "unit_cell_at_reject": 45,
+      "occupant_exists_at_target": true,
+      "occupant_id_at_target": "Player2_Light_(23, 21)#-121806",
+      "occupant_owner_at_target": "Player2",
+      "occupant_type_at_target": "Light",
+      "occupant_x_at_target": 22,
+      "occupant_y_at_target": 1,
+      "occupant_cell_at_target": 46,
+      "occupancy_lookup_method": "GridManager.TryGetOccupant",
+      "occupancy_lookup_source": "MatchManager.TryExecuteMove",
+      "target_in_bounds_at_reject": true,
+      "target_passable_at_reject": false,
+      "target_occupied_at_reject": true,
+      "target_occupied_by_runtime_lookup": true,
+      "target_occupied_by_snapshot_lookup": "NOT_EXPOSED",
+      "snapshot_step_used_for_attribution": -1,
+      "direct_runtime_lookup_matches_snapshot_lookup": true,
+      "direct_runtime_target_matches_reconstructed_target": true,
+      "flat_to_xy_source_cell": {
+        "x": 21,
+        "y": 1
+      },
+      "flat_to_xy_target_cell": {
+        "x": 22,
+        "y": 1
+      },
+      "xy_to_flat_source": 45,
+      "xy_to_flat_target": 46,
+      "source_flat_roundtrip_ok": true,
+      "target_flat_roundtrip_ok": true,
+      "move_dir_delta_used": {
+        "dx": 1,
+        "dy": 0
+      },
+      "reconstructed_target_from_source_and_move_dir": 46,
+      "reconstructed_target_matches_command_target": true,
+      "unity_runtime_target_matches_report_target": true,
+      "snapshot_comparison": {
+        "command_decision_step_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "immediately_before_reject_target_occupancy": {
+          "available": true,
+          "occupied": false,
+          "occupant_id": null,
+          "occupant_owner": null,
+          "occupant_type": null,
+          "occupant_cell": -1
+        },
+        "at_reject_step_target_occupancy": {
+          "available": true,
+          "occupied": true,
+          "occupant_id": "W2",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 46
+        },
+        "direct_runtime_lookup_at_reject": {
+          "occupied": true,
+          "occupant_id": "Player2_Light_(23, 21)#-121806",
+          "occupant_owner": "Player2",
+          "occupant_type": "Light",
+          "occupant_cell": 46
+        }
+      },
+      "occupancy_outcome": "A_RUNTIME_OCCUPIED_WITH_DIRECT_OCCUPANT"
+    }
+  ],
+  "required_answers": {
+    "q1_for_each_command_source_and_target": [
+      {
+        "command_id": "cmd:106",
+        "source_cell": 42,
+        "target_cell": 43
+      },
+      {
+        "command_id": "cmd:120",
+        "source_cell": 41,
+        "target_cell": 42
+      },
+      {
+        "command_id": "cmd:142",
+        "source_cell": 38,
+        "target_cell": 39
+      },
+      {
+        "command_id": "cmd:78",
+        "source_cell": 45,
+        "target_cell": 46
+      }
+    ],
+    "q2_source_target_flat_index_roundtrip_pass": {
+      "cmd:106": true,
+      "cmd:120": true,
+      "cmd:142": true,
+      "cmd:78": true
+    },
+    "q3_reconstructed_target_matches_command_target": {
+      "cmd:106": true,
+      "cmd:120": true,
+      "cmd:142": true,
+      "cmd:78": true
+    },
+    "q4_target_occupied_true_in_direct_runtime": {
+      "cmd:106": true,
+      "cmd:120": true,
+      "cmd:142": true,
+      "cmd:78": true
+    },
+    "q5_exact_occupant_direct_from_matchmanager": {
+      "cmd:106": {
+        "occupant_id": "Player2_Light_(23, 21)#-121806",
+        "occupant_owner": "Player2",
+        "occupant_type": "Light",
+        "occupant_cell": 43
+      },
+      "cmd:120": {
+        "occupant_id": "Player2_Light_(22, 21)#-121842",
+        "occupant_owner": "Player2",
+        "occupant_type": "Light",
+        "occupant_cell": 42
+      },
+      "cmd:142": {
+        "occupant_id": "Player2_Light_(22, 21)#-121842",
+        "occupant_owner": "Player2",
+        "occupant_type": "Light",
+        "occupant_cell": 39
+      },
+      "cmd:78": {
+        "occupant_id": "Player2_Light_(23, 21)#-121806",
+        "occupant_owner": "Player2",
+        "occupant_type": "Light",
+        "occupant_cell": 46
+      }
+    },
+    "q6_direct_runtime_matches_snapshot_or_posthoc": {
+      "cmd:106": true,
+      "cmd:120": true,
+      "cmd:142": true,
+      "cmd:78": true
+    },
+    "q7_player2_occupant_claims_proven_or_disproven": {
+      "directly_proven": [
+        "cmd:106",
+        "cmd:120",
+        "cmd:142",
+        "cmd:78"
+      ],
+      "directly_disproven_or_unproven": []
+    },
+    "q8_is_b4_target_occupied_still_valid": true,
+    "q9_occupant_attribution_validity": "valid",
+    "q10_stage10d21b5_gate": "GO_FOR_STAGE10D21B5_DYNAMIC_OCCUPANCY_MASK_ENRICHMENT",
+    "q11_stage10d21c_gate": "NO-GO"
+  },
+  "go_no_go": {
+    "stage10d21b4r_direct_occupancy_attribution_validation": "PASS",
+    "stage10d21b5_legal_mask_enrichment_gate": "GO_FOR_STAGE10D21B5_DYNAMIC_OCCUPANCY_MASK_ENRICHMENT",
+    "stage10d21c_movement_application_audit": "NO-GO"
+  }
+}

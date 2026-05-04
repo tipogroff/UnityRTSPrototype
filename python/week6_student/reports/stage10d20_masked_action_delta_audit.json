@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-05-03T21:31:55.391914+00:00",
-  "number_of_actions_changed_by_mask": 314,
+  "generated_at_utc": "2026-05-04T00:11:19.976884+00:00",
+  "number_of_actions_changed_by_mask": 171,
   "changed_action_breakdown": {
-    "invalid_move_to_noop": 8,
+    "invalid_move_to_noop": 0,
     "invalid_move_to_valid_move": 0,
     "off_actor_non_noop_to_noop": 171,
     "invalid_attack_to_noop": 0,
-    "invalid_produce_to_noop": 59,
-    "other": 76
+    "invalid_produce_to_noop": 0,
+    "other": 0
   },
   "raw_action_distribution": {
     "NoOp": 173,
@@ -18,11 +18,11 @@
     "Attack": 0
   },
   "masked_action_distribution": {
-    "NoOp": 316,
-    "Move": 4,
-    "Harvest": 0,
+    "NoOp": 173,
+    "Move": 12,
+    "Harvest": 76,
     "Return": 0,
-    "Produce": 15,
+    "Produce": 74,
     "Attack": 0
   },
   "produced_unit_raw_distribution": {
@@ -43,7 +43,7 @@
   },
   "b2_raw_vs_masked": {
     "raw": "Harvest",
-    "masked": "NoOp"
+    "masked": "Harvest"
   },
   "c3_raw_vs_masked": {
     "raw": "Produce",

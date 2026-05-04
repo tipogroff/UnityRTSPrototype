@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-03T21:31:53.431894+00:00",
+  "generated_at_utc": "2026-05-04T00:11:18.470357+00:00",
   "task": "stage10d20_masked_checkpoint_binding_verification",
   "source_snapshot": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/tmp/stage10d20_masked_runtime_rerun/stage10d20_snapshot_step0001.json",
   "active_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d19b_valid_move_augmented_bc_20260503T192454Z/student_bc_stage10d19b_valid_move_best.pt",

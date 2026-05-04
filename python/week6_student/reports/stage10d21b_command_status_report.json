@@ -1,0 +1,126 @@
+{
+  "generated_at_utc": "2026-05-03T22:49:47.570823+00:00",
+  "stage": "Stage10D.21B",
+  "source_manifest": "python/week6_student/tmp/stage10d20_masked_runtime_rerun/stage10d20_run_manifest.json",
+  "steps_analyzed": 76,
+  "last_step": 76,
+  "counts": {
+    "move_candidate_rows": 4,
+    "trace_rows": 4,
+    "unique_command_ids": 4,
+    "same_flat_multi_command_pairs": 0,
+    "command_level_conflicts": 4,
+    "command_level_nonexclusive": 4,
+    "authoritative_status_rows": 4,
+    "mutually_exclusive_rows": 0
+  },
+  "ratios": {
+    "authoritative_status_ratio": 1.0,
+    "mutually_exclusive_ratio": 0.0
+  },
+  "status_counts": {
+    "telemetry_conflict": 4
+  },
+  "event_source_counts": {
+    "matchmanager.rejected": 4
+  },
+  "conflict_counts": {
+    "same_command_both_events": 4
+  },
+  "command_status_cardinality": {
+    "1": 4
+  },
+  "required_questions": {
+    "q1_command_id_present": "Per-command IDs are present",
+    "q2_authoritative_status_only": "Statuses are authoritative",
+    "q3_accepted_rejected_mutually_exclusive": "Rows exist with both accepted and rejected true",
+    "q4_same_command_conflicts_removed": "Conflicts remain on command-level telemetry",
+    "q5_same_flat_multi_command_merge_removed": "No same-flat multi-command merges",
+    "q6_event_provenance_present": "Event provenance fields populated",
+    "q7_stage10d21c_gate": "Cleanup NO-GO"
+  },
+  "go_no_go": {
+    "stage10d21b_command_status_telemetry_cleanup": "NO-GO"
+  },
+  "samples": {
+    "problem_commands": [
+      {
+        "command_id": "cmd:78",
+        "statuses": [
+          "telemetry_conflict"
+        ],
+        "rows": [
+          {
+            "step": 30,
+            "cell_index": 45,
+            "status": "telemetry_conflict",
+            "accepted": true,
+            "rejected": true,
+            "event_step": 29,
+            "event_sequence": 79,
+            "event_source": "matchmanager.rejected",
+            "conflict": "same_command_both_events"
+          }
+        ]
+      },
+      {
+        "command_id": "cmd:106",
+        "statuses": [
+          "telemetry_conflict"
+        ],
+        "rows": [
+          {
+            "step": 37,
+            "cell_index": 42,
+            "status": "telemetry_conflict",
+            "accepted": true,
+            "rejected": true,
+            "event_step": 36,
+            "event_sequence": 108,
+            "event_source": "matchmanager.rejected",
+            "conflict": "same_command_both_events"
+          }
+        ]
+      },
+      {
+        "command_id": "cmd:120",
+        "statuses": [
+          "telemetry_conflict"
+        ],
+        "rows": [
+          {
+            "step": 41,
+            "cell_index": 41,
+            "status": "telemetry_conflict",
+            "accepted": true,
+            "rejected": true,
+            "event_step": 40,
+            "event_sequence": 124,
+            "event_source": "matchmanager.rejected",
+            "conflict": "same_command_both_events"
+          }
+        ]
+      },
+      {
+        "command_id": "cmd:142",
+        "statuses": [
+          "telemetry_conflict"
+        ],
+        "rows": [
+          {
+            "step": 48,
+            "cell_index": 38,
+            "status": "telemetry_conflict",
+            "accepted": true,
+            "rejected": true,
+            "event_step": 47,
+            "event_sequence": 146,
+            "event_source": "matchmanager.rejected",
+            "conflict": "same_command_both_events"
+          }
+        ]
+      }
+    ],
+    "same_flat_examples": []
+  }
+}
