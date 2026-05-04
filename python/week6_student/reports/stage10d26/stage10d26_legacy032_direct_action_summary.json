@@ -1,0 +1,99 @@
+{
+  "part": "C_D",
+  "env_available": true,
+  "model_loaded": true,
+  "errors": [],
+  "warnings": [
+    "Unexpected state_dict keys: 4"
+  ],
+  "env_obs_shape": [
+    24,
+    24,
+    27
+  ],
+  "env_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "env_matches_contract": true,
+  "eval_results": {
+    "deterministic": {
+      "episodes": 4,
+      "episodes_completed": 4,
+      "mean_return": -10.0,
+      "std_return": 0.0,
+      "total_env_steps": 17895,
+      "mean_ep_steps": 4473.75,
+      "action_type_counts": {
+        "attack": 10307520
+      },
+      "action_type_share": {
+        "attack": 1.0
+      },
+      "move_count": 0,
+      "move_share": 0.0,
+      "noop_share": 0.0,
+      "harvest_count": 0,
+      "return_count": 0,
+      "produce_count": 0,
+      "attack_count": 10307520,
+      "policy_entropy_norm": 0.0,
+      "movement_state_delta_count": 0,
+      "movement_delta_examples": [],
+      "per_cell_b0_range": [
+        5,
+        5
+      ],
+      "per_cell_b0_in_action_type_range_0_5": true,
+      "per_cell_b0_semantic_interpretation": "action_type (correct per-cell representation; actor_index branch was dropped)",
+      "stochastic_note": null
+    },
+    "stochastic": {
+      "episodes": 4,
+      "episodes_completed": 4,
+      "mean_return": -5.0,
+      "std_return": 5.0,
+      "total_env_steps": 22330,
+      "mean_ep_steps": 5582.5,
+      "action_type_counts": {
+        "noop": 24,
+        "move": 22,
+        "harvest": 9084,
+        "return": 4921,
+        "produce": 14,
+        "attack": 12848015
+      },
+      "action_type_share": {
+        "noop": 1.8659501418122109e-06,
+        "move": 1.7104542966611933e-06,
+        "harvest": 0.0007062621286759217,
+        "return": 0.00038259752699407873,
+        "produce": 1.088470916057123e-06,
+        "attack": 0.9989064754689755
+      },
+      "move_count": 22,
+      "move_share": 1.7104542966611933e-06,
+      "noop_share": 1.8659501418122109e-06,
+      "harvest_count": 9084,
+      "return_count": 4921,
+      "produce_count": 14,
+      "attack_count": 12848015,
+      "policy_entropy_norm": 0.0051848368958607935,
+      "movement_state_delta_count": 0,
+      "movement_delta_examples": [],
+      "per_cell_b0_range": [
+        0,
+        5
+      ],
+      "per_cell_b0_in_action_type_range_0_5": true,
+      "per_cell_b0_semantic_interpretation": "action_type (correct per-cell representation; actor_index branch was dropped)",
+      "stochastic_note": "Stochastic sampling with high-entropy logits produces ~uniform distribution across action types even if argmax (deterministic) is always noop. Move count in stochastic mode is NOT evidence of real move behaviour."
+    }
+  }
+}

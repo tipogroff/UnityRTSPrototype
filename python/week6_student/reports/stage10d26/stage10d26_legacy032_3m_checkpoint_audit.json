@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-05-04T20:49:55Z",
+  "part_a": {
+    "part": "A",
+    "run_id": "legacy032_24x24_teacher_main_20260430T130208Z",
+    "stage": "stage_003000000",
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+    "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\model_metadata.json",
+    "checkpoint_exists": true,
+    "metadata_exists": true,
+    "errors": [],
+    "warnings": [],
+    "total_timesteps": 2999808,
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "seed": 17,
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "device": "cpu",
+    "contract_obs_match": true,
+    "contract_nvec_match": true,
+    "contract_arch_match": true,
+    "contract_all_match": true,
+    "branch_semantics": {
+      "raw_global_branch_0": "actor_index (source cell, range 0..575)",
+      "raw_global_branch_1": "action_type (0=noop,1=move,2=harvest,3=return,4=produce,5=attack)",
+      "per_cell_branch_0": "action_type (actor_index branch DROPPED in infer_actions output)",
+      "per_cell_branch_1": "move_dir",
+      "per_cell_branch_5": "produce_unit_type",
+      "per_cell_branch_6": "attack_target_local",
+      "note": "The export script (export_teacher_rollout_legacy032.py) uses nvec[1:] for per-cell branches and drops nvec[0] (actor_index). Per-cell branch 0 = action_type is CORRECT. Stage10D25 raw audit counted per_cell[:,0] = action_type, which is semantically correct."
+    }
+  },
+  "part_b_summary": {
+    "gate_det_move_count": 0,
+    "gate_stoch_note": "~16.6% stochastic move is high-entropy sampling noise",
+    "rollout_export_move_count": 0,
+    "bc_train_move_count": 0
+  },
+  "go_nogo": {
+    "gates": {
+      "checkpoint_located": {
+        "pass": true,
+        "value": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt"
+      },
+      "action_semantics_proven": {
+        "pass": true,
+        "value": "The export script (export_teacher_rollout_legacy032.py) uses nvec[1:] for per-cell branches and drops nvec[0] (actor_index). Per-cell branch 0 = action_type is CORRECT. Stage10D25 raw audit counted per_cell[:,0] = action_type, which is semantically correct."
+      },
+      "direct_behaviour_understood": {
+        "pass": true,
+        "env_available": true,
+        "model_loaded": true,
+        "gate_fallback_available": true,
+        "note": "Direct eval performed"
+      },
+      "move_exists_in_teacher": {
+        "pass": false,
+        "det_move_count": 0,
+        "state_delta_count": 0,
+        "stoch_move_count": 22,
+        "stoch_note": "stochastic move is HIGH-ENTROPY noise; not evidence of move behaviour",
+        "verdict": "NO_MOVE"
+      },
+      "move_loss_boundary_identified": {
+        "pass": true,
+        "first_loss_boundary": {
+          "from_stage": "direct_model_predict_stochastic",
+          "from_move_count": 22,
+          "to_stage": "export_rollout_npz_per_cell_action_t",
+          "to_move_count": 0
+        }
+      }
+    },
+    "all_gates_pass": false,
+    "recommendation": "NO-GO for corrected Legacy032 3M BC dataset as primary Move source. The teacher itself does not produce Move actions deterministically. The stochastic sampling ~16.6% is high-entropy noise. ACTION: use gridnet_stoch_adapted_episodes as the Move source (already identified in Stage10D25 as having 20% deterministic move_share). The Legacy032 3M teacher is valid as a Harvest/Produce source but NOT as a Move source."
+  }
+}

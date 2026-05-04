@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-05-04T21:25:56.186787+00:00",
+  "status": "PASS",
+  "representation_mode": "MICRORTS_GRIDMODE_PER_CELL",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "expected_observation_space": [
+    24,
+    24,
+    27
+  ],
+  "expected_gridmode_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "global_single_action_nvec_reference": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    576
+  ],
+  "unity_v2_branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "gridmode_attack_target_semantics": "local_7x7_49",
+  "contract_gridmode_matches_expected": true,
+  "observation_space": [
+    24,
+    24,
+    27
+  ],
+  "observed_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "action_space_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "mapsize": 576,
+  "mask_available": true,
+  "mask_source": "env.vec_client.getMasks(0)",
+  "mask_shape": [
+    6,
+    24,
+    24,
+    79
+  ],
+  "policy_forward_ok": true,
+  "masked_action_sample_ok": true,
+  "env_step_ok": true,
+  "policy_actor_output_shape": [
+    6,
+    24,
+    24,
+    78
+  ],
+  "errors": [],
+  "warnings": []
+}

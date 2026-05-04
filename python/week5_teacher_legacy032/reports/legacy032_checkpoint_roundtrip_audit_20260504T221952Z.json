@@ -1,0 +1,300 @@
+{
+  "timestamp": "2026-05-04T22:19:52Z",
+  "run_label": "legacy032_checkpoint_roundtrip_audit",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\model_metadata.json",
+  "expected_contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "max_steps": 6000
+  },
+  "status": "OK",
+  "errors": [],
+  "contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1"
+  },
+  "checkpoint_path_confirmed": true,
+  "strict_load": {
+    "strict_true_ok": true,
+    "strict_true_error": null,
+    "missing_keys": [],
+    "unexpected_keys": []
+  },
+  "roundtrip": {
+    "copied_checkpoint_path": "C:\\Users\\grozo\\AppData\\Local\\Temp\\legacy032_roundtrip_iqofzkzx\\roundtrip_checkpoint.pt",
+    "copy_load_strict_true_ok": true,
+    "copy_load_strict_true_error": null,
+    "logits_max_abs_diff": 0.0,
+    "logits_mean_abs_diff": 0.0,
+    "logits_allclose_atol_0_rtol_0": true,
+    "logits_allclose_atol_1e-7": true,
+    "deterministic_actions_equal": true,
+    "stochastic_actions_equal_fixed_seed": true,
+    "deterministic_vs_stochastic_equal_on_model_a": false,
+    "deterministic_vs_stochastic_equal_on_model_b": false,
+    "fixed_batch_shape": [
+      6,
+      24,
+      24,
+      27
+    ],
+    "fixed_mask_shape": [
+      6,
+      576,
+      79
+    ],
+    "fixed_mask_source": "env.vec_client.getMasks(0)"
+  },
+  "deterministic_eval": {
+    "mode": "deterministic",
+    "episodes_requested": 4,
+    "episodes_completed": 4,
+    "all_cell_action_counts": {
+      "NoOp": 2452220,
+      "Move": 0,
+      "Harvest": 4252,
+      "Return": 0,
+      "Produce": 4180,
+      "Attack": 20
+    },
+    "all_cell_action_shares": {
+      "NoOp": 0.9965651659384103,
+      "Move": 0.0,
+      "Harvest": 0.0017279832501040366,
+      "Return": 0.0,
+      "Produce": 0.0016987229504785684,
+      "Attack": 8.127861007074491e-06
+    },
+    "source_valid_cell_action_counts": {
+      "NoOp": 0,
+      "Move": 0,
+      "Harvest": 4252,
+      "Return": 0,
+      "Produce": 4180,
+      "Attack": 20
+    },
+    "source_valid_cell_action_shares": {
+      "NoOp": 0.0,
+      "Move": 0.0,
+      "Harvest": 0.5030761949834359,
+      "Return": 0.0,
+      "Produce": 0.4945575011831519,
+      "Attack": 0.00236630383341221
+    },
+    "mean_reward": -10.0,
+    "std_reward": 0.0,
+    "mean_episode_length": 608.5,
+    "episode_behavior_proxies": [
+      {
+        "episode_index": 0,
+        "reward": -10.0,
+        "episode_length": 505,
+        "terminal_reason": "env_done",
+        "movement_action_count": 0,
+        "production_action_count": 480,
+        "harvest_action_count": 500,
+        "return_action_count": 0,
+        "attack_action_count": 5,
+        "state_delta_mean_abs": 0.0005431793179317933,
+        "state_changed_step_share": 0.21782178217821782
+      },
+      {
+        "episode_index": 1,
+        "reward": -10.0,
+        "episode_length": 505,
+        "terminal_reason": "env_done",
+        "movement_action_count": 0,
+        "production_action_count": 480,
+        "harvest_action_count": 500,
+        "return_action_count": 0,
+        "attack_action_count": 5,
+        "state_delta_mean_abs": 0.0005431793179317933,
+        "state_changed_step_share": 0.21782178217821782
+      },
+      {
+        "episode_index": 2,
+        "reward": -10.0,
+        "episode_length": 712,
+        "terminal_reason": "env_done",
+        "movement_action_count": 0,
+        "production_action_count": 691,
+        "harvest_action_count": 707,
+        "return_action_count": 0,
+        "attack_action_count": 5,
+        "state_delta_mean_abs": 0.0001873020414296944,
+        "state_changed_step_share": 0.2991573033707865
+      },
+      {
+        "episode_index": 3,
+        "reward": -10.0,
+        "episode_length": 712,
+        "terminal_reason": "env_done",
+        "movement_action_count": 0,
+        "production_action_count": 691,
+        "harvest_action_count": 707,
+        "return_action_count": 0,
+        "attack_action_count": 5,
+        "state_delta_mean_abs": 0.0001873020414296944,
+        "state_changed_step_share": 0.2991573033707865
+      }
+    ]
+  },
+  "stochastic_eval": {
+    "mode": "stochastic",
+    "episodes_requested": 4,
+    "episodes_completed": 4,
+    "all_cell_action_counts": {
+      "NoOp": 408826,
+      "Move": 408450,
+      "Harvest": 413127,
+      "Return": 408622,
+      "Produce": 413093,
+      "Attack": 408554
+    },
+    "all_cell_action_shares": {
+      "NoOp": 0.16614404520391177,
+      "Move": 0.16599124141697877,
+      "Harvest": 0.16789194171348315,
+      "Return": 0.16606114102163963,
+      "Produce": 0.16787812434977112,
+      "Attack": 0.16603350629421557
+    },
+    "source_valid_cell_action_counts": {
+      "NoOp": 408,
+      "Move": 0,
+      "Harvest": 4252,
+      "Return": 0,
+      "Produce": 3772,
+      "Attack": 20
+    },
+    "source_valid_cell_action_shares": {
+      "NoOp": 0.048272598201609083,
+      "Move": 0.0,
+      "Harvest": 0.5030761949834359,
+      "Return": 0.0,
+      "Produce": 0.44628490298154283,
+      "Attack": 0.00236630383341221
+    },
+    "mean_reward": -10.0,
+    "std_reward": 0.0,
+    "mean_episode_length": 608.5,
+    "episode_behavior_proxies": [
+      {
+        "episode_index": 0,
+        "reward": -10.0,
+        "episode_length": 505,
+        "terminal_reason": "env_done",
+        "movement_action_count": 48402,
+        "production_action_count": 48711,
+        "harvest_action_count": 49243,
+        "return_action_count": 48186,
+        "attack_action_count": 48135,
+        "state_delta_mean_abs": 0.0005431793179317933,
+        "state_changed_step_share": 0.21782178217821782
+      },
+      {
+        "episode_index": 1,
+        "reward": -10.0,
+        "episode_length": 505,
+        "terminal_reason": "env_done",
+        "movement_action_count": 48328,
+        "production_action_count": 48992,
+        "harvest_action_count": 48780,
+        "return_action_count": 48083,
+        "attack_action_count": 48294,
+        "state_delta_mean_abs": 0.0005431793179317933,
+        "state_changed_step_share": 0.21782178217821782
+      },
+      {
+        "episode_index": 2,
+        "reward": -10.0,
+        "episode_length": 712,
+        "terminal_reason": "env_done",
+        "movement_action_count": 67834,
+        "production_action_count": 69056,
+        "harvest_action_count": 68813,
+        "return_action_count": 67876,
+        "attack_action_count": 68400,
+        "state_delta_mean_abs": 0.0001873020414296944,
+        "state_changed_step_share": 0.2991573033707865
+      },
+      {
+        "episode_index": 3,
+        "reward": -10.0,
+        "episode_length": 712,
+        "terminal_reason": "env_done",
+        "movement_action_count": 68212,
+        "production_action_count": 68698,
+        "harvest_action_count": 69142,
+        "return_action_count": 68078,
+        "attack_action_count": 68188,
+        "state_delta_mean_abs": 0.0001873020414296944,
+        "state_changed_step_share": 0.2991573033707865
+      }
+    ]
+  },
+  "strict_false_occurrences": {
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\evaluate_teacher_legacy032.py": [
+      785
+    ],
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\export_teacher_rollout_legacy032.py": [
+      543
+    ],
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\evaluate_teacher_large_map_diagnostics.py": [
+      751
+    ],
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\evaluate_teacher_large_map_win_diagnostics.py": [
+      1179
+    ],
+    "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\run_legacy032_3m_visual_single_episode.py": [
+      538
+    ]
+  },
+  "trainer_pipeline": {
+    "classification": "RESUME_NOT_SUPPORTED",
+    "has_local_resume_flag": false,
+    "has_wandb_resume_branch": true,
+    "saves_optimizer_state": false,
+    "saves_rng_state": false,
+    "saves_global_step_in_checkpoint": false,
+    "agent_step_checkpoint_count": 0,
+    "agent_step_checkpoint_examples": []
+  },
+  "classifications": {
+    "SAVE_LOAD": "SAVE_LOAD_OK",
+    "RESUME": "RESUME_NOT_SUPPORTED",
+    "DETERMINISTIC_STOCHASTIC_MISMATCH": "DETERMINISTIC_STOCHASTIC_MISMATCH_YES",
+    "CHECKPOINT_PATH": "CHECKPOINT_PATH_CONFIRMED",
+    "NEXT_ACTION": "ALIGN_DETERMINISTIC_AND_STOCHASTIC_EVAL_PATHS_AND_COMPARE_BOTH"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "part": "E",
+  "npz_files": {
+    "export_raw": {
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_unity_v2_rollout_export_20260501T125015Z\\teacher_rollout_raw.npz",
+      "exists": true,
+      "keys": {
+        "episode_id": {
+          "key": "episode_id",
+          "shape": [
+            88165
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 15.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "step_id": {
+          "key": "step_id",
+          "shape": [
+            88165
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 5999.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "observation_t": {
+          "key": "observation_t",
+          "shape": [
+            88165,
+            24,
+            24,
+            27
+          ],
+          "dtype": "float32",
+          "ndim": 4,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "observation_spatial_N_24_24_27",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "raw_action_t": {
+          "key": "raw_action_t",
+          "error": "Object arrays cannot be loaded when allow_pickle=False"
+        },
+        "per_cell_action_t": {
+          "key": "per_cell_action_t",
+          "shape": [
+            88165,
+            576,
+            7
+          ],
+          "dtype": "int16",
+          "ndim": 3,
+          "min": 0.0,
+          "max": 31.0,
+          "possible_interpretation": "per_cell_action_N_576_7",
+          "action_type_hist_b0": {
+            "noop": 2870125,
+            "harvest": 4870,
+            "produce": 5000,
+            "attack": 5
+          },
+          "action_type_hist_b1": null,
+          "notes": [
+            "Shape [N,576,7]: per-cell action. Branch 0 = action_type (0..5). Actor_index branch was dropped."
+          ],
+          "move_count_b0": 0,
+          "total_cell_actions_sampled": 2880000
+        },
+        "reward_t": {
+          "key": "reward_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "float32",
+          "ndim": 1,
+          "min": -10.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "done_t": {
+          "key": "done_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "terminated_t": {
+          "key": "terminated_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "truncated_t": {
+          "key": "truncated_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "info_t_json": {
+          "key": "info_t_json",
+          "error": "Object arrays cannot be loaded when allow_pickle=False"
+        },
+        "action_mask_t": {
+          "key": "action_mask_t",
+          "error": "Object arrays cannot be loaded when allow_pickle=False"
+        },
+        "action_mask_available_t": {
+          "key": "action_mask_available_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 1.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        }
+      },
+      "errors": []
+    },
+    "adapted": {
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_adapted\\legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z\\adapted_dataset.npz",
+      "exists": true,
+      "keys": {
+        "observations": {
+          "key": "observations",
+          "shape": [
+            88165,
+            576,
+            27
+          ],
+          "dtype": "float32",
+          "ndim": 3,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "observation_flat_N_576_27",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "actions": {
+          "key": "actions",
+          "shape": [
+            88165,
+            576,
+            7
+          ],
+          "dtype": "int16",
+          "ndim": 3,
+          "min": 0.0,
+          "max": 31.0,
+          "possible_interpretation": "per_cell_action_N_576_7",
+          "action_type_hist_b0": {
+            "noop": 2870125,
+            "harvest": 4870,
+            "produce": 5000,
+            "attack": 5
+          },
+          "action_type_hist_b1": null,
+          "notes": [
+            "Shape [N,576,7]: per-cell action. Branch 0 = action_type (0..5). Actor_index branch was dropped."
+          ],
+          "move_count_b0": 0,
+          "total_cell_actions_sampled": 2880000
+        },
+        "episode_id": {
+          "key": "episode_id",
+          "shape": [
+            88165
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 15.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "step_id": {
+          "key": "step_id",
+          "shape": [
+            88165
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 5999.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "reward_t": {
+          "key": "reward_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "float32",
+          "ndim": 1,
+          "min": -10.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "done_t": {
+          "key": "done_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "terminated_t": {
+          "key": "terminated_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "truncated_t": {
+          "key": "truncated_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "action_mask_available_t": {
+          "key": "action_mask_available_t",
+          "shape": [
+            88165
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 1.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        }
+      },
+      "errors": []
+    },
+    "bc_train": {
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_train.npz",
+      "exists": true,
+      "keys": {
+        "observations": {
+          "key": "observations",
+          "shape": [
+            74940,
+            576,
+            27
+          ],
+          "dtype": "float32",
+          "ndim": 3,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "observation_flat_N_576_27",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "actions": {
+          "key": "actions",
+          "shape": [
+            74940,
+            576,
+            7
+          ],
+          "dtype": "int16",
+          "ndim": 3,
+          "min": 0.0,
+          "max": 31.0,
+          "possible_interpretation": "per_cell_action_N_576_7",
+          "action_type_hist_b0": {
+            "noop": 2870134,
+            "harvest": 4875,
+            "produce": 4987,
+            "attack": 4
+          },
+          "action_type_hist_b1": null,
+          "notes": [
+            "Shape [N,576,7]: per-cell action. Branch 0 = action_type (0..5). Actor_index branch was dropped."
+          ],
+          "move_count_b0": 0,
+          "total_cell_actions_sampled": 2880000
+        },
+        "episode_id": {
+          "key": "episode_id",
+          "shape": [
+            74940
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 15.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "step_id": {
+          "key": "step_id",
+          "shape": [
+            74940
+          ],
+          "dtype": "int32",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 5999.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "reward_t": {
+          "key": "reward_t",
+          "shape": [
+            74940
+          ],
+          "dtype": "float32",
+          "ndim": 1,
+          "min": -10.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "done_t": {
+          "key": "done_t",
+          "shape": [
+            74940
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "terminated_t": {
+          "key": "terminated_t",
+          "shape": [
+            74940
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "truncated_t": {
+          "key": "truncated_t",
+          "shape": [
+            74940
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 0.0,
+          "max": 0.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        },
+        "action_mask_available_t": {
+          "key": "action_mask_available_t",
+          "shape": [
+            74940
+          ],
+          "dtype": "bool",
+          "ndim": 1,
+          "min": 1.0,
+          "max": 1.0,
+          "possible_interpretation": "step_scalar_array",
+          "action_type_hist_b0": null,
+          "action_type_hist_b1": null,
+          "notes": []
+        }
+      },
+      "errors": []
+    }
+  },
+  "errors": []
+}
