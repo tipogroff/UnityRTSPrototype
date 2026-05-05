@@ -1,0 +1,753 @@
+{
+  "timestamp_utc": "2026-05-05T18:16:22Z",
+  "status": "OK",
+  "run_label": "stage5h_training_postload_parity",
+  "stage": "Stage5H",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\model_metadata.json",
+  "commands_run": [
+    "python python/week5_teacher_legacy032/scripts/audit_stage5h_training_postload_parity.py --checkpoint-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_1m_20260504T231107Z/stage_001000000/agent_final.pt --model-metadata-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_1m_20260504T231107Z/stage_001000000/model_metadata.json --device cpu --seed 17"
+  ],
+  "static_source_parity_audit": {
+    "files": [
+      "python/week5_teacher_legacy032/scripts/ppo_gridnet_legacy032_24x24_local_save.py",
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py",
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py",
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py",
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py"
+    ],
+    "per_file": {
+      "python/week5_teacher_legacy032/scripts/ppo_gridnet_legacy032_24x24_local_save.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Agent"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": true,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": false,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": false,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": true,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": false,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      }
+    },
+    "pairwise_vs_training_script": {
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py": {
+        "diff_count": 4,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      }
+    },
+    "shared_feature_checks": {
+      "same_output_channel_count_rule": true,
+      "same_split_rule_from_nvec1": true,
+      "same_mask_slice_rule": true,
+      "same_deterministic_rule": false,
+      "same_stochastic_rule": true
+    }
+  },
+  "same_obs_mask_roundtrip": {
+    "fixed_batch_shape": [
+      6,
+      24,
+      24,
+      27
+    ],
+    "fixed_mask_shape": [
+      6,
+      576,
+      79
+    ],
+    "mask_source": "env.vec_client.getMasks(0)",
+    "training_before_save": {
+      "logits_hash": "567f9bef4e83900f81e09039d6344f53de8d054885b119df621222eabb9f3202",
+      "action_hash": "cb970322ca4a924643e4c022c5bb6750f9cc82b8e54f0be8e62cad2c2d55dc7f",
+      "action_type_hist": {
+        "0": 3444,
+        "2": 6,
+        "4": 6
+      }
+    },
+    "same_process_reload": {
+      "logits_max_abs_diff": 0.0,
+      "logits_mean_abs_diff": 0.0,
+      "logits_allclose_exact": true,
+      "logits_allclose_atol_1e-7": true,
+      "action_tensor_equal": true,
+      "action_type_equal": true,
+      "branch_equal": {
+        "action_type": true,
+        "move_dir": true,
+        "harvest_dir": true,
+        "return_dir": true,
+        "produce_dir": true,
+        "produce_unit_type": true,
+        "attack_target": true
+      },
+      "source_valid_action_equal": true,
+      "source_valid_branch_equal": {
+        "action_type": true,
+        "move_dir": true,
+        "harvest_dir": true,
+        "return_dir": true,
+        "produce_dir": true,
+        "produce_unit_type": true,
+        "attack_target": true
+      },
+      "stochastic_action_tensor_equal": true
+    },
+    "fresh_object_reload": {
+      "logits_max_abs_diff": 0.0,
+      "logits_mean_abs_diff": 0.0,
+      "logits_allclose_exact": true,
+      "logits_allclose_atol_1e-7": true,
+      "action_tensor_equal": true,
+      "action_type_equal": true,
+      "branch_equal": {
+        "action_type": true,
+        "move_dir": true,
+        "harvest_dir": true,
+        "return_dir": true,
+        "produce_dir": true,
+        "produce_unit_type": true,
+        "attack_target": true
+      },
+      "source_valid_action_equal": true,
+      "source_valid_branch_equal": {
+        "action_type": true,
+        "move_dir": true,
+        "harvest_dir": true,
+        "return_dir": true,
+        "produce_dir": true,
+        "produce_unit_type": true,
+        "attack_target": true
+      },
+      "stochastic_action_tensor_equal": true
+    },
+    "subprocess_reload": {
+      "executed": false,
+      "reason": "Optional path skipped in this run; same-process and fresh-object reload executed."
+    }
+  },
+  "training_vs_eval_action_method_audit": {
+    "training_action_method_name": "Agent.get_action (ppo_gridnet_legacy032_24x24_local_save.py)",
+    "eval_action_method_name": "Legacy032Policy.get_action (evaluate_teacher_legacy032.py)",
+    "visual_action_method_name": "Legacy032Policy.infer_actions (run_legacy032_3m_visual_single_episode.py)",
+    "shared_vs_duplicated": "duplicated_implementations",
+    "training_eval_deterministic_action_equal": true,
+    "static_diff_vs_training": {
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "diff_count": 3,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py": {
+        "diff_count": 4,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      }
+    },
+    "recommend_canonical_extraction": {
+      "module": "python/week5_teacher_legacy032/scripts/legacy032_policy_action.py",
+      "functions": [
+        "build_policy_from_metadata",
+        "load_policy_checkpoint_strict",
+        "infer_logits",
+        "split_logits_and_masks",
+        "select_action_deterministic",
+        "select_action_stochastic",
+        "format_env_action"
+      ]
+    }
+  },
+  "env_action_application_parity": {
+    "training_action": {
+      "obs_hash_before": "1f6e906babff83b68cbb1e7a0cac60bed0dbd2c6df3a81198c736a0c66a15bb5",
+      "next_obs_hash": "447152dc8ea132502cfd8af1b06f728425c08f100bec876c3a0a4f4de10cc0f0",
+      "reward_env0": 0.0,
+      "done_env0": false,
+      "truncated_env0": false,
+      "info_keys_env0": [
+        "raw_rewards"
+      ]
+    },
+    "postload_action": {
+      "obs_hash_before": "1f6e906babff83b68cbb1e7a0cac60bed0dbd2c6df3a81198c736a0c66a15bb5",
+      "next_obs_hash": "226125cefeddca61c51fcfb1793350931f8b03812eb600b9bf94b6706eb9b83d",
+      "reward_env0": 0.0,
+      "done_env0": false,
+      "truncated_env0": false,
+      "info_keys_env0": [
+        "raw_rewards"
+      ]
+    },
+    "obs_hash_before_equal": true,
+    "training_vs_postload_same": {
+      "reward_equal": true,
+      "done_equal": true,
+      "next_obs_hash_equal": false,
+      "info_keys_equal": true
+    },
+    "action_shape": [
+      6,
+      576,
+      7
+    ],
+    "action_dtype": "int32",
+    "action_min": 0,
+    "action_max": 4
+  },
+  "full_action_command_validity": {
+    "selected_source_valid_cells": 12,
+    "source_valid_total": 12,
+    "non_noop_source_valid_total": 12,
+    "effective_noop_candidate_count": 0,
+    "effective_noop_candidate_share": 0.0,
+    "rows": [
+      {
+        "flat_cell_index": 25,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 50,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 601,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 626,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 1177,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 1202,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 1753,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 1778,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 2329,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 2354,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 2905,
+        "action_type": 2,
+        "branches": [
+          2,
+          1,
+          3,
+          0,
+          2,
+          2,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": false,
+          "produce_unit_type": false,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": true,
+          "harvest_dir": true,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      },
+      {
+        "flat_cell_index": 2930,
+        "action_type": 4,
+        "branches": [
+          4,
+          0,
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "required_parameters": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "parameter_validity": {
+          "move_dir": false,
+          "harvest_dir": false,
+          "return_dir": false,
+          "produce_dir": true,
+          "produce_unit_type": true,
+          "attack_target": false
+        },
+        "effective_noop_candidate": false
+      }
+    ]
+  },
+  "targeted_visual_script_audit": {
+    "exists": true,
+    "file": "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py",
+    "has_3m_hardcoded_assumptions": true,
+    "default_checkpoint_is_3m": true,
+    "default_uses_agent_final_pt": true,
+    "default_uses_trainer_state_final_pt": false,
+    "metadata_driven_architecture": true,
+    "strict_load_default_true": true,
+    "deterministic_default": true,
+    "has_generic_exception_handlers": true,
+    "has_noop_fallback_hint": false,
+    "findings": [
+      "Visual script defaults are pinned to stage_003000000 checkpoint path.",
+      "Visual script contains 3M-specific assumptions in defaults/naming.",
+      "Visual script uses broad exception handlers; failures may be softened into warnings.",
+      "strict_load default is True.",
+      "deterministic eval mode is default."
+    ]
+  },
+  "classification": "STAGE5H_ACTION_FORMATTING_MISMATCH",
+  "ranked_root_cause_candidates": [
+    "Action tensor formatting mismatch before env.step.",
+    "Per-branch value bounds/shape mismatch despite parity in logits."
+  ],
+  "recommended_fix_plan": [
+    "Extract a single canonical policy-action module and replace duplicated action-selection implementations.",
+    "Patch visual script defaults to target explicit input checkpoint/metadata and remove stale 3M assumptions.",
+    "Keep strict_load=True and add one fixed obs/mask parity smoke-test to CI before visual runs.",
+    "Only after parity fix: rerun visual single-episode verification, then decide on further training/export/BC/Unity transfer."
+  ],
+  "errors": [],
+  "contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml"
+  }
+}

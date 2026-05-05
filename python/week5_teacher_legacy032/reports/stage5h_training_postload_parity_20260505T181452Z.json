@@ -1,0 +1,213 @@
+{
+  "timestamp_utc": "2026-05-05T18:14:52Z",
+  "status": "ERROR",
+  "run_label": "stage5h_training_postload_parity",
+  "stage": "Stage5H",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\model_metadata.json",
+  "commands_run": [
+    "python python/week5_teacher_legacy032/scripts/audit_stage5h_training_postload_parity.py --checkpoint-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_1m_20260504T231107Z/stage_001000000/agent_final.pt --model-metadata-path python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_1m_20260504T231107Z/stage_001000000/model_metadata.json --device cpu --seed 17"
+  ],
+  "static_source_parity_audit": {
+    "files": [
+      "python/week5_teacher_legacy032/scripts/ppo_gridnet_legacy032_24x24_local_save.py",
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py",
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py",
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py",
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py"
+    ],
+    "per_file": {
+      "python/week5_teacher_legacy032/scripts/ppo_gridnet_legacy032_24x24_local_save.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Agent"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": false,
+          "reshape_logits": true,
+          "split_sizes_78444749": true,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": false,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": true,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": false,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": true,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      },
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py": {
+        "exists": true,
+        "features": {
+          "policy_class_names": [
+            "Legacy032Policy"
+          ],
+          "uses_resolution_aware_decoder": true,
+          "uses_legacy_decoder": false,
+          "output_channels_sum_nvec": true,
+          "reshape_logits": true,
+          "split_sizes_78444749": false,
+          "split_from_nvec_1": true,
+          "mask_source_getMasks0": true,
+          "mask_slice_drop_source": true,
+          "deterministic_argmax": true,
+          "stochastic_sample": true,
+          "env_step_present": true
+        }
+      }
+    },
+    "pairwise_vs_training_script": {
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "diff_count": 4,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "output_channels_sum_nvec: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "diff_count": 4,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "output_channels_sum_nvec: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "diff_count": 4,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "output_channels_sum_nvec: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      },
+      "python/week5_teacher_legacy032/scripts/audit_stage5g_1m_behavior.py": {
+        "diff_count": 5,
+        "diffs": [
+          "deterministic_argmax: base=False current=True",
+          "output_channels_sum_nvec: base=False current=True",
+          "policy_class_names: base=['Agent'] current=['Legacy032Policy']",
+          "split_sizes_78444749: base=True current=False",
+          "uses_legacy_decoder: base=True current=False"
+        ]
+      }
+    },
+    "shared_feature_checks": {
+      "same_output_channel_count_rule": false,
+      "same_split_rule_from_nvec1": true,
+      "same_mask_slice_rule": true,
+      "same_deterministic_rule": false,
+      "same_stochastic_rule": true
+    }
+  },
+  "same_obs_mask_roundtrip": {},
+  "training_vs_eval_action_method_audit": {},
+  "env_action_application_parity": {},
+  "full_action_command_validity": {},
+  "targeted_visual_script_audit": {
+    "exists": true,
+    "file": "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py",
+    "has_3m_hardcoded_assumptions": true,
+    "default_checkpoint_is_3m": true,
+    "default_uses_agent_final_pt": true,
+    "default_uses_trainer_state_final_pt": false,
+    "metadata_driven_architecture": true,
+    "strict_load_default_true": true,
+    "deterministic_default": true,
+    "has_generic_exception_handlers": true,
+    "has_noop_fallback_hint": false,
+    "findings": [
+      "Visual script defaults are pinned to stage_003000000 checkpoint path.",
+      "Visual script contains 3M-specific assumptions in defaults/naming.",
+      "Visual script uses broad exception handlers; failures may be softened into warnings.",
+      "strict_load default is True.",
+      "deterministic eval mode is default."
+    ]
+  },
+  "classification": "STAGE5H_AUDIT_FAILED",
+  "ranked_root_cause_candidates": [],
+  "recommended_fix_plan": [],
+  "errors": [
+    "Error(s) in loading state_dict for Legacy032Policy:\n\tUnexpected key(s) in state_dict: \"critic.2.weight\", \"critic.2.bias\", \"critic.4.weight\", \"critic.4.bias\". ",
+    "Traceback (most recent call last):\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\scripts\\audit_stage5h_training_postload_parity.py\", line 833, in main\n    policy.load_state_dict(state_dict, strict=True)\n  File \"C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\lib\\site-packages\\torch\\nn\\modules\\module.py\", line 1223, in load_state_dict\n    raise RuntimeError('Error(s) in loading state_dict for {}:\\n\\t{}'.format(\nRuntimeError: Error(s) in loading state_dict for Legacy032Policy:\n\tUnexpected key(s) in state_dict: \"critic.2.weight\", \"critic.2.bias\", \"critic.4.weight\", \"critic.4.bias\". \n"
+  ],
+  "contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml"
+  }
+}
