@@ -90,6 +90,11 @@ python/week6_student/reports/stage10d15_*.jsonl
 
 # Legacy032 generated visual episode captures (per-frame data, large)
 python/week5_teacher_legacy032/reports/stage10d27a_visual_single_episode/
+python/week5_teacher_legacy032/reports/stage5v_1m_visual_single_episode/
+python/week5_teacher_legacy032/reports/*_visual_single_episode/
+
+# Legacy032 trained model outputs (binary + generated metadata, DO NOT COMMIT)
+python/week5_teacher_legacy032/teacher_models/
 
 # Large raw action trace logs (generated, DO NOT COMMIT)
 python/week6_student/reports/stage10d26/*_trace.jsonl

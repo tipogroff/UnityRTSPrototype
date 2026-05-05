@@ -1,0 +1,492 @@
+{
+  "timestamp": "2026-05-05T03:44:48.311546+00:00",
+  "run_id": "legacy032_24x24_teacher_resume_1m_20260504T231107Z",
+  "run_label": "legacy032_24x24_teacher_resume_1m",
+  "status": "PASS",
+  "decision": "READY_FOR_500K",
+  "decision_reasons": [],
+  "config": {
+    "stages": [
+      100000,
+      500000,
+      1000000
+    ],
+    "seed": 17,
+    "device": "cpu",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "training_max_steps": 6000,
+    "output_root": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032",
+    "evaluate_after_each": true,
+    "episodes_per_gate": 8,
+    "max_steps_per_gate": 6000,
+    "no_wandb": true,
+    "dry_run": false,
+    "continue_on_gate_warning": false,
+    "stop_on_gate_fail": false,
+    "require_contract_check": true,
+    "local_resume_mode": "required",
+    "full_checkpoint_required": true,
+    "save_full_training_state": true,
+    "schedule_total_timesteps": 3000000
+  },
+  "preflight": {
+    "status": "PASS",
+    "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5a_24x24_contract_probe.json",
+    "result": {
+      "timestamp": "2026-05-04T23:11:08.052426+00:00",
+      "status": "PASS",
+      "representation_mode": "MICRORTS_GRIDMODE_PER_CELL",
+      "map_path": "maps/24x24/basesWorkers24x24.xml",
+      "expected_observation_space": [
+        24,
+        24,
+        27
+      ],
+      "expected_gridmode_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "global_single_action_nvec_reference": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        576
+      ],
+      "unity_v2_branch_sizes": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "gridmode_attack_target_semantics": "local_7x7_49",
+      "contract_gridmode_matches_expected": true,
+      "observation_space": [
+        24,
+        24,
+        27
+      ],
+      "observed_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "action_space_nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "mapsize": 576,
+      "mask_available": true,
+      "mask_source": "env.vec_client.getMasks(0)",
+      "mask_shape": [
+        6,
+        24,
+        24,
+        79
+      ],
+      "policy_forward_ok": true,
+      "masked_action_sample_ok": true,
+      "env_step_ok": true,
+      "policy_actor_output_shape": [
+        6,
+        24,
+        24,
+        78
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    "errors": []
+  },
+  "stages": [
+    {
+      "stage": 100000,
+      "stage_name": "stage_000100000",
+      "training_exit_code": 0,
+      "training_status": "PASS",
+      "RESUME_STATUS": "STARTED_FROM_SCRATCH",
+      "CHECKPOINT_STATUS": "FULL_CHECKPOINT_SAVED",
+      "global_step_start": 0,
+      "global_step_end": 99840,
+      "target_total_timesteps": 100000,
+      "schedule_total_timesteps": 3000000,
+      "resumed_from_checkpoint": null,
+      "optimizer_state_restored": false,
+      "rng_state_restored": false,
+      "strict_agent_load": false,
+      "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000100000\\agent_final.pt",
+      "metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000100000\\model_metadata.json",
+      "full_checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000100000\\trainer_state_final.pt",
+      "full_checkpoint_step_path": null,
+      "latest_trainer_state_index_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000100000\\latest_trainer_state.json",
+      "checkpoint_saved": true,
+      "metadata_saved": true,
+      "full_checkpoint_saved": true,
+      "metadata_contract_ok": true,
+      "metadata_contract": {
+        "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+        "observation_space": [
+          24,
+          24,
+          27
+        ],
+        "action_space_nvec": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      },
+      "device_diagnostics": {
+        "requested_device": "cpu",
+        "effective_device": "cpu",
+        "torch_version": "1.8.0+cpu",
+        "torch_cuda_version": null,
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_device_name": "NO CUDA"
+      },
+      "gate_requested": true,
+      "gate_exit_code": 0,
+      "gate_status": "PASS",
+      "gate_json_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000100000_20260504T234007Z.json",
+      "gate_md_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000100000_20260504T234007Z.md",
+      "gate_decision": "PASS",
+      "gate_config": {
+        "episodes": 8,
+        "eval_mode": "both",
+        "env_mode": "target_24x24_gridmode",
+        "require_mask": true,
+        "max_steps_per_episode": 6000,
+        "env_max_steps": 6000
+      },
+      "training_config": {
+        "max_steps": 6000
+      },
+      "gate_checks": {
+        "checkpoint_load_ok": true,
+        "policy_architecture_load_ok": true,
+        "inference_ok": true,
+        "eval_observation_shape": [
+          24,
+          24,
+          27
+        ],
+        "eval_action_space": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "env_matches_target_24x24": true,
+        "mask_used_during_eval": true,
+        "action_type_counts": {
+          "noop": 819351,
+          "move": 818193,
+          "harvest": 825876,
+          "return": 817164,
+          "produce": 823730,
+          "attack": 817030
+        },
+        "action_type_share": {
+          "noop": 0.16648927610018727,
+          "move": 0.16625397452403246,
+          "harvest": 0.1678151334269663,
+          "return": 0.16604488529962547,
+          "produce": 0.16737907368393676,
+          "attack": 0.16601765696525178
+        },
+        "mean_return": -10.0,
+        "effective_activity_share": 0.8335107238998127,
+        "noop_share": 0.16648927610018727,
+        "move_share": 0.16625397452403246,
+        "attack_action_count": 817030,
+        "produce_action_count": 823730,
+        "policy_entropy_proxy": 0.0009899255336871177
+      },
+      "warnings": [],
+      "errors": [],
+      "training_duration_seconds": 1737.9274451732635,
+      "training_metrics_summary": {
+        "episode_count": 52,
+        "last_global_step": 99678,
+        "mean_episode_reward": 67.71538299780626
+      }
+    },
+    {
+      "stage": 500000,
+      "stage_name": "stage_000500000",
+      "training_exit_code": 0,
+      "training_status": "PASS",
+      "RESUME_STATUS": "RESUMED_FROM_FULL_CHECKPOINT",
+      "CHECKPOINT_STATUS": "FULL_CHECKPOINT_SAVED",
+      "global_step_start": 99840,
+      "global_step_end": 499200,
+      "target_total_timesteps": 500000,
+      "schedule_total_timesteps": 3000000,
+      "resumed_from_checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000100000\\trainer_state_final.pt",
+      "optimizer_state_restored": true,
+      "rng_state_restored": true,
+      "strict_agent_load": true,
+      "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000500000\\agent_final.pt",
+      "metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000500000\\model_metadata.json",
+      "full_checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000500000\\trainer_state_final.pt",
+      "full_checkpoint_step_path": null,
+      "latest_trainer_state_index_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000500000\\latest_trainer_state.json",
+      "checkpoint_saved": true,
+      "metadata_saved": true,
+      "full_checkpoint_saved": true,
+      "metadata_contract_ok": true,
+      "metadata_contract": {
+        "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+        "observation_space": [
+          24,
+          24,
+          27
+        ],
+        "action_space_nvec": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      },
+      "device_diagnostics": {
+        "requested_device": "cpu",
+        "effective_device": "cpu",
+        "torch_version": "1.8.0+cpu",
+        "torch_cuda_version": null,
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_device_name": "NO CUDA"
+      },
+      "gate_requested": true,
+      "gate_exit_code": 0,
+      "gate_status": "PASS",
+      "gate_json_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000500000_20260505T012116Z.json",
+      "gate_md_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_000500000_20260505T012116Z.md",
+      "gate_decision": "PASS",
+      "gate_config": {
+        "episodes": 8,
+        "eval_mode": "both",
+        "env_mode": "target_24x24_gridmode",
+        "require_mask": true,
+        "max_steps_per_episode": 6000,
+        "env_max_steps": 6000
+      },
+      "training_config": {
+        "max_steps": 6000
+      },
+      "gate_checks": {
+        "checkpoint_load_ok": true,
+        "policy_architecture_load_ok": true,
+        "inference_ok": true,
+        "eval_observation_shape": [
+          24,
+          24,
+          27
+        ],
+        "eval_action_space": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "env_matches_target_24x24": true,
+        "mask_used_during_eval": true,
+        "action_type_counts": {
+          "noop": 818445,
+          "move": 818160,
+          "harvest": 825947,
+          "return": 817164,
+          "produce": 824575,
+          "attack": 817053
+        },
+        "action_type_share": {
+          "noop": 0.16630518004837702,
+          "move": 0.16624726903870163,
+          "harvest": 0.16782956038025384,
+          "return": 0.16604488529962547,
+          "produce": 0.16755077474771118,
+          "attack": 0.16602233048533083
+        },
+        "mean_return": -10.0,
+        "effective_activity_share": 0.833694819951623,
+        "noop_share": 0.16630518004837702,
+        "move_share": 0.16624726903870163,
+        "attack_action_count": 817053,
+        "produce_action_count": 824575,
+        "policy_entropy_proxy": 0.0002654594623645914
+      },
+      "warnings": [],
+      "errors": [],
+      "training_duration_seconds": 5988.149838209152,
+      "training_metrics_summary": {
+        "episode_count": 151,
+        "last_global_step": 495396,
+        "mean_episode_reward": 117.29006440750021
+      }
+    },
+    {
+      "stage": 1000000,
+      "stage_name": "stage_001000000",
+      "training_exit_code": 0,
+      "training_status": "PASS",
+      "RESUME_STATUS": "RESUMED_FROM_FULL_CHECKPOINT",
+      "CHECKPOINT_STATUS": "FULL_CHECKPOINT_SAVED",
+      "global_step_start": 499200,
+      "global_step_end": 999936,
+      "target_total_timesteps": 1000000,
+      "schedule_total_timesteps": 3000000,
+      "resumed_from_checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_000500000\\trainer_state_final.pt",
+      "optimizer_state_restored": true,
+      "rng_state_restored": true,
+      "strict_agent_load": true,
+      "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+      "metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\model_metadata.json",
+      "full_checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\trainer_state_final.pt",
+      "full_checkpoint_step_path": null,
+      "latest_trainer_state_index_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\latest_trainer_state.json",
+      "checkpoint_saved": true,
+      "metadata_saved": true,
+      "full_checkpoint_saved": true,
+      "metadata_contract_ok": true,
+      "metadata_contract": {
+        "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+        "observation_space": [
+          24,
+          24,
+          27
+        ],
+        "action_space_nvec": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ]
+      },
+      "device_diagnostics": {
+        "requested_device": "cpu",
+        "effective_device": "cpu",
+        "torch_version": "1.8.0+cpu",
+        "torch_cuda_version": null,
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_device_name": "NO CUDA"
+      },
+      "gate_requested": true,
+      "gate_exit_code": 0,
+      "gate_status": "PASS",
+      "gate_json_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_001000000_20260505T034329Z.json",
+      "gate_md_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\reports\\stage5_gate_001000000_20260505T034329Z.md",
+      "gate_decision": "PASS",
+      "gate_config": {
+        "episodes": 8,
+        "eval_mode": "both",
+        "env_mode": "target_24x24_gridmode",
+        "require_mask": true,
+        "max_steps_per_episode": 6000,
+        "env_max_steps": 6000
+      },
+      "training_config": {
+        "max_steps": 6000
+      },
+      "gate_checks": {
+        "checkpoint_load_ok": true,
+        "policy_architecture_load_ok": true,
+        "inference_ok": true,
+        "eval_observation_shape": [
+          24,
+          24,
+          27
+        ],
+        "eval_action_space": [
+          576,
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "env_matches_target_24x24": true,
+        "mask_used_during_eval": true,
+        "action_type_counts": {
+          "noop": 817699,
+          "move": 818160,
+          "harvest": 825946,
+          "return": 817164,
+          "produce": 825321,
+          "attack": 817054
+        },
+        "action_type_share": {
+          "noop": 0.1661535954405951,
+          "move": 0.16624726903870163,
+          "harvest": 0.16782935718372868,
+          "return": 0.16604488529962547,
+          "produce": 0.16770235935549313,
+          "attack": 0.16602253368185602
+        },
+        "mean_return": -10.0,
+        "effective_activity_share": 0.833846404559405,
+        "noop_share": 0.1661535954405951,
+        "move_share": 0.16624726903870163,
+        "attack_action_count": 817054,
+        "produce_action_count": 825321,
+        "policy_entropy_proxy": 0.00020565505028673542
+      },
+      "warnings": [],
+      "errors": [],
+      "training_duration_seconds": 8444.54812836647,
+      "training_metrics_summary": {
+        "episode_count": 164,
+        "last_global_step": 998124,
+        "mean_episode_reward": 171.8256084395618
+      }
+    }
+  ]
+}

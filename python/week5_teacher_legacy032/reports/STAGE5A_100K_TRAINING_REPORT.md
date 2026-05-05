@@ -1,7 +1,7 @@
 # STAGE5A 100K Training Report
 
-- Date: 2026-04-30T22:56:41.362188+00:00
-- run_id: legacy032_24x24_teacher_main_20260430T130208Z
+- Date: 2026-05-05T03:44:48.313046+00:00
+- run_id: legacy032_24x24_teacher_resume_1m_20260504T231107Z
 - Stage 5A status: PASS
 - Decision: READY_FOR_500K
 
@@ -30,10 +30,10 @@
 
 ## Training Result
 
-- checkpoint_path: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\teacher_models\legacy032_24x24_teacher_main_20260430T130208Z\stage_003000000\agent_final.pt
-- model_metadata_path: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\teacher_models\legacy032_24x24_teacher_main_20260430T130208Z\stage_003000000\model_metadata.json
-- machine_report_json: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_24x24_training_20260430T130208Z.json
-- machine_report_md: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_24x24_training_20260430T130208Z.md
+- checkpoint_path: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\teacher_models\legacy032_24x24_teacher_resume_1m_20260504T231107Z\stage_000100000\agent_final.pt
+- model_metadata_path: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\teacher_models\legacy032_24x24_teacher_resume_1m_20260504T231107Z\stage_000100000\model_metadata.json
+- machine_report_json: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_24x24_training_20260504T231107Z.json
+- machine_report_md: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_24x24_training_20260504T231107Z.md
 
 ## Metadata Contract
 
@@ -46,8 +46,8 @@
 
 ## Behavior Gate Result
 
-- gate_json_report: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_gate_003000000_20260430T225547Z.json
-- gate_md_report: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_gate_003000000_20260430T225547Z.md
+- gate_json_report: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_gate_000100000_20260504T234007Z.json
+- gate_md_report: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\reports\stage5_gate_000100000_20260504T234007Z.md
 - gate_decision: PASS
 - checkpoint_load_ok: True
 - policy_architecture_load_ok: True
@@ -60,13 +60,13 @@
 | metric | value |
 |---|---|
 | mean_return | -10.0 |
-| effective_activity_share | 0.8337624843945068 |
-| noop_share | 0.16623751560549313 |
-| move_share | 0.16624726903870163 |
-| attack_action_count | 817054 |
-| produce_action_count | 824908 |
-| policy_entropy_proxy | 0.0006434021773641822 |
-| action_type_share | {'noop': 0.16623751560549313, 'move': 0.16624726903870163, 'harvest': 0.16782935718372868, 'return': 0.16604488529962547, 'produce': 0.1676184391905951, 'attack': 0.16602253368185602} |
+| effective_activity_share | 0.8335107238998127 |
+| noop_share | 0.16648927610018727 |
+| move_share | 0.16625397452403246 |
+| attack_action_count | 817030 |
+| produce_action_count | 823730 |
+| policy_entropy_proxy | 0.0009899255336871177 |
+| action_type_share | {'noop': 0.16648927610018727, 'move': 0.16625397452403246, 'harvest': 0.1678151334269663, 'return': 0.16604488529962547, 'produce': 0.16737907368393676, 'attack': 0.16601765696525178} |
 
 ## Warnings / Errors
 

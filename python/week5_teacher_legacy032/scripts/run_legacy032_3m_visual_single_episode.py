@@ -207,11 +207,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-metadata-path", default=METADATA_REL)
     parser.add_argument("--map-path", default=MAP_REL)
     parser.add_argument("--output-dir", default=OUTPUT_DIR_REL)
+    parser.add_argument("--run-label", default="")
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--device", default="cpu", choices=("cpu", "cuda"))
     parser.add_argument("--max-steps", type=int, default=6000)
+    parser.add_argument("--max-steps-per-episode", type=int, default=None)
     parser.add_argument("--num-bot-envs", type=int, default=2)
     parser.add_argument("--eval-mode", default="deterministic", choices=("deterministic", "stochastic"))
+    parser.add_argument("--deterministic", type=parse_bool, default=None)
+    parser.add_argument("--render", type=parse_bool, default=True)
     parser.add_argument("--fps", type=int, default=8)
     parser.add_argument("--frame-every", type=int, default=1)
     parser.add_argument("--write-video", action="store_true")
@@ -249,6 +253,37 @@ def load_legacy032_policy_checkpoint(path: Path, device: torch.device, strict_lo
         details["checkpoint_format"] = "weights_only_state_dict"
         return payload, details
     raise Stage10D27AError("Checkpoint payload is not state_dict-compatible.")
+
+
+def prepare_policy_state_dict_for_load(
+    policy: nn.Module,
+    raw_state_dict: Dict[str, Any],
+    strict_load: bool,
+) -> Tuple[Dict[str, Any], List[str], List[str], List[str]]:
+    model_state = policy.state_dict()
+    model_keys = set(model_state.keys())
+    incoming_keys = set(raw_state_dict.keys())
+
+    filtered_state = {k: v for k, v in raw_state_dict.items() if k in model_keys}
+    filtered_keys = set(filtered_state.keys())
+
+    missing = sorted(list(model_keys - filtered_keys))
+    unexpected = sorted(list(incoming_keys - model_keys))
+    ignored_critic = [k for k in unexpected if k.startswith("critic.")]
+    unexpected_non_critic = [k for k in unexpected if not k.startswith("critic.")]
+
+    if strict_load:
+        if missing:
+            raise Stage10D27AError(
+                f"Strict load failed: missing policy keys count={len(missing)}"
+            )
+        if unexpected_non_critic:
+            raise Stage10D27AError(
+                "Strict load failed: unexpected non-critic keys present "
+                f"count={len(unexpected_non_critic)}"
+            )
+
+    return filtered_state, missing, unexpected, ignored_critic
 
 
 def validate_metadata_contract(metadata: Dict[str, Any]) -> List[int]:
@@ -525,10 +560,17 @@ def build_markdown_report(summary: Dict[str, Any], command: str) -> str:
 def main() -> int:
     args = parse_args()
 
+    if args.deterministic is not None:
+        args.eval_mode = "deterministic" if bool(args.deterministic) else "stochastic"
+    if args.max_steps_per_episode is not None:
+        args.max_steps = int(args.max_steps_per_episode)
+
     checkpoint_path = resolve_path(args.checkpoint_path)
     metadata_path = resolve_path(args.model_metadata_path)
     map_path = args.map_path
     output_dir = resolve_path(args.output_dir)
+    if args.run_label:
+        output_dir = output_dir / str(args.run_label)
     output_dir.mkdir(parents=True, exist_ok=True)
     frames_dir = output_dir / "frames"
     frames_dir.mkdir(parents=True, exist_ok=True)
@@ -562,11 +604,16 @@ def main() -> int:
         obs_hw=(EXPECTED_OBS_SHAPE[0], EXPECTED_OBS_SHAPE[1]),
         architecture_name=str(metadata.get("architecture_name", "")),
     ).to(device)
+    policy_architecture_load_ok = True
+    filtered_state_dict, missing, unexpected, ignored_critic = prepare_policy_state_dict_for_load(
+        policy=policy,
+        raw_state_dict=state_dict,
+        strict_load=bool(args.strict_load),
+    )
     if args.strict_load:
-        policy.load_state_dict(state_dict, strict=True)
-        missing, unexpected = [], []
+        policy.load_state_dict(filtered_state_dict, strict=True)
     else:
-        missing, unexpected = policy.load_state_dict(state_dict, strict=False)
+        missing, unexpected = policy.load_state_dict(filtered_state_dict, strict=False)
     policy.eval()
 
     env = None
@@ -587,9 +634,18 @@ def main() -> int:
     video_path = None
     snapshot_paths: List[str] = []
     warnings: List[str] = []
+    mask_used_during_eval = False
+    checkpoint_load_ok = True
+    inference_ok = True
+    env_matches_target_24x24 = False
+    env_matches_training_metadata = False
+    observed_obs_shape: List[int] = []
+    observed_action_nvec: List[int] = []
 
     if not args.strict_load:
         warnings.append(f"STRICT_LOAD_STATUS=STRICT_LOAD_OPT_OUT missing={len(missing)} unexpected={len(unexpected)}")
+    if ignored_critic:
+        warnings.append(f"Ignored critic-only keys during policy load: {len(ignored_critic)}")
     if missing:
         warnings.append(f"Missing checkpoint keys: {len(missing)}")
     if unexpected:
@@ -599,6 +655,8 @@ def main() -> int:
         env = build_env(map_path=map_path, max_steps=int(args.max_steps), num_bot_envs=int(args.num_bot_envs))
         env_obs_shape = [int(v) for v in env.observation_space.shape]
         env_nvec = [int(v) for v in env.action_space.nvec.tolist()]
+        observed_obs_shape = env_obs_shape
+        observed_action_nvec = env_nvec
         if env_obs_shape != EXPECTED_OBS_SHAPE:
             raise Stage10D27AError(
                 f"Env observation shape mismatch. expected={EXPECTED_OBS_SHAPE}, actual={env_obs_shape}"
@@ -607,6 +665,11 @@ def main() -> int:
             raise Stage10D27AError(
                 f"Env action nvec mismatch. expected={EXPECTED_RAW_ACTION_NVEC}, actual={env_nvec}"
             )
+        env_matches_target_24x24 = True
+        env_matches_training_metadata = bool(
+            env_obs_shape == [int(v) for v in metadata.get("observation_space", [])]
+            and env_nvec == [int(v) for v in metadata.get("action_space_nvec", [])]
+        )
 
         try:
             obs = env.reset(seed=int(args.seed))
@@ -621,6 +684,7 @@ def main() -> int:
                 num_envs = int(obs.shape[0])
                 mask_dim = 1 + sum(EXPECTED_PER_CELL_BRANCH_SIZES)
                 mask_np, mask_source = read_action_mask(env, num_envs, EXPECTED_PER_CELL_ACTION_SHAPE[0], mask_dim)
+                mask_used_during_eval = True
                 mask_tensor = torch.as_tensor(mask_np, device=device, dtype=torch.float32)
                 obs_tensor = torch.as_tensor(obs, device=device, dtype=torch.float32)
 
@@ -645,7 +709,7 @@ def main() -> int:
 
                 rendered_frame_path = None
                 rendered_raw = None
-                if total_steps % max(1, int(args.frame_every)) == 0:
+                if bool(args.render) and total_steps % max(1, int(args.frame_every)) == 0:
                     rendered_frame_path, render_reason, rendered_raw = try_render_frame(env, frames_dir, total_steps)
                     if rendered_frame_path is not None:
                         visual_artifact_mode = "png_frames"
@@ -747,9 +811,23 @@ def main() -> int:
         "checkpoint_path": str(checkpoint_path),
         "metadata_path": str(metadata_path),
         "map_path": map_path,
+        "run_label": str(args.run_label or ""),
         "seed": int(args.seed),
         "eval_mode": args.eval_mode,
+        "deterministic": bool(args.eval_mode == "deterministic"),
         "device": str(device),
+        "strict_load": bool(args.strict_load),
+        "strict_load_status": checkpoint_details.get("strict_load_status"),
+        "checkpoint_load_ok": bool(checkpoint_load_ok),
+        "policy_architecture_load_ok": bool(policy_architecture_load_ok),
+        "inference_ok": bool(inference_ok),
+        "mask_used_during_eval": bool(mask_used_during_eval),
+        "env_matches_target_24x24": bool(env_matches_target_24x24),
+        "env_matches_training_metadata": bool(env_matches_training_metadata),
+        "observed_obs_shape": observed_obs_shape,
+        "observed_action_nvec": observed_action_nvec,
+        "expected_obs_shape": EXPECTED_OBS_SHAPE,
+        "expected_action_nvec": EXPECTED_RAW_ACTION_NVEC,
         "num_bot_envs_effective": int(max(1, min(2, int(args.num_bot_envs)))),
         "total_steps": int(total_steps),
         "terminal_reason": terminal_reason,
