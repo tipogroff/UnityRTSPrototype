@@ -1,0 +1,38 @@
+{
+  "generated_at_utc": "2026-05-06T15:28:29Z",
+  "notes": "Independent validation debug payload generated from adapted_dataset.npz and adapted_manifest.json.",
+  "manifest_keys": [
+    "action_shape_per_sample",
+    "attack_target_semantics",
+    "branch_sizes",
+    "direct_weight_transfer_claim",
+    "flat_cell_index_formula",
+    "flatten_order",
+    "generated_at_utc",
+    "global_vector_policy",
+    "notes",
+    "observation_shape_per_sample",
+    "semantic_parity_claim",
+    "source_export_dir",
+    "source_manifest_file",
+    "source_pipeline",
+    "source_rollout_file",
+    "target_action_contract",
+    "teacher_lineage"
+  ],
+  "dataset_keys_seen": [
+    "action_mask_available_t",
+    "actions",
+    "done_t",
+    "episode_id",
+    "observations",
+    "reward_t",
+    "step_id",
+    "terminated_t",
+    "truncated_t"
+  ],
+  "report_paths": {
+    "json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z\\LEGACY032_UNITY_V2_DATASET_VALIDATION_REPORT.json",
+    "markdown": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z\\LEGACY032_UNITY_V2_DATASET_VALIDATION_REPORT.md"
+  }
+}

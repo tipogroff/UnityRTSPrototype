@@ -1,0 +1,234 @@
+{
+  "date": "2026-05-06",
+  "project": "UnityRTSPrototype Thesis",
+  "stage": "Stage5P2",
+  "title": "Legacy032 3M Main Rollout Export, 16 episodes",
+  "run_directory": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260506T144700Z",
+  "output_files": [
+    "teacher_rollout_raw.npz",
+    "teacher_rollout_manifest.json",
+    "teacher_rollout_summary.json"
+  ],
+  "inputs": {
+    "checkpoint_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/agent_final.pt",
+    "model_metadata_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/model_metadata.json",
+    "trainer_state_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/trainer_state_final.pt",
+    "map_path": "maps/24x24/basesWorkers24x24.xml"
+  },
+  "execution": {
+    "episodes": 16,
+    "max_steps_per_episode": 6000,
+    "seed": 17,
+    "device": "cpu",
+    "export_mode": "stochastic",
+    "step_mode": "training_compatible",
+    "require_mask": true,
+    "num_bot_envs": 1
+  },
+  "schema_validation": {
+    "status": "PASS",
+    "required_npz_arrays_present": true,
+    "observation_t_shape": [
+      37343,
+      24,
+      24,
+      27
+    ],
+    "observation_t_dtype": "float32",
+    "per_cell_action_t_shape": [
+      37343,
+      576,
+      7
+    ],
+    "per_cell_action_t_dtype": "int16",
+    "metadata_length_matches_T": true,
+    "no_nan_inf": true
+  },
+  "manifest_validation": {
+    "status": "PASS",
+    "schema_version": "legacy032.teacher_rollout_raw.v2",
+    "teacher_lineage": "legacy032",
+    "architecture": "legacy032_resolution_aware_gridnet_v1",
+    "gym_microrts_version": "0.3.2",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "raw_action_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "stored_action_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "exported_per_cell_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "step_mode": "training_compatible",
+    "step_mode_is_final_evidence_valid": true,
+    "semantic_parity_claim": false,
+    "direct_weight_transfer_claim": false
+  },
+  "action_branch_bounds_validation": {
+    "status": "PASS",
+    "branch_semantics": {
+      "0": "action_type",
+      "1": "move_dir",
+      "2": "harvest_dir",
+      "3": "return_dir",
+      "4": "produce_dir",
+      "5": "produce_unit_type",
+      "6": "attack_target"
+    },
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "mins": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "maxs": [
+      5,
+      3,
+      3,
+      3,
+      3,
+      6,
+      48
+    ]
+  },
+  "episode_step_consistency_validation": {
+    "status": "PASS",
+    "episodes": 16,
+    "total_steps": 37343,
+    "step_ids_contiguous_per_episode": true,
+    "episode_lengths": [
+      2185,
+      1999,
+      1750,
+      2489,
+      3309,
+      1442,
+      2595,
+      2749,
+      3402,
+      1839,
+      3347,
+      2686,
+      1656,
+      2147,
+      2033,
+      1715
+    ],
+    "terminal_count": 16,
+    "terminated_count": 16,
+    "truncated_count": 0
+  },
+  "mask_validation": {
+    "status": "PASS",
+    "mask_available_share": 1.0,
+    "mask_available_count": 37343,
+    "mask_unavailable_count": 0
+  },
+  "behavior_diagnostics": {
+    "episode_mean_return": 197.875,
+    "episode_returns": [
+      200.2,
+      204.2,
+      190.2,
+      211.2,
+      203.4,
+      137.4,
+      219.2,
+      215.2,
+      219.2,
+      189.2,
+      205.4,
+      197.4,
+      201.2,
+      199.2,
+      171.2,
+      202.2
+    ],
+    "noop_share": 0.1698400916280606,
+    "action_type_histogram": {
+      "0": 3653187,
+      "1": 3643439,
+      "2": 3551791,
+      "3": 3551892,
+      "4": 3558493,
+      "5": 3550766
+    },
+    "selected_non_noop_total": 17856381,
+    "source_valid_non_noop_total": 103848,
+    "source_valid_total": 209357,
+    "selected_source_valid_non_noop_share": 0.4960330918001309,
+    "is_completely_degenerate": false
+  },
+  "comparison_with_stage5p1_smoke": {
+    "smoke_run_directory": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z",
+    "episodes": {
+      "smoke": 2,
+      "main": 16
+    },
+    "steps": {
+      "smoke": 4349,
+      "main": 37343
+    },
+    "mask_available_share": {
+      "smoke": 1.0,
+      "main": 1.0
+    },
+    "noop_share": {
+      "smoke": 0.1693500740911065,
+      "main": 0.1698400916280606
+    },
+    "episode_mean_return": {
+      "smoke": 199.1999969482422,
+      "main": 197.875
+    },
+    "step_mode": {
+      "smoke": "training_compatible",
+      "main": "training_compatible"
+    },
+    "export_mode": {
+      "smoke": "stochastic",
+      "main": "stochastic"
+    }
+  },
+  "warnings": [],
+  "final_decision": "STAGE5P2_MAIN_EXPORT_PASS_READY_FOR_ADAPTER",
+  "recommended_next_stage": "Stage5P3 — Adapt Main Legacy032 3M Rollout To Unity v2",
+  "recommended_next_command": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2.py --input-dir python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260506T144700Z",
+  "stage_boundary_confirmation": {
+    "bc_training_run": false,
+    "unity_launched": false,
+    "adapter_run": false
+  }
+}

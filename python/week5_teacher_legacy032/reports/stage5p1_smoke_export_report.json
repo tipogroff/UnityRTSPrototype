@@ -1,0 +1,240 @@
+{
+  "stage": "5P1",
+  "title": "Legacy032 3M Teacher Rollout Smoke Export",
+  "timestamp_utc": "2026-05-06T14:27:30Z",
+  "overall_status": "PASS",
+  "final_decision": "STAGE5P1_SMOKE_EXPORT_PASS_READY_FOR_MAIN_EXPORT",
+  "code_changes_required": false,
+  "export_command": {
+    "exporter": "python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py",
+    "checkpoint_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/agent_final.pt",
+    "model_metadata_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/model_metadata.json",
+    "trainer_state_path": "python/week5_teacher_legacy032/teacher_models/legacy032_24x24_teacher_resume_3m_from_1m_postfix/trainer_state_final.pt",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "run_label": "legacy032_3m_unity_v2_rollout_smoke",
+    "episodes": 2,
+    "max_steps_per_episode": 6000,
+    "seed": 17,
+    "device": "cpu",
+    "export_mode": "stochastic",
+    "step_mode": "training_compatible",
+    "require_mask": true,
+    "num_bot_envs": 1,
+    "output_root": "python/week5_teacher_legacy032/teacher_rollouts"
+  },
+  "output_files": {
+    "base_directory": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z",
+    "rollout_npz": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z/teacher_rollout_raw.npz",
+    "manifest_json": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z/teacher_rollout_manifest.json",
+    "summary_json": "python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z/teacher_rollout_summary.json"
+  },
+  "validation_results": {
+    "npz_schema": {
+      "status": "PASS",
+      "observation_t": {
+        "shape": [4349, 24, 24, 27],
+        "dtype": "float32",
+        "valid": true,
+        "nan_inf_free": true
+      },
+      "per_cell_action_t": {
+        "shape": [4349, 576, 7],
+        "dtype": "int16",
+        "valid": true
+      },
+      "metadata_arrays": {
+        "episode_id": {"dtype": "int32", "length": 4349, "valid": true},
+        "step_id": {"dtype": "int32", "length": 4349, "valid": true},
+        "reward_t": {"dtype": "float32", "length": 4349, "valid": true, "nan_inf_free": true},
+        "done_t": {"dtype": "bool", "length": 4349, "valid": true},
+        "terminated_t": {"dtype": "bool", "length": 4349, "valid": true},
+        "truncated_t": {"dtype": "bool", "length": 4349, "valid": true},
+        "action_mask_available_t": {"dtype": "bool", "length": 4349, "valid": true}
+      },
+      "diagnostic_arrays": {
+        "source_valid_action_count_t": {"present": true, "dtype": "int32", "length": 4349},
+        "selected_non_noop_count_t": {"present": true, "dtype": "int32", "length": 4349},
+        "source_valid_non_noop_count_t": {"present": true, "dtype": "int32", "length": 4349},
+        "mask_source_valid_count_t": {"present": true, "dtype": "int32", "length": 4349}
+      }
+    },
+    "manifest_schema": {
+      "status": "PASS",
+      "schema_version": {
+        "expected": "legacy032.teacher_rollout_raw.v2",
+        "actual": "legacy032.teacher_rollout_raw.v2",
+        "valid": true
+      },
+      "teacher_lineage": {
+        "expected": "legacy032",
+        "actual": "legacy032",
+        "valid": true
+      },
+      "architecture": {
+        "expected": "legacy032_resolution_aware_gridnet_v1",
+        "actual": "legacy032_resolution_aware_gridnet_v1",
+        "valid": true
+      },
+      "gym_microrts_version": {
+        "expected": "0.3.2",
+        "actual": "0.3.2",
+        "valid": true
+      },
+      "map_path": {
+        "expected": "maps/24x24/basesWorkers24x24.xml",
+        "actual": "maps/24x24/basesWorkers24x24.xml",
+        "valid": true
+      },
+      "observation_shape": {
+        "expected": [24, 24, 27],
+        "actual": [24, 24, 27],
+        "valid": true
+      },
+      "raw_action_nvec": {
+        "expected": [576, 6, 4, 4, 4, 4, 7, 49],
+        "actual": [576, 6, 4, 4, 4, 4, 7, 49],
+        "valid": true
+      },
+      "stored_action_format": {
+        "expected": "per_cell_policy_branches",
+        "actual": "per_cell_policy_branches",
+        "valid": true
+      },
+      "stored_action_branch_sizes": {
+        "expected": [6, 4, 4, 4, 4, 7, 49],
+        "actual": [6, 4, 4, 4, 4, 7, 49],
+        "valid": true
+      },
+      "env_step_action_format": {
+        "expected": "training_compatible_java_valid_actions",
+        "actual": "training_compatible_java_valid_actions",
+        "valid": true
+      },
+      "step_mode": {
+        "expected": "training_compatible",
+        "actual": "training_compatible",
+        "valid": true
+      },
+      "mask_required": {
+        "expected": true,
+        "actual": true,
+        "valid": true
+      },
+      "mask_source": {
+        "expected": "env.vec_client.getMasks(0)",
+        "actual": "env.vec_client.getMasks(0)",
+        "valid": true
+      },
+      "export_mode": {
+        "expected": "stochastic",
+        "actual": "stochastic",
+        "valid": true
+      },
+      "semantic_parity_claim": {
+        "expected": false,
+        "actual": false,
+        "valid": true
+      },
+      "direct_weight_transfer_claim": {
+        "expected": false,
+        "actual": false,
+        "valid": true
+      },
+      "step_mode_is_final_evidence_valid": {
+        "expected": true,
+        "actual": true,
+        "valid": true
+      }
+    },
+    "action_branch_bounds": {
+      "status": "PASS",
+      "branches": [
+        {"branch": 0, "semantic": "move unit type", "expected_max": 6, "min_found": 0, "max_found": 5, "valid": true},
+        {"branch": 1, "semantic": "parameter 1", "expected_max": 4, "min_found": 0, "max_found": 3, "valid": true},
+        {"branch": 2, "semantic": "parameter 2", "expected_max": 4, "min_found": 0, "max_found": 3, "valid": true},
+        {"branch": 3, "semantic": "parameter 3", "expected_max": 4, "min_found": 0, "max_found": 3, "valid": true},
+        {"branch": 4, "semantic": "parameter 4", "expected_max": 4, "min_found": 0, "max_found": 3, "valid": true},
+        {"branch": 5, "semantic": "action type", "expected_max": 7, "min_found": 0, "max_found": 6, "valid": true},
+        {"branch": 6, "semantic": "attack target", "expected_max": 49, "min_found": 0, "max_found": 48, "valid": true}
+      ]
+    },
+    "episode_consistency": {
+      "status": "PASS",
+      "total_episodes": 2,
+      "total_steps": 4349,
+      "episodes": [
+        {
+          "episode_id": 0,
+          "length": 1955,
+          "step_id_valid": true,
+          "starts_at_zero": true,
+          "contiguous": true,
+          "terminated": true,
+          "truncated": false,
+          "return": 189.1999969482422
+        },
+        {
+          "episode_id": 1,
+          "length": 2394,
+          "step_id_valid": true,
+          "starts_at_zero": true,
+          "contiguous": true,
+          "terminated": true,
+          "truncated": false,
+          "return": 209.1999969482422
+        }
+      ],
+      "all_episode_lengths_gt_zero": true,
+      "mean_episode_return": 199.19999694824218
+    },
+    "mask_availability": {
+      "status": "PASS",
+      "mask_available_count": 4349,
+      "mask_unavailable_count": 0,
+      "mask_available_share": 1.0,
+      "is_perfect": true
+    }
+  },
+  "behavior_diagnostics": {
+    "status": "ADEQUATE",
+    "total_steps": 4349,
+    "episode_count": 2,
+    "episode_returns": [189.1999969482422, 209.1999969482422],
+    "episode_mean_return": 199.19999694824218,
+    "terminal_count": 2,
+    "terminated_count": 2,
+    "truncated_count": 0,
+    "noop_share": 0.16938859559220506,
+    "is_completely_degenerate": false,
+    "action_type_histogram": {
+      "0": 424226,
+      "1": 424393,
+      "2": 414398,
+      "3": 413804,
+      "4": 415413,
+      "5": 412790
+    },
+    "selected_non_noop_total": 2080798,
+    "source_valid_non_noop_total": 12275,
+    "source_valid_total": 23214,
+    "action_distribution_balanced": true,
+    "policy_producing_diverse_actions": true
+  },
+  "warnings": [],
+  "test_constraints_met": {
+    "no_bc_training": true,
+    "no_unity_launch": true,
+    "no_adapter_run": true,
+    "no_full_export_run": true,
+    "no_teacher_code_changes": true,
+    "training_compatible_stepping_used": true,
+    "mask_required": true
+  },
+  "recommended_next_step": {
+    "command_type": "main_export_16_episodes",
+    "status": "READY",
+    "episodes": 16,
+    "description": "Proceed with main dataset export (16 episodes) to build BC training dataset",
+    "note": "16 episodes is first production batch; may scale to 200+ later as planned in Week 5"
+  }
+}

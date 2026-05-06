@@ -1,5 +1,13 @@
 # LEGACY032 Week 5 Pipeline Compatibility Audit
 
+> STATUS: HISTORICAL / STALE AFTER STAGE5L AND STAGE5P0.
+>
+> Current authoritative audit for the existing transfer pipeline:
+> python/week5_teacher_legacy032/reports/STAGE5P0_EXISTING_TRANSFER_PIPELINE_AUDIT.md
+>
+> This document contains historical findings. Earlier claims that the Legacy032 exporter, adapter,
+> validator, and packager were missing are no longer current.
+
 Date: 2026-05-01
 Author: GitHub Copilot (static code/config audit only)
 

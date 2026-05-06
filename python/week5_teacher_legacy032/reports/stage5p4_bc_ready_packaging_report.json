@@ -1,0 +1,287 @@
+{
+  "date": "2026-05-06",
+  "project": "UnityRTSPrototype Thesis",
+  "stage": "Stage5P4",
+  "title": "BC-ready packaging from adapted Legacy032 Unity v2 dataset + loader dry-run",
+  "packager_code_changed": false,
+  "packager_cli_discovered": {
+    "usage": "build_bc_ready_dataset_legacy032_v2.py --adapted-dir ADAPTED_DIR --validation-report VALIDATION_REPORT --output-dir OUTPUT_DIR --run-label RUN_LABEL [--validation-split VALIDATION_SPLIT] [--debug-samples DEBUG_SAMPLES] [--seed SEED] [--fail-on-contract-mismatch FAIL_ON_CONTRACT_MISMATCH]",
+    "required_args": [
+      "--adapted-dir",
+      "--validation-report",
+      "--output-dir",
+      "--run-label"
+    ],
+    "optional_args": [
+      "--validation-split",
+      "--debug-samples",
+      "--seed",
+      "--fail-on-contract-mismatch"
+    ]
+  },
+  "packager_command_executed": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/build_bc_ready_dataset_legacy032_v2.py --adapted-dir python/week5_teacher_legacy032/teacher_exports/legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z --validation-report python/week5_teacher_legacy032/teacher_exports/legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z/LEGACY032_UNITY_V2_DATASET_VALIDATION_REPORT.json --output-dir python/week5_teacher_legacy032/teacher_exports_bc --run-label legacy032_3m_unity_v2_bc_ready_stage5p4 --seed 17 --fail-on-contract-mismatch true",
+  "input_adapted_dataset_dir": "python/week5_teacher_legacy032/teacher_exports/legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z",
+  "output_bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+  "output_files": [
+    "bc_train.npz",
+    "bc_validation.npz",
+    "bc_debug.npz",
+    "bc_manifest.json",
+    "bc_summary.json",
+    "bc_summary.md",
+    "LEGACY032_BC_READY_DRY_RUN_REPORT.json",
+    "LEGACY032_BC_READY_DRY_RUN_REPORT.md"
+  ],
+  "bc_ready_manifest_summary": {
+    "dataset_type": "bc_ready_legacy032_unity_v2",
+    "teacher_lineage": "legacy032",
+    "source_pipeline": "gym_microrts==0.3.2",
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "observation_shape_per_sample": [
+      576,
+      27
+    ],
+    "action_shape_per_sample": [
+      576,
+      7
+    ],
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "attack_target_semantics": "local_7x7_49",
+    "flatten_order": "row_major",
+    "flat_cell_index_formula": "row * 24 + col",
+    "direct_weight_transfer_claim": false,
+    "semantic_parity_claim": false,
+    "split_seed": 17,
+    "validation_split": 0.15
+  },
+  "split_statistics": {
+    "source_sample_count": 37343,
+    "train_count": 31742,
+    "validation_count": 5601,
+    "debug_count": 512,
+    "train_plus_validation": 37343,
+    "train_validation_matches_source": true,
+    "sample_loss_without_reason": false
+  },
+  "schema_validation_of_splits": {
+    "train": {
+      "observations_shape": [
+        31742,
+        576,
+        27
+      ],
+      "actions_shape": [
+        31742,
+        576,
+        7
+      ],
+      "observations_dtype": "float32",
+      "actions_dtype": "int16",
+      "keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "non_empty": true
+    },
+    "validation": {
+      "observations_shape": [
+        5601,
+        576,
+        27
+      ],
+      "actions_shape": [
+        5601,
+        576,
+        7
+      ],
+      "observations_dtype": "float32",
+      "actions_dtype": "int16",
+      "keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "non_empty": true
+    },
+    "debug": {
+      "observations_shape": [
+        512,
+        576,
+        27
+      ],
+      "actions_shape": [
+        512,
+        576,
+        7
+      ],
+      "observations_dtype": "float32",
+      "actions_dtype": "int16",
+      "keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "exists": true
+    }
+  },
+  "branch_bounds_validation": {
+    "all_in_bounds": true,
+    "branch_semantics": {
+      "0": "action_type",
+      "1": "move_dir",
+      "2": "harvest_dir",
+      "3": "return_dir",
+      "4": "produce_dir",
+      "5": "produce_unit_type",
+      "6": "attack_target"
+    },
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "train_branch_min_max": [
+      {
+        "branch": 0,
+        "size": 6,
+        "min": 0,
+        "max": 5,
+        "in_bounds": true
+      },
+      {
+        "branch": 1,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 2,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 3,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 4,
+        "size": 4,
+        "min": 0,
+        "max": 3,
+        "in_bounds": true
+      },
+      {
+        "branch": 5,
+        "size": 7,
+        "min": 0,
+        "max": 6,
+        "in_bounds": true
+      },
+      {
+        "branch": 6,
+        "size": 49,
+        "min": 0,
+        "max": 48,
+        "in_bounds": true
+      }
+    ]
+  },
+  "v1_regression_check": {
+    "v1_branch_sizes_detected": false,
+    "attack_target_size_9_detected": false,
+    "target_action_shape_compatible_576x7": true
+  },
+  "loader_dry_run_cli_discovered": {
+    "usage": "dry_run_bc_loader_legacy032_v2.py --bc-ready-dir BC_READY_DIR [--batch-size BATCH_SIZE] [--fail-on-contract-mismatch FAIL_ON_CONTRACT_MISMATCH] [--write-report WRITE_REPORT] --output-dir OUTPUT_DIR",
+    "required_args": [
+      "--bc-ready-dir",
+      "--output-dir"
+    ],
+    "optional_args": [
+      "--batch-size",
+      "--fail-on-contract-mismatch",
+      "--write-report"
+    ]
+  },
+  "loader_dry_run_command_executed": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/dry_run_bc_loader_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --batch-size 8 --fail-on-contract-mismatch true --write-report true --output-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+  "loader_dry_run_result": {
+    "status": "pass",
+    "hard_failures_count": 0,
+    "batch_size_requested": 8,
+    "batch_size_train_actual": 8,
+    "batch_size_validation_actual": 8,
+    "batch_shapes": {
+      "train_observations": [
+        8,
+        576,
+        27
+      ],
+      "train_actions": [
+        8,
+        576,
+        7
+      ],
+      "validation_observations": [
+        8,
+        576,
+        27
+      ],
+      "validation_actions": [
+        8,
+        576,
+        7
+      ]
+    },
+    "manifest_contract_checks_pass": true,
+    "no_nan_inf": true,
+    "no_v1_regression": true,
+    "training_executed": false
+  },
+  "warnings": [],
+  "final_decision": "STAGE5P4_BC_READY_PACKAGING_PASS_READY_FOR_WEEK6_BC_SMOKE",
+  "recommended_next_stage": "Stage5P5 / Week6A — Student BC training smoke on BC-ready package",
+  "recommended_next_command": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu",
+  "stage_boundary_confirmation": {
+    "bc_training_run": false,
+    "unity_launched": false,
+    "teacher_training_run": false,
+    "ppo_finetuning_run": false
+  }
+}
