@@ -1,5 +1,8 @@
 # Week 6 Day 1 - Student-side BC Training Contract
 
+> STATUS: CURRENT CANONICAL
+> NOTE: This contract remains active for Week6 BC loader/training expectations under v2 branch schema.
+
 ## Scope and Honesty
 
 This artifact defines the Day 1 student-side contract over Week 5 BC-ready artifacts only.

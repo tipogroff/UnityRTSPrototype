@@ -4,6 +4,8 @@
 
 ## Актуализация статуса (2026-04-29)
 
+- Primary current pointers for Week5/Week6 pipeline: `PIPELINE_AUDIT_WEEK5_WEEK6.md` and `CURRENT_PIPELINE_RUNBOOK.md`.
+
 - Этот план сохраняет исходную по-недельную структуру как исторический roadmap.
 - Текущий action contract в Unity-коде: per-cell MultiDiscrete, 7 ветвей, branch sizes `[6,4,4,4,4,7,49]`.
 - Текущий transfer pipeline: teacher trajectories -> adapter -> BC-ready dataset -> student policy -> Unity inference/fine-tune.

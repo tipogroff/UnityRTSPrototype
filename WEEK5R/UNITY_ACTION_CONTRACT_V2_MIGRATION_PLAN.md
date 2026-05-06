@@ -1,5 +1,8 @@
 # Unity Action Contract v2 Migration Plan (Gridnet-compatible)
 
+> STATUS: HISTORICAL BASELINE / DO NOT USE AS CURRENT PIPELINE
+> NOTE: Migration completed; keep this file for design traceability. Current contract source is Unity runtime code plus PIPELINE_AUDIT_WEEK5_WEEK6.md and CURRENT_PIPELINE_RUNBOOK.md.
+
 Status: historical migration plan (core v2 contract now implemented in Unity code).
 
 ## Current Status Update (2026-04-29)

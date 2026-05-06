@@ -3,6 +3,14 @@
 Date: 2026-04-29
 Scope: Repository-wide documentation sync against current Unity/Python code contract.
 
+## Current Canonical Pointers (2026-05-06)
+
+- PIPELINE_AUDIT_WEEK5_WEEK6.md
+- CURRENT_PIPELINE_RUNBOOK.md
+
+These are the primary current interpretation documents for Week5/Week6 pipeline state.
+If older docs conflict, treat them as historical unless they are explicitly marked current canonical.
+
 ## 1. Confirmed Source-of-Truth Contract (from code)
 
 ### Unity action contract (confirmed)

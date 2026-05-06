@@ -1,5 +1,8 @@
 # Week 5 Runtime and Day 3 Raw Export
 
+> STATUS: HISTORICAL BASELINE / DO NOT USE AS CURRENT PIPELINE
+> NOTE: This README contains historical v1/non-legacy and migration-era material. For current canonical Week5/Week6 lineage, use PIPELINE_AUDIT_WEEK5_WEEK6.md and CURRENT_PIPELINE_RUNBOOK.md.
+
 ## Current Status Update (2026-04-29)
 
 - This folder contains both historical v1 artifacts and current migration work.

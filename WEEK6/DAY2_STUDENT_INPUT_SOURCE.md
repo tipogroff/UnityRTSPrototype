@@ -1,5 +1,8 @@
 # WEEK6 Day 2 Student Input Source (Pinned)
 
+> STATUS: HISTORICAL BASELINE / DO NOT USE AS CURRENT PIPELINE
+> NOTE: This file is retained as a historical Day2 pin. For current canonical lineage, use PIPELINE_AUDIT_WEEK5_WEEK6.md and CURRENT_PIPELINE_RUNBOOK.md.
+
 Date pinned (UTC): 2026-04-22
 Purpose: Prevent lineage confusion for student BC training inputs.
 

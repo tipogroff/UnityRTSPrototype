@@ -1,5 +1,13 @@
 # Copilot Project Context — диплом / RTS AI agent / Unity + ML-Agents + Gym-μRTS
 
+## Current Canonical Documentation Pointers (2026-05-06)
+
+- PIPELINE_AUDIT_WEEK5_WEEK6.md
+- CURRENT_PIPELINE_RUNBOOK.md
+
+Use these two files as the primary source for current Week5/Week6 pipeline interpretation.
+Treat older Week5/Week5R/Day2 documents as historical unless explicitly marked current.
+
 ## 1. Что это за проект
 
 Это магистерская диссертация по теме разработки стратегической игры с генерацией тактического поведения виртуального противника. Исследование и программная реализация сосредоточены на создании RTS-прототипа в Unity и интеграции в него обучаемого AI-агента. Основная цель — сравнить два подхода:

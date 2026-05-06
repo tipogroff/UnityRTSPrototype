@@ -1,5 +1,8 @@
 # WEEK5_TEACHER_PIPELINE_SUMMARY
 
+> STATUS: HISTORICAL BASELINE / DO NOT USE AS CURRENT PIPELINE
+> NOTE: Preserved for Week5 traceability. For current Week5/Week6 canonical lineage, use PIPELINE_AUDIT_WEEK5_WEEK6.md and CURRENT_PIPELINE_RUNBOOK.md.
+
 Date (UTC): 2026-04-21
 Status: Week 5 closed as teacher-data stage
 
