@@ -21,6 +21,9 @@ namespace RTS.ML
     {
         private const string CanonicalStage6A2CheckpointRelativePath =
             "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt";
+        // Stage6B2: bind to full BC checkpoint (Stage6B1 best, epoch 5, val_loss 1.8362, model_variant=transfer)
+        private const string CanonicalStage6B1CheckpointRelativePath =
+            "python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -78,8 +81,8 @@ namespace RTS.ML
         [Header("Python Bridge")]
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _adapterScriptRelativePath = "python/week6_student/student_inference_adapter.py";
-        // Stage6A2 is the current canonical student checkpoint candidate for Unity dry-run wiring.
-        [SerializeField] private string _checkpointRelativePath = CanonicalStage6A2CheckpointRelativePath;
+        // Stage6B2: active checkpoint is now Stage6B1 full BC best checkpoint.
+        [SerializeField] private string _checkpointRelativePath = CanonicalStage6B1CheckpointRelativePath;
         [SerializeField] private string _artifactDirectoryRelativePath = "WEEK6/artifacts/day4_student_inference";
         [SerializeField] private string _smokeReportRelativePath = "python/week6_student/tmp/day4_unity_playmode_smoke_report.json";
 

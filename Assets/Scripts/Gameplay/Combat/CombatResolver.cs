@@ -182,6 +182,12 @@ namespace RTS.Gameplay
                     _matchManager.GetPlayerState(deadUnit.Owner)?.RegisterOwnLoss();
             }
 
+            if (deadUnit.GetComponent<StaticSceneEntityAuthoring>() != null)
+            {
+                deadUnit.gameObject.SetActive(false);
+                return;
+            }
+
             Object.Destroy(deadUnit.gameObject);
         }
 

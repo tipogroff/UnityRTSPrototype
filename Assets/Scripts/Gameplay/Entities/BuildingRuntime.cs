@@ -125,10 +125,9 @@ namespace RTS.Gameplay
         /// </summary>
         public void ResetProduction()
         {
-            if (_productionQueue != null)
-            {
-                _productionQueue.ResetForEpisode();
-            }
+            if (!EnsureInitialized()) return;
+
+            _productionQueue.ResetForEpisode();
         }
 
         // ── Event handlers ───────────────────────────────────────────────────────
@@ -209,15 +208,19 @@ namespace RTS.Gameplay
         /// </summary>
         private bool EnsureInitialized()
         {
-            if (_productionQueue != null && _unitRuntime != null)
-                return true;
-
             _unitRuntime = GetComponent<UnitRuntime>();
             if (_unitRuntime == null)
                 return false;
 
-            if (_productionQueue == null)
+            if (_productionQueue == null ||
+                _productionQueue.Owner != _unitRuntime.Owner ||
+                _productionQueue.BuildingPosition != _unitRuntime.GridPos)
             {
+                if (_productionQueue != null)
+                {
+                    _productionQueue.OnProductionComplete -= HandleProductionComplete;
+                }
+
                 _productionQueue = new ProductionQueue(_unitRuntime.Owner, _unitRuntime.GridPos);
                 _productionQueue.OnProductionComplete += HandleProductionComplete;
             }

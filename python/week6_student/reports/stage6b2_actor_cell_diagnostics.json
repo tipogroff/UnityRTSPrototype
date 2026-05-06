@@ -1,0 +1,67 @@
+{
+  "generated_at_utc": "2026-05-06T20:44:02.529453+00:00",
+  "stage": "Stage6B2",
+  "checkpoint": "python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt",
+  "checkpoint_epoch": 5,
+  "checkpoint_model_variant": "transfer",
+  "steps_run": 54,
+  "eligible_own_actor_cells_total": 108,
+  "commands_built_total": 99,
+  "commands_submitted_total": 99,
+  "commands_accepted_total": 0,
+  "commands_rejected_total": 99,
+  "fallback_to_noop_total": 0,
+  "mask_constrained_enabled": false,
+  "masked_out_count": 0,
+  "action_attempts_by_type": {
+    "Attack": 48,
+    "Harvest": 45,
+    "Return": 6,
+    "NoOp": 0,
+    "Move": 0,
+    "Produce": 0
+  },
+  "action_accepted_by_type": {
+    "NoOp": 0,
+    "Move": 0,
+    "Harvest": 0,
+    "Return": 0,
+    "Produce": 0,
+    "Attack": 0
+  },
+  "action_rejected_by_type": {
+    "Attack": 48,
+    "Harvest": 45,
+    "Return": 6,
+    "NoOp": 0,
+    "Move": 0,
+    "Produce": 0
+  },
+  "actor_cells_last_step": 2,
+  "actor_cell_predicted_noop_last_step": 1,
+  "actor_cell_predicted_non_noop_last_step": 1,
+  "actor_cell_command_built_last_step": 0,
+  "unit_type_histogram_last_step": [
+    "Base:1",
+    "Worker:1"
+  ],
+  "per_actor_breakdown": {
+    "B2_Worker": {
+      "action_type": "Harvest",
+      "commands_submitted": 45,
+      "commands_accepted": 0,
+      "commands_rejected": 45,
+      "rejection_reason": "invalid_harvest_no_resource"
+    },
+    "C3_Base": {
+      "action_type": "Attack_and_Return",
+      "commands_submitted": 54,
+      "commands_accepted": 0,
+      "commands_rejected": 54,
+      "rejection_reason": "invalid_attack_no_target_or_invalid_return"
+    }
+  },
+  "command_acceptance_rate": 0.0,
+  "command_rejection_rate": 1.0,
+  "all_commands_rejected": true
+}

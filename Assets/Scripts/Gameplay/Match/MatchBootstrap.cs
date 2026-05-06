@@ -40,6 +40,12 @@ namespace RTS.Gameplay
         Week6StudentMicroRtsMirror24x24 = 4,
     }
 
+    public enum BootstrapInitializationMode
+    {
+        ProceduralSpawn = 0,
+        StaticSceneRegistration = 1,
+    }
+
     /// <summary>
     /// MonoBehaviour, прикреплённый к единственному GameObject "Bootstrap" в сцене.
     /// Запускается из Start(), до того как любой агент запрашивает наблюдения.
@@ -59,6 +65,8 @@ namespace RTS.Gameplay
         [Header("Scenario preset")]
         [Tooltip("LegacyMvpSymmetric = исторический Week 1 старт. Day6Sanity24x24 = sanity-friendly opening для Day 6 rollout. Week4TwoWorkersSymmetric = 2 Worker + 2 ресурса на каждую сторону. Week6VisualSanitySpread24x24 = тот же состав, но с большей стартовой дистанцией.")]
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week4TwoWorkersSymmetric;
+        [Tooltip("ProceduralSpawn: классический спавн через UnitFactory. StaticSceneRegistration: только регистрация заранее расставленных scene-authored объектов без спавна.")]
+        [SerializeField] private BootstrapInitializationMode _initializationMode = BootstrapInitializationMode.ProceduralSpawn;
         [Tooltip("Стартовые ресурсы для Day6Sanity24x24. Нужны, чтобы production был practically reachable в sanity-rollout.")]
         [Min(0)]
         [SerializeField] private int _day6SanityStartResources = 60;
@@ -93,8 +101,17 @@ namespace RTS.Gameplay
             if (_gridManager == null || _matchManager == null) return;
 
             InitGrid();
-            _unitFactory = new UnitFactory(_config, _gridManager, transform, _unitRegistry);
-            SpawnStartingUnits();
+
+            if (_initializationMode == BootstrapInitializationMode.StaticSceneRegistration)
+            {
+                RegisterStaticSceneEntities();
+            }
+            else
+            {
+                _unitFactory = new UnitFactory(_config, _gridManager, transform, _unitRegistry);
+                SpawnStartingUnits();
+            }
+
             int scenarioStartResources = ResolveScenarioStartResources();
             _matchManager.BeginMatch(scenarioStartResources, _config.maxEpisodeSteps);
 
@@ -420,6 +437,85 @@ namespace RTS.Gameplay
             }
 
             return _config.startResources;
+        }
+
+        private void RegisterStaticSceneEntities()
+        {
+            StaticSceneEntityAuthoring[] authoredEntities = FindObjectsByType<StaticSceneEntityAuthoring>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            if (authoredEntities == null || authoredEntities.Length == 0)
+            {
+                Debug.LogWarning("[MatchBootstrap] StaticSceneRegistration mode активирован, но StaticSceneEntityAuthoring не найден.");
+                return;
+            }
+
+            _unitRegistry?.Clear();
+            _resourceManager?.Clear();
+
+            int registeredUnits = 0;
+            int registeredResources = 0;
+
+            for (int i = 0; i < authoredEntities.Length; i++)
+            {
+                StaticSceneEntityAuthoring authored = authoredEntities[i];
+                if (authored == null)
+                {
+                    continue;
+                }
+
+                GridPosition pos = authored.GetGridPosition();
+                authored.gameObject.SetActive(true);
+                authored.CaptureGridFromWorld();
+                if (!_gridManager.IsInside(pos))
+                {
+                    Debug.LogError($"[MatchBootstrap] Static entity '{authored.name}' вне карты: {pos}.");
+                    continue;
+                }
+
+                if (_gridManager.IsCellOccupied(pos))
+                {
+                    Debug.LogError($"[MatchBootstrap] Duplicate static entity at {pos}: '{authored.name}'.");
+                    continue;
+                }
+
+                UnitDefinition definition = _config.GetDefinition(authored.UnitType);
+                if (definition == null)
+                {
+                    Debug.LogError($"[MatchBootstrap] UnitDefinition не найден для {authored.UnitType} (entity '{authored.name}').");
+                    continue;
+                }
+
+                UnitRuntime unit = authored.GetComponent<UnitRuntime>();
+                if (unit == null)
+                {
+                    Debug.LogError($"[MatchBootstrap] На '{authored.name}' отсутствует UnitRuntime.");
+                    continue;
+                }
+
+                Owner runtimeOwner = authored.EntityKind == StaticSceneEntityKind.Resource ? Owner.Neutral : authored.Owner;
+                unit.Init(definition, runtimeOwner, pos);
+                unit.GetComponent<BuildingRuntime>()?.ResetProduction();
+
+                if (!_gridManager.TryPlaceUnit(unit, pos))
+                {
+                    Debug.LogError($"[MatchBootstrap] Не удалось зарегистрировать '{authored.name}' в GridManager at {pos}.");
+                    continue;
+                }
+
+                _unitRegistry?.Register(unit);
+                registeredUnits++;
+
+                if (authored.EntityKind == StaticSceneEntityKind.Resource)
+                {
+                    _resourceManager?.RegisterResourceNode(new ResourceNode(pos, authored.ResourceAmount));
+                    registeredResources++;
+                }
+            }
+
+            Debug.Log(
+                $"[MatchBootstrap] StaticSceneRegistration complete. Entities={authoredEntities.Length}, " +
+                $"RegisteredUnits={registeredUnits}, RegisteredResources={registeredResources}.");
         }
     }
 }

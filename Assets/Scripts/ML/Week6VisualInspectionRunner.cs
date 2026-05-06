@@ -157,8 +157,9 @@ namespace RTS.ML
         private Stage10RBridgeDebug _latestBridgeDebug;
         private string _flattenAlignmentClassification = "INCONCLUSIVE_NEEDS_MORE_LOGITS";
 
-        private const int FocusFlatWorkerB2 = 25;
-        private const int FocusFlatBaseC3 = 50;
+        private const int FocusFlatWorkerLegacy = 25;
+        private const int FocusFlatBaseLegacy = 50;
+        private const string StaticHarvestSceneName = "Week6_StudentStaticHarvestLayout";
         private static readonly Color StudentColor = new Color(0.20f, 0.75f, 0.95f, 1f);
         private static readonly Color BaselineColor = new Color(1.00f, 0.55f, 0.20f, 1f);
         private static readonly Color ResourceColor = new Color(0.20f, 1.00f, 0.35f, 1f);
@@ -166,6 +167,22 @@ namespace RTS.ML
         private static readonly Color NoOpColor = new Color(0.85f, 0.85f, 0.85f, 0.95f);
         private static readonly Color WarningColor = new Color(1.00f, 0.40f, 0.20f, 0.95f);
         private static readonly Color SuccessColor = new Color(0.15f, 0.95f, 0.35f, 0.95f);
+
+        private int FocusFlatWorker => IsStaticHarvestSceneActive()
+            ? new GridPosition(2, 2).ToFlatIndex()
+            : FocusFlatWorkerLegacy;
+
+        private int FocusFlatBase => IsStaticHarvestSceneActive()
+            ? new GridPosition(3, 3).ToFlatIndex()
+            : FocusFlatBaseLegacy;
+
+        private string FocusWorkerLabel => IsStaticHarvestSceneActive() ? "C3" : "B2";
+        private string FocusBaseLabel => IsStaticHarvestSceneActive() ? "D4" : "C3";
+
+        private static bool IsStaticHarvestSceneActive()
+        {
+            return string.Equals(SceneManager.GetActiveScene().name, StaticHarvestSceneName, StringComparison.Ordinal);
+        }
 
         [Serializable]
         private sealed class AdapterArtifactJson
@@ -1187,16 +1204,16 @@ namespace RTS.ML
 
             GUILayout.Space(4f);
             GUILayout.Label($"NoOp collapse probe: actorChecked={_latestActorRows.Count}, actorNoOp={_noOpActorCells}, actorNonNoOp={_nonNoOpActorCells}, nonActorNonNoOp={_nonActorNonNoOpCells}");
-            GUILayout.Label($"Focus cells: B2(flat25) top={_b2TopAction}; C3(flat50) top={_c3TopAction}");
+            GUILayout.Label($"Focus cells: {FocusWorkerLabel}(flat{FocusFlatWorker}) top={_b2TopAction}; {FocusBaseLabel}(flat{FocusFlatBase}) top={_c3TopAction}");
             GUILayout.Label($"Probe classification: {_noOpProbeClassification}");
             GUILayout.Label($"Flatten classification: {_flattenAlignmentClassification}");
 
             ActorCellDiagnosticRow b2Row;
             ActorCellDiagnosticRow c3Row;
-            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorkerB2, out b2Row);
-            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatBaseC3, out c3Row);
-            GUILayout.Label("B2 probs: " + BuildFocusProbabilitiesLine(b2Row));
-            GUILayout.Label("C3 probs: " + BuildFocusProbabilitiesLine(c3Row));
+            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorker, out b2Row);
+            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatBase, out c3Row);
+            GUILayout.Label(FocusWorkerLabel + " probs: " + BuildFocusProbabilitiesLine(b2Row));
+            GUILayout.Label(FocusBaseLabel + " probs: " + BuildFocusProbabilitiesLine(c3Row));
 
             GUILayout.Space(4f);
             GUILayout.Label($"Decoder/Applier: built={_totalCommandsBuiltAfterFilter}, submitted={_totalCommandsSubmittedAfterFilter}, ActionApplierCalled={_lastStepActionApplierReached}, ApplyCommandCalled={_lastStepApplyCommandCalled}, accepted={_acceptedStudentCommands}, rejected={_invalidStudentCommands}, ignored={_ignoredStudentCommands}");
@@ -3158,12 +3175,12 @@ namespace RTS.ML
                         _nonActorNonNoOpCells++;
                     }
 
-                    if (flat == FocusFlatWorkerB2)
+                    if (flat == FocusFlatWorker)
                     {
                         _b2TopAction = ResolveTopActionLabel(flat, actionType.ToString());
                     }
 
-                    if (flat == FocusFlatBaseC3)
+                    if (flat == FocusFlatBase)
                     {
                         _c3TopAction = ResolveTopActionLabel(flat, actionType.ToString());
                     }
@@ -3274,8 +3291,8 @@ namespace RTS.ML
         private List<FocusCellSnapshot> BuildFocusCellSnapshots()
         {
             var focus = new List<FocusCellSnapshot>(2);
-            AddFocusCellSnapshot(focus, FocusFlatWorkerB2, "B2");
-            AddFocusCellSnapshot(focus, FocusFlatBaseC3, "C3");
+            AddFocusCellSnapshot(focus, FocusFlatWorker, FocusWorkerLabel);
+            AddFocusCellSnapshot(focus, FocusFlatBase, FocusBaseLabel);
             return focus;
         }
 
@@ -3333,14 +3350,14 @@ namespace RTS.ML
             var lines = new List<string>();
             int b2Expected = (1 * ObservationContract.GridW) + 1;
             int c3Expected = (2 * ObservationContract.GridW) + 2;
-            lines.Add($"B2 formula check: expected={b2Expected}, actual={FocusFlatWorkerB2}, pass={b2Expected == FocusFlatWorkerB2}");
-            lines.Add($"C3 formula check: expected={c3Expected}, actual={FocusFlatBaseC3}, pass={c3Expected == FocusFlatBaseC3}");
+            lines.Add($"{FocusWorkerLabel} formula check: expected={b2Expected}, actual={FocusFlatWorker}, pass={b2Expected == FocusFlatWorker}");
+            lines.Add($"{FocusBaseLabel} formula check: expected={c3Expected}, actual={FocusFlatBase}, pass={c3Expected == FocusFlatBase}");
 
-            lines.Add("B2 observation unit alignment: " + BuildFocusUnitAlignmentLine(FocusFlatWorkerB2, "Worker"));
-            lines.Add("C3 observation unit alignment: " + BuildFocusUnitAlignmentLine(FocusFlatBaseC3, "Base"));
+            lines.Add(FocusWorkerLabel + " observation unit alignment: " + BuildFocusUnitAlignmentLine(FocusFlatWorker, "Worker"));
+            lines.Add(FocusBaseLabel + " observation unit alignment: " + BuildFocusUnitAlignmentLine(FocusFlatBase, "Base"));
 
-            lines.Add("B2 predicted row alignment: pass=" + (_latestActorRowsByFlatIndex.ContainsKey(FocusFlatWorkerB2)).ToString());
-            lines.Add("C3 predicted row alignment: pass=" + (_latestActorRowsByFlatIndex.ContainsKey(FocusFlatBaseC3)).ToString());
+            lines.Add(FocusWorkerLabel + " predicted row alignment: pass=" + (_latestActorRowsByFlatIndex.ContainsKey(FocusFlatWorker)).ToString());
+            lines.Add(FocusBaseLabel + " predicted row alignment: pass=" + (_latestActorRowsByFlatIndex.ContainsKey(FocusFlatBase)).ToString());
 
             if (_latestBridgeDebug != null && _latestBridgeDebug.flatten_alignment_checks != null)
             {
@@ -3425,8 +3442,8 @@ namespace RTS.ML
 
             ActorCellDiagnosticRow b2 = null;
             ActorCellDiagnosticRow c3 = null;
-            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorkerB2, out b2);
-            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatBaseC3, out c3);
+            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorker, out b2);
+            _latestActorRowsByFlatIndex.TryGetValue(FocusFlatBase, out c3);
 
             bool bothNoop = b2 != null && c3 != null
                 && b2.PredictedActionType == UnitActionType.NoOp
@@ -3506,12 +3523,12 @@ namespace RTS.ML
                 }
             }
 
-            if (BuildFocusUnitAlignmentLine(FocusFlatWorkerB2, "Worker").IndexOf("pass=True", StringComparison.Ordinal) < 0)
+            if (BuildFocusUnitAlignmentLine(FocusFlatWorker, "Worker").IndexOf("pass=True", StringComparison.Ordinal) < 0)
             {
                 mismatch = true;
             }
 
-            if (BuildFocusUnitAlignmentLine(FocusFlatBaseC3, "Base").IndexOf("pass=True", StringComparison.Ordinal) < 0)
+            if (BuildFocusUnitAlignmentLine(FocusFlatBase, "Base").IndexOf("pass=True", StringComparison.Ordinal) < 0)
             {
                 mismatch = true;
             }
@@ -4094,18 +4111,18 @@ namespace RTS.ML
                 };
             }
 
-            if (_latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorkerB2, out ActorCellDiagnosticRow b2))
+                if (_latestActorRowsByFlatIndex.TryGetValue(FocusFlatWorker, out ActorCellDiagnosticRow b2))
             {
                 DrawWorldLabel(
                     b2.Unit,
-                    $"B2 Student predicted: {b2.PredictedActionType} | top3={b2.Top3ActionType} | margin={b2.NoopMargin.ToString("F3", CultureInfo.InvariantCulture)} | command_built={b2.CommandBuilt} | reason={b2.CommandNotBuiltReason}");
+                    $"{FocusWorkerLabel} Student predicted: {b2.PredictedActionType} | top3={b2.Top3ActionType} | margin={b2.NoopMargin.ToString("F3", CultureInfo.InvariantCulture)} | command_built={b2.CommandBuilt} | reason={b2.CommandNotBuiltReason}");
             }
 
-            if (_latestActorRowsByFlatIndex.TryGetValue(FocusFlatBaseC3, out ActorCellDiagnosticRow c3))
+                if (_latestActorRowsByFlatIndex.TryGetValue(FocusFlatBase, out ActorCellDiagnosticRow c3))
             {
                 DrawWorldLabel(
                     c3.Unit,
-                    $"C3 Student predicted: {c3.PredictedActionType} | top3={c3.Top3ActionType} | margin={c3.NoopMargin.ToString("F3", CultureInfo.InvariantCulture)} | command_built={c3.CommandBuilt} | reason={c3.CommandNotBuiltReason}");
+                    $"{FocusBaseLabel} Student predicted: {c3.PredictedActionType} | top3={c3.Top3ActionType} | margin={c3.NoopMargin.ToString("F3", CultureInfo.InvariantCulture)} | command_built={c3.CommandBuilt} | reason={c3.CommandNotBuiltReason}");
             }
         }
 

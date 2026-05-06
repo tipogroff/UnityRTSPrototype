@@ -1,0 +1,156 @@
+{
+  "generated_at_utc": "2026-05-06T20:45:56.190441+00:00",
+  "stage": "Stage6B2",
+  "stage_title": "Bind Full BC Checkpoint To Unity Bridge And Run Controlled Sanity With Stage6R5C Telemetry",
+  "classification": "STAGE6B2_UNITY_SANITY_PASS_WITH_WARNINGS",
+  "classification_reason": [
+    "Stage6B1 best checkpoint is active and confirmed at inference",
+    "Bridge started successfully (55 steps of inference data)",
+    "Payload contract fully validated: v2_gridnet_compatible, branch_sizes=[6,4,4,4,4,7,49], action_flat_size=44928",
+    "No v1 regression detected",
+    "No fake/heuristic/random fallback used",
+    "Stage6R5C command lifecycle invariant holds: 99 == 0 + 0 + 0 + 99",
+    "Actor-cell metrics generated",
+    "WARNING: All 99 submitted commands rejected (Harvest=45, Attack=48, Return=6); 0/99 applied",
+    "WARNING: Terminal is Loss at step 55",
+    "WARNING: Behavior regressed vs Stage6A2 (0 applied vs 22/22)",
+    "Offline BC metrics predicted weak quality (action_type_acc=0.1713, entropy_norm=0.9514)"
+  ],
+  "prior_stage": {
+    "name": "Stage6B1",
+    "classification": "STAGE6B1_FULL_BC_TRAINING_PASS_READY_FOR_UNITY_SANITY",
+    "checkpoint": "python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt"
+  },
+  "checkpoint_binding": {
+    "active_checkpoint": "python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt",
+    "checkpoint_exists": true,
+    "pt_extension_accepted": true,
+    "model_variant": "transfer",
+    "checkpoint_epoch": 5,
+    "stale_stage6a2_checkpoint_used": false,
+    "stale_stage10d_checkpoint_used": false,
+    "binding_confirmed_in_scene_snapshot": true
+  },
+  "contract_verification": {
+    "action_contract_version_pass": true,
+    "branch_sizes_pass": true,
+    "single_payload_action_flat_size_pass": true,
+    "observation_shape_pass": true,
+    "produce_head_size_pass": true,
+    "attack_head_size_pass": true,
+    "v1_payload_seen_pass": true,
+    "fallback_used_pass": true,
+    "fake_policy_or_stub_seen_pass": true,
+    "uses_heuristic_policy_pass": true
+  },
+  "all_contract_checks_pass": true,
+  "scene": {
+    "name": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "mode": "student_live_policy",
+    "target_steps": 80,
+    "steps_completed": 55,
+    "terminal_reason": "Loss",
+    "uses_heuristic_policy": false,
+    "fake_policy_or_stub_seen": false,
+    "fallback_used": false
+  },
+  "command_lifecycle_telemetry": {
+    "submitted_command_count": 99,
+    "applied_by_match_manager": 0,
+    "rejected_by_applier": 0,
+    "rejected_by_match_manager": 0,
+    "expired_or_unresolved_at_capture_end": 99,
+    "invariant_expression": "99 == 0 + 0 + 0 + 99",
+    "invariant_holds": true,
+    "semantic_note": "Worker B2 predicted Harvest (no adjacent resource), Base C3 predicted Attack (no valid target) / Return (invalid for Base). 0/99 commands applied vs 22/22 in Stage6A2.",
+    "telemetry_note": "All 99 commands ended in expired_or_unresolved due to MatchManager rejection events not linking back via command_event_key for Harvest/Attack/Return action types. Episode diagnostics independently confirms 99 commands rejected as invalid (Attack=48, Harvest=45, Return=6). Invariant holds arithmetically."
+  },
+  "actor_cell_summary": {
+    "steps_run": 54,
+    "eligible_own_actor_cells_total": 108,
+    "commands_built_total": 99,
+    "commands_submitted_total": 99,
+    "commands_accepted_total": 0,
+    "commands_rejected_total": 99,
+    "command_acceptance_rate": 0.0,
+    "command_rejection_rate": 1.0,
+    "action_attempts_by_type": {
+      "Attack": 48,
+      "Harvest": 45,
+      "Return": 6,
+      "NoOp": 0,
+      "Move": 0,
+      "Produce": 0
+    },
+    "actor_cells_last_step": 2,
+    "unit_type_histogram_last_step": [
+      "Base:1",
+      "Worker:1"
+    ],
+    "per_actor_breakdown": {
+      "B2_Worker": {
+        "action_type": "Harvest",
+        "commands_submitted": 45,
+        "commands_accepted": 0,
+        "commands_rejected": 45,
+        "rejection_reason": "invalid_harvest_no_resource"
+      },
+      "C3_Base": {
+        "action_type": "Attack_and_Return",
+        "commands_submitted": 54,
+        "commands_accepted": 0,
+        "commands_rejected": 54,
+        "rejection_reason": "invalid_attack_no_target_or_invalid_return"
+      }
+    }
+  },
+  "stage6a2_vs_stage6b1_comparison": {
+    "steps_completed_stage6a2": 57,
+    "steps_completed_stage6b1": 55,
+    "terminal_same": true,
+    "applied_stage6a2": 22,
+    "applied_stage6b1": 0,
+    "apply_rate_stage6a2": "22/22 = 1.000",
+    "apply_rate_stage6b1": "0/99 = 0.000",
+    "worker_behavior_stage6a2": "Move (valid East, 22/22 applied)",
+    "worker_behavior_stage6b1": "Harvest/East (invalid, 45/45 rejected)",
+    "base_behavior_stage6a2": "Move -> masked_to_noop (60/83 actor-cells masked)",
+    "base_behavior_stage6b1": "Attack (48 rejected) / Return (6 rejected)",
+    "v1_regression_either": false,
+    "fallback_either": false,
+    "behavior_direction": "REGRESSED",
+    "improvement_claimed": false
+  },
+  "hard_fail_checks": {
+    "stale_stage6a2_checkpoint": false,
+    "v1_payload_appeared": false,
+    "fallback_heuristic_used": false,
+    "telemetry_invariant_failed": false,
+    "output_heads_mismatch": false
+  },
+  "safety_boundaries": {
+    "bc_training_run": false,
+    "ppo_run": false,
+    "teacher_training_run": false,
+    "semantic_parity_claimed": false,
+    "direct_weight_transfer_claimed": false,
+    "final_behavior_quality_claimed": false,
+    "fake_heuristic_fallback_introduced": false,
+    "v1_rejection_weakened": false,
+    "action_semantics_changed": false,
+    "mask_semantics_changed": false,
+    "runtime_truth": "ActionApplier / MatchManager.ApplyCommand"
+  },
+  "recommended_next_stage": "Stage6B3R",
+  "recommended_next_stage_title": "BC Training Quality Diagnosis And Data/Loss Review",
+  "recommended_next_stage_reason": "Stage6B2 passes binding and contract but behavior regressed vs Stage6A2 (0/99 applied vs 22/22). Model predicts Harvest/Attack for all eligible cells but these are semantically invalid in the current scene. Diagnosis of BC dataset action distribution and loss decomposition required.",
+  "artifacts": {
+    "stage6b2_payload_summary": "python/week6_student/reports/stage6b2_payload_summary.json",
+    "stage6b2_scene_sanity_snapshot": "python/week6_student/reports/stage6b2_scene_sanity_snapshot.json",
+    "stage6b2_actor_cell_diagnostics": "python/week6_student/reports/stage6b2_actor_cell_diagnostics.json",
+    "stage6b2_command_lifecycle_trace": "python/week6_student/reports/stage6b2_command_lifecycle_trace.jsonl",
+    "stage6b2_command_terminal_events": "python/week6_student/reports/stage6b2_command_terminal_events.jsonl",
+    "stage6b2_counter_consistency_report": "python/week6_student/reports/stage6b2_counter_consistency_report.json",
+    "stage6b2_stage6a2_vs_stage6b1_comparison": "python/week6_student/reports/stage6b2_stage6a2_vs_stage6b1_comparison.json"
+  }
+}

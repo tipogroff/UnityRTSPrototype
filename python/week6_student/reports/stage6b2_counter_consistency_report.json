@@ -1,0 +1,16 @@
+{
+  "generated_at_utc": "2026-05-06T20:44:02.529953+00:00",
+  "stage": "Stage6B2",
+  "submitted": 99,
+  "applied_by_match_manager": 0,
+  "rejected_by_applier": 0,
+  "rejected_by_match_manager": 0,
+  "expired_or_unresolved_at_capture_end": 99,
+  "terminal_events_count": 99,
+  "invariant_submitted_equals_terminal_buckets": true,
+  "invariant_expression": "99 == 0 + 0 + 0 + 99",
+  "telemetry_note": "All 99 commands ended in expired_or_unresolved due to MatchManager rejection events not linking back via command_event_key for Harvest/Attack/Return action types. Episode diagnostics independently confirms 99 commands rejected as invalid (Attack=48, Harvest=45, Return=6). Invariant holds arithmetically.",
+  "semantic_note": "Worker B2 predicted Harvest (no adjacent resource), Base C3 predicted Attack (no valid target) / Return (invalid for Base). 0/99 commands applied vs 22/22 in Stage6A2.",
+  "v1_regression_detected": false,
+  "fallback_used": false
+}

@@ -1,0 +1,207 @@
+{
+  "stage": "Stage6B1",
+  "classification": "STAGE6B1_FULL_BC_TRAINING_PASS_READY_FOR_UNITY_SANITY",
+  "dataset_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+  "model_variant": "transfer",
+  "device": "cpu",
+  "train_samples": 31742,
+  "validation_samples": 5601,
+  "epochs_configured": 20,
+  "epochs_completed": 10,
+  "best_epoch": 5,
+  "best_validation_total_loss": 1.8362130231139502,
+  "final_validation_total_loss": 1.8372341383180357,
+  "final_train_total_loss": 1.8346883650845853,
+  "validation_exact_branch_accuracy": 2.479715923743776e-06,
+  "validation_action_type_distribution": {
+    "0": 850097,
+    "1": 297634,
+    "2": 324354,
+    "3": 729145,
+    "4": 684328,
+    "5": 340618
+  },
+  "predicted_noop_share": 0.26349988345335157,
+  "predicted_move_share": 0.09225597115594437,
+  "predicted_produce_share": 0.21211737983296633,
+  "predicted_attack_share": 0.10557948481421968,
+  "action_type_entropy": 1.7046540223841693,
+  "action_type_entropy_normalized": 0.9513855244859326,
+  "validation_action_type_mean_confidence": 0.17949655023412242,
+  "per_branch_validation": {
+    "action_type": {
+      "loss": 1.7809992014194738,
+      "accuracy": 0.17133194221270012
+    },
+    "move_dir": {
+      "loss": 1.381358048510353,
+      "accuracy": 0.2538293216630197
+    },
+    "harvest_dir": {
+      "loss": 1.3870301124124929,
+      "accuracy": 0.24898645734494954
+    },
+    "return_dir": {
+      "loss": 1.3872104439235173,
+      "accuracy": 0.249438366731041
+    },
+    "produce_dir": {
+      "loss": 1.3863963048808312,
+      "accuracy": 0.24962418135264722
+    },
+    "produce_unit_type": {
+      "loss": 1.9437589113510967,
+      "accuracy": 0.14512597890916998
+    },
+    "attack_target_local": {
+      "loss": 3.8934816911469365,
+      "accuracy": 0.020616192583208178
+    }
+  },
+  "learning_rate": 0.0003,
+  "weight_decay": 1e-05,
+  "batch_size": 32,
+  "num_workers": 0,
+  "seed": 17,
+  "max_train_batches": null,
+  "max_validation_batches": null,
+  "save_every_epoch": true,
+  "early_stopping_patience": 5,
+  "stopped_early": true,
+  "stop_reason": "early_stopping_patience_5",
+  "optimizer_step_count_total": 9920,
+  "no_nan_inf_loss": true,
+  "contract_checks": {
+    "dataset_type": "bc_ready_legacy032_unity_v2",
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "attack_target_semantics": "local_7x7_49",
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "observation_shape_per_sample": [
+      576,
+      27
+    ],
+    "action_shape_per_sample": [
+      576,
+      7
+    ]
+  },
+  "checkpoint_paths": {
+    "best": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_best.pt",
+    "final": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_final.pt",
+    "compatibility_report": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\stage6b1_best_checkpoint_compatibility_report.json"
+  },
+  "compatibility": {
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_best.pt",
+    "load_success": true,
+    "missing_state_dict_keys": [],
+    "unexpected_state_dict_keys": [],
+    "dummy_forward_input_shape": [
+      1,
+      24,
+      24,
+      27
+    ],
+    "output_head_shapes": {
+      "action_type_logits": [
+        1,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        1,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        1,
+        576,
+        49
+      ]
+    },
+    "expected_head_shapes": {
+      "action_type_logits": [
+        1,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        1,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        1,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        1,
+        576,
+        49
+      ]
+    },
+    "produce_head_size": 7,
+    "attack_head_size": 49,
+    "v1_regression_detected": false,
+    "fake_heuristic_fallback_used": false
+  },
+  "base_worker_metrics": {
+    "available": false,
+    "reason": "Unit type channels are not inferred in this script; reporting unavailable by design."
+  },
+  "constraints": {
+    "no_teacher_training": true,
+    "no_ppo_finetuning": true,
+    "no_week5_artifact_modification": true,
+    "semantic_parity_claim": false,
+    "direct_weight_transfer_claim": false,
+    "behavior_quality_claim_from_loss_only": false,
+    "fake_heuristic_random_fallback_used": false,
+    "v1_rejection_weakened": false
+  },
+  "recommended_next_stage": "Stage6B2 \u2014 Bind Full BC Checkpoint To Unity Bridge And Run Controlled Sanity With Stage6R5C Telemetry",
+  "run_label": "legacy032_v2_full_bc_stage6b1"
+}

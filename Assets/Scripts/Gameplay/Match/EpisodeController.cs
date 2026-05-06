@@ -573,6 +573,11 @@ namespace RTS.Gameplay
                     UnitRuntime unit = units[i];
                     if (unit != null)
                     {
+                        if (unit.GetComponent<StaticSceneEntityAuthoring>() != null)
+                        {
+                            continue;
+                        }
+
                         Destroy(unit.gameObject);
                     }
                 }

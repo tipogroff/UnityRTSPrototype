@@ -1,0 +1,43 @@
+{
+  "generated_at_utc": "2026-05-06T20:44:02.528953+00:00",
+  "stage": "Stage6B2",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_best.pt",
+  "action_contract_version": "v2_gridnet_compatible",
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "single_payload_action_flat_size": 44928,
+  "checkpoint_model_variant": "transfer",
+  "checkpoint_epoch": 5,
+  "produce_head_size": 7,
+  "attack_head_size": 49,
+  "single_payload_action_flat_size_pass": true,
+  "v1_payload_seen": false,
+  "fallback_used": false,
+  "fake_policy_or_stub_seen": false,
+  "uses_heuristic_policy": false,
+  "contract_checks": {
+    "action_contract_version_pass": true,
+    "branch_sizes_pass": true,
+    "single_payload_action_flat_size_pass": true,
+    "observation_shape_pass": true,
+    "produce_head_size_pass": true,
+    "attack_head_size_pass": true,
+    "v1_payload_seen_pass": true,
+    "fallback_used_pass": true,
+    "fake_policy_or_stub_seen_pass": true,
+    "uses_heuristic_policy_pass": true
+  },
+  "all_contract_checks_pass": true
+}

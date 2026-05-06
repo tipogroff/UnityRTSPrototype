@@ -1,0 +1,298 @@
+{
+    "generated_at_utc": "2026-05-06T21:21:34.2542112Z",
+    "scene_name": "Week6_StudentStaticHarvestLayout",
+    "scene_path": "Assets/Scenes/Week6_StudentStaticHarvestLayout.unity",
+    "map_width": 24,
+    "map_height": 24,
+    "bootstrap_mode": "StaticSceneRegistration",
+    "authored_entities": [
+        {
+            "name": "P1_Base",
+            "entity_kind": "Unit",
+            "unit_type": "Base",
+            "owner": "Player1",
+            "grid_x": 3,
+            "grid_y": 3,
+            "world_x": 3.0,
+            "world_y": 0.0,
+            "world_z": 3.0,
+            "visual_label": "D4",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P1_Resource_1",
+            "entity_kind": "Resource",
+            "unit_type": "Resource",
+            "owner": "Player1",
+            "grid_x": 1,
+            "grid_y": 1,
+            "world_x": 1.0,
+            "world_y": 0.0,
+            "world_z": 1.0,
+            "visual_label": "B2",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P1_Resource_2",
+            "entity_kind": "Resource",
+            "unit_type": "Resource",
+            "owner": "Player1",
+            "grid_x": 1,
+            "grid_y": 2,
+            "world_x": 1.0,
+            "world_y": 0.0,
+            "world_z": 2.0,
+            "visual_label": "B3",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P1_Worker",
+            "entity_kind": "Unit",
+            "unit_type": "Worker",
+            "owner": "Player1",
+            "grid_x": 2,
+            "grid_y": 2,
+            "world_x": 2.0,
+            "world_y": 0.0,
+            "world_z": 2.0,
+            "visual_label": "C3",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P2_Base",
+            "entity_kind": "Unit",
+            "unit_type": "Base",
+            "owner": "Player2",
+            "grid_x": 20,
+            "grid_y": 20,
+            "world_x": 20.0,
+            "world_y": 0.0,
+            "world_z": 20.0,
+            "visual_label": "U21",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P2_Resource_1",
+            "entity_kind": "Resource",
+            "unit_type": "Resource",
+            "owner": "Player2",
+            "grid_x": 22,
+            "grid_y": 22,
+            "world_x": 22.0,
+            "world_y": 0.0,
+            "world_z": 22.0,
+            "visual_label": "W23",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P2_Resource_2",
+            "entity_kind": "Resource",
+            "unit_type": "Resource",
+            "owner": "Player2",
+            "grid_x": 22,
+            "grid_y": 21,
+            "world_x": 22.0,
+            "world_y": 0.0,
+            "world_z": 21.0,
+            "visual_label": "W22",
+            "visual_y_flipped": false
+        },
+        {
+            "name": "P2_Worker",
+            "entity_kind": "Unit",
+            "unit_type": "Worker",
+            "owner": "Player2",
+            "grid_x": 21,
+            "grid_y": 21,
+            "world_x": 21.0,
+            "world_y": 0.0,
+            "world_z": 21.0,
+            "visual_label": "V22",
+            "visual_y_flipped": false
+        }
+    ],
+    "grid_occupancy": [
+        {
+            "grid_x": 1,
+            "grid_y": 1,
+            "unit_name": "Neutral_Resource_(1, 1)",
+            "unit_type": "Resource",
+            "owner": "Neutral"
+        },
+        {
+            "grid_x": 1,
+            "grid_y": 2,
+            "unit_name": "Neutral_Resource_(1, 2)",
+            "unit_type": "Resource",
+            "owner": "Neutral"
+        },
+        {
+            "grid_x": 2,
+            "grid_y": 2,
+            "unit_name": "Player1_Worker_(2, 2)",
+            "unit_type": "Worker",
+            "owner": "Player1"
+        },
+        {
+            "grid_x": 3,
+            "grid_y": 3,
+            "unit_name": "Player1_Base_(3, 3)",
+            "unit_type": "Base",
+            "owner": "Player1"
+        },
+        {
+            "grid_x": 20,
+            "grid_y": 20,
+            "unit_name": "Player2_Base_(20, 20)",
+            "unit_type": "Base",
+            "owner": "Player2"
+        },
+        {
+            "grid_x": 21,
+            "grid_y": 21,
+            "unit_name": "Player2_Worker_(21, 21)",
+            "unit_type": "Worker",
+            "owner": "Player2"
+        },
+        {
+            "grid_x": 22,
+            "grid_y": 21,
+            "unit_name": "Neutral_Resource_(22, 21)",
+            "unit_type": "Resource",
+            "owner": "Neutral"
+        },
+        {
+            "grid_x": 22,
+            "grid_y": 22,
+            "unit_name": "Neutral_Resource_(22, 22)",
+            "unit_type": "Resource",
+            "owner": "Neutral"
+        }
+    ],
+    "unit_registry": [
+        {
+            "unit_name": "Neutral_Resource_(1, 1)",
+            "unit_type": "Resource",
+            "owner": "Neutral",
+            "grid_x": 1,
+            "grid_y": 1
+        },
+        {
+            "unit_name": "Neutral_Resource_(1, 2)",
+            "unit_type": "Resource",
+            "owner": "Neutral",
+            "grid_x": 1,
+            "grid_y": 2
+        },
+        {
+            "unit_name": "Neutral_Resource_(22, 21)",
+            "unit_type": "Resource",
+            "owner": "Neutral",
+            "grid_x": 22,
+            "grid_y": 21
+        },
+        {
+            "unit_name": "Neutral_Resource_(22, 22)",
+            "unit_type": "Resource",
+            "owner": "Neutral",
+            "grid_x": 22,
+            "grid_y": 22
+        },
+        {
+            "unit_name": "Player1_Base_(3, 3)",
+            "unit_type": "Base",
+            "owner": "Player1",
+            "grid_x": 3,
+            "grid_y": 3
+        },
+        {
+            "unit_name": "Player1_Worker_(2, 2)",
+            "unit_type": "Worker",
+            "owner": "Player1",
+            "grid_x": 2,
+            "grid_y": 2
+        },
+        {
+            "unit_name": "Player2_Base_(20, 20)",
+            "unit_type": "Base",
+            "owner": "Player2",
+            "grid_x": 20,
+            "grid_y": 20
+        },
+        {
+            "unit_name": "Player2_Worker_(21, 21)",
+            "unit_type": "Worker",
+            "owner": "Player2",
+            "grid_x": 21,
+            "grid_y": 21
+        }
+    ],
+    "resource_nodes": [
+        {
+            "grid_x": 1,
+            "grid_y": 1,
+            "current_resources": 20,
+            "is_exhausted": false
+        },
+        {
+            "grid_x": 1,
+            "grid_y": 2,
+            "current_resources": 20,
+            "is_exhausted": false
+        },
+        {
+            "grid_x": 22,
+            "grid_y": 21,
+            "current_resources": 20,
+            "is_exhausted": false
+        },
+        {
+            "grid_x": 22,
+            "grid_y": 22,
+            "current_resources": 20,
+            "is_exhausted": false
+        }
+    ],
+    "authored_entity_count": 8,
+    "occupancy_count": 8,
+    "unit_registry_count": 8,
+    "resource_node_count": 4,
+    "static_objects_registered": true,
+    "duplicate_spawn_prevented_after_play_start": true,
+    "playmode_validation_present": true,
+    "playmode_validation": {
+        "scene": "Week6_StudentStaticHarvestLayout",
+        "captured_at_utc": "2026-05-06T21:17:49.9142097Z",
+        "authored_entity_count": 8,
+        "grid_occupancy_count": 8,
+        "unit_registry_count": 8,
+        "resource_node_count": 4,
+        "unique_occupancy_cells": 8,
+        "no_duplicate_spawn_after_play_start": true
+    },
+    "worker_harvest_check": {
+        "worker_grid_x": 2,
+        "worker_grid_y": 2,
+        "direction_enum": "0=North,1=East,2=South,3=West",
+        "north_target": "(2,3)",
+        "east_target": "(3,2)",
+        "south_target": "(2,1)",
+        "west_target": "(1,2)",
+        "north_valid": false,
+        "east_valid": false,
+        "south_valid": false,
+        "west_valid": true,
+        "mask_north": false,
+        "mask_east": false,
+        "mask_south": false,
+        "mask_west": true,
+        "expected_valid_direction": "West",
+        "expected_valid_direction_index": 3,
+        "expected_invalid_direction": "East",
+        "expected_invalid_direction_index": 1,
+        "direction_mask_matches_expectation": true
+    },
+    "coordinate_mapping_note": "GridPosition(X,Y) uses X->world.x and Y->world.z. Visual Y is not flipped in this scene.",
+    "classification": "STAGE6B3S_PASS_STATIC_SCENE_READY",
+    "stage6b3h_ready": true
+}

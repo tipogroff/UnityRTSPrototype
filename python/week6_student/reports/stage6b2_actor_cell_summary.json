@@ -1,0 +1,12 @@
+﻿{
+    "generated_at_utc": "2026-05-06T20:39:44.3152677Z",
+    "actor_cells_detected": 2,
+    "actor_cell_predicted_noop_count": 1,
+    "actor_cell_predicted_non_noop_count": 1,
+    "actor_cell_command_built_count": 0,
+    "actor_cell_command_not_built_count": 2,
+    "unit_type_prediction_histogram": [
+        "Base:1",
+        "Worker:1"
+    ]
+}

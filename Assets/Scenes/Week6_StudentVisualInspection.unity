@@ -832,9 +832,11 @@ MonoBehaviour:
   _maxDecisionRequestsPerEpisode: 200
   _pythonExecutableRelativePath: .venv/Scripts/python.exe
   _bridgeScriptRelativePath: python/week6_student/student_inference_server.py
-  _checkpointRelativePath: python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt
-  _artifactDirectoryRelativePath: python/week6_student/tmp/day5_sanity
-  _artifactFilePrefix: day5_sanity
+  _checkpointRelativePath: python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt
+  _enableLegalActionMaskForSelection: 0
+  _enableDynamicOccupancyMoveMaskEnrichment: 1
+  _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
+  _artifactFilePrefix: stage6b2
   _artifactRingSlots: 4
   _cleanupTempArtifactsOnReset: 1
   _device: cpu
@@ -899,14 +901,14 @@ MonoBehaviour:
   _cameraTiltDegrees: 90
   _orthographicPadding: 1.5
   _manualStepMode: 1
-  _autoVisualPlaybackOnPlay: 0
-  _autoVisualPlaybackMaxSteps: 100
-  _autoVisualPlaybackStepIntervalSeconds: 0.35
+  _autoVisualPlaybackOnPlay: 1
+  _autoVisualPlaybackMaxSteps: 80
+  _autoVisualPlaybackStepIntervalSeconds: 0.1
   _applyBaseVisualScaleOverrideInInspection: 1
   _baseVisualCellScale: 0.85
-  _jsonReportRelativePath: python/week6_student/tmp/week6_visual/week6_visual_episode_diagnostics.json
-  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/reports
-  _stepSnapshotFilePrefix: stage10r_noop_collapse_snapshot_step
+  _jsonReportRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy/stage6b2_episode_diagnostics.json
+  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
+  _stepSnapshotFilePrefix: stage6b2_snapshot_step
 --- !u!4 &2051000303
 Transform:
   m_ObjectHideFlags: 0
