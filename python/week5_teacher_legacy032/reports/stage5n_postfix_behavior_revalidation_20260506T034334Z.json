@@ -1,0 +1,2630 @@
+{
+  "timestamp_utc": "2026-05-06T03:43:34Z",
+  "status": "OK",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_3m_from_1m_postfix\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_3m_from_1m_postfix\\model_metadata.json",
+  "step_mode": "training_compatible",
+  "strict_load": {
+    "strict_load": true,
+    "checkpoint_format": "weights_only_state_dict",
+    "strict_load_status": "STRICT_LOAD_ENFORCED",
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "allowed_unexpected_keys_policy": "critic.* may be ignored by loader before reporting"
+  },
+  "contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "mask_source": "env.vec_client.getMasks(0)",
+    "step_mode": "training_compatible",
+    "java_payload_used": true,
+    "build_report": {
+      "architecture": "legacy032_resolution_aware_gridnet_v1",
+      "mapsize": 576,
+      "obs_shape": [
+        24,
+        24,
+        27
+      ],
+      "nvec": [
+        576,
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "fallback_architecture_used": false
+    }
+  },
+  "evaluation_matrix": {
+    "deterministic_seed17": {
+      "mode": "deterministic",
+      "seed": 17,
+      "episodes_requested": 8,
+      "max_steps_per_episode": 6000,
+      "episodes": [
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 0,
+          "steps": 6000,
+          "total_reward": 194.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            95.0,
+            33.0,
+            1.0,
+            38.0,
+            7.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 4339,
+          "obs_changed_share": 0.7231666666666666,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20650868,
+            "move": 70638,
+            "harvest": 606,
+            "return": 580,
+            "produce": 12468,
+            "attack": 840
+          },
+          "action_type_counts_source_valid": {
+            "noop": 214537,
+            "move": 70638,
+            "harvest": 606,
+            "return": 580,
+            "produce": 12468,
+            "attack": 840
+          },
+          "source_valid_non_noop_count": 85132,
+          "source_valid_non_noop_share": 0.2840867757425693,
+          "source_valid_action_type_shares": {
+            "noop": 0.7159132242574306,
+            "move": 0.23572007781919385,
+            "harvest": 0.002022231195085244,
+            "return": 0.0019354688005766363,
+            "produce": 0.041605905182050866,
+            "attack": 0.0028030927456627144
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 1,
+          "steps": 6000,
+          "total_reward": 226.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            99.0,
+            35.0,
+            1.0,
+            64.0,
+            7.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 4973,
+          "obs_changed_share": 0.8288333333333333,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20664072,
+            "move": 57112,
+            "harvest": 608,
+            "return": 582,
+            "produce": 12771,
+            "attack": 855
+          },
+          "action_type_counts_source_valid": {
+            "noop": 213935,
+            "move": 57112,
+            "harvest": 608,
+            "return": 582,
+            "produce": 12771,
+            "attack": 855
+          },
+          "source_valid_non_noop_count": 71928,
+          "source_valid_non_noop_share": 0.2516170333341496,
+          "source_valid_action_type_shares": {
+            "noop": 0.7483829666658505,
+            "move": 0.19978801034061772,
+            "harvest": 0.00212689295221837,
+            "return": 0.0020359402930774533,
+            "produce": 0.04467524653417896,
+            "attack": 0.0029909432140570835
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 2,
+          "steps": 4805,
+          "total_reward": 221.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            100.0,
+            33.0,
+            1.0,
+            46.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 3580,
+          "obs_changed_share": 0.745057232049948,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 16550340,
+            "move": 42693,
+            "harvest": 543,
+            "return": 526,
+            "produce": 11200,
+            "attack": 778
+          },
+          "action_type_counts_source_valid": {
+            "noop": 175815,
+            "move": 42693,
+            "harvest": 543,
+            "return": 526,
+            "produce": 11200,
+            "attack": 778
+          },
+          "source_valid_non_noop_count": 55740,
+          "source_valid_non_noop_share": 0.24072034721772365,
+          "source_valid_action_type_shares": {
+            "noop": 0.7592796527822764,
+            "move": 0.18437520243570643,
+            "harvest": 0.002345015223165123,
+            "return": 0.0022715985403035997,
+            "produce": 0.048368638120532916,
+            "attack": 0.0033598928980155904
+          },
+          "java_payload_used_count": 4805,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 3,
+          "steps": 6000,
+          "total_reward": 235.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            99.0,
+            33.0,
+            1.0,
+            71.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 4563,
+          "obs_changed_share": 0.7605,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20658523,
+            "move": 61909,
+            "harvest": 651,
+            "return": 622,
+            "produce": 13463,
+            "attack": 832
+          },
+          "action_type_counts_source_valid": {
+            "noop": 206362,
+            "move": 61909,
+            "harvest": 651,
+            "return": 622,
+            "produce": 13463,
+            "attack": 832
+          },
+          "source_valid_non_noop_count": 77477,
+          "source_valid_non_noop_share": 0.27296108004890096,
+          "source_valid_action_type_shares": {
+            "noop": 0.727038919951099,
+            "move": 0.21811308523493952,
+            "harvest": 0.002293553739972308,
+            "return": 0.0021913831432607924,
+            "produce": 0.04743181874231519,
+            "attack": 0.0029312391884131496
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 4,
+          "steps": 6000,
+          "total_reward": 215.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            95.0,
+            29.0,
+            1.0,
+            55.0,
+            9.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 5312,
+          "obs_changed_share": 0.8853333333333333,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20656691,
+            "move": 63833,
+            "harvest": 647,
+            "return": 617,
+            "produce": 13356,
+            "attack": 856
+          },
+          "action_type_counts_source_valid": {
+            "noop": 193308,
+            "move": 63833,
+            "harvest": 647,
+            "return": 617,
+            "produce": 13356,
+            "attack": 856
+          },
+          "source_valid_non_noop_count": 79309,
+          "source_valid_non_noop_share": 0.29091729422596535,
+          "source_valid_action_type_shares": {
+            "noop": 0.7090827057740346,
+            "move": 0.2341490075820657,
+            "harvest": 0.002373292934776628,
+            "return": 0.002263248440119288,
+            "produce": 0.048991809021447674,
+            "attack": 0.0031399362475560953
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 5,
+          "steps": 6000,
+          "total_reward": 199.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            99.0,
+            33.0,
+            1.0,
+            35.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 5006,
+          "obs_changed_share": 0.8343333333333334,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20665249,
+            "move": 55157,
+            "harvest": 652,
+            "return": 623,
+            "produce": 13484,
+            "attack": 835
+          },
+          "action_type_counts_source_valid": {
+            "noop": 214202,
+            "move": 55157,
+            "harvest": 652,
+            "return": 623,
+            "produce": 13484,
+            "attack": 835
+          },
+          "source_valid_non_noop_count": 70751,
+          "source_valid_non_noop_share": 0.24829006888855354,
+          "source_valid_action_type_shares": {
+            "noop": 0.7517099311114465,
+            "move": 0.1935652546209375,
+            "harvest": 0.0022880966334799073,
+            "return": 0.0021863254641993593,
+            "produce": 0.04732008436478998,
+            "attack": 0.002930307805146814
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 6,
+          "steps": 6000,
+          "total_reward": 219.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            0.0,
+            99.0,
+            33.0,
+            1.0,
+            55.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 5313,
+          "obs_changed_share": 0.8855,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20658732,
+            "move": 62075,
+            "harvest": 654,
+            "return": 622,
+            "produce": 13061,
+            "attack": 856
+          },
+          "action_type_counts_source_valid": {
+            "noop": 203271,
+            "move": 62075,
+            "harvest": 654,
+            "return": 622,
+            "produce": 13061,
+            "attack": 856
+          },
+          "source_valid_non_noop_count": 77268,
+          "source_valid_non_noop_share": 0.27542694598611955,
+          "source_valid_action_type_shares": {
+            "noop": 0.7245730540138804,
+            "move": 0.22127048289186174,
+            "harvest": 0.002331226674366131,
+            "return": 0.0022171605373940877,
+            "produce": 0.04655680671849547,
+            "attack": 0.003051269164002153
+          },
+          "java_payload_used_count": 6000,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "deterministic",
+          "seed": 17,
+          "episode_index": 7,
+          "steps": 5985,
+          "total_reward": 224.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            99.0,
+            33.0,
+            1.0,
+            50.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 5332,
+          "obs_changed_share": 0.8908939014202172,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 3444,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 20609111,
+            "move": 59166,
+            "harvest": 645,
+            "return": 619,
+            "produce": 13779,
+            "attack": 840
+          },
+          "action_type_counts_source_valid": {
+            "noop": 208907,
+            "move": 59166,
+            "harvest": 645,
+            "return": 619,
+            "produce": 13779,
+            "attack": 840
+          },
+          "source_valid_non_noop_count": 75049,
+          "source_valid_non_noop_share": 0.26429798982941016,
+          "source_valid_action_type_shares": {
+            "noop": 0.7357020101705898,
+            "move": 0.20836326754849344,
+            "harvest": 0.002271478679795461,
+            "return": 0.0021799151981292874,
+            "produce": 0.04852512361070025,
+            "attack": 0.0029582047922917633
+          },
+          "java_payload_used_count": 5985,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        }
+      ],
+      "env_step_errors": [],
+      "mask_source": "env.vec_client.getMasks(0)",
+      "java_payload_used": true
+    },
+    "stochastic_seed17": {
+      "mode": "stochastic",
+      "seed": 17,
+      "episodes_requested": 8,
+      "max_steps_per_episode": 6000,
+      "episodes": [
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 0,
+          "steps": 2377,
+          "total_reward": 208.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            99.0,
+            32.0,
+            1.0,
+            35.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2107,
+          "obs_changed_share": 0.8864114429953723,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 597,
+              "1": 584,
+              "2": 589,
+              "3": 547,
+              "4": 572,
+              "5": 567
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1385660,
+            "move": 1386123,
+            "harvest": 1357873,
+            "return": 1361854,
+            "produce": 1363318,
+            "attack": 1360084
+          },
+          "action_type_counts_source_valid": {
+            "noop": 25984,
+            "move": 25010,
+            "harvest": 330,
+            "return": 313,
+            "produce": 2262,
+            "attack": 358
+          },
+          "source_valid_non_noop_count": 28273,
+          "source_valid_non_noop_share": 0.521094052380338,
+          "source_valid_action_type_shares": {
+            "noop": 0.478905947619662,
+            "move": 0.4609543469045469,
+            "harvest": 0.006082164513334685,
+            "return": 0.005768840886890171,
+            "produce": 0.04169047311867593,
+            "attack": 0.006598226956890356
+          },
+          "java_payload_used_count": 2377,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 1,
+          "steps": 2699,
+          "total_reward": 230.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            103.0,
+            32.0,
+            1.0,
+            49.0,
+            9.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2438,
+          "obs_changed_share": 0.9032975175991108,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 11,
+            "action_type_histogram_source_valid": {
+              "0": 1,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 5,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 614,
+              "1": 552,
+              "2": 612,
+              "3": 544,
+              "4": 582,
+              "5": 552
+            },
+            "source_valid_action_type_counts": {
+              "0": 1,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 5,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1573560,
+            "move": 1571864,
+            "harvest": 1545192,
+            "return": 1546188,
+            "produce": 1545213,
+            "attack": 1545727
+          },
+          "action_type_counts_source_valid": {
+            "noop": 27105,
+            "move": 26818,
+            "harvest": 398,
+            "return": 376,
+            "produce": 2785,
+            "attack": 404
+          },
+          "source_valid_non_noop_count": 30781,
+          "source_valid_non_noop_share": 0.5317520644024462,
+          "source_valid_action_type_shares": {
+            "noop": 0.4682479355975538,
+            "move": 0.46328991465984865,
+            "harvest": 0.006875583042531873,
+            "return": 0.006495525688422071,
+            "produce": 0.04811180596344539,
+            "attack": 0.006979235048198183
+          },
+          "java_payload_used_count": 2699,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 2,
+          "steps": 4770,
+          "total_reward": 220.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            109.0,
+            37.0,
+            1.0,
+            40.0,
+            6.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 4480,
+          "obs_changed_share": 0.939203354297694,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 595,
+              "1": 560,
+              "2": 544,
+              "3": 569,
+              "4": 601,
+              "5": 587
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 2781582,
+            "move": 2782942,
+            "harvest": 2729271,
+            "return": 2730786,
+            "produce": 2731645,
+            "attack": 2728894
+          },
+          "action_type_counts_source_valid": {
+            "noop": 56114,
+            "move": 52690,
+            "harvest": 592,
+            "return": 545,
+            "produce": 3565,
+            "attack": 677
+          },
+          "source_valid_non_noop_count": 58069,
+          "source_valid_non_noop_share": 0.5085608190361087,
+          "source_valid_action_type_shares": {
+            "noop": 0.4914391809638913,
+            "move": 0.46145223019188497,
+            "harvest": 0.0051846597129169844,
+            "return": 0.004773039769492832,
+            "produce": 0.0312218106022788,
+            "attack": 0.005929078759535132
+          },
+          "java_payload_used_count": 4770,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 3,
+          "steps": 3049,
+          "total_reward": 218.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            102.0,
+            33.0,
+            1.0,
+            41.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2729,
+          "obs_changed_share": 0.8950475565759265,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 605,
+              "1": 546,
+              "2": 563,
+              "3": 566,
+              "4": 614,
+              "5": 562
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1780534,
+            "move": 1778387,
+            "harvest": 1745290,
+            "return": 1743338,
+            "produce": 1745886,
+            "attack": 1743909
+          },
+          "action_type_counts_source_valid": {
+            "noop": 37318,
+            "move": 32458,
+            "harvest": 402,
+            "return": 375,
+            "produce": 3535,
+            "attack": 501
+          },
+          "source_valid_non_noop_count": 37271,
+          "source_valid_non_noop_share": 0.49968494013862635,
+          "source_valid_action_type_shares": {
+            "noop": 0.5003150598613737,
+            "move": 0.43515799916877823,
+            "harvest": 0.00538953464988135,
+            "return": 0.005027550979366931,
+            "produce": 0.0473930472321656,
+            "attack": 0.006716808108434219
+          },
+          "java_payload_used_count": 3049,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 4,
+          "steps": 1401,
+          "total_reward": 164.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            86.0,
+            26.0,
+            1.0,
+            10.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1100,
+          "obs_changed_share": 0.7851534618129907,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 535,
+              "1": 610,
+              "2": 567,
+              "3": 571,
+              "4": 585,
+              "5": 588
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 809356,
+            "move": 813503,
+            "harvest": 804650,
+            "return": 805094,
+            "produce": 805979,
+            "attack": 803274
+          },
+          "action_type_counts_source_valid": {
+            "noop": 6577,
+            "move": 9860,
+            "harvest": 270,
+            "return": 253,
+            "produce": 1793,
+            "attack": 168
+          },
+          "source_valid_non_noop_count": 12344,
+          "source_valid_non_noop_share": 0.6523968077797156,
+          "source_valid_action_type_shares": {
+            "noop": 0.34760319222028435,
+            "move": 0.5211141060197664,
+            "harvest": 0.014269858886951007,
+            "return": 0.013371386290365203,
+            "produce": 0.09476243327519687,
+            "attack": 0.008879023307436182
+          },
+          "java_payload_used_count": 1401,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 5,
+          "steps": 3611,
+          "total_reward": 214.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            105.0,
+            34.0,
+            1.0,
+            37.0,
+            7.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 3306,
+          "obs_changed_share": 0.9155358626419274,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 594,
+              "1": 526,
+              "2": 606,
+              "3": 580,
+              "4": 587,
+              "5": 563
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 2100931,
+            "move": 2103957,
+            "harvest": 2069222,
+            "return": 2067382,
+            "produce": 2070197,
+            "attack": 2067927
+          },
+          "action_type_counts_source_valid": {
+            "noop": 37818,
+            "move": 37796,
+            "harvest": 532,
+            "return": 489,
+            "produce": 3662,
+            "attack": 586
+          },
+          "source_valid_non_noop_count": 43065,
+          "source_valid_non_noop_share": 0.5324357405140759,
+          "source_valid_action_type_shares": {
+            "noop": 0.4675642594859241,
+            "move": 0.4672922616619067,
+            "harvest": 0.006577401926239136,
+            "return": 0.0060457698156596565,
+            "produce": 0.04527527416144307,
+            "attack": 0.007245032948827318
+          },
+          "java_payload_used_count": 3611,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 6,
+          "steps": 2758,
+          "total_reward": 216.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            102.0,
+            34.0,
+            1.0,
+            38.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2503,
+          "obs_changed_share": 0.9075416968817984,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 630,
+              "1": 548,
+              "2": 595,
+              "3": 569,
+              "4": 550,
+              "5": 564
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1610420,
+            "move": 1607927,
+            "harvest": 1577879,
+            "return": 1578227,
+            "produce": 1580030,
+            "attack": 1577165
+          },
+          "action_type_counts_source_valid": {
+            "noop": 31911,
+            "move": 29908,
+            "harvest": 359,
+            "return": 338,
+            "produce": 1967,
+            "attack": 443
+          },
+          "source_valid_non_noop_count": 33015,
+          "source_valid_non_noop_share": 0.508501986877368,
+          "source_valid_action_type_shares": {
+            "noop": 0.4914980131226319,
+            "move": 0.4606475063918923,
+            "harvest": 0.005529371900317284,
+            "return": 0.005205926747373933,
+            "produce": 0.030296029325693866,
+            "attack": 0.006823152512090688
+          },
+          "java_payload_used_count": 2758,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 17,
+          "episode_index": 7,
+          "steps": 3625,
+          "total_reward": 221.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            103.0,
+            30.0,
+            1.0,
+            42.0,
+            9.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 3347,
+          "obs_changed_share": 0.9233103448275862,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 550,
+              "1": 587,
+              "2": 610,
+              "3": 579,
+              "4": 576,
+              "5": 554
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 2113515,
+            "move": 2113680,
+            "harvest": 2074513,
+            "return": 2076014,
+            "produce": 2076554,
+            "attack": 2073724
+          },
+          "action_type_counts_source_valid": {
+            "noop": 40521,
+            "move": 39163,
+            "harvest": 511,
+            "return": 478,
+            "produce": 3618,
+            "attack": 610
+          },
+          "source_valid_non_noop_count": 44380,
+          "source_valid_non_noop_share": 0.5227264696528898,
+          "source_valid_action_type_shares": {
+            "noop": 0.4772735303471102,
+            "move": 0.46127843017161163,
+            "harvest": 0.006018774808306144,
+            "return": 0.005630086806986961,
+            "produce": 0.042614339053721396,
+            "attack": 0.007184838812263695
+          },
+          "java_payload_used_count": 3625,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        }
+      ],
+      "env_step_errors": [],
+      "mask_source": "env.vec_client.getMasks(0)",
+      "java_payload_used": true
+    },
+    "stochastic_seed123": {
+      "mode": "stochastic",
+      "seed": 123,
+      "episodes_requested": 8,
+      "max_steps_per_episode": 6000,
+      "episodes": [
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 0,
+          "steps": 1934,
+          "total_reward": 190.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            95.0,
+            34.0,
+            1.0,
+            27.0,
+            6.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1673,
+          "obs_changed_share": 0.8650465356773527,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 547,
+              "1": 571,
+              "2": 615,
+              "3": 558,
+              "4": 579,
+              "5": 586
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1123595,
+            "move": 1127057,
+            "harvest": 1106603,
+            "return": 1108567,
+            "produce": 1110539,
+            "attack": 1107543
+          },
+          "action_type_counts_source_valid": {
+            "noop": 17085,
+            "move": 18516,
+            "harvest": 300,
+            "return": 287,
+            "produce": 2179,
+            "attack": 354
+          },
+          "source_valid_non_noop_count": 21636,
+          "source_valid_non_noop_share": 0.5587665607809715,
+          "source_valid_action_type_shares": {
+            "noop": 0.4412334392190284,
+            "move": 0.4781901293871543,
+            "harvest": 0.007747733787867049,
+            "return": 0.007411998657059477,
+            "produce": 0.056274373079207664,
+            "attack": 0.009142325869683117
+          },
+          "java_payload_used_count": 1934,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 1,
+          "steps": 2246,
+          "total_reward": 213.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            103.0,
+            36.0,
+            1.0,
+            40.0,
+            6.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1980,
+          "obs_changed_share": 0.8815672306322351,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 596,
+              "1": 584,
+              "2": 565,
+              "3": 562,
+              "4": 589,
+              "5": 560
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1309443,
+            "move": 1306400,
+            "harvest": 1285265,
+            "return": 1287534,
+            "produce": 1287298,
+            "attack": 1286236
+          },
+          "action_type_counts_source_valid": {
+            "noop": 21732,
+            "move": 21980,
+            "harvest": 343,
+            "return": 317,
+            "produce": 2192,
+            "attack": 367
+          },
+          "source_valid_non_noop_count": 25199,
+          "source_valid_non_noop_share": 0.5369372056849417,
+          "source_valid_action_type_shares": {
+            "noop": 0.46306279431505826,
+            "move": 0.4683471479405936,
+            "harvest": 0.007308601990155761,
+            "return": 0.00675459717457544,
+            "produce": 0.046706867528925444,
+            "attack": 0.00781999105069144
+          },
+          "java_payload_used_count": 2246,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 2,
+          "steps": 1919,
+          "total_reward": 193.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            100.0,
+            32.0,
+            1.0,
+            15.0,
+            9.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1608,
+          "obs_changed_share": 0.8379364252214695,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 615,
+              "1": 579,
+              "2": 519,
+              "3": 587,
+              "4": 573,
+              "5": 583
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1117238,
+            "move": 1118928,
+            "harvest": 1098423,
+            "return": 1098814,
+            "produce": 1099409,
+            "attack": 1099252
+          },
+          "action_type_counts_source_valid": {
+            "noop": 18231,
+            "move": 18777,
+            "harvest": 301,
+            "return": 290,
+            "produce": 2495,
+            "attack": 278
+          },
+          "source_valid_non_noop_count": 22141,
+          "source_valid_non_noop_share": 0.5484246507480433,
+          "source_valid_action_type_shares": {
+            "noop": 0.4515753492519568,
+            "move": 0.465099573962152,
+            "harvest": 0.007455662340235807,
+            "return": 0.007183196274645794,
+            "produce": 0.06180025760428019,
+            "attack": 0.006885960566729416
+          },
+          "java_payload_used_count": 1919,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 3,
+          "steps": 3197,
+          "total_reward": 207.4,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            102.0,
+            32.0,
+            2.0,
+            39.0,
+            6.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2861,
+          "obs_changed_share": 0.8949014701282453,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 540,
+              "1": 590,
+              "2": 538,
+              "3": 601,
+              "4": 597,
+              "5": 590
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1865737,
+            "move": 1862284,
+            "harvest": 1829468,
+            "return": 1830340,
+            "produce": 1832252,
+            "attack": 1828751
+          },
+          "action_type_counts_source_valid": {
+            "noop": 40097,
+            "move": 33299,
+            "harvest": 406,
+            "return": 390,
+            "produce": 3503,
+            "attack": 481
+          },
+          "source_valid_non_noop_count": 38079,
+          "source_valid_non_noop_share": 0.48709322554236595,
+          "source_valid_action_type_shares": {
+            "noop": 0.5129067744576341,
+            "move": 0.4259491404011461,
+            "harvest": 0.005193409742120344,
+            "return": 0.004988743348342202,
+            "produce": 0.044809148587801884,
+            "attack": 0.006152783462955383
+          },
+          "java_payload_used_count": 3197,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 4,
+          "steps": 2143,
+          "total_reward": 203.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            100.0,
+            32.0,
+            1.0,
+            29.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1902,
+          "obs_changed_share": 0.8875408306112926,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 617,
+              "1": 566,
+              "2": 569,
+              "3": 520,
+              "4": 579,
+              "5": 605
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1242490,
+            "move": 1249804,
+            "harvest": 1229368,
+            "return": 1227971,
+            "produce": 1229274,
+            "attack": 1227301
+          },
+          "action_type_counts_source_valid": {
+            "noop": 16167,
+            "move": 18807,
+            "harvest": 360,
+            "return": 327,
+            "produce": 2610,
+            "attack": 317
+          },
+          "source_valid_non_noop_count": 22421,
+          "source_valid_non_noop_share": 0.5810355550948482,
+          "source_valid_action_type_shares": {
+            "noop": 0.41896444490515183,
+            "move": 0.48737949621644033,
+            "harvest": 0.009329325178812065,
+            "return": 0.00847413703742096,
+            "produce": 0.06763760754638748,
+            "attack": 0.008214989115787292
+          },
+          "java_payload_used_count": 2143,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 5,
+          "steps": 2132,
+          "total_reward": 199.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            99.0,
+            33.0,
+            1.0,
+            25.0,
+            8.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1865,
+          "obs_changed_share": 0.874765478424015,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 576,
+              "1": 564,
+              "2": 570,
+              "3": 588,
+              "4": 592,
+              "5": 566
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1242615,
+            "move": 1243670,
+            "harvest": 1220048,
+            "return": 1219630,
+            "produce": 1221223,
+            "attack": 1221006
+          },
+          "action_type_counts_source_valid": {
+            "noop": 22915,
+            "move": 23592,
+            "harvest": 310,
+            "return": 298,
+            "produce": 2192,
+            "attack": 375
+          },
+          "source_valid_non_noop_count": 26767,
+          "source_valid_non_noop_share": 0.538766555291655,
+          "source_valid_action_type_shares": {
+            "noop": 0.4612334447083451,
+            "move": 0.47486011030151765,
+            "harvest": 0.0062396843927378124,
+            "return": 0.005998148222696348,
+            "produce": 0.04412060706090737,
+            "attack": 0.007548005313795741
+          },
+          "java_payload_used_count": 2132,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 6,
+          "steps": 2275,
+          "total_reward": 197.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            102.0,
+            35.0,
+            1.0,
+            22.0,
+            7.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 1966,
+          "obs_changed_share": 0.8641758241758242,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 566,
+              "1": 564,
+              "2": 572,
+              "3": 565,
+              "4": 598,
+              "5": 591
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1322240,
+            "move": 1324761,
+            "harvest": 1304304,
+            "return": 1303639,
+            "produce": 1304810,
+            "attack": 1302646
+          },
+          "action_type_counts_source_valid": {
+            "noop": 21444,
+            "move": 22216,
+            "harvest": 351,
+            "return": 321,
+            "produce": 2466,
+            "attack": 352
+          },
+          "source_valid_non_noop_count": 25706,
+          "source_valid_non_noop_share": 0.5451961823966066,
+          "source_valid_action_type_shares": {
+            "noop": 0.45480381760339345,
+            "move": 0.47117709437963945,
+            "harvest": 0.007444326617179215,
+            "return": 0.006808059384941676,
+            "produce": 0.05230116648992577,
+            "attack": 0.007465535524920466
+          },
+          "java_payload_used_count": 2275,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        },
+        {
+          "mode": "stochastic",
+          "seed": 123,
+          "episode_index": 7,
+          "steps": 2634,
+          "total_reward": 219.2,
+          "done": true,
+          "terminal_info_keys": [
+            "raw_rewards"
+          ],
+          "raw_rewards_sum": [
+            1.0,
+            104.0,
+            36.0,
+            1.0,
+            41.0,
+            7.0
+          ],
+          "outcome": "win",
+          "terminal_reason": "env_done",
+          "total_obs_changed_steps": 2374,
+          "obs_changed_share": 0.9012908124525436,
+          "first_step": {
+            "mask_source": "env.vec_client.getMasks(0)",
+            "source_valid_total": 12,
+            "source_valid_non_noop_count": 12,
+            "action_type_histogram_source_valid": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            },
+            "valid_actions_counts": [
+              2,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "all_cell_action_type_counts": {
+              "0": 571,
+              "1": 563,
+              "2": 580,
+              "3": 578,
+              "4": 588,
+              "5": 576
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 6,
+              "3": 0,
+              "4": 6,
+              "5": 0
+            }
+          },
+          "action_type_counts_all_cells": {
+            "noop": 1538254,
+            "move": 1534517,
+            "harvest": 1508181,
+            "return": 1506927,
+            "produce": 1510040,
+            "attack": 1505185
+          },
+          "action_type_counts_source_valid": {
+            "noop": 33919,
+            "move": 29031,
+            "harvest": 330,
+            "return": 312,
+            "produce": 2796,
+            "attack": 438
+          },
+          "source_valid_non_noop_count": 32907,
+          "source_valid_non_noop_share": 0.492428096848532,
+          "source_valid_action_type_shares": {
+            "noop": 0.5075719031514679,
+            "move": 0.4344267201388681,
+            "harvest": 0.004938197707479125,
+            "return": 0.004668841468889354,
+            "produce": 0.041840002394277674,
+            "attack": 0.0065543351390177475
+          },
+          "java_payload_used_count": 2634,
+          "java_payload_used_share": 1.0,
+          "env_step_error_count": 0,
+          "branch_names": [
+            "action_type",
+            "move_dir",
+            "harvest_dir",
+            "return_dir",
+            "produce_dir",
+            "produce_unit_type",
+            "attack_target"
+          ]
+        }
+      ],
+      "env_step_errors": [],
+      "mask_source": "env.vec_client.getMasks(0)",
+      "java_payload_used": true
+    }
+  },
+  "aggregates": {
+    "deterministic_seed17": {
+      "mode": "deterministic",
+      "seed": 17,
+      "episodes_completed": 8,
+      "mean_reward": 216.825,
+      "median_reward": 220.2,
+      "min_reward": 194.2,
+      "max_reward": 235.2,
+      "mean_episode_length": 5848.75,
+      "max_episode_length": 6000,
+      "mean_obs_changed_steps": 4802.25,
+      "mean_obs_changed_share": 0.819202225017104,
+      "win_count": 8,
+      "loss_count": 0,
+      "draw_count": 0,
+      "win_rate": 1.0,
+      "mean_source_valid_non_noop_share": 0.26603969190917404,
+      "mean_source_valid_action_type_shares": {
+        "noop": 0.7333979309857754,
+        "move": 0.21258880490294382,
+        "harvest": 0.0022519209479480574,
+        "return": 0.0021552044070353863,
+        "produce": 0.046595780189843325,
+        "attack": 0.0030103585664539353
+      },
+      "terminal_counts": {
+        "env_done": 8
+      },
+      "mean_raw_rewards_components": [
+        0.25,
+        98.125,
+        32.75,
+        1.0,
+        51.75,
+        7.875
+      ],
+      "action_type_counts_all_cells": {
+        "noop": 161113586,
+        "move": 472583,
+        "harvest": 5006,
+        "return": 4791,
+        "produce": 103582,
+        "attack": 6692
+      },
+      "action_type_counts_source_valid": {
+        "noop": 1630337,
+        "move": 472583,
+        "harvest": 5006,
+        "return": 4791,
+        "produce": 103582,
+        "attack": 6692
+      },
+      "env_step_error_count": 0,
+      "mask_source": "env.vec_client.getMasks(0)"
+    },
+    "stochastic_seed17": {
+      "mode": "stochastic",
+      "seed": 17,
+      "episodes_completed": 8,
+      "mean_reward": 211.575,
+      "median_reward": 217.2,
+      "min_reward": 164.2,
+      "max_reward": 230.2,
+      "mean_episode_length": 3036.25,
+      "max_episode_length": 4770,
+      "mean_obs_changed_steps": 2751.25,
+      "mean_obs_changed_share": 0.8944376547040508,
+      "win_count": 8,
+      "loss_count": 0,
+      "draw_count": 0,
+      "win_rate": 1.0,
+      "mean_source_valid_non_noop_share": 0.5346441100976961,
+      "mean_source_valid_action_type_shares": {
+        "noop": 0.4783396846040113,
+        "move": 0.46082071252901663,
+        "harvest": 0.0061647891366025725,
+        "return": 0.005752471183152725,
+        "produce": 0.042116371747319935,
+        "attack": 0.00680597079989683
+      },
+      "terminal_counts": {
+        "env_done": 8
+      },
+      "mean_raw_rewards_components": [
+        1.0,
+        101.125,
+        32.25,
+        1.0,
+        36.5,
+        7.875
+      ],
+      "action_type_counts_all_cells": {
+        "noop": 14155558,
+        "move": 14158383,
+        "harvest": 13903890,
+        "return": 13908883,
+        "produce": 13918822,
+        "attack": 13900704
+      },
+      "action_type_counts_source_valid": {
+        "noop": 263348,
+        "move": 253703,
+        "harvest": 3394,
+        "return": 3167,
+        "produce": 23187,
+        "attack": 3747
+      },
+      "env_step_error_count": 0,
+      "mask_source": "env.vec_client.getMasks(0)"
+    },
+    "stochastic_seed123": {
+      "mode": "stochastic",
+      "seed": 123,
+      "episodes_completed": 8,
+      "mean_reward": 202.85,
+      "median_reward": 201.2,
+      "min_reward": 190.2,
+      "max_reward": 219.2,
+      "mean_episode_length": 2310.0,
+      "max_episode_length": 3197,
+      "mean_obs_changed_steps": 2028.625,
+      "mean_obs_changed_share": 0.8759030759153723,
+      "win_count": 8,
+      "loss_count": 0,
+      "draw_count": 0,
+      "win_rate": 1.0,
+      "mean_source_valid_non_noop_share": 0.5360810040484956,
+      "mean_source_valid_action_type_shares": {
+        "noop": 0.47137873173804146,
+        "move": 0.45816172382063053,
+        "harvest": 0.00664540923025445,
+        "return": 0.006254213351835176,
+        "produce": 0.05027236090403153,
+        "attack": 0.007287560955206842
+      },
+      "terminal_counts": {
+        "env_done": 8
+      },
+      "mean_raw_rewards_components": [
+        1.0,
+        100.625,
+        33.75,
+        1.125,
+        29.75,
+        7.125
+      ],
+      "action_type_counts_all_cells": {
+        "noop": 10761612,
+        "move": 10767421,
+        "harvest": 10581660,
+        "return": 10583422,
+        "produce": 10594845,
+        "attack": 10577920
+      },
+      "action_type_counts_source_valid": {
+        "noop": 191590,
+        "move": 186218,
+        "harvest": 2701,
+        "return": 2542,
+        "produce": 20433,
+        "attack": 2962
+      },
+      "env_step_error_count": 0,
+      "mask_source": "env.vec_client.getMasks(0)"
+    }
+  },
+  "decision": {
+    "classification": "STAGE5N_1M_BEHAVIOR_METRICS_PASS",
+    "recommendation": "1M checkpoint is a valid post-fix teacher candidate. You may export rollouts now; 2M/3M remains optional for stronger teacher quality.",
+    "comparison": {
+      "is_stochastic_better_than_deterministic": false,
+      "deterministic_still_weaker_or_stranger": false,
+      "deterministic_mean_reward": 216.825,
+      "stochastic_mean_reward_across_seeds": 207.21249999999998
+    },
+    "answers": {
+      "rollout_export_policy": "stochastic_or_deterministic",
+      "is_1m_valid_teacher_candidate": true,
+      "continue_to_2m_3m_before_bc": false,
+      "is_1m_good_enough_to_export_rollouts": true,
+      "is_1m_good_enough_to_continue_training": true
+    }
+  },
+  "warnings": [],
+  "errors": []
+}

@@ -1,0 +1,26 @@
+{
+  "timestamp_utc": "2026-05-05T18:32:31Z",
+  "status": "ERROR",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\model_metadata.json",
+  "checks": {
+    "A_canonical_import": {
+      "passed": true
+    },
+    "B_strict_load_1m": {
+      "passed": true,
+      "load_report": {
+        "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+        "checkpoint_format": "weights_only_state_dict",
+        "strict": true,
+        "strict_load_status": "STRICT_LOAD_ENFORCED",
+        "missing_keys": [],
+        "unexpected_keys": []
+      }
+    }
+  },
+  "errors": [
+    "reset() got an unexpected keyword argument 'seed'"
+  ],
+  "classification": "STAGE5I_VALIDATION_FAILED"
+}

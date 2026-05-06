@@ -23,6 +23,7 @@ import random
 import os
 from datetime import datetime, timezone
 from stable_baselines3.common.vec_env import VecEnvWrapper, VecVideoRecorder
+from legacy032_policy_action import select_action_stochastic
 
 ARCHITECTURE_NAME = "legacy032_resolution_aware_gridnet_v1"
 FULL_CHECKPOINT_SCHEMA_VERSION = "legacy032.full_training_checkpoint.v1"
@@ -585,12 +586,27 @@ class Agent(nn.Module):
 
         if action is None:
             invalid_action_masks = torch.tensor(np.array(envs.vec_client.getMasks(0))).to(device)
+            invalid_action_masks_3d = invalid_action_masks.view(
+                -1,
+                self.mapsize,
+                int(envs.action_space.nvec[1:].sum()) + 1,
+            )
+            action = select_action_stochastic(
+                logits=logits,
+                nvec=envs.action_space.nvec.tolist(),
+                action_mask=invalid_action_masks_3d,
+            )
+            action = action.view(-1, action.shape[-1]).T
             invalid_action_masks = invalid_action_masks.view(-1, invalid_action_masks.shape[-1])
-            split_invalid_action_masks = torch.split(invalid_action_masks[:, 1:], envs.action_space.nvec[1:].tolist(),
-                                                     dim=1)
-            multi_categoricals = [CategoricalMasked(logits=logits, masks=iam) for (logits, iam) in
-                                  zip(split_logits, split_invalid_action_masks)]
-            action = torch.stack([categorical.sample() for categorical in multi_categoricals])
+            split_invalid_action_masks = torch.split(
+                invalid_action_masks[:, 1:],
+                envs.action_space.nvec[1:].tolist(),
+                dim=1,
+            )
+            multi_categoricals = [
+                CategoricalMasked(logits=logits, masks=iam)
+                for (logits, iam) in zip(split_logits, split_invalid_action_masks)
+            ]
         else:
             invalid_action_masks = invalid_action_masks.view(-1, invalid_action_masks.shape[-1])
             action = action.view(-1, action.shape[-1]).T

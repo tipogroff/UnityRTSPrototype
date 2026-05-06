@@ -1,0 +1,430 @@
+{
+  "timestamp_utc": "2026-05-05T18:55:54.126490+00:00",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_stage5k_fresh_mini_train\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_stage5k_fresh_mini_train\\model_metadata.json",
+  "steps_target": 16,
+  "modes": {
+    "deterministic": {
+      "steps_recorded": 16,
+      "obs_changed_steps": 1,
+      "any_obs_change": true,
+      "records": [
+        {
+          "step_id": 0,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": true,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 1,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 2,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 3,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 4,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 5,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 6,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 7,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 8,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 9,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 10,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 11,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 12,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 13,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 14,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 15,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "stochastic": {
+      "steps_recorded": 8,
+      "obs_changed_steps": 2,
+      "any_obs_change": true,
+      "records": [
+        {
+          "step_id": 0,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 1,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": true,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 1,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 2,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 3,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 3,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 3,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 4,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 1,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 5,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 4,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 6,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 2,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": false,
+          "reward": 0.0,
+          "done": false,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "step_id": 7,
+          "source_valid_total": 4,
+          "source_valid_non_noop_count": 2,
+          "effective_noop_candidate_count": 0,
+          "obs_changed": true,
+          "reward": 0.0,
+          "done": true,
+          "raw_rewards": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  }
+}

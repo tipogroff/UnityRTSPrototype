@@ -1,0 +1,243 @@
+{
+  "timestamp_utc": "2026-05-05T18:36:09Z",
+  "status": "OK",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+  "model_metadata_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\model_metadata.json",
+  "checks": {
+    "A_canonical_import": {
+      "passed": true
+    },
+    "B_strict_load_1m": {
+      "passed": true,
+      "load_report": {
+        "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_1m_20260504T231107Z\\stage_001000000\\agent_final.pt",
+        "checkpoint_format": "weights_only_state_dict",
+        "strict": true,
+        "strict_load_status": "STRICT_LOAD_ENFORCED",
+        "missing_keys": [],
+        "unexpected_keys": []
+      }
+    },
+    "C_fixed_obs_mask_inference": {
+      "passed": true,
+      "logits_shape": [
+        2,
+        24,
+        24,
+        78
+      ],
+      "mask_source": "env.vec_client.getMasks(0)"
+    },
+    "D_deterministic_shape": {
+      "passed": true,
+      "action_shape": [
+        2,
+        576,
+        7
+      ]
+    },
+    "E_format_env_action": {
+      "passed": true,
+      "dtype": "int32",
+      "shape": [
+        2,
+        576,
+        7
+      ],
+      "contiguous": true
+    },
+    "F_branch_bounds": {
+      "passed": true
+    },
+    "G_fresh_reload_parity": {
+      "passed": true,
+      "logits_max_abs_diff": 0.0,
+      "logits_mean_abs_diff": 0.0,
+      "action_tensor_equal": true
+    },
+    "H_wiring_old_scripts": {
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_legacy032.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_diagnostics.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      },
+      "python/week5_teacher_legacy032/scripts/evaluate_teacher_large_map_win_diagnostics.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      },
+      "python/week5_teacher_legacy032/scripts/export_teacher_rollout_legacy032.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_visual_single_episode.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      },
+      "python/week5_teacher_legacy032/scripts/run_legacy032_3m_visual_single_episode.py": {
+        "exists": true,
+        "imports_canonical": true,
+        "contains_stale_stage_003000000": false
+      }
+    },
+    "I_no_stale_3m_default": {
+      "passed": true,
+      "stale_files": []
+    },
+    "J_visual_smoke": {
+      "requested": true,
+      "deterministic": {
+        "ok": true,
+        "mode": "deterministic",
+        "steps": 16,
+        "total_reward": 0.0,
+        "first_step": {
+          "mask_source": "env.vec_client.getMasks(0)",
+          "summary": {
+            "all_cell_action_type_counts": {
+              "0": 1148,
+              "1": 0,
+              "2": 2,
+              "3": 0,
+              "4": 2,
+              "5": 0
+            },
+            "all_cell_action_type_shares": {
+              "0": 0.9965277777777778,
+              "1": 0.0,
+              "2": 0.001736111111111111,
+              "3": 0.0,
+              "4": 0.001736111111111111,
+              "5": 0.0
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 2,
+              "3": 0,
+              "4": 2,
+              "5": 0
+            },
+            "source_valid_action_type_shares": {
+              "0": 0.0,
+              "1": 0.0,
+              "2": 0.5,
+              "3": 0.0,
+              "4": 0.5,
+              "5": 0.0
+            },
+            "source_valid_non_noop_count": 4,
+            "source_valid_total": 4
+          },
+          "effective_noop_candidate_count": 0
+        }
+      },
+      "stochastic": {
+        "ok": true,
+        "mode": "stochastic",
+        "steps": 16,
+        "total_reward": 0.0,
+        "first_step": {
+          "mask_source": "env.vec_client.getMasks(0)",
+          "summary": {
+            "all_cell_action_type_counts": {
+              "0": 191,
+              "1": 194,
+              "2": 201,
+              "3": 174,
+              "4": 199,
+              "5": 193
+            },
+            "all_cell_action_type_shares": {
+              "0": 0.1657986111111111,
+              "1": 0.1684027777777778,
+              "2": 0.17447916666666666,
+              "3": 0.15104166666666666,
+              "4": 0.17274305555555555,
+              "5": 0.1675347222222222
+            },
+            "source_valid_action_type_counts": {
+              "0": 0,
+              "1": 0,
+              "2": 2,
+              "3": 0,
+              "4": 2,
+              "5": 0
+            },
+            "source_valid_action_type_shares": {
+              "0": 0.0,
+              "1": 0.0,
+              "2": 0.5,
+              "3": 0.0,
+              "4": 0.5,
+              "5": 0.0
+            },
+            "source_valid_non_noop_count": 4,
+            "source_valid_total": 4
+          },
+          "effective_noop_candidate_count": 0
+        }
+      },
+      "no_noop_fallback_string": true
+    }
+  },
+  "errors": [],
+  "classification": "STAGE5I_CANONICAL_ACTION_PATH_PASS",
+  "build_report": {
+    "architecture": "legacy032_resolution_aware_gridnet_v1",
+    "mapsize": 576,
+    "obs_shape": [
+      24,
+      24,
+      27
+    ],
+    "nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "fallback_architecture_used": false
+  },
+  "contract": {
+    "observation_space": [
+      24,
+      24,
+      27
+    ],
+    "action_space_nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "architecture_name": "legacy032_resolution_aware_gridnet_v1",
+    "map_path": "maps/24x24/basesWorkers24x24.xml",
+    "mapsize": 576,
+    "mask_dim": 79,
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ]
+  }
+}
