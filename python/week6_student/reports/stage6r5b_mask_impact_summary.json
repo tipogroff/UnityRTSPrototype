@@ -1,0 +1,228 @@
+{
+  "actor_cell_masked_to_noop_count": 60,
+  "actor_cell_masked_to_noop_share": 0.7228915662650602,
+  "unit_type_specific_masked_to_noop_share": {
+    "Base": {
+      "masked_to_noop_count": 56,
+      "masked_to_noop_share": 1.0,
+      "total": 56
+    },
+    "Worker": {
+      "masked_to_noop_count": 4,
+      "masked_to_noop_share": 0.14814814814814814,
+      "total": 27
+    }
+  },
+  "action_type_specific_masked_to_noop_share": {
+    "Attack": {
+      "masked_to_noop_count": 4,
+      "masked_to_noop_share": 0.6666666666666666,
+      "total": 6
+    },
+    "Move": {
+      "masked_to_noop_count": 56,
+      "masked_to_noop_share": 0.7272727272727273,
+      "total": 77
+    }
+  },
+  "branch_values_for_masked_to_noop_cases": {
+    "move_dir": {
+      "1": 56,
+      "3": 4
+    },
+    "harvest_dir": {
+      "2": 60
+    },
+    "return_dir": {
+      "0": 60
+    },
+    "produce_dir": {
+      "0": 60
+    },
+    "produce_unit_type": {
+      "6": 60
+    },
+    "attack_target_local": {
+      "0": 60
+    },
+    "raw_move_dir_top1": {
+      "1": 56,
+      "3": 4
+    },
+    "masked_move_dir": {
+      "1": 56,
+      "3": 4
+    },
+    "decoder_received_move_dir": {
+      "0": 60
+    }
+  },
+  "examples_base_move_to_noop": [
+    {
+      "step": 1,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 2,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 3,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 4,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 5,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 6,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 7,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 8,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 9,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    },
+    {
+      "step": 10,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp"
+    }
+  ],
+  "examples_worker_move_to_move": [
+    {
+      "step": 1,
+      "flat_index": 26,
+      "logical_label": "C2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 2,
+      "flat_index": 27,
+      "logical_label": "D2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 3,
+      "flat_index": 28,
+      "logical_label": "E2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 4,
+      "flat_index": 29,
+      "logical_label": "F2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 5,
+      "flat_index": 30,
+      "logical_label": "G2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 6,
+      "flat_index": 31,
+      "logical_label": "H2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 7,
+      "flat_index": 32,
+      "logical_label": "I2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 8,
+      "flat_index": 33,
+      "logical_label": "J2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 9,
+      "flat_index": 34,
+      "logical_label": "K2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    },
+    {
+      "step": 10,
+      "flat_index": 35,
+      "logical_label": "L2",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true
+    }
+  ],
+  "mask_interpretation": {
+    "expected_correction_observed": true,
+    "systematic_bad_selection_signal": "Base repeatedly selects Move before mask, indicating unit-type action mismatch in logits rather than runtime contract failure."
+  }
+}

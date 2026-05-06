@@ -1,0 +1,31 @@
+{
+  "counts": {
+    "submitted": 23,
+    "accepted_pending": 23,
+    "accepted_confirmed": 0,
+    "applied_by_match_manager": 0,
+    "rejected": 0
+  },
+  "step_span": {
+    "first_step": 1,
+    "last_step": 27,
+    "distinct_steps": 23
+  },
+  "counter_consistency_warnings": [
+    "23 submitted commands remain in accepted_pending/unknown state at capture end; no explicit expire/apply terminal event was exported for them."
+  ],
+  "interpretation": {
+    "accepted_pending_likely_missing_terminal_telemetry": true,
+    "match_manager_apply_may_exist_but_not_linked": true,
+    "queued_for_future_frames_possible": true,
+    "apply_or_expire_events_not_linked_to_command_ids": true
+  },
+  "recommendation": {
+    "decision": "add_small_telemetry_for_apply_confirmation",
+    "minimal_telemetry_additions": [
+      "Export command terminal event stream with command_id and lifecycle status (accepted/applied/expired/rejected).",
+      "Emit MatchManager.ApplyCommand outcome rows linked by command_id.",
+      "Emit bounded-run end-of-capture unresolved-command summary keyed by command_id."
+    ]
+  }
+}

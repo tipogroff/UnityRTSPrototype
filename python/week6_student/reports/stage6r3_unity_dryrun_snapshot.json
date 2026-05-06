@@ -1,0 +1,15 @@
+{
+  "stage": "Stage6R3",
+  "unity_dryrun_component": "Week6Day4StudentInferenceDryRun",
+  "entrypoint": "SmokeTest/11 - Unity Action Contract v2 Full Evidence Smoke",
+  "status": "pass",
+  "checkpoint": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+  "action_contract_version": "v2_gridnet_compatible",
+  "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+  "action_flat_size": 44928,
+  "decoded_output_inspected": true,
+  "command_built_count": 8,
+  "commands_accepted_count": 1,
+  "commands_rejected_count": 7,
+  "scope_note": "Technical bridge-path dry-run only; no match-quality or behavior-quality claims."
+}

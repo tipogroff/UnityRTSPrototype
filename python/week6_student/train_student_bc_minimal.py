@@ -73,7 +73,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Week 6 Day 2: minimal supervised branch-wise BC training loop over pinned BC-ready dataset. "
-            "This script is BC-only and not RL/PPO/Unity inference integration."
+            "This script is BC-only and not RL/PPO/Unity inference integration. "
+            "For Stage6 canonical smoke/preflight entrypoint policy, use "
+            "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py."
         )
     )
     parser.add_argument("--bc-ready-dir", type=Path, default=_default_bc_ready_dir())

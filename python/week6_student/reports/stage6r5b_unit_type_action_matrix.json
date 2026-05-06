@@ -1,0 +1,55 @@
+{
+  "unit_type_rows": [
+    {
+      "unit_type": "Base",
+      "predictions_before_mask": 56,
+      "selected_before_mask_histogram": {
+        "Move": 56
+      },
+      "selected_after_mask_histogram": {
+        "NoOp": 56
+      },
+      "masked_to_noop_count": 56,
+      "masked_to_noop_share": 1.0,
+      "command_built_count": 0,
+      "command_built_share": 0.0,
+      "command_submitted_count": 0,
+      "command_submitted_share": 0.0,
+      "accepted_pending_count": 0,
+      "accepted_pending_share": 0.0,
+      "accepted_confirmed_count": 0,
+      "accepted_confirmed_share": 0.0,
+      "applied_count": 0,
+      "applied_share": 0.0
+    },
+    {
+      "unit_type": "Worker",
+      "predictions_before_mask": 27,
+      "selected_before_mask_histogram": {
+        "Move": 21,
+        "Attack": 6
+      },
+      "selected_after_mask_histogram": {
+        "Move": 21,
+        "NoOp": 4,
+        "Attack": 2
+      },
+      "masked_to_noop_count": 4,
+      "masked_to_noop_share": 0.14814814814814814,
+      "command_built_count": 23,
+      "command_built_share": 0.8518518518518519,
+      "command_submitted_count": 23,
+      "command_submitted_share": 0.8518518518518519,
+      "accepted_pending_count": 23,
+      "accepted_pending_share": 0.8518518518518519,
+      "accepted_confirmed_count": 0,
+      "accepted_confirmed_share": 0.0,
+      "applied_count": 0,
+      "applied_share": 0.0
+    }
+  ],
+  "focus_units_present": [
+    "Worker",
+    "Base"
+  ]
+}

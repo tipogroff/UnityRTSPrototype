@@ -1,0 +1,301 @@
+{
+  "generated_at_utc": "2026-05-06T18:50:58.440705+00:00",
+  "stage": "Stage6R5A",
+  "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+  "run_mode": "student_live_policy",
+  "target_steps": 80,
+  "steps_completed": 57,
+  "terminal": true,
+  "terminal_reason": "Loss",
+  "checkpoint_used": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+  "flat_size": {
+    "generated_at_utc": "2026-05-06T18:50:58.440705+00:00",
+    "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "mode": "student_live_policy",
+    "adapter_artifact_path": "python/week6_student/tmp/day5_sanity/day5_sanity_player1_slot03_adapter.json",
+    "action_contract_version": "v2_gridnet_compatible",
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "single_payload_expected_action_flat_size": 44928,
+    "single_payload_action_flat_size": 44928,
+    "single_payload_action_flat_size_pass": true,
+    "legacy_stage6r4_reported_action_flat_size": 526848,
+    "legacy_stage6r4_interpretation": "legacy downstream report value; raw adapter payload remains 44928 and no checked-in runtime adapter path emits 526848",
+    "corrected_field_name": "single_payload_action_flat_size",
+    "aggregate_action_value_count": null
+  },
+  "all_grid_scope": {
+    "total_cells_evaluated": 32832,
+    "all_grid_predicted_noop_count": 110,
+    "all_grid_predicted_non_noop_count": 32722,
+    "all_grid_non_actor_cell_rejections": 32639
+  },
+  "actor_cell_scope": {
+    "actor_cells_detected": 83,
+    "controllable_actor_cells_detected": 83,
+    "actor_cell_predictions_count": 83,
+    "actor_cell_predicted_noop_count": 0,
+    "actor_cell_predicted_non_noop_count": 83,
+    "actor_cell_masked_to_noop_count": 60,
+    "actor_cell_command_built_count": 23,
+    "actor_cell_command_not_built_count": 60,
+    "actor_cell_command_not_built_reasons": {
+      "masked_to_noop": 60
+    }
+  },
+  "command_lifecycle_scope": {
+    "commands_built": 23,
+    "commands_submitted": 23,
+    "commands_accepted_pending": 23,
+    "commands_accepted_confirmed": 0,
+    "commands_rejected": 0,
+    "commands_applied_by_match_manager": 0,
+    "commands_not_applied": 23,
+    "rejection_or_drop_reasons": {
+      "accepted_pending_unresolved": 23
+    }
+  },
+  "counter_consistency": {
+    "generated_at_utc": "2026-05-06T18:50:58.440705+00:00",
+    "accepted_event_definition": "accepted_confirmed is defined as row.command_event_accepted or row.applier_accepted, i.e. MatchManager acceptance telemetry as exposed through the runner export.",
+    "rule_results": [
+      {
+        "rule": "commands_submitted_vs_built",
+        "pass": true,
+        "details": {
+          "commands_submitted": 23,
+          "commands_built": 23,
+          "multi_command_expansion_exists": false,
+          "multi_command_expansion_pairs": []
+        }
+      },
+      {
+        "rule": "accepted_pending_resolution",
+        "pass": false,
+        "details": {
+          "accepted_pending": 23,
+          "resolution_definition": "accepted_pending means submitted command with no confirmed accept/reject/apply terminal event in current bounded capture."
+        }
+      },
+      {
+        "rule": "rejected_events_visibility",
+        "pass": true,
+        "details": {
+          "commands_rejected": 0,
+          "commands_accepted_pending": 23,
+          "commands_accepted_confirmed": 0,
+          "commands_submitted": 23,
+          "unaccounted_submitted": 0
+        }
+      }
+    ],
+    "warnings": [
+      "23 submitted commands remain in accepted_pending/unknown state at capture end; no explicit expire/apply terminal event was exported for them."
+    ],
+    "multi_command_expansion_exists": false,
+    "multi_command_expansion_examples": []
+  },
+  "top_actor_cell_command_outcomes": [
+    {
+      "step": 1,
+      "flat_index": 26,
+      "logical_label": "C2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 1,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    },
+    {
+      "step": 2,
+      "flat_index": 27,
+      "logical_label": "D2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 2,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    },
+    {
+      "step": 3,
+      "flat_index": 28,
+      "logical_label": "E2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 3,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    },
+    {
+      "step": 4,
+      "flat_index": 29,
+      "logical_label": "F2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 4,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    },
+    {
+      "step": 5,
+      "flat_index": 30,
+      "logical_label": "G2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 5,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    },
+    {
+      "step": 6,
+      "flat_index": 31,
+      "logical_label": "H2",
+      "unit_type": "Worker",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "Move",
+      "command_built": true,
+      "command_submitted": true,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "none"
+    },
+    {
+      "step": 6,
+      "flat_index": 50,
+      "logical_label": "C3",
+      "unit_type": "Base",
+      "selected_before_mask": "Move",
+      "selected_after_mask": "NoOp",
+      "command_built": false,
+      "command_submitted": false,
+      "command_accepted": false,
+      "command_rejected": false,
+      "status": "accepted_pending",
+      "reason": "masked_to_noop"
+    }
+  ],
+  "fallback_status": {
+    "uses_student_checkpoint": true,
+    "uses_python_adapter": true,
+    "uses_heuristic_policy": false,
+    "fake_policy_or_stub_seen": false,
+    "fallback_used": false
+  },
+  "v1_regression": false,
+  "no_training_assertions": {
+    "bc_training_run": false,
+    "ppo_fine_tuning_run": false,
+    "teacher_training_run": false
+  },
+  "claims_not_made": {
+    "semantic_parity_claim": false,
+    "direct_weight_transfer_claim": false,
+    "policy_quality_claim": false
+  },
+  "classification": "STAGE6R5A_DIAGNOSTICS_NORMALIZATION_PASS_READY_FOR_BEHAVIOR_BOTTLENECK_ANALYSIS",
+  "classification_reason": "single payload flat size is 44928, actor-cell-only counters are separated from all-grid counters, and lifecycle warnings are explicit.",
+  "recommended_next_stage": "Stage6R5B \u2014 Behavior Bottleneck Analysis on Actor Cells"
+}

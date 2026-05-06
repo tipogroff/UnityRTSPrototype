@@ -1,0 +1,105 @@
+{
+  "stage": "Stage6R2",
+  "title": "Unity Bridge Checkpoint Path / Filename Gating Fix",
+  "final_decision": "STAGE6R2_UNITY_BRIDGE_FIX_PASS_READY_FOR_DRY_RUN",
+  "executive_summary": "Updated Unity bridge defaults to Stage6A2 checkpoint and replaced stale filename-family gating with compatibility-oriented startup + payload contract checks while preserving explicit v1 rejection.",
+  "constraints_respected": {
+    "unity_editor_launched": false,
+    "unity_play_mode_run": false,
+    "matches_run": false,
+    "bc_training_run": false,
+    "ppo_fine_tuning_run": false,
+    "teacher_training_run": false,
+    "python_training_artifacts_modified": false,
+    "week5_artifacts_modified": false,
+    "runtime_truth_path_modified": false,
+    "mask_promoted_to_runtime_truth": false,
+    "v1_rejection_weakened": false
+  },
+  "changed_files": [
+    "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+    "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs"
+  ],
+  "previous_blockers": [
+    "Week6StudentPolicyAdapter stale default checkpoint path",
+    "Week6StudentPolicyAdapter stale filename allowlist tied to old Stage10D families",
+    "Week6Day4StudentInferenceDryRun stale default checkpoint path"
+  ],
+  "stage6a2_checkpoint_selected": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+  "path_updates": {
+    "week6_student_policy_adapter": {
+      "old_default_checkpoint_path": "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
+      "new_default_checkpoint_path": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt"
+    },
+    "week6_day4_student_inference_dry_run": {
+      "old_default_checkpoint_path": "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+      "new_default_checkpoint_path": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt"
+    }
+  },
+  "week6_student_policy_adapter_changes": {
+    "filename_allowlist_removed_as_authoritative_gate": true,
+    "startup_checkpoint_extension_guard": ".pt",
+    "startup_model_variant_guard": "ready.checkpoint_model_variant must be transfer when present",
+    "compatibility_primary_gate": "ValidateAdapterPayload",
+    "payload_checks": {
+      "action_contract_version": "v2_gridnet_compatible",
+      "branch_count": 7,
+      "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+      "produce_head_size": 7,
+      "attack_head_size": 49,
+      "action_flat_size": 44928
+    },
+    "silent_fallback_introduced": false
+  },
+  "week6_day4_dry_run_changes": {
+    "default_checkpoint_updated_to_stage6a2": true,
+    "canonical_comment_added": true,
+    "strict_legacy_filename_check_removed": true,
+    "pt_extension_guard_added": true,
+    "v2_payload_validation_preserved": true,
+    "v1_mismatch_guard_preserved": true
+  },
+  "checkpoint_gating_policy_after_fix": {
+    "filename_as_metadata_only": true,
+    "authoritative_compatibility_source": "adapter/server initialization + payload contract metadata",
+    "rejection_is_explicit_and_diagnostic": true,
+    "accepts_arbitrary_incompatible_checkpoints": false
+  },
+  "v1_rejection_policy_after_fix": {
+    "explicit_v1_contract_rejection_exists": true,
+    "v1_branch_sizes_rejected": [6, 4, 4, 4, 4, 4, 9],
+    "v1_error_message": "v1 action contract artifact is incompatible with Unity v2 runtime"
+  },
+  "runtime_truth_and_mask_policy_preservation": {
+    "pipeline_chain_preserved": "ObservationBuilder -> student bridge -> ActionDecoder -> ActionApplier -> MatchManager.ApplyCommand",
+    "action_applier_authoritative": true,
+    "mask_pre_submit_only": true,
+    "new_heuristic_fake_random_fallback": false,
+    "new_semantic_parity_claim": false
+  },
+  "static_validation_checks": {
+    "edited_file_errors": "no errors found",
+    "requested_old_checkpoint_pattern_scan_assets_scripts_ml": {
+      "status": "completed",
+      "notes": "old patterns remain in historical/editor helper files; removed from target bridge defaults"
+    },
+    "requested_v1_assumption_scan_assets_scripts_ml": {
+      "status": "completed",
+      "notes": "v1 references retained as rejection diagnostics only"
+    },
+    "stage6a2_default_presence_in_targets": {
+      "week6_student_policy_adapter": true,
+      "week6_day4_student_inference_dry_run": true
+    },
+    "scene_prep_validator": {
+      "command": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week6_student/scripts/validate_week6_scene_prep.py",
+      "status": "completed",
+      "report_path": "python/week6_student/reports/LEGACY032_UNITY_V2_SCENE_PREP_VALIDATION.json"
+    }
+  },
+  "remaining_warnings": [
+    "Historical Stage10 Editor menu scripts still contain older checkpoint constants outside Stage6R2 target scope.",
+    "Scene-prep validator output metadata may still reflect historical checkpoint references independent of target bridge defaults."
+  ],
+  "recommended_next_stage": "Stage6R3 — Unity-side inference dry-run without match-quality claims"
+}

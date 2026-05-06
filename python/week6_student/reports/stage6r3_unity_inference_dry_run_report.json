@@ -1,0 +1,98 @@
+{
+  "stage": "Stage6R3",
+  "title": "Unity-side inference dry-run without match-quality claims",
+  "classification": "STAGE6R3_UNITY_INFERENCE_DRY_RUN_PASS_READY_FOR_CONTROLLED_SCENE_SANITY",
+  "scope_constraints": {
+    "full_match_quality_evaluation_run": false,
+    "behavior_quality_claim_made": false,
+    "semantic_parity_claim_made": false,
+    "direct_weight_transfer_claim_made": false,
+    "bc_training_run": false,
+    "ppo_finetuning_run": false,
+    "teacher_training_run": false
+  },
+  "checkpoint": {
+    "path_used": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+    "exists": true,
+    "extension_pt": true,
+    "model_variant": "transfer",
+    "legacy_v1_checkpoint_detected": false
+  },
+  "pre_dry_run_static_checks": {
+    "week6_student_policy_adapter_default_points_to_stage6a2": true,
+    "week6_day4_dryrun_default_points_to_stage6a2": true,
+    "v1_rejection_guard_present": true,
+    "authoritative_filename_allowlist_removed": true,
+    "fake_heuristic_random_fallback_introduced": false,
+    "notes": [
+      "Checkpoint gate is .pt extension plus bridge/payload compatibility.",
+      "Week6StudentPolicyAdapter keeps explicit v1 rejection message.",
+      "No fake logits or random-policy fallback path was found in the Stage6R3 execution path."
+    ]
+  },
+  "python_adapter_dryrun": {
+    "artifact": "python/week6_student/runs/legacy032_v2_unity_dryrun_stage6r3/python_adapter_dryrun_report.json",
+    "status": "ok",
+    "adapter_ready": true,
+    "python_exception": "",
+    "observation_shape": [24, 24, 27],
+    "output_payload_shapes": {
+      "action_type_logits": [1, 576, 6],
+      "move_dir_logits": [1, 576, 4],
+      "harvest_dir_logits": [1, 576, 4],
+      "return_dir_logits": [1, 576, 4],
+      "produce_dir_logits": [1, 576, 4],
+      "produce_unit_type_logits": [1, 576, 7],
+      "attack_target_local_logits": [1, 576, 49]
+    },
+    "action_contract_version": "v2_gridnet_compatible",
+    "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+    "produce_head_size": 7,
+    "attack_head_size": 49,
+    "action_flat_size": 44928,
+    "invalid_payload_count": 0,
+    "contains_nan_or_inf": false,
+    "predicted_noop_count": 1,
+    "predicted_noop_share": 0.001736111111111111
+  },
+  "unity_dryrun": {
+    "play_mode_run": true,
+    "entrypoint": "SmokeTest/11 - Unity Action Contract v2 Full Evidence Smoke",
+    "component": "Week6Day4StudentInferenceDryRun",
+    "bridge_start_status": "pass",
+    "adapter_ready_status": "ok",
+    "ready_handshake_status": "pass",
+    "python_exit_code": 0,
+    "unity_exception": "",
+    "python_stderr": "",
+    "checkpoint_model_variant": "transfer",
+    "action_contract_version": "v2_gridnet_compatible",
+    "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+    "produce_head_size": 7,
+    "attack_head_size": 49,
+    "action_flat_size": 44928,
+    "payload_validation_passed": true,
+    "decoded_output_inspected": true,
+    "command_built_count": 8,
+    "commands_accepted_count": 1,
+    "commands_rejected_count": 7,
+    "v1_regression_detected": false,
+    "v1_rejection_guard_active": true,
+    "fallback_used": false,
+    "fake_logits_used": false,
+    "heuristic_policy_used": false,
+    "runtime_truth_preserved": true,
+    "mask_role": "pre-submit and diagnostics only"
+  },
+  "artifacts": {
+    "main_markdown": "python/week6_student/reports/STAGE6R3_UNITY_INFERENCE_DRY_RUN_REPORT.md",
+    "main_json": "python/week6_student/reports/stage6r3_unity_inference_dry_run_report.json",
+    "python_adapter_dryrun_json": "python/week6_student/runs/legacy032_v2_unity_dryrun_stage6r3/python_adapter_dryrun_report.json",
+    "unity_smoke_report_json": "python/week6_student/tmp/day4_unity_playmode_smoke_report.json",
+    "unity_adapter_output_json": "WEEK6/artifacts/day4_student_inference/student_inference_result.json",
+    "stage6r3_unity_dryrun_snapshot_json": "python/week6_student/reports/stage6r3_unity_dryrun_snapshot.json",
+    "stage6r3_bridge_startup_report_json": "python/week6_student/reports/stage6r3_bridge_startup_report.json",
+    "stage6r3_payload_validation_report_json": "python/week6_student/reports/stage6r3_payload_validation_report.json"
+  },
+  "next_stage_recommendation": "Stage6R4 — Controlled Unity scene sanity run with global diagnostics"
+}

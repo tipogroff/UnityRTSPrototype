@@ -1,0 +1,146 @@
+{
+  "stage": "Stage6R1",
+  "title": "Fix Week 6 Python Student Entrypoint Drift",
+  "final_decision": "STAGE6R1_PYTHON_ENTRYPOINT_FIX_PASS_READY_FOR_WEEK6A_BC_SMOKE",
+  "summary": "Canonical Week 6 Python smoke/preflight wrapper added with Stage5P4 path + transfer default + non-training contract-check-only validation.",
+  "constraints_respected": {
+    "unity_launched": false,
+    "unity_play_mode_run": false,
+    "bc_training_run": false,
+    "optimizer_step_executed": false,
+    "ppo_fine_tuning_run": false,
+    "teacher_training_run": false,
+    "unity_csharp_runtime_modified": false,
+    "week5_artifacts_modified": false
+  },
+  "changed_files": [
+    {
+      "path": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py",
+      "change_type": "added"
+    },
+    {
+      "path": "python/week6_student/train_student_bc_minimal.py",
+      "change_type": "updated",
+      "details": "help text only; no training semantics changed"
+    }
+  ],
+  "wrapper_created": true,
+  "legacy_training_script_changed": true,
+  "legacy_training_script_change_scope": "help text guidance only",
+  "previous_stage6r0_blockers": [
+    "train_student_bc_minimal.py default dataset path pointed to older day6_bc_ready lineage",
+    "train_student_bc_minimal.py default model_variant was minimal",
+    "no dedicated canonical Stage5P4 smoke wrapper existed"
+  ],
+  "entrypoint_strategy": {
+    "strategy": "dedicated_wrapper",
+    "wrapper_path": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py",
+    "reused_modules": [
+      "student_bc_loader.load_bc_ready_dataset",
+      "student_architecture_transfer.build_day3_student_model",
+      "train_student_bc_minimal.create_dataloader"
+    ]
+  },
+  "canonical_policy": {
+    "CANONICAL_STAGE5P4_BC_READY_DIR": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+    "CANONICAL_BRANCH_SIZES": [6, 4, 4, 4, 4, 7, 49],
+    "CANONICAL_TARGET_ACTION_CONTRACT": "unity_v2_legacy032_gridnet",
+    "CANONICAL_ATTACK_TARGET_SEMANTICS": "local_7x7_49"
+  },
+  "model_variant_policy": {
+    "default_model_variant": "transfer",
+    "canonical_preflight_requires_transfer": true,
+    "supported_cli_values": [
+      "transfer",
+      "minimal"
+    ]
+  },
+  "cli_after_fix": {
+    "flags": [
+      "--bc-ready-dir",
+      "--device",
+      "--epochs",
+      "--batch-size",
+      "--max-train-batches",
+      "--max-validation-batches",
+      "--seed",
+      "--output-dir",
+      "--run-label",
+      "--save-checkpoint",
+      "--model-variant",
+      "--contract-check-only",
+      "--dry-run-only"
+    ],
+    "defaults": {
+      "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+      "device": "cpu",
+      "epochs": 1,
+      "batch_size": 8,
+      "max_train_batches": 1,
+      "max_validation_batches": 1,
+      "seed": 17,
+      "model_variant": "transfer",
+      "contract_check_only": true,
+      "dry_run_only": true
+    }
+  },
+  "safe_checks": {
+    "python_executable": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe",
+    "py_compile": {
+      "status": "pass",
+      "files": [
+        "python/week6_student/train_student_bc_minimal.py",
+        "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py"
+      ]
+    },
+    "help_check": {
+      "status": "pass",
+      "script": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py"
+    },
+    "contract_check_only": {
+      "status": "pass",
+      "command": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu --batch-size 8 --seed 17 --output-dir python/week6_student/runs/legacy032_v2_bc_smoke_stage6r1_preflight --run-label legacy032_v2_bc_smoke_stage6r1_preflight --contract-check-only true",
+      "report_path": "python/week6_student/runs/legacy032_v2_bc_smoke_stage6r1_preflight/legacy032_v2_bc_smoke_stage6r1_preflight_contract_check_report.json"
+    }
+  },
+  "preflight_result": {
+    "status": "pass",
+    "manifest_checks": {
+      "dataset_type": "bc_ready_legacy032_unity_v2",
+      "target_action_contract": "unity_v2_legacy032_gridnet",
+      "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+      "attack_target_semantics": "local_7x7_49",
+      "semantic_parity_claim": false,
+      "direct_weight_transfer_claim": false
+    },
+    "split_shapes": {
+      "train_input": [31742, 24, 24, 27],
+      "train_target": [31742, 576, 7],
+      "validation_input": [5601, 24, 24, 27],
+      "validation_target": [5601, 576, 7],
+      "train_batch_input": [8, 24, 24, 27],
+      "train_batch_target": [8, 576, 7],
+      "validation_batch_input": [8, 24, 24, 27],
+      "validation_batch_target": [8, 576, 7]
+    },
+    "forward_head_shapes": [
+      [8, 576, 6],
+      [8, 576, 4],
+      [8, 576, 4],
+      [8, 576, 4],
+      [8, 576, 4],
+      [8, 576, 7],
+      [8, 576, 49]
+    ],
+    "no_nan_inf": true,
+    "v1_branch_regression_detected": false,
+    "optimizer_step_executed": false,
+    "weights_updated": false
+  },
+  "remaining_python_blockers": [],
+  "remaining_unity_blockers": [
+    "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs default checkpoint path and filename policy",
+    "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs stale default checkpoint path"
+  ],
+  "recommended_next_action": "Proceed to Week6A BC smoke stage using the Stage6R1 wrapper policy."
+}

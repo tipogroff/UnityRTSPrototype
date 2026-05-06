@@ -317,11 +317,8 @@ namespace RTS.ML
     [DisallowMultipleComponent]
     public sealed class Week6StudentPolicyAdapter : MonoBehaviour
     {
-        private const string ExpectedStudentCheckpointFileNameLegacy = "student_bc_transfer_best.pt";
-        private const string ExpectedStudentCheckpointFileNameSemantic = "student_bc_semantic_best.pt";
-        private const string ExpectedStudentCheckpointFileNameAugmented = "student_bc_stage10d14_augmented_best.pt";
-        private const string ExpectedStudentCheckpointFileNameMovementAugmented = "student_bc_stage10d17_movement_augmented_best.pt";
-        private const string ExpectedStudentCheckpointFileNameStage10D19B = "student_bc_stage10d19b_valid_move_best.pt";
+        private const string CanonicalStage6A2CheckpointRelativePath =
+            "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -489,7 +486,7 @@ namespace RTS.ML
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
-        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt";
+        [SerializeField] private string _checkpointRelativePath = CanonicalStage6A2CheckpointRelativePath;
         [SerializeField] private bool _enableLegalActionMaskForSelection = false;
         [SerializeField] private bool _enableDynamicOccupancyMoveMaskEnrichment = true;
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
@@ -1041,17 +1038,12 @@ namespace RTS.ML
                 return false;
             }
 
+            // Filename family is metadata only; contract compatibility is enforced by
+            // bridge initialization and per-response payload validation.
             string checkpointFileName = Path.GetFileName(checkpointPath);
-            bool checkpointNameAllowed =
-                string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameLegacy, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameSemantic, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameAugmented, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameMovementAugmented, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(checkpointFileName, ExpectedStudentCheckpointFileNameStage10D19B, StringComparison.OrdinalIgnoreCase);
-
-            if (!checkpointNameAllowed)
+            if (!checkpointFileName.EndsWith(".pt", StringComparison.OrdinalIgnoreCase))
             {
-                error = "Unexpected checkpoint file name for Day 5 bridge: " + checkpointPath;
+                error = "Student checkpoint must be a PyTorch .pt file: " + checkpointPath;
                 return false;
             }
 
@@ -1100,6 +1092,16 @@ namespace RTS.ML
                 if (ready == null || !string.Equals(ready.status, "ready", StringComparison.Ordinal))
                 {
                     error = "Student bridge ready handshake failed: " + readyLine;
+                    ShutdownBridge();
+                    return false;
+                }
+
+                if (!string.IsNullOrWhiteSpace(ready.checkpoint_model_variant)
+                    && !string.Equals(ready.checkpoint_model_variant, "transfer", StringComparison.OrdinalIgnoreCase))
+                {
+                    error =
+                        "Student bridge checkpoint model variant is incompatible. " +
+                        $"Expected transfer, got {ready.checkpoint_model_variant}";
                     ShutdownBridge();
                     return false;
                 }

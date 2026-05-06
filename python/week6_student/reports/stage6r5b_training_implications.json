@@ -1,0 +1,22 @@
+{
+  "should_full_bc_training_proceed_now": false,
+  "main_bottleneck_likely_undertraining": true,
+  "evidence_of_contract_or_bridge_failure": false,
+  "evidence_of_unit_type_action_semantic_mismatch": true,
+  "full_training_metric_recommendation": [
+    "Keep existing loss objective.",
+    "Add actor-cell-focused Unity sanity metrics (Base illegal Move rate, Worker Move command_build rate, actor_cell_masked_to_noop_share by unit type).",
+    "Track command lifecycle confirmation rate once telemetry is added."
+  ],
+  "checkpoint_selection_recommendation": "Use validation loss as primary selector; add actor-cell Unity sanity metrics as promotion gate.",
+  "classification": "STAGE6R5B_BEHAVIOR_BOTTLENECK_ANALYSIS_PASS_NEEDS_TELEMETRY_FIX",
+  "recommended_next_stage": "Stage6R5C - Command Apply/Expire Telemetry Fix",
+  "constraint_acknowledgements": {
+    "no_bc_training_run": true,
+    "no_ppo_finetuning_run": true,
+    "no_teacher_training_run": true,
+    "no_semantic_parity_claim": true,
+    "no_direct_weight_transfer_claim": true,
+    "no_behavior_quality_claim": true
+  }
+}

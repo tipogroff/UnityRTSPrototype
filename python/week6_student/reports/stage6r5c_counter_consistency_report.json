@@ -1,0 +1,11 @@
+{
+  "generated_at_utc": "2026-05-06T18:51:45.828681+00:00",
+  "submitted": 22,
+  "applied_by_match_manager": 22,
+  "rejected_by_applier": 0,
+  "rejected_by_match_manager": 0,
+  "expired_or_unresolved_at_capture_end": 0,
+  "terminal_events_count": 44,
+  "invariant_submitted_equals_terminal_buckets": true,
+  "invariant_expression": "22 == 22 + 0 + 0 + 0"
+}

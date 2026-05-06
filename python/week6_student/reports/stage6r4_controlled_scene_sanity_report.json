@@ -1,0 +1,116 @@
+{
+    "stage":  "Stage6R4",
+    "classification":  "PASS_WITH_WARNINGS",
+    "classification_reason":  "Stage6A2 checkpoint binding and v2 branch-shape evidence are present; student run is terminal Loss with decoder non_actor_cell rejection dominance and no accepted/rejected MatchManager events captured in student_live_policy mode.",
+    "constraints_respected":  {
+                                  "no_training":  true,
+                                  "no_fallback_weakening":  true,
+                                  "no_semantic_quality_claims":  true
+                              },
+    "pre_run_verification":  {
+                                 "run_manifest_generated_at_utc":  "2026-05-06T17:59:03.6930194Z",
+                                 "scene":  "Week6_StudentVisualInspection",
+                                 "mode":  "student_live_policy",
+                                 "checkpoint_expected":  "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+                                 "checkpoint_used_at_inference":  "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+                                 "uses_student_checkpoint":  true,
+                                 "uses_python_adapter":  true,
+                                 "uses_heuristic_policy":  false,
+                                 "python_request_status":  "completed",
+                                 "python_response_status":  "ok",
+                                 "adapter_response_has_action_contract_version_key":  true,
+                                 "adapter_response_has_branch_sizes_key":  true,
+                                 "adapter_response_has_action_flat_size_key":  true,
+                                 "adapter_response_has_observation_shape_key":  true,
+                                 "inferred_action_contract_version":  "v2_gridnet_compatible",
+                                 "branch_sizes":  [
+                                                      6,
+                                                      4,
+                                                      4,
+                                                      4,
+                                                      4,
+                                                      7,
+                                                      49
+                                                  ],
+                                 "action_flat_size":  526848,
+                                 "logits_shape_lines":  [
+                                                            "action_type_logits: [1,576,6]",
+                                                            "move_dir_logits: [1,576,4]",
+                                                            "harvest_dir_logits: [1,576,4]",
+                                                            "return_dir_logits: [1,576,4]",
+                                                            "produce_dir_logits: [1,576,4]",
+                                                            "produce_unit_type_logits: [1,576,7]",
+                                                            "attack_target_local_logits: [1,576,49]"
+                                                        ],
+                                 "observation_shape":  [
+                                                           24,
+                                                           24,
+                                                           27
+                                                       ],
+                                 "model_input_shape":  [
+                                                           24,
+                                                           24,
+                                                           27
+                                                       ],
+                                 "owner_encoding_mode":  "absolute_player_channels",
+                                 "flatten_formula":  "flat_index = row * 24 + col",
+                                 "total_mask_fallback_to_noop_step1":  0,
+                                 "v1_payload_seen":  false,
+                                 "fake_policy_or_stub_seen":  false
+                             },
+    "run_outcome":  {
+                        "mode":  "student_live_policy",
+                        "target_steps":  80,
+                        "steps_completed":  57,
+                        "terminal":  true,
+                        "terminal_reason":  "Loss"
+                    },
+    "lifecycle_counters":  {
+                               "command_built_rows":  83,
+                               "accepted_events":  22,
+                               "command_built_share_of_inferred_actor_rows":  1,
+                               "predicted_non_noop_share_all_rows":  0.99665,
+                               "steps":  57,
+                               "decision_requests":  1653,
+                               "predicted_noop_share_all_rows":  0.00335,
+                               "rejected_events":  0,
+                               "predicted_non_noop_rows":  32722,
+                               "masked_non_noop_rows":  23,
+                               "command_submitted_share_of_inferred_actor_rows":  1.26506,
+                               "command_submitted_rows":  105,
+                               "decoder_rejected_rows":  32617,
+                               "decoder_non_noop_rows":  24,
+                               "records":  32832,
+                               "accepted_pending_rows":  105,
+                               "candidate_actor_cells_submitted":  85,
+                               "applier_rejected_rows":  0,
+                               "inferred_actor_cell_rows":  83,
+                               "accepted_event_share_of_submitted_rows":  0.209524,
+                               "rejected_event_share_of_submitted_rows":  0,
+                               "predicted_noop_rows":  110
+                           },
+    "rejection_summary":  {
+                              "decoder_reject_reason_histogram":  {
+                                                                      "non_actor_cell":  32639
+                                                                  },
+                              "applier_reject_reason_histogram":  {
+
+                                                                  }
+                          },
+    "scene_snapshot":  {
+                           "scene":  "Week6_StudentVisualInspection",
+                           "mode":  "student_live_policy",
+                           "steps_completed":  57,
+                           "terminal":  true,
+                           "terminal_reason":  "Loss",
+                           "player1_resources_step1":  60,
+                           "player2_resources_step1":  57,
+                           "unit_positions_step1_count":  9,
+                           "own_actor_summary_step1":  [
+                                                           "flat=25 B2: top1=Move (0.1845), top2=Attack (0.1696), noop_margin=-0.0208",
+                                                           "flat=50 C3: top1=Move (0.2060), top2=Attack (0.1775), noop_margin=-0.0341"
+                                                       ]
+                       },
+    "recommended_next_stage":  "Proceed to targeted observation/cell-alignment remediation before any behavior-quality assertions.",
+    "disclaimer":  "Diagnostics-only: no parity, quality, or training-success claim is made."
+}

@@ -19,7 +19,8 @@ namespace RTS.ML
     [DisallowMultipleComponent]
     public sealed class Week6Day4StudentInferenceDryRun : MonoBehaviour
     {
-        private const string ExpectedStudentCheckpointFileName = "student_bc_transfer_best.pt";
+        private const string CanonicalStage6A2CheckpointRelativePath =
+            "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -77,7 +78,8 @@ namespace RTS.ML
         [Header("Python Bridge")]
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _adapterScriptRelativePath = "python/week6_student/student_inference_adapter.py";
-        [SerializeField] private string _checkpointRelativePath = "python/week6_student/runs/legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt";
+        // Stage6A2 is the current canonical student checkpoint candidate for Unity dry-run wiring.
+        [SerializeField] private string _checkpointRelativePath = CanonicalStage6A2CheckpointRelativePath;
         [SerializeField] private string _artifactDirectoryRelativePath = "WEEK6/artifacts/day4_student_inference";
         [SerializeField] private string _smokeReportRelativePath = "python/week6_student/tmp/day4_unity_playmode_smoke_report.json";
 
@@ -142,12 +144,13 @@ namespace RTS.ML
             Directory.CreateDirectory(artifactDir);
             smokeReport.checkpoint_path = checkpointPath;
 
-            if (!string.Equals(Path.GetFileName(checkpointPath), ExpectedStudentCheckpointFileName, StringComparison.OrdinalIgnoreCase))
+            string checkpointFileName = Path.GetFileName(checkpointPath);
+            if (!checkpointFileName.EndsWith(".pt", StringComparison.OrdinalIgnoreCase))
             {
                 FailAndWriteReport(
                     smokeReport,
                     smokeReportPath,
-                    "Unexpected checkpoint file name. Day4 requires student_bc_transfer_best.pt");
+                    "Unexpected checkpoint file extension. Day4 expects a PyTorch .pt checkpoint artifact.");
                 return;
             }
 

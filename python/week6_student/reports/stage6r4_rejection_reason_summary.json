@@ -1,0 +1,8 @@
+{
+    "decoder_reject_reason_histogram":  {
+                                            "non_actor_cell":  32639
+                                        },
+    "applier_reject_reason_histogram":  {
+
+                                        }
+}

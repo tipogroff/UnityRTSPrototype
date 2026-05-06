@@ -1,0 +1,135 @@
+{
+  "stage": "Stage6A2",
+  "title": "Short Bounded BC Run + Checkpoint Compatibility Selection",
+  "final_decision": "STAGE6A2_SHORT_BC_RUN_PASS_READY_FOR_UNITY_BRIDGE_FIX",
+  "commands_executed": {
+    "preflight": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu --batch-size 16 --seed 17 --output-dir python/week6_student/runs/legacy032_v2_bc_short_stage6a2_preflight --run-label legacy032_v2_bc_short_stage6a2_preflight --contract-check-only true --dry-run-only true",
+    "short_run": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu --epochs 3 --batch-size 16 --max-train-batches 200 --max-validation-batches 50 --seed 17 --output-dir python/week6_student/runs/legacy032_v2_bc_short_stage6a2 --run-label legacy032_v2_bc_short_stage6a2 --model-variant transfer --save-checkpoint true --contract-check-only false --dry-run-only false",
+    "loader_help_probe": "python/week6_student/load_student_checkpoint.py --help",
+    "compatibility_check": "temporary load-only script using load_student_transfer_checkpoint + dummy forward [1,24,24,27]"
+  },
+  "dataset_and_contract_summary": {
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+    "dataset_type": "bc_ready_legacy032_unity_v2",
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+    "attack_target_semantics": "local_7x7_49",
+    "semantic_parity_claim": false,
+    "direct_weight_transfer_claim": false
+  },
+  "preflight_regression_result": {
+    "status": "pass",
+    "optimizer_step_executed": false,
+    "weights_updated": false,
+    "forward_head_shapes": {
+      "action_type_logits": [16, 576, 6],
+      "move_dir_logits": [16, 576, 4],
+      "harvest_dir_logits": [16, 576, 4],
+      "return_dir_logits": [16, 576, 4],
+      "produce_dir_logits": [16, 576, 4],
+      "produce_unit_type_logits": [16, 576, 7],
+      "attack_target_local_logits": [16, 576, 49]
+    },
+    "report_path": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2_preflight/legacy032_v2_bc_short_stage6a2_preflight_contract_check_report.json"
+  },
+  "short_bc_run_configuration": {
+    "epochs": 3,
+    "batch_size": 16,
+    "max_train_batches": 200,
+    "max_validation_batches": 50,
+    "seed": 17,
+    "device": "cpu",
+    "model_variant": "transfer",
+    "save_checkpoint": true
+  },
+  "training_metrics": {
+    "train_total_loss_first": 1.8422220008831738,
+    "train_total_loss_last": 1.8380480182920613,
+    "train_total_loss_mean": 1.8395045848981049,
+    "train_branch_losses": {
+      "train_action_type_loss": 1.7812571620941162,
+      "train_move_dir_loss": 1.384849916267975,
+      "train_harvest_dir_loss": 1.386543658334099,
+      "train_return_dir_loss": 1.3866232715437563,
+      "train_produce_dir_loss": 1.386144718027984,
+      "train_produce_unit_type_loss": 1.9432843570080052,
+      "train_attack_target_local_loss": 3.8930794881428414
+    },
+    "train_branch_accuracies": {
+      "train_action_type_accuracy": 0.17157552083333333,
+      "train_move_dir_accuracy": 0.2529988325400593,
+      "train_harvest_dir_accuracy": 0.2518864487499713,
+      "train_return_dir_accuracy": 0.24987700966212095,
+      "train_produce_dir_accuracy": 0.2502908295048997,
+      "train_produce_unit_type_accuracy": 0.14570393885022115,
+      "train_attack_target_local_accuracy": 0.020446309990326126
+    },
+    "optimizer_step_count": 600,
+    "train_batches_executed": 600,
+    "no_nan_inf_loss": true
+  },
+  "validation_metrics": {
+    "validation_total_loss_mean": 1.8386250157253297,
+    "validation_branch_losses": {
+      "val_action_type_loss": 1.7838045014275445,
+      "val_move_dir_loss": 1.3842286771036407,
+      "val_harvest_dir_loss": 1.386941997462141,
+      "val_return_dir_loss": 1.3867354560065936,
+      "val_produce_dir_loss": 1.3863667319105364,
+      "val_produce_unit_type_loss": 1.9428623729588366,
+      "val_attack_target_local_loss": 3.893301584221406
+    },
+    "validation_branch_accuracies": {
+      "val_action_type_accuracy": 0.16974609375,
+      "val_move_dir_accuracy": 0.25149269096149884,
+      "val_harvest_dir_accuracy": 0.24864249545317754,
+      "val_return_dir_accuracy": 0.25197293512544333,
+      "val_produce_dir_accuracy": 0.24828921716147434,
+      "val_produce_unit_type_accuracy": 0.14647964724508356,
+      "val_attack_target_local_accuracy": 0.021162208459612596
+    },
+    "validation_batches_executed": 150
+  },
+  "checkpoint_files": {
+    "smoke_checkpoint": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+    "smoke_training_report_json": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_training_report.json",
+    "smoke_training_report_md": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_training_report.md"
+  },
+  "checkpoint_compatibility_validation": {
+    "status": "pass",
+    "compatibility_report_path": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/stage6a2_checkpoint_compatibility_report.json",
+    "loadable_by_transfer_loader": true,
+    "model_variant": "transfer",
+    "state_dict_key_count": 76,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "dummy_input_shape": [1, 24, 24, 27],
+    "dummy_output_head_shapes": {
+      "action_type_logits": [1, 576, 6],
+      "move_dir_logits": [1, 576, 4],
+      "harvest_dir_logits": [1, 576, 4],
+      "return_dir_logits": [1, 576, 4],
+      "produce_dir_logits": [1, 576, 4],
+      "produce_unit_type_logits": [1, 576, 7],
+      "attack_target_local_logits": [1, 576, 49]
+    },
+    "produce_head_size": 7,
+    "attack_head_size": 49,
+    "v1_regression_detected": false
+  },
+  "warnings": [
+    "Loss improvement is modest; this stage focuses on bounded-run and checkpoint compatibility rather than final optimization."
+  ],
+  "remaining_unity_blockers": [
+    "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs checkpoint path/filename gating",
+    "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs stale default checkpoint path"
+  ],
+  "recommended_next_stage": "Stage6R2 — Unity Bridge Checkpoint Path / Filename Gating Fix",
+  "explicit_non_actions": {
+    "unity_launched": false,
+    "unity_play_mode_run": false,
+    "ppo_run": false,
+    "teacher_training_run": false,
+    "unity_csharp_files_modified": false
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "stage": "Stage6R3",
+  "payload_validation_passed": true,
+  "action_contract_version": "v2_gridnet_compatible",
+  "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+  "produce_head_size": 7,
+  "attack_head_size": 49,
+  "action_flat_size": 44928,
+  "observation_shape": [24, 24, 27],
+  "output_payload_shapes": {
+    "action_type_logits": [1, 576, 6],
+    "move_dir_logits": [1, 576, 4],
+    "harvest_dir_logits": [1, 576, 4],
+    "return_dir_logits": [1, 576, 4],
+    "produce_dir_logits": [1, 576, 4],
+    "produce_unit_type_logits": [1, 576, 7],
+    "attack_target_local_logits": [1, 576, 49]
+  },
+  "invalid_payload_count": 0,
+  "v1_regression_detected": false,
+  "v1_payload_rejection_guard_active": true,
+  "fallback_used": false,
+  "fake_logits_used": false,
+  "heuristic_policy_used": false
+}

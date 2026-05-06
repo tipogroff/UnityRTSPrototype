@@ -111,7 +111,7 @@
       "ok": true
     },
     "checkpoint_reference_unchanged_by_scene_prep": {
-      "checkpoint_relative_path": "python/week6_student/runs/day3_transfer_bc_main_20260423/student_bc_transfer_best.pt",
+      "checkpoint_relative_path": "python/week6_student/runs/legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
       "ok": true
     }
   },

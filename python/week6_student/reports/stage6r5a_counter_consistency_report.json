@@ -1,0 +1,40 @@
+{
+  "generated_at_utc": "2026-05-06T18:50:58.440705+00:00",
+  "accepted_event_definition": "accepted_confirmed is defined as row.command_event_accepted or row.applier_accepted, i.e. MatchManager acceptance telemetry as exposed through the runner export.",
+  "rule_results": [
+    {
+      "rule": "commands_submitted_vs_built",
+      "pass": true,
+      "details": {
+        "commands_submitted": 23,
+        "commands_built": 23,
+        "multi_command_expansion_exists": false,
+        "multi_command_expansion_pairs": []
+      }
+    },
+    {
+      "rule": "accepted_pending_resolution",
+      "pass": false,
+      "details": {
+        "accepted_pending": 23,
+        "resolution_definition": "accepted_pending means submitted command with no confirmed accept/reject/apply terminal event in current bounded capture."
+      }
+    },
+    {
+      "rule": "rejected_events_visibility",
+      "pass": true,
+      "details": {
+        "commands_rejected": 0,
+        "commands_accepted_pending": 23,
+        "commands_accepted_confirmed": 0,
+        "commands_submitted": 23,
+        "unaccounted_submitted": 0
+      }
+    }
+  ],
+  "warnings": [
+    "23 submitted commands remain in accepted_pending/unknown state at capture end; no explicit expire/apply terminal event was exported for them."
+  ],
+  "multi_command_expansion_exists": false,
+  "multi_command_expansion_examples": []
+}

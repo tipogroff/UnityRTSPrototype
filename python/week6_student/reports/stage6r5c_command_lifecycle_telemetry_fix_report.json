@@ -1,0 +1,53 @@
+{
+  "generated_at_utc": "2026-05-06T18:51:45.829181+00:00",
+  "stage": "Stage6R5C",
+  "changed_files": [
+    "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+    "python/week6_student/stage6r5c_build_command_lifecycle_telemetry_fix_report.py"
+  ],
+  "command_lifecycle_flow_before_fix": [
+    "decoded candidate -> command built/submitted -> accepted_pending in per-cell row",
+    "terminal apply/reject linkage not exported as terminal bucket per submitted command",
+    "bounded capture ended with unresolved accepted_pending counts"
+  ],
+  "command_lifecycle_flow_after_fix": [
+    "decoded candidate/built/submitted rows tracked with diagnostic_command_id",
+    "matchmanager accepted/rejected events linked by command_event_key",
+    "completed-step finalization emits applied_by_match_manager terminal bucket",
+    "capture-end finalization emits expired_or_unresolved_at_capture_end for remaining submitted commands"
+  ],
+  "command_id_correlation_policy": "diagnostic_command_id = step:actor_flat_index:action_type:sequence; command_event_key uses step|owner|flat|action|dir|produce|attack fields",
+  "terminal_status_buckets": {
+    "applied_by_match_manager": 22,
+    "rejected_by_applier": 0,
+    "rejected_by_match_manager": 0,
+    "expired_or_unresolved_at_capture_end": 0
+  },
+  "submitted_command_count": 22,
+  "applied_by_match_manager_count": 22,
+  "rejected_by_applier_count": 0,
+  "rejected_by_match_manager_count": 0,
+  "expired_or_unresolved_at_capture_end_count": 0,
+  "counter_invariant": {
+    "generated_at_utc": "2026-05-06T18:51:45.828681+00:00",
+    "submitted": 22,
+    "applied_by_match_manager": 22,
+    "rejected_by_applier": 0,
+    "rejected_by_match_manager": 0,
+    "expired_or_unresolved_at_capture_end": 0,
+    "terminal_events_count": 44,
+    "invariant_submitted_equals_terminal_buckets": true,
+    "invariant_expression": "22 == 22 + 0 + 0 + 0"
+  },
+  "v1_regression_detected": false,
+  "fallback_used": false,
+  "fake_policy_or_stub_seen": false,
+  "uses_heuristic_policy": false,
+  "bc_training_run": false,
+  "ppo_run": false,
+  "teacher_training_run": false,
+  "classification": "STAGE6R5C_COMMAND_TELEMETRY_FIX_PASS_READY_FOR_FULL_BC_TRAINING",
+  "recommended_next_stage": "Stage6B1 - Full Student BC Training From Stage5P4 Dataset",
+  "scene_sanity_snapshot_reference": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage6r5c_scene_sanity_snapshot.json",
+  "actor_cell_summary_reference": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week6_student/reports/stage6r5c_actor_cell_summary.json"
+}

@@ -1,0 +1,14 @@
+{
+    "scene":  "Week6_StudentVisualInspection",
+    "mode":  "student_live_policy",
+    "steps_completed":  57,
+    "terminal":  true,
+    "terminal_reason":  "Loss",
+    "player1_resources_step1":  60,
+    "player2_resources_step1":  57,
+    "unit_positions_step1_count":  9,
+    "own_actor_summary_step1":  [
+                                    "flat=25 B2: top1=Move (0.1845), top2=Attack (0.1696), noop_margin=-0.0208",
+                                    "flat=50 C3: top1=Move (0.2060), top2=Attack (0.1775), noop_margin=-0.0341"
+                                ]
+}

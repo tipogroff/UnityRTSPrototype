@@ -1,0 +1,124 @@
+{
+  "stage": "Stage6A1",
+  "title": "Enable Controlled BC Smoke Training In Stage6R1 Wrapper",
+  "final_decision": "STAGE6A1_BC_SMOKE_TRAINING_PASS_READY_FOR_SHORT_BC_RUN",
+  "executive_summary": "Controlled BC smoke training mode was enabled in the Stage6 wrapper with strict gating and batch limits, while contract-check-only mode remained intact.",
+  "changed_files": [
+    "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py"
+  ],
+  "training_mode_implementation_summary": {
+    "mode_gate": {
+      "contract_check_only_mode": "--contract-check-only true --dry-run-only true",
+      "controlled_training_mode": "--contract-check-only false --dry-run-only false"
+    },
+    "training_components": [
+      "build_day3_student_model",
+      "create_dataloader",
+      "compute_branchwise_loss",
+      "Adam"
+    ],
+    "required_transfer_variant_enforced": true,
+    "bounded_train_batches_enforced": true,
+    "bounded_validation_batches_enforced": true,
+    "checkpoint_saved_only_when_requested": true,
+    "contract_check_only_preserved": true
+  },
+  "contract_check_only_regression_check": {
+    "status": "pass",
+    "command": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu --batch-size 8 --seed 17 --output-dir python/week6_student/runs/legacy032_v2_bc_smoke_stage6a1_preflight --run-label legacy032_v2_bc_smoke_stage6a1_preflight --contract-check-only true --dry-run-only true",
+    "report_path": "python/week6_student/runs/legacy032_v2_bc_smoke_stage6a1_preflight/legacy032_v2_bc_smoke_stage6a1_preflight_contract_check_report.json",
+    "optimizer_step_executed": false,
+    "weights_updated": false
+  },
+  "smoke_training_command_executed": "python/week6_student/scripts/train_student_bc_smoke_legacy032_v2.py --bc-ready-dir python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z --device cpu --epochs 2 --batch-size 8 --max-train-batches 20 --max-validation-batches 5 --seed 17 --output-dir python/week6_student/runs/legacy032_v2_bc_smoke_stage6a1 --run-label legacy032_v2_bc_smoke_stage6a1 --model-variant transfer --save-checkpoint true --contract-check-only false --dry-run-only false",
+  "dataset_contract_summary": {
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+    "dataset_type": "bc_ready_legacy032_unity_v2",
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+    "attack_target_semantics": "local_7x7_49",
+    "semantic_parity_claim": false,
+    "direct_weight_transfer_claim": false
+  },
+  "model_head_shape_summary": {
+    "model_variant": "transfer",
+    "first_batch_target_shape": [8, 576, 7],
+    "first_batch_head_shapes": {
+      "action_type_logits": [8, 576, 6],
+      "move_dir_logits": [8, 576, 4],
+      "harvest_dir_logits": [8, 576, 4],
+      "return_dir_logits": [8, 576, 4],
+      "produce_dir_logits": [8, 576, 4],
+      "produce_unit_type_logits": [8, 576, 7],
+      "attack_target_local_logits": [8, 576, 49]
+    },
+    "v1_regression_detected": false
+  },
+  "train_smoke_metrics": {
+    "train_total_loss_first": 1.856973278512174,
+    "train_total_loss_last": 1.8464400354376536,
+    "train_total_loss_mean": 1.8517066569749137,
+    "train_branch_losses": {
+      "train_action_type_loss": 1.7918933444552951,
+      "train_move_dir_loss": 1.3884160425881664,
+      "train_harvest_dir_loss": 1.3888231924086143,
+      "train_return_dir_loss": 1.3879781446549067,
+      "train_produce_dir_loss": 1.3879625375016484,
+      "train_produce_unit_type_loss": 1.9486354750912815,
+      "train_attack_target_local_loss": 3.9004084035434596
+    },
+    "train_branch_accuracies": {
+      "train_action_type_accuracy": 0.17027994791666667,
+      "train_move_dir_accuracy": 0.24265312599174865,
+      "train_harvest_dir_accuracy": 0.24585327476561988,
+      "train_return_dir_accuracy": 0.25198267244251915,
+      "train_produce_dir_accuracy": 0.2515495186601609,
+      "train_produce_unit_type_accuracy": 0.1458525649479098,
+      "train_attack_target_local_accuracy": 0.021904948171327987
+    },
+    "train_batches_executed": 40,
+    "optimizer_step_count": 40,
+    "no_nan_inf_loss": true
+  },
+  "validation_smoke_metrics": {
+    "validation_total_loss_mean": 1.8361315424501463,
+    "validation_branch_losses": {
+      "val_action_type_loss": 1.791842312282986,
+      "val_move_dir_loss": 1.3860362916419098,
+      "val_harvest_dir_loss": 1.3864656865642633,
+      "val_return_dir_loss": 1.3871685821429156,
+      "val_produce_dir_loss": 1.3876069511973441,
+      "val_produce_unit_type_loss": 1.9465942226752269,
+      "val_attack_target_local_loss": 3.8931565699313504
+    },
+    "validation_branch_accuracies": {
+      "val_action_type_accuracy": 0.16940104166666667,
+      "val_move_dir_accuracy": 0.2517985611510791,
+      "val_harvest_dir_accuracy": 0.25365478327776353,
+      "val_return_dir_accuracy": 0.23682140047206923,
+      "val_produce_dir_accuracy": 0.23830222449501406,
+      "val_produce_unit_type_accuracy": 0.14446433137305037,
+      "val_attack_target_local_accuracy": 0.02016898337421641
+    },
+    "validation_batches_executed": 10
+  },
+  "checkpoint_files": [
+    "python/week6_student/runs/legacy032_v2_bc_smoke_stage6a1/legacy032_v2_bc_smoke_stage6a1_smoke_checkpoint.pt"
+  ],
+  "warnings": [
+    "Smoke run is intentionally short and bounded; this is not final BC training.",
+    "Loss movement is modest as expected for a short smoke run."
+  ],
+  "remaining_unity_blockers": [
+    "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs bridge path/filename policy",
+    "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs stale default checkpoint path"
+  ],
+  "recommended_next_stage": "Stage6A2",
+  "explicit_non_actions": {
+    "unity_launched": false,
+    "unity_play_mode_run": false,
+    "ppo_run": false,
+    "teacher_training_run": false,
+    "unity_csharp_files_modified": false
+  }
+}

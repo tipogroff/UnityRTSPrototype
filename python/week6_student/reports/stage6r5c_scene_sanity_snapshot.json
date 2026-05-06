@@ -1,0 +1,11 @@
+{
+    "generated_at_utc": "2026-05-06T18:50:04.2689462Z",
+    "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "mode": "student_live_policy",
+    "steps_completed": 57,
+    "terminal_reason": "Loss",
+    "checkpoint_path_used_at_inference": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+    "uses_heuristic_policy": false,
+    "fake_policy_or_stub_seen": false,
+    "fallback_used": false
+}

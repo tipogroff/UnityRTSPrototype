@@ -1,0 +1,28 @@
+{
+  "generated_at_utc": "2026-05-06T18:50:58.440705+00:00",
+  "scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+  "mode": "student_live_policy",
+  "adapter_artifact_path": "python/week6_student/tmp/day5_sanity/day5_sanity_player1_slot03_adapter.json",
+  "action_contract_version": "v2_gridnet_compatible",
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "single_payload_expected_action_flat_size": 44928,
+  "single_payload_action_flat_size": 44928,
+  "single_payload_action_flat_size_pass": true,
+  "legacy_stage6r4_reported_action_flat_size": 526848,
+  "legacy_stage6r4_interpretation": "legacy downstream report value; raw adapter payload remains 44928 and no checked-in runtime adapter path emits 526848",
+  "corrected_field_name": "single_payload_action_flat_size",
+  "aggregate_action_value_count": null
+}

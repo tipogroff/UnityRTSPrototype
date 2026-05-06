@@ -1,0 +1,11 @@
+{
+  "all_grid_decoder_reject_reasons": {
+    "non_actor_cell": 32639
+  },
+  "actor_cell_command_not_built_reasons": {
+    "masked_to_noop": 60
+  },
+  "command_lifecycle_rejection_or_drop_reasons": {
+    "accepted_pending_unresolved": 23
+  }
+}

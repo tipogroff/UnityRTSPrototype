@@ -1,0 +1,569 @@
+{
+  "stage": "Stage6R0 / Week6A0",
+  "title": "Week 6 Script Relevance & Contract Audit",
+  "classification": "STAGE6R0_WEEK6_SCRIPT_AUDIT_BLOCKED_BY_PYTHON_CONTRACT_DRIFT",
+  "recommended_next_action": "FIX_WEEK6_PYTHON_STUDENT_PATH_FIRST",
+  "constraints_respected": {
+    "bc_training_run": false,
+    "unity_editor_launched": false,
+    "unity_play_mode_run": false,
+    "ppo_fine_tuning_run": false,
+    "teacher_training_run": false,
+    "runtime_csharp_behavior_modified": false
+  },
+  "canonical_stage5p4_contract": {
+    "dataset_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+    "dataset_type": "bc_ready_legacy032_unity_v2",
+    "teacher_lineage": "legacy032",
+    "source_pipeline": "gym_microrts==0.3.2",
+    "target_action_contract": "unity_v2_legacy032_gridnet",
+    "observation_shape_per_sample": [576, 27],
+    "action_shape_per_sample": [576, 7],
+    "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+    "attack_target_semantics": "local_7x7_49",
+    "flatten_order": "row_major",
+    "flat_cell_index_formula": "row * 24 + col",
+    "direct_weight_transfer_claim": false,
+    "semantic_parity_claim": false,
+    "split_sizes": {
+      "source_samples_expected": 37343,
+      "train": 31742,
+      "validation": 5601,
+      "debug": 512
+    },
+    "safe_loader_check": {
+      "status": "pass",
+      "train_input_shape": [31742, 24, 24, 27],
+      "train_target_shape": [31742, 576, 7],
+      "validation_input_shape": [5601, 24, 24, 27],
+      "validation_target_shape": [5601, 576, 7],
+      "batch_shape_train_input": [8, 24, 24, 27],
+      "batch_shape_train_target": [8, 576, 7],
+      "batch_shape_validation_input": [8, 24, 24, 27],
+      "batch_shape_validation_target": [8, 576, 7]
+    }
+  },
+  "files_discovered": [
+    {
+      "path": "python/week6_student/student_bc_contract.py",
+      "language": "Python",
+      "likely_stage_day": "Day 1",
+      "purpose": "BC-ready manifest contract model",
+      "status": "canonical",
+      "reason": "Manifest-driven and compatible with Stage5P4 flat manifest fields."
+    },
+    {
+      "path": "python/week6_student/student_branch_contract.py",
+      "language": "Python",
+      "likely_stage_day": "Day 2-3",
+      "purpose": "Student branch order and sizes",
+      "status": "canonical",
+      "reason": "Defines v2 branch sizes [6,4,4,4,4,7,49]."
+    },
+    {
+      "path": "python/week6_student/student_bc_loader.py",
+      "language": "Python",
+      "likely_stage_day": "Day 1",
+      "purpose": "Load BC-ready train/validation artifacts",
+      "status": "canonical",
+      "reason": "Supports observations/actions naming and explicit reshape to [24,24,27]."
+    },
+    {
+      "path": "python/week6_student/student_bc_metrics.py",
+      "language": "Python",
+      "likely_stage_day": "Day 2",
+      "purpose": "Branch-wise BC objective",
+      "status": "canonical",
+      "reason": "Explicit action-type-gated inactive-branch handling."
+    },
+    {
+      "path": "python/week6_student/inspect_bc_dataset.py",
+      "language": "Python",
+      "likely_stage_day": "Day 1",
+      "purpose": "Safe BC-ready loader inspection CLI",
+      "status": "canonical",
+      "reason": "Requires explicit dataset path and passed against Stage5P4."
+    },
+    {
+      "path": "python/week6_student/student_architecture_transfer.py",
+      "language": "Python",
+      "likely_stage_day": "Day 3",
+      "purpose": "Transfer-aware student architecture",
+      "status": "probably current",
+      "reason": "V2-correct branch heads and conservative transfer posture."
+    },
+    {
+      "path": "python/week6_student/partial_transfer_strategy.py",
+      "language": "Python",
+      "likely_stage_day": "Day 3",
+      "purpose": "Partial transfer policy",
+      "status": "probably current",
+      "reason": "No hidden direct transfer claim."
+    },
+    {
+      "path": "python/week6_student/load_student_checkpoint.py",
+      "language": "Python",
+      "likely_stage_day": "Day 4",
+      "purpose": "Strict transfer-checkpoint loader",
+      "status": "probably current",
+      "reason": "Strict state-dict loading against transfer architecture."
+    },
+    {
+      "path": "python/week6_student/student_bc_model_minimal.py",
+      "language": "Python",
+      "likely_stage_day": "Day 2",
+      "purpose": "Minimal BC model",
+      "status": "probably current",
+      "reason": "Head sizes are v2-correct, but not the canonical later inference architecture."
+    },
+    {
+      "path": "python/week6_student/train_student_bc_minimal.py",
+      "language": "Python",
+      "likely_stage_day": "Day 2",
+      "purpose": "Main BC training entrypoint",
+      "status": "stale",
+      "reason": "Default dataset path is pre-Stage5P4 and default model variant is not aligned to later inference loading."
+    },
+    {
+      "path": "python/week6_student/student_inference_adapter.py",
+      "language": "Python",
+      "likely_stage_day": "Day 4",
+      "purpose": "Offline inference adapter",
+      "status": "probably current",
+      "reason": "Validates v2 branch contract and row-major flatten assumptions."
+    },
+    {
+      "path": "python/week6_student/student_inference_server.py",
+      "language": "Python",
+      "likely_stage_day": "Day 5",
+      "purpose": "Persistent inference bridge",
+      "status": "probably current",
+      "reason": "Thin server wrapper without training side effects."
+    },
+    {
+      "path": "python/week6_student/scripts/validate_week6_scene_prep.py",
+      "language": "Python",
+      "likely_stage_day": "Day 4-5",
+      "purpose": "Static scene wiring validator",
+      "status": "probably current",
+      "reason": "Read-only static validation utility."
+    },
+    {
+      "path": "Assets/Scripts/ML/ActionContract.cs",
+      "language": "C#",
+      "likely_stage_day": "Shared core",
+      "purpose": "Unity action contract",
+      "status": "canonical",
+      "reason": "Authoritative v2 constants and offsets."
+    },
+    {
+      "path": "Assets/Scripts/ML/ActionDecoder.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4",
+      "purpose": "Decode branch tensors into AgentAction",
+      "status": "canonical",
+      "reason": "V2 branch semantics with explicit mask-aware diagnostics."
+    },
+    {
+      "path": "Assets/Scripts/ML/ActionApplier.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4-5",
+      "purpose": "Authoritative runtime validation and command submit",
+      "status": "canonical",
+      "reason": "Preserves ActionApplier -> MatchManager.ApplyCommand path."
+    },
+    {
+      "path": "Assets/Scripts/ML/MlPolicyPipelineFacade.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4",
+      "purpose": "Canonical pipeline façade",
+      "status": "canonical",
+      "reason": "Observation/mask/decode/apply path remains explicit."
+    },
+    {
+      "path": "Assets/Scripts/ML/ObservationBuilder.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4",
+      "purpose": "Build runtime observation",
+      "status": "probably current",
+      "reason": "Runtime shape is correct; only terminology in comments is dated."
+    },
+    {
+      "path": "Assets/Scripts/ML/ObservationContract.cs",
+      "language": "C#",
+      "likely_stage_day": "Shared core",
+      "purpose": "Observation contract constants",
+      "status": "probably current",
+      "reason": "Shape/channel count correct; compatibility wording is stale."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4-5",
+      "purpose": "Live Unity student bridge",
+      "status": "stale",
+      "reason": "Default checkpoint path and filename allowlist are tied to older checkpoint families."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 4",
+      "purpose": "Technical dry-run component",
+      "status": "stale",
+      "reason": "Pinned to older checkpoint path and older validation target."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6Day5SanityMatchRunner.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 5",
+      "purpose": "Sanity diagnostics collector",
+      "status": "probably current",
+      "reason": "Still computes invalid, ignored, produce, attack, and action histogram metrics."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 5",
+      "purpose": "Visual and global runtime diagnostics",
+      "status": "probably current",
+      "reason": "Not limited to B2/C3; also writes stage10d10 global runtime diagnostics."
+    },
+    {
+      "path": "Assets/Scripts/Gameplay/Match/EpisodeController.cs",
+      "language": "C#",
+      "likely_stage_day": "Day 5",
+      "purpose": "Week 6 control-mode owner",
+      "status": "probably current",
+      "reason": "Enforces one-student-side safe Day 5 configuration."
+    },
+    {
+      "path": "Assets/Scenes/Week6_StudentSanity.unity",
+      "language": "Unity scene",
+      "likely_stage_day": "Day 5",
+      "purpose": "Sanity-match scene",
+      "status": "probably current",
+      "reason": "Existing Week 6 scene relevant to Day 5 runs."
+    },
+    {
+      "path": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+      "language": "Unity scene",
+      "likely_stage_day": "Day 5",
+      "purpose": "Visual inspection scene",
+      "status": "probably current",
+      "reason": "Static validator targets it directly."
+    }
+  ],
+  "stale_marker_scan_results": [
+    {
+      "path": "Assets/Scripts/ML/ObservationContract.cs",
+      "line": 8,
+      "excerpt": "Gym-µRTS v0.6.1",
+      "severity": "warning",
+      "why_it_matters": "Active comment still references historical compatibility framing rather than current canonical source lineage gym_microrts==0.3.2.",
+      "recommended_action": "Clarify as historical/reference-only wording."
+    },
+    {
+      "path": "Assets/Scripts/ML/ObservationBuilder.cs",
+      "line": 5,
+      "excerpt": "LegacyGymCompatibleSpec / UnityMvpTransferSpec",
+      "severity": "warning",
+      "why_it_matters": "Older terminology may confuse observation modes with current canonical Week 6 contract targets.",
+      "recommended_action": "Clarify that these are observation-mode labels only."
+    },
+    {
+      "path": "python/week6_student/train_student_bc_minimal.py",
+      "line": 28,
+      "excerpt": "PINNED_BC_READY_RELATIVE -> day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+      "severity": "blocker",
+      "why_it_matters": "Default BC smoke entrypoint is not pinned to the current canonical Stage5P4 dataset.",
+      "recommended_action": "Update default to Stage5P4 or require explicit --bc-ready-dir."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+      "line": 492,
+      "excerpt": "_checkpointRelativePath = legacy032_v2_stage10d14_unity_like_augmented_bc_20260503T1455Z/student_bc_stage10d14_augmented_best.pt",
+      "severity": "blocker",
+      "why_it_matters": "Unity live bridge defaults to an older checkpoint lineage.",
+      "recommended_action": "Switch to explicit canonical checkpoint configuration before new inference runs."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+      "line": 1046,
+      "excerpt": "checkpointFileName allowlist for older stage10 families",
+      "severity": "blocker",
+      "why_it_matters": "A fresh canonical Week 6 checkpoint name may be rejected even if its branch shapes are valid.",
+      "recommended_action": "Use contract validation as the primary gate instead of a stale filename allowlist."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+      "line": 1656,
+      "excerpt": "v1 action contract artifact is incompatible with Unity v2 runtime",
+      "severity": "historical-ok",
+      "why_it_matters": "This is a protective guard, not active v1 usage.",
+      "recommended_action": "Keep."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs",
+      "line": 80,
+      "excerpt": "_checkpointRelativePath = legacy032_v2_bc_minimal_20260501T195501Z/student_bc_transfer_best.pt",
+      "severity": "warning",
+      "why_it_matters": "Historical Day 4 dry run is still pinned to an older artifact.",
+      "recommended_action": "Update or mark historical."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs",
+      "line": 259,
+      "excerpt": "v1-sized (produce=4, attack=9)",
+      "severity": "historical-ok",
+      "why_it_matters": "Protective mismatch guard only.",
+      "recommended_action": "Keep."
+    },
+    {
+      "path": "python/week6_student/runs/day2_minimal_bc_proof_learning_20260422/day2_minimal_metrics_history.json",
+      "line": 3,
+      "excerpt": "day6_bc_ready_teacher_adapted_day5_hardened_v2 ... corrective_sl2000",
+      "severity": "historical-ok",
+      "why_it_matters": "Historical run provenance only, not canonical input for new smoke.",
+      "recommended_action": "Preserve as history, exclude from canonical path."
+    },
+    {
+      "path": "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_STAGE0_HANDOFF_VERIFICATION.md",
+      "line": 95,
+      "excerpt": "older failure text about dataset path and minimal model",
+      "severity": "historical-ok",
+      "why_it_matters": "The report is stale relative to current code and can mislead audits.",
+      "recommended_action": "Treat as historical context only."
+    },
+    {
+      "path": "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+      "line": 1448,
+      "excerpt": "stage10d10_global_runtime_* diagnostics",
+      "severity": "warning",
+      "why_it_matters": "Confirms visual inspection is broader than B2/C3, but focus-cell narrative still remains prominent.",
+      "recommended_action": "Keep global diagnostics and optionally reduce focus-cell emphasis later."
+    }
+  ],
+  "python_student_audit": {
+    "status": "blocked_by_entrypoint_drift",
+    "core_contract_support": "pass",
+    "findings": [
+      "Stage5P4 loader compatibility passed through inspect_bc_dataset.py.",
+      "Loader accepts flat observations/actions naming and explicitly reshapes to [N,24,24,27].",
+      "Branch contract is v2-correct: [6,4,4,4,4,7,49].",
+      "Branch-wise loss uses explicit action-type-gated inactive-branch handling.",
+      "Partial transfer strategy is conservative and makes no full direct-transfer claim.",
+      "Training entrypoint default dataset path is stale relative to Stage5P4.",
+      "Training entrypoint default model variant is minimal, while inference loader expects transfer checkpoints."
+    ],
+    "requirement_checks": {
+      "loader_expects_stage5p4_schema": "pass",
+      "loader_reads_observations_actions_keys": "pass",
+      "loader_supports_576x27": "pass",
+      "reshape_to_24x24x27_explicit": "pass",
+      "model_outputs_7_heads": "pass",
+      "no_old_produce_head_4_in_active_models": "pass",
+      "no_old_attack_head_9_in_active_models": "pass",
+      "branchwise_loss_semantics_correct": "pass",
+      "action_targets_shape_b_576_7": "pass",
+      "inactive_branch_logic_explicit": "pass",
+      "masks_not_runtime_truth": "pass",
+      "train_script_accepts_bc_ready_dir": "pass",
+      "no_hardcoded_old_bc_dir": "fail",
+      "no_hidden_direct_weight_transfer_path": "pass",
+      "checkpoint_save_load_clear": "pass_with_warnings",
+      "validation_loop_present": "pass",
+      "dry_run_or_safe_smoke_exists": "pass_with_warnings"
+    },
+    "blockers": [
+      "train_student_bc_minimal.py default dataset path is not the current Stage5P4 package.",
+      "train_student_bc_minimal.py default model variant is not aligned with the transfer-only inference loader."
+    ],
+    "required_fixes": [
+      "Pin canonical BC smoke to the Stage5P4 dataset.",
+      "Use transfer architecture as the canonical smoke model variant or add a dedicated smoke wrapper."
+    ]
+  },
+  "unity_inference_audit": {
+    "status": "blocked_by_bridge_configuration_drift",
+    "findings": [
+      "ActionContract.cs is v2-correct and authoritative for [6,4,4,4,4,7,49].",
+      "ActionDecoder.cs decodes v2 produce and local 7x7 attack branches.",
+      "ActionApplier.cs remains the authoritative runtime gate and submits through MatchManager.ApplyCommand().",
+      "MlPolicyPipelineFacade.cs preserves the intended downstream path.",
+      "Week6StudentPolicyAdapter.cs rejects v1 [6,4,4,4,4,4,9] payloads.",
+      "Week6Day5SanityMatchRunner.cs still produces action, produce, attack, invalid, and ignored metrics.",
+      "Week6VisualInspectionRunner.cs still has focus cells but also emits global runtime diagnostics.",
+      "Unity bridge default checkpoint path and filename allowlist are stale."
+    ],
+    "requirement_checks": {
+      "observation_builder_outputs_24x24x27": "pass",
+      "bridge_expects_correct_input_layout": "pass",
+      "flatten_order_row_major": "pass",
+      "decoder_expects_7_branches": "pass",
+      "produce_branch_size_7": "pass",
+      "attack_branch_size_49": "pass",
+      "no_active_3x3_decoder_assumption": "pass",
+      "no_active_9_way_attack_contract": "pass",
+      "mask_policy_non_authoritative": "pass",
+      "runtime_uses_action_applier_matchmanager": "pass",
+      "no_heuristic_or_random_fallback": "pass_with_warnings",
+      "checkpoint_filename_gating_current": "fail",
+      "visual_runner_global_diagnostics_present": "pass_with_warnings",
+      "requested_behavior_metrics_observable": "pass",
+      "command_built_predicted_noop_rejection_reasons_observable": "pass"
+    },
+    "blockers": [
+      "Week6StudentPolicyAdapter.cs default checkpoint path is stale.",
+      "Week6StudentPolicyAdapter.cs checkpoint filename allowlist is stale.",
+      "Week6Day4StudentInferenceDryRun.cs is pinned to an older checkpoint path."
+    ],
+    "required_fixes": [
+      "Update Unity bridge checkpoint path policy before any new inference run.",
+      "Replace or relax stale filename gating in favor of contract-based validation.",
+      "Update Day 4 dry-run defaults or mark it historical."
+    ]
+  },
+  "readiness_matrix": {
+    "day1_student_loader_and_bc_contract": {
+      "status": "PASS_WITH_WARNINGS",
+      "evidence": [
+        "Stage5P4 loader inspection passed.",
+        "Contract and branch sizes are correct.",
+        "Loader explicit reshape and metadata handling are present."
+      ],
+      "blockers": [],
+      "required_fixes": [
+        "Align canonical training entrypoint defaults to Stage5P4."
+      ]
+    },
+    "day2_minimal_bc_training_loop": {
+      "status": "FAIL",
+      "evidence": [
+        "Branch-wise training loop and validation loop exist.",
+        "V2 branch sizes and active/inactive gating are correct."
+      ],
+      "blockers": [
+        "Default dataset path is stale.",
+        "Default model variant is not aligned to later transfer-checkpoint inference."
+      ],
+      "required_fixes": [
+        "Pin canonical BC smoke to Stage5P4.",
+        "Use transfer architecture for canonical smoke."
+      ]
+    },
+    "day3_student_architecture_and_partial_transfer": {
+      "status": "PASS",
+      "evidence": [
+        "Transfer architecture is v2-correct.",
+        "Partial transfer policy is conservative and explicit.",
+        "No hidden direct transfer claim was found."
+      ],
+      "blockers": [],
+      "required_fixes": []
+    },
+    "day4_unity_side_inference_path": {
+      "status": "FAIL",
+      "evidence": [
+        "Core Unity action contract, decoder, applier, and pipeline are v2-correct.",
+        "Unity bridge rejects v1 payloads."
+      ],
+      "blockers": [
+        "Week6StudentPolicyAdapter default checkpoint path is stale.",
+        "Week6StudentPolicyAdapter filename allowlist is stale.",
+        "Week6Day4StudentInferenceDryRun default checkpoint path is stale."
+      ],
+      "required_fixes": [
+        "Update bridge path and gating before any new inference attempt."
+      ]
+    },
+    "day5_behavior_sanity_diagnostics": {
+      "status": "PASS_WITH_WARNINGS",
+      "evidence": [
+        "Day 5 runner still computes invalid/ignored share, action histogram, produce frequency, and attack frequency.",
+        "Visual runner still writes global runtime diagnostics, not only focus-cell traces."
+      ],
+      "blockers": [
+        "Inherits stale checkpoint path/gating from Day 4 bridge configuration."
+      ],
+      "required_fixes": [
+        "Fix Day 4 bridge configuration first.",
+        "Optionally rebalance visual reporting away from focus-cell emphasis."
+      ]
+    }
+  },
+  "blockers": [
+    "train_student_bc_minimal.py default dataset path is not the current Stage5P4 package.",
+    "train_student_bc_minimal.py default model variant is not aligned with later inference loading.",
+    "Week6StudentPolicyAdapter.cs default checkpoint path is stale.",
+    "Week6StudentPolicyAdapter.cs stale filename allowlist may reject a fresh canonical checkpoint.",
+    "Week6Day4StudentInferenceDryRun.cs is pinned to an older checkpoint path."
+  ],
+  "warnings": [
+    "ObservationContract.cs and ObservationBuilder.cs still contain older compatibility terminology in comments.",
+    "Week6VisualInspectionRunner.cs still foregrounds B2/C3 even though global diagnostics exist.",
+    "Historical Week 6 reports and run artifacts remain in the tree and can mislead future audits if treated as current."
+  ],
+  "historical_stale_scripts": [
+    "python/week6_student/reports/LEGACY032_UNITY_V2_WEEK6_STAGE0_HANDOFF_VERIFICATION.md",
+    "python/week6_student/runs/*",
+    "python/week6_student/bc_ready/* under stage10d14/stage10d17/stage10d19*",
+    "python/week6_student/scripts/generate_stage10r_noop_collapse_report.py",
+    "Assets/Scripts/ML/Week6Day4StudentInferenceDryRun.cs (current defaults only)"
+  ],
+  "canonical_scripts": [
+    "python/week6_student/student_bc_contract.py",
+    "python/week6_student/student_branch_contract.py",
+    "python/week6_student/student_bc_loader.py",
+    "python/week6_student/student_bc_metrics.py",
+    "python/week6_student/student_architecture_transfer.py",
+    "python/week6_student/load_student_checkpoint.py",
+    "python/week6_student/inspect_bc_dataset.py",
+    "python/week6_student/student_inference_adapter.py",
+    "python/week6_student/student_inference_server.py",
+    "python/week6_student/scripts/validate_week6_scene_prep.py",
+    "Assets/Scripts/ML/ActionContract.cs",
+    "Assets/Scripts/ML/ActionDecoder.cs",
+    "Assets/Scripts/ML/ActionApplier.cs",
+    "Assets/Scripts/ML/MlPolicyPipelineFacade.cs",
+    "Assets/Scripts/ML/ObservationBuilder.cs",
+    "Assets/Scripts/ML/Week6Day5SanityMatchRunner.cs",
+    "Assets/Scripts/ML/Week6VisualInspectionRunner.cs",
+    "Assets/Scripts/Gameplay/Match/EpisodeController.cs",
+    "Assets/Scenes/Week6_StudentSanity.unity",
+    "Assets/Scenes/Week6_StudentVisualInspection.unity"
+  ],
+  "safe_checks_run": [
+    {
+      "check": "py_compile active Week 6 Python files",
+      "status": "pass"
+    },
+    {
+      "check": "train_student_bc_minimal.py --help",
+      "status": "pass"
+    },
+    {
+      "check": "inspect_bc_dataset.py --help",
+      "status": "pass"
+    },
+    {
+      "check": "student_inference_adapter.py --help",
+      "status": "pass"
+    },
+    {
+      "check": "student_inference_server.py --help",
+      "status": "pass"
+    },
+    {
+      "check": "scripts/validate_week6_scene_prep.py",
+      "status": "pass"
+    },
+    {
+      "check": "inspect_bc_dataset.py against canonical Stage5P4 package",
+      "status": "pass"
+    },
+    {
+      "check": "Problems-panel check on key Python/C# files",
+      "status": "pass"
+    }
+  ]
+}

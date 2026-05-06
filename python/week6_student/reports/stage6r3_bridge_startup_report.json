@@ -1,0 +1,13 @@
+{
+  "stage": "Stage6R3",
+  "bridge_start_status": "pass",
+  "adapter_ready_status": "ok",
+  "ready_handshake_status": "pass",
+  "checkpoint_path": "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt",
+  "checkpoint_model_variant": "transfer",
+  "python_executable": ".venv/Scripts/python.exe",
+  "bridge_script": "python/week6_student/student_inference_server.py",
+  "python_exit_code": 0,
+  "python_exceptions": [],
+  "unity_exceptions": []
+}

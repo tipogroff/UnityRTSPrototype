@@ -127,6 +127,13 @@ namespace RTS.ML
             new Dictionary<int, ActionDecoder.MaskAwareCellTelemetry>();
         private readonly Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> _latestLegalMaskByFlat =
             new Dictionary<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry>();
+        private readonly List<Stage6R5CCommandLifecycleRow> _stage6r5cLifecycleRows = new List<Stage6R5CCommandLifecycleRow>();
+        private readonly Dictionary<string, Stage6R5CCommandLifecycleRow> _stage6r5cLifecycleById =
+            new Dictionary<string, Stage6R5CCommandLifecycleRow>(StringComparer.Ordinal);
+        private readonly Dictionary<string, Queue<string>> _stage6r5cPendingByEventKey =
+            new Dictionary<string, Queue<string>>(StringComparer.Ordinal);
+        private readonly List<Stage6R5CCommandTerminalEventRow> _stage6r5cTerminalEvents =
+            new List<Stage6R5CCommandTerminalEventRow>();
 
         private GUIStyle _statusBannerStyle;
         private GUIStyle _worldLabelStyle;
@@ -613,6 +620,90 @@ namespace RTS.ML
             public Stage10D10CellRow[] cells;
         }
 
+        [Serializable]
+        private sealed class Stage6R5CCommandLifecycleRow
+        {
+            public string diagnostic_command_id;
+            public long command_id;
+            public int step;
+            public int actor_flat_index;
+            public string actor_label;
+            public string unit_id;
+            public string unit_type;
+            public string owner;
+            public string action_type;
+            public int move_dir;
+            public int harvest_dir;
+            public int return_dir;
+            public int produce_dir;
+            public int produce_unit_type;
+            public int attack_target_local;
+            public string decoder_result;
+            public string applier_result;
+            public string match_manager_result;
+            public string final_lifecycle_status;
+            public bool decoded_candidate;
+            public bool built;
+            public bool submitted_to_applier;
+            public bool rejected_by_decoder;
+            public bool rejected_by_applier;
+            public bool accepted_by_applier;
+            public bool submitted_to_match_manager;
+            public bool applied_by_match_manager;
+            public bool rejected_by_match_manager;
+            public bool expired_or_unresolved_at_capture_end;
+            public string reject_reason;
+            public string reject_reason_raw;
+            public string command_event_key;
+            public int last_event_sequence;
+            public string last_event_source;
+            public bool finalized;
+        }
+
+        [Serializable]
+        private sealed class Stage6R5CCommandTerminalEventRow
+        {
+            public string diagnostic_command_id;
+            public long command_id;
+            public int step;
+            public int actor_flat_index;
+            public string actor_label;
+            public string owner;
+            public string action_type;
+            public string event_type;
+            public string terminal_bucket;
+            public string reason;
+            public string source;
+            public string command_event_key;
+            public int event_sequence;
+        }
+
+        [Serializable]
+        private sealed class Stage6R5CSceneSanitySnapshot
+        {
+            public string generated_at_utc;
+            public string scene;
+            public string mode;
+            public int steps_completed;
+            public string terminal_reason;
+            public string checkpoint_path_used_at_inference;
+            public bool uses_heuristic_policy;
+            public bool fake_policy_or_stub_seen;
+            public bool fallback_used;
+        }
+
+        [Serializable]
+        private sealed class Stage6R5CActorCellSummary
+        {
+            public string generated_at_utc;
+            public int actor_cells_detected;
+            public int actor_cell_predicted_noop_count;
+            public int actor_cell_predicted_non_noop_count;
+            public int actor_cell_command_built_count;
+            public int actor_cell_command_not_built_count;
+            public string[] unit_type_prediction_histogram;
+        }
+
         private readonly struct RuntimeRejectionInfo
         {
             public RuntimeRejectionInfo(string reason, MatchCommand command)
@@ -992,6 +1083,7 @@ namespace RTS.ML
 
             if (_episodeController.TryGetWeek6StudentExecutionReport(_studentControlledPlayer, out StudentPolicyExecutionReport report))
             {
+                RecordStage6R5CLifecycleForStep(currentStep, report);
                 _acceptedStudentCommands += report.AcceptedCount;
                 _invalidStudentCommands += report.RejectedCount;
                 _ignoredStudentCommands = _runtimeRejectedStudentCommands;
@@ -1038,6 +1130,7 @@ namespace RTS.ML
             if (currentStep > 0)
             {
                 _diagnosticsCollector?.RecordStepCompleted();
+                FinalizeStage6R5CCompletedSteps(currentStep);
             }
 
             RefreshLatestDiagnosticsFromArtifacts();
@@ -2485,6 +2578,10 @@ namespace RTS.ML
             _latestLegalMaskByFlat.Clear();
             _lastBaselineAcceptedByActor.Clear();
             _lastBaselineRejectedByActor.Clear();
+            _stage6r5cLifecycleRows.Clear();
+            _stage6r5cLifecycleById.Clear();
+            _stage6r5cPendingByEventKey.Clear();
+            _stage6r5cTerminalEvents.Clear();
 
             ResetActionHistogram(_aggregateActionTypeHistogram);
             ResetActionHistogram(_aggregateActorActionTypeHistogram);
@@ -2570,6 +2667,7 @@ namespace RTS.ML
             if (command.Owner == _studentControlledPlayer)
             {
                 RecordCommandTelemetry(command, accepted: true, reason: string.Empty);
+                RecordStage6R5CTerminalEvent(command, accepted: true, normalizedReason: string.Empty, rawReason: string.Empty, diagnostics: default);
                 _lastStepApplyCommandCalled = true;
             }
             else
@@ -2615,6 +2713,7 @@ namespace RTS.ML
 
             string normalizedReason = NormalizeReason(reason);
             RecordCommandTelemetry(command, accepted: false, reason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
+            RecordStage6R5CTerminalEvent(command, accepted: false, normalizedReason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
             IncrementStringCount(_runtimeRejectionReasons, normalizedReason);
         }
 
@@ -2656,6 +2755,8 @@ namespace RTS.ML
 
                 if (!_terminalReportWritten)
                 {
+                    FinalizeStage6R5CCaptureEnd();
+                    WriteStage6R5CTelemetryArtifacts();
                     WriteCompactDiagnosticsReport();
                     _terminalReportWritten = true;
                 }
@@ -4139,6 +4240,436 @@ namespace RTS.ML
             return ResolveCommandNotBuiltReason(flatIndex, predictedActionType, commandBuilt);
         }
 
+        private void RecordStage6R5CLifecycleForStep(int step, StudentPolicyExecutionReport report)
+        {
+            if (report.DecodedActions == null || report.DecodedActions.Count == 0)
+            {
+                return;
+            }
+
+            var perFlatActionSequence = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            for (int i = 0; i < report.DecodedActions.Count; i++)
+            {
+                AgentAction action = report.DecodedActions[i];
+                if (action.ActionType == UnitActionType.NoOp)
+                {
+                    continue;
+                }
+
+                int flat = ToFlatIndex(action.ActorPosition);
+                string actionType = action.ActionType.ToString();
+                string seqKey = string.Format(CultureInfo.InvariantCulture, "{0}|{1}", flat, actionType);
+                int sequence = 1;
+                if (perFlatActionSequence.TryGetValue(seqKey, out int previous))
+                {
+                    sequence = previous + 1;
+                }
+
+                perFlatActionSequence[seqKey] = sequence;
+                string diagnosticId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}:{1}:{2}:{3}",
+                    step,
+                    flat,
+                    actionType,
+                    sequence);
+
+                if (_stage6r5cLifecycleById.ContainsKey(diagnosticId))
+                {
+                    continue;
+                }
+
+                MatchCommand command = CreateMatchCommandFromAgentAction(_studentControlledPlayer, action);
+                string eventKey = BuildCommandTelemetryKey(step, command);
+
+                var row = new Stage6R5CCommandLifecycleRow
+                {
+                    diagnostic_command_id = diagnosticId,
+                    command_id = 0L,
+                    step = step,
+                    actor_flat_index = flat,
+                    actor_label = ToCellLabel(action.ActorPosition),
+                    unit_id = "NOT_EXPOSED",
+                    unit_type = ResolveUnitTypeLabelAt(action.ActorPosition),
+                    owner = _studentControlledPlayer.ToString(),
+                    action_type = actionType,
+                    move_dir = action.ActionType == UnitActionType.Move ? (int)action.Direction : 0,
+                    harvest_dir = action.ActionType == UnitActionType.Harvest ? (int)action.Direction : 0,
+                    return_dir = action.ActionType == UnitActionType.Return ? (int)action.Direction : 0,
+                    produce_dir = action.ActionType == UnitActionType.Produce ? (int)action.Direction : 0,
+                    produce_unit_type = action.ActionType == UnitActionType.Produce ? (int)action.ProduceUnitType : 0,
+                    attack_target_local = action.ActionType == UnitActionType.Attack ? AttackTargetToLocal(action.ActorPosition, action.AttackTargetPosition) : 24,
+                    decoder_result = "command_built",
+                    applier_result = "submitted_to_applier",
+                    match_manager_result = "pending",
+                    final_lifecycle_status = "submitted_to_match_manager",
+                    decoded_candidate = true,
+                    built = true,
+                    submitted_to_applier = true,
+                    rejected_by_decoder = false,
+                    rejected_by_applier = false,
+                    accepted_by_applier = false,
+                    submitted_to_match_manager = true,
+                    applied_by_match_manager = false,
+                    rejected_by_match_manager = false,
+                    expired_or_unresolved_at_capture_end = false,
+                    reject_reason = string.Empty,
+                    reject_reason_raw = string.Empty,
+                    command_event_key = eventKey,
+                    last_event_sequence = 0,
+                    last_event_source = "student_decoded",
+                    finalized = false,
+                };
+
+                _stage6r5cLifecycleRows.Add(row);
+                _stage6r5cLifecycleById[diagnosticId] = row;
+
+                if (!_stage6r5cPendingByEventKey.TryGetValue(eventKey, out Queue<string> queue))
+                {
+                    queue = new Queue<string>();
+                    _stage6r5cPendingByEventKey[eventKey] = queue;
+                }
+
+                queue.Enqueue(diagnosticId);
+            }
+        }
+
+        private void RecordStage6R5CTerminalEvent(
+            MatchCommand command,
+            bool accepted,
+            string normalizedReason,
+            string rawReason,
+            MatchCommandRejectionDiagnostics diagnostics)
+        {
+            int step = _matchManager != null ? _matchManager.Step : 0;
+            string eventKey = BuildCommandTelemetryKey(step, command);
+
+            Stage6R5CCommandLifecycleRow row = null;
+            string diagnosticId = string.Empty;
+            if (_stage6r5cPendingByEventKey.TryGetValue(eventKey, out Queue<string> queue) && queue.Count > 0)
+            {
+                diagnosticId = queue.Dequeue();
+                _stage6r5cLifecycleById.TryGetValue(diagnosticId, out row);
+            }
+
+            if (row == null)
+            {
+                string orphanId = string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}:{3}", step, ToFlatIndex(command.UnitPosition), command.ActionType, "orphan");
+                row = new Stage6R5CCommandLifecycleRow
+                {
+                    diagnostic_command_id = orphanId,
+                    command_id = 0L,
+                    step = step,
+                    actor_flat_index = ToFlatIndex(command.UnitPosition),
+                    actor_label = ToCellLabel(command.UnitPosition),
+                    unit_id = "NOT_EXPOSED",
+                    unit_type = "NOT_EXPOSED",
+                    owner = command.Owner.ToString(),
+                    action_type = command.ActionType.ToString(),
+                    move_dir = command.ActionType == UnitActionType.Move ? (int)command.Direction : 0,
+                    harvest_dir = command.ActionType == UnitActionType.Harvest ? (int)command.Direction : 0,
+                    return_dir = command.ActionType == UnitActionType.Return ? (int)command.Direction : 0,
+                    produce_dir = command.ActionType == UnitActionType.Produce ? (int)command.Direction : 0,
+                    produce_unit_type = command.ActionType == UnitActionType.Produce ? (int)command.ProduceUnitType : 0,
+                    attack_target_local = command.ActionType == UnitActionType.Attack ? AttackTargetToLocal(command.UnitPosition, command.AttackTarget) : 24,
+                    decoder_result = "unknown",
+                    applier_result = "unknown",
+                    match_manager_result = "pending",
+                    final_lifecycle_status = "submitted_to_match_manager",
+                    decoded_candidate = false,
+                    built = true,
+                    submitted_to_applier = true,
+                    rejected_by_decoder = false,
+                    rejected_by_applier = false,
+                    accepted_by_applier = false,
+                    submitted_to_match_manager = true,
+                    applied_by_match_manager = false,
+                    rejected_by_match_manager = false,
+                    expired_or_unresolved_at_capture_end = false,
+                    reject_reason = string.Empty,
+                    reject_reason_raw = string.Empty,
+                    command_event_key = eventKey,
+                    last_event_sequence = 0,
+                    last_event_source = "orphan_event",
+                    finalized = false,
+                };
+                _stage6r5cLifecycleRows.Add(row);
+                _stage6r5cLifecycleById[orphanId] = row;
+                diagnosticId = orphanId;
+            }
+
+            if (_commandTelemetryByKey.TryGetValue(eventKey, out CommandEventTelemetry telemetry))
+            {
+                row.command_id = telemetry.CommandId;
+                row.last_event_sequence = telemetry.LastEventSequence;
+                row.last_event_source = telemetry.LastEventSource ?? string.Empty;
+            }
+
+            if (accepted)
+            {
+                row.accepted_by_applier = true;
+                row.applier_result = "accepted_by_applier";
+                row.match_manager_result = "submitted_to_match_manager";
+                row.final_lifecycle_status = "submitted_to_match_manager";
+            }
+            else
+            {
+                row.rejected_by_match_manager = true;
+                row.applier_result = "accepted_by_applier";
+                row.match_manager_result = "rejected_by_match_manager";
+                row.final_lifecycle_status = "rejected_by_match_manager";
+                row.reject_reason = string.IsNullOrWhiteSpace(normalizedReason) ? NormalizeReason(rawReason) : normalizedReason;
+                row.reject_reason_raw = string.IsNullOrWhiteSpace(rawReason) ? row.reject_reason : rawReason;
+                row.finalized = true;
+            }
+
+            _stage6r5cTerminalEvents.Add(new Stage6R5CCommandTerminalEventRow
+            {
+                diagnostic_command_id = diagnosticId,
+                command_id = row.command_id,
+                step = step,
+                actor_flat_index = row.actor_flat_index,
+                actor_label = row.actor_label,
+                owner = row.owner,
+                action_type = row.action_type,
+                event_type = accepted ? "accepted_by_applier" : "rejected_by_match_manager",
+                terminal_bucket = accepted ? "pending_terminal_resolution" : "rejected_by_match_manager",
+                reason = accepted ? string.Empty : row.reject_reason,
+                source = accepted ? "matchmanager.accepted" : "matchmanager.rejected",
+                command_event_key = eventKey,
+                event_sequence = row.last_event_sequence,
+            });
+        }
+
+        private void FinalizeStage6R5CCompletedSteps(int currentStep)
+        {
+            for (int i = 0; i < _stage6r5cLifecycleRows.Count; i++)
+            {
+                Stage6R5CCommandLifecycleRow row = _stage6r5cLifecycleRows[i];
+                if (row.finalized || row.step >= currentStep)
+                {
+                    continue;
+                }
+
+                if (row.rejected_by_match_manager)
+                {
+                    row.finalized = true;
+                    continue;
+                }
+
+                if (row.accepted_by_applier)
+                {
+                    row.applied_by_match_manager = true;
+                    row.match_manager_result = "applied_by_match_manager";
+                    row.final_lifecycle_status = "applied_by_match_manager";
+                    row.finalized = true;
+
+                    _stage6r5cTerminalEvents.Add(new Stage6R5CCommandTerminalEventRow
+                    {
+                        diagnostic_command_id = row.diagnostic_command_id,
+                        command_id = row.command_id,
+                        step = row.step,
+                        actor_flat_index = row.actor_flat_index,
+                        actor_label = row.actor_label,
+                        owner = row.owner,
+                        action_type = row.action_type,
+                        event_type = "applied_by_match_manager",
+                        terminal_bucket = "applied_by_match_manager",
+                        reason = string.Empty,
+                        source = "matchmanager.step_finalization",
+                        command_event_key = row.command_event_key,
+                        event_sequence = row.last_event_sequence,
+                    });
+                }
+            }
+        }
+
+        private void FinalizeStage6R5CCaptureEnd()
+        {
+            int currentStep = _matchManager != null ? _matchManager.Step : 0;
+            FinalizeStage6R5CCompletedSteps(currentStep + 1);
+
+            for (int i = 0; i < _stage6r5cLifecycleRows.Count; i++)
+            {
+                Stage6R5CCommandLifecycleRow row = _stage6r5cLifecycleRows[i];
+                if (row.finalized)
+                {
+                    continue;
+                }
+
+                row.expired_or_unresolved_at_capture_end = true;
+                row.match_manager_result = "expired_or_unresolved_at_capture_end";
+                row.final_lifecycle_status = "expired_or_unresolved_at_capture_end";
+                row.finalized = true;
+
+                _stage6r5cTerminalEvents.Add(new Stage6R5CCommandTerminalEventRow
+                {
+                    diagnostic_command_id = row.diagnostic_command_id,
+                    command_id = row.command_id,
+                    step = row.step,
+                    actor_flat_index = row.actor_flat_index,
+                    actor_label = row.actor_label,
+                    owner = row.owner,
+                    action_type = row.action_type,
+                    event_type = "expired_or_unresolved_at_capture_end",
+                    terminal_bucket = "expired_or_unresolved_at_capture_end",
+                    reason = string.IsNullOrWhiteSpace(row.reject_reason) ? "bounded_capture_end" : row.reject_reason,
+                    source = "capture_end",
+                    command_event_key = row.command_event_key,
+                    event_sequence = row.last_event_sequence,
+                });
+            }
+        }
+
+        private void WriteStage6R5CTelemetryArtifacts()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string reportsDir = Path.Combine(projectRoot, _stepSnapshotOutputDirectoryRelativePath);
+            Directory.CreateDirectory(reportsDir);
+
+            string lifecyclePath = Path.Combine(reportsDir, "stage6r5c_command_lifecycle_trace.jsonl");
+            string terminalPath = Path.Combine(reportsDir, "stage6r5c_command_terminal_events.jsonl");
+            string scenePath = Path.Combine(reportsDir, "stage6r5c_scene_sanity_snapshot.json");
+            string actorSummaryPath = Path.Combine(reportsDir, "stage6r5c_actor_cell_summary.json");
+
+            _stage6r5cLifecycleRows.Sort((a, b) =>
+            {
+                int c = a.step.CompareTo(b.step);
+                if (c != 0) return c;
+                c = a.actor_flat_index.CompareTo(b.actor_flat_index);
+                if (c != 0) return c;
+                return string.CompareOrdinal(a.diagnostic_command_id, b.diagnostic_command_id);
+            });
+
+            using (var writer = new StreamWriter(lifecyclePath, false, new UTF8Encoding(true)))
+            {
+                for (int i = 0; i < _stage6r5cLifecycleRows.Count; i++)
+                {
+                    writer.WriteLine(JsonUtility.ToJson(_stage6r5cLifecycleRows[i]));
+                }
+            }
+
+            using (var writer = new StreamWriter(terminalPath, false, new UTF8Encoding(true)))
+            {
+                for (int i = 0; i < _stage6r5cTerminalEvents.Count; i++)
+                {
+                    writer.WriteLine(JsonUtility.ToJson(_stage6r5cTerminalEvents[i]));
+                }
+            }
+
+            var scene = new Stage6R5CSceneSanitySnapshot
+            {
+                generated_at_utc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                scene = SceneManager.GetActiveScene().path,
+                mode = "student_live_policy",
+                steps_completed = _matchManager != null ? _matchManager.Step : 0,
+                terminal_reason = _lastTerminalReason,
+                checkpoint_path_used_at_inference = _latestInferenceDiagnostics != null
+                    ? _latestInferenceDiagnostics.checkpoint_path_used_at_inference
+                    : string.Empty,
+                uses_heuristic_policy = ResolveUsesHeuristicPolicy(),
+                fake_policy_or_stub_seen = ResolveInferenceSource().IndexOf("stub", StringComparison.OrdinalIgnoreCase) >= 0,
+                fallback_used = ResolveUsesHeuristicPolicy(),
+            };
+
+            File.WriteAllText(scenePath, JsonUtility.ToJson(scene, true), Encoding.UTF8);
+
+            var unitTypeCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+            int predictedNoOp = 0;
+            int predictedNonNoOp = 0;
+            int commandBuilt = 0;
+            for (int i = 0; i < _latestActorRows.Count; i++)
+            {
+                ActorCellDiagnosticRow row = _latestActorRows[i];
+                string unitType = row.Unit != null ? row.Unit.Type.ToString() : "Unknown";
+                if (!unitTypeCounts.TryGetValue(unitType, out int count))
+                {
+                    count = 0;
+                }
+
+                unitTypeCounts[unitType] = count + 1;
+                if (row.PredictedActionType == UnitActionType.NoOp)
+                {
+                    predictedNoOp++;
+                }
+                else
+                {
+                    predictedNonNoOp++;
+                }
+
+                if (row.CommandBuilt)
+                {
+                    commandBuilt++;
+                }
+            }
+
+            var histLines = new List<string>();
+            foreach (KeyValuePair<string, int> kvp in unitTypeCounts)
+            {
+                histLines.Add(kvp.Key + ":" + kvp.Value.ToString(CultureInfo.InvariantCulture));
+            }
+            histLines.Sort(StringComparer.Ordinal);
+
+            var actorSummary = new Stage6R5CActorCellSummary
+            {
+                generated_at_utc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                actor_cells_detected = _latestActorRows.Count,
+                actor_cell_predicted_noop_count = predictedNoOp,
+                actor_cell_predicted_non_noop_count = predictedNonNoOp,
+                actor_cell_command_built_count = commandBuilt,
+                actor_cell_command_not_built_count = Mathf.Max(0, _latestActorRows.Count - commandBuilt),
+                unit_type_prediction_histogram = histLines.ToArray(),
+            };
+
+            File.WriteAllText(actorSummaryPath, JsonUtility.ToJson(actorSummary, true), Encoding.UTF8);
+            Debug.Log("[Week6VisualInspectionRunner] Stage6R5C telemetry artifacts written to: " + reportsDir);
+        }
+
+        private static MatchCommand CreateMatchCommandFromAgentAction(Owner owner, AgentAction action)
+        {
+            return new MatchCommand(
+            owner: owner,
+                unitPosition: action.ActorPosition,
+                actionType: action.ActionType,
+                direction: action.Direction,
+                produceUnitType: action.ProduceUnitType,
+                attackTarget: action.AttackTargetPosition,
+                hasAttackTarget: action.ActionType == UnitActionType.Attack);
+        }
+
+        private string ResolveUnitTypeLabelAt(GridPosition position)
+        {
+            if (_unitRegistry == null)
+            {
+                return "NOT_EXPOSED";
+            }
+
+            List<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+            for (int i = 0; i < allUnits.Count; i++)
+            {
+                UnitRuntime unit = allUnits[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                if (unit.Owner == _studentControlledPlayer && unit.GridPos == position)
+                {
+                    return unit.Type.ToString();
+                }
+            }
+
+            return "NOT_EXPOSED";
+        }
+
+        private static int AttackTargetToLocal(GridPosition source, GridPosition target)
+        {
+            int dx = Mathf.Clamp(target.X - source.X, -3, 3);
+            int dy = Mathf.Clamp(target.Y - source.Y, -3, 3);
+            return (dy + 3) * 7 + (dx + 3);
+        }
+
         private void RecordCommandTelemetry(
             MatchCommand command,
             bool accepted,
@@ -4328,31 +4859,6 @@ namespace RTS.ML
             }
 
             return fallback;
-        }
-
-        private string ResolveAdapterArtifactMissingReason()
-        {
-            if (_latestArtifact.IsAvailable)
-            {
-                return string.Empty;
-            }
-
-            if (_latestInferenceDiagnostics == null)
-            {
-                return "adapter_diagnostics_unavailable";
-            }
-
-            if (_latestInferenceDiagnostics.inference_request_count <= 0)
-            {
-                return "no_inference_requests_yet";
-            }
-
-            if (!string.IsNullOrWhiteSpace(_latestInferenceDiagnostics.adapter_artifact_missing_reason))
-            {
-                return _latestInferenceDiagnostics.adapter_artifact_missing_reason;
-            }
-
-            return "adapter_artifact_missing_after_inference";
         }
 
         private string ResolveAdapterArtifactMissingReason()
