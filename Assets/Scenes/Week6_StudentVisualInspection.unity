@@ -832,11 +832,11 @@ MonoBehaviour:
   _maxDecisionRequestsPerEpisode: 200
   _pythonExecutableRelativePath: .venv/Scripts/python.exe
   _bridgeScriptRelativePath: python/week6_student/student_inference_server.py
-  _checkpointRelativePath: python/week6_student/runs/Stage6B2_SourceValidNoOpFix/legacy032_v2_bc_source_valid_noop_fix_best.pt
+  _checkpointRelativePath: python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt
   _enableLegalActionMaskForSelection: 0
   _enableDynamicOccupancyMoveMaskEnrichment: 1
-  _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
-  _artifactFilePrefix: stage6b2
+  _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b3_semantic_obs_fix_visual_inference
+  _artifactFilePrefix: stage6b3_semantic_obs_fix
   _artifactRingSlots: 4
   _cleanupTempArtifactsOnReset: 1
   _device: cpu
@@ -906,9 +906,9 @@ MonoBehaviour:
   _autoVisualPlaybackStepIntervalSeconds: 0.1
   _applyBaseVisualScaleOverrideInInspection: 1
   _baseVisualCellScale: 0.85
-  _jsonReportRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy/stage6b2_episode_diagnostics.json
-  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
-  _stepSnapshotFilePrefix: stage6b2_snapshot_step
+  _jsonReportRelativePath: python/week6_student/tmp/stage6b3_semantic_obs_fix_visual_inference/stage6b3_semantic_obs_fix_episode_diagnostics.json
+  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/tmp/stage6b3_semantic_obs_fix_visual_inference
+  _stepSnapshotFilePrefix: stage6b3_semantic_obs_fix_snapshot_step
 --- !u!4 &2051000303
 Transform:
   m_ObjectHideFlags: 0

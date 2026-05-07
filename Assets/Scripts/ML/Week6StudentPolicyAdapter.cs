@@ -319,9 +319,9 @@ namespace RTS.ML
     {
         private const string CanonicalStage6A2CheckpointRelativePath =
             "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt";
-        // Stage6B2: source-valid NoOp fix checkpoint from the clean legacy032 Unity v2 BC lineage.
-        private const string CanonicalStage6B2CheckpointRelativePath =
-            "python/week6_student/runs/Stage6B2_SourceValidNoOpFix/legacy032_v2_bc_source_valid_noop_fix_best.pt";
+        // Stage6B3: final semantic observation fix checkpoint. This is intentionally final, not best.
+        private const string CanonicalStage6B3CheckpointRelativePath =
+            "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
@@ -490,7 +490,7 @@ namespace RTS.ML
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
-        [SerializeField] private string _checkpointRelativePath = CanonicalStage6B2CheckpointRelativePath;
+        [SerializeField] private string _checkpointRelativePath = CanonicalStage6B3CheckpointRelativePath;
         [SerializeField] private bool _enableLegalActionMaskForSelection = false;
         [SerializeField] private bool _enableDynamicOccupancyMoveMaskEnrichment = true;
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";

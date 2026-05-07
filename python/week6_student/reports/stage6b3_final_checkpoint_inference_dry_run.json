@@ -1,0 +1,179 @@
+{
+  "stage": "10D.8",
+  "diagnostic": "checkpoint_inference_dry_run",
+  "generated_at_utc": "2026-05-07T15:33:11Z",
+  "status": "fail",
+  "checks": {
+    "has_action_type_logits": true,
+    "shape_action_type_logits": true,
+    "has_move_dir_logits": true,
+    "shape_move_dir_logits": true,
+    "has_harvest_dir_logits": true,
+    "shape_harvest_dir_logits": true,
+    "has_return_dir_logits": true,
+    "shape_return_dir_logits": true,
+    "has_produce_dir_logits": true,
+    "shape_produce_dir_logits": true,
+    "has_produce_unit_type_logits": true,
+    "shape_produce_unit_type_logits": true,
+    "has_attack_target_local_logits": true,
+    "shape_attack_target_local_logits": true,
+    "actor_cell_count_gt_0": true,
+    "actor_cells_not_noop_only": true,
+    "some_harvest_pred_on_worker_proxy": false,
+    "some_produce_pred_on_base_proxy": false
+  },
+  "details": {
+    "checkpoint": "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt",
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+    "batch_size_used": 128,
+    "input_shape": [
+      128,
+      24,
+      24,
+      27
+    ],
+    "target_shape": [
+      128,
+      576,
+      7
+    ],
+    "logits_shapes": {
+      "action_type_logits": [
+        128,
+        576,
+        6
+      ],
+      "move_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "harvest_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "return_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "produce_dir_logits": [
+        128,
+        576,
+        4
+      ],
+      "produce_unit_type_logits": [
+        128,
+        576,
+        7
+      ],
+      "attack_target_local_logits": [
+        128,
+        576,
+        49
+      ]
+    },
+    "action_type_distribution_all_cells": {
+      "total": 73728,
+      "counts": {
+        "0": 73254,
+        "1": 446,
+        "2": 0,
+        "3": 1,
+        "4": 26,
+        "5": 1
+      },
+      "shares": {
+        "0": 0.9935709635416666,
+        "1": 0.006049262152777778,
+        "2": 0.0,
+        "3": 1.3563368055555555e-05,
+        "4": 0.00035264756944444444,
+        "5": 1.3563368055555555e-05
+      }
+    },
+    "action_type_distribution_actor_cells": {
+      "total": 474,
+      "counts": {
+        "0": 3,
+        "1": 444,
+        "2": 0,
+        "3": 1,
+        "4": 25,
+        "5": 1
+      },
+      "shares": {
+        "0": 0.006329113924050633,
+        "1": 0.9367088607594937,
+        "2": 0.0,
+        "3": 0.002109704641350211,
+        "4": 0.052742616033755275,
+        "5": 0.002109704641350211
+      }
+    },
+    "worker_harvest_proxy": {
+      "count": 0,
+      "predicted_harvest_count": 0,
+      "predicted_harvest_share": 0.0,
+      "action_type_distribution": {
+        "total": 0,
+        "counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "shares": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0
+        }
+      }
+    },
+    "base_produce_proxy": {
+      "count": 1,
+      "predicted_produce_count": 0,
+      "predicted_produce_share": 0.0,
+      "action_type_distribution": {
+        "total": 1,
+        "counts": {
+          "0": 1,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "shares": {
+          "0": 1.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0
+        }
+      }
+    },
+    "actor_cell_metrics": {
+      "actor_cell_count": 474,
+      "actor_cell_non_noop_pred_count": 471,
+      "actor_cell_noop_pred_share": 0.006329113924050633
+    }
+  },
+  "hard_failures": [
+    "check_failed: some_harvest_pred_on_worker_proxy",
+    "check_failed: some_produce_pred_on_base_proxy"
+  ],
+  "explicit_non_claims": [
+    "Dry-run only; no Unity runtime behavior claim.",
+    "No checkpoint mutation.",
+    "No PPO or retraining in this script."
+  ]
+}
