@@ -2,6 +2,34 @@
 
 > STATUS: CURRENT CANONICAL
 
+## 0. Current Successful Baseline (Frozen)
+
+Current successful baseline: Stage6B3 StaticHarvest masked policy.
+
+- Baseline status: FIRST_SUCCESSFUL_WORKING_PIPELINE / GO
+- Final scene: Assets/Scenes/Week6_StudentStaticHarvestLayout.unity
+- Final checkpoint: python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt
+- Runtime mode: Stage6B3 student checkpoint inference with legal parameter-level masking enabled
+- Manual Play Mode: GO (normal Unity Play Mode)
+
+How to run in Unity Play Mode:
+
+1. Open Assets/Scenes/Week6_StudentStaticHarvestLayout.unity.
+2. Press Play in Unity Editor.
+3. Verify binding banner [Stage6B3ManualPlayBinding] in Console.
+4. Verify artifacts in python/week6_student/tmp/stage6b3_static_manual_play_smoke/ and binding JSON in python/week6_student/tmp/stage6b3_static_manual_play_binding_validation.json.
+
+Do not modify before further experiments:
+
+- Assets/Scenes/Week6_StudentStaticHarvestLayout.unity
+- Assets/Scripts/ML/Week6Stage6B3StaticManualPlayBootstrap.cs
+- python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt
+
+Primary baseline docs:
+
+- FIRST_SUCCESSFUL_PIPELINE_BASELINE.md
+- STAGE6B3_SUCCESSFUL_PIPELINE_ARTIFACT_INDEX.md
+
 Updated: 2026-05-06
 Scope: authoritative operational runbook for current Week5/Week6 UnityRTSPrototype pipeline.
 
