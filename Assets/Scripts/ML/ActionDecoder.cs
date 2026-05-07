@@ -41,13 +41,35 @@ namespace RTS.ML
                 string moveDirMaskFallbackReason,
                 UnitActionType decoderReceivedActionType,
                 int decoderReceivedMoveDir,
-                bool decoderReceivedMoveDirLegal)
+                bool decoderReceivedMoveDirLegal,
+                int rawHarvestDirTop1 = 0,
+                int rawReturnDirTop1 = 0,
+                int rawProduceDirTop1 = 0,
+                int rawProduceUnitTypeTop1 = 0,
+                int rawAttackTargetLocalTop1 = 0,
+                int maskedHarvestDir = 0,
+                int maskedReturnDir = 0,
+                int maskedProduceDir = 0,
+                int maskedProduceUnitType = 0,
+                int maskedAttackTargetLocal = 0,
+                bool branchParameterMaskApplied = false,
+                string branchParameterMaskReason = "")
             {
                 CellIndex = cellIndex;
                 RawActionTypeTop1 = rawActionTypeTop1;
                 RawMoveDirTop1 = rawMoveDirTop1;
+                RawHarvestDirTop1 = rawHarvestDirTop1;
+                RawReturnDirTop1 = rawReturnDirTop1;
+                RawProduceDirTop1 = rawProduceDirTop1;
+                RawProduceUnitTypeTop1 = rawProduceUnitTypeTop1;
+                RawAttackTargetLocalTop1 = rawAttackTargetLocalTop1;
                 MaskedActionType = maskedActionType;
                 MaskedMoveDir = maskedMoveDir;
+                MaskedHarvestDir = maskedHarvestDir;
+                MaskedReturnDir = maskedReturnDir;
+                MaskedProduceDir = maskedProduceDir;
+                MaskedProduceUnitType = maskedProduceUnitType;
+                MaskedAttackTargetLocal = maskedAttackTargetLocal;
                 LegalActionTypeMask = legalActionTypeMask ?? Array.Empty<bool>();
                 LegalMoveDirMask = legalMoveDirMask ?? Array.Empty<bool>();
                 MaskedMoveDirLegal = maskedMoveDirLegal;
@@ -56,13 +78,25 @@ namespace RTS.ML
                 DecoderReceivedActionType = decoderReceivedActionType;
                 DecoderReceivedMoveDir = decoderReceivedMoveDir;
                 DecoderReceivedMoveDirLegal = decoderReceivedMoveDirLegal;
+                BranchParameterMaskApplied = branchParameterMaskApplied;
+                BranchParameterMaskReason = branchParameterMaskReason ?? string.Empty;
             }
 
             public int CellIndex { get; }
             public UnitActionType RawActionTypeTop1 { get; }
             public int RawMoveDirTop1 { get; }
+            public int RawHarvestDirTop1 { get; }
+            public int RawReturnDirTop1 { get; }
+            public int RawProduceDirTop1 { get; }
+            public int RawProduceUnitTypeTop1 { get; }
+            public int RawAttackTargetLocalTop1 { get; }
             public UnitActionType MaskedActionType { get; }
             public int MaskedMoveDir { get; }
+            public int MaskedHarvestDir { get; }
+            public int MaskedReturnDir { get; }
+            public int MaskedProduceDir { get; }
+            public int MaskedProduceUnitType { get; }
+            public int MaskedAttackTargetLocal { get; }
             public bool[] LegalActionTypeMask { get; }
             public bool[] LegalMoveDirMask { get; }
             public bool MaskedMoveDirLegal { get; }
@@ -71,6 +105,8 @@ namespace RTS.ML
             public UnitActionType DecoderReceivedActionType { get; }
             public int DecoderReceivedMoveDir { get; }
             public bool DecoderReceivedMoveDirLegal { get; }
+            public bool BranchParameterMaskApplied { get; }
+            public string BranchParameterMaskReason { get; }
         }
 
         private readonly GridManager _gridManager;
@@ -228,14 +264,41 @@ namespace RTS.ML
                     actionFlat,
                     cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_MOVE_DIR),
                     ActionContract.SIZE_DIRECTION);
+                int rawHarvestDir = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_HARVEST_DIR),
+                    ActionContract.SIZE_DIRECTION);
+                int rawReturnDir = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_RETURN_DIR),
+                    ActionContract.SIZE_DIRECTION);
+                int rawProduceDir = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_PRODUCE_DIR),
+                    ActionContract.SIZE_DIRECTION);
+                int rawProduceUnitType = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_PRODUCE_UNIT_TYPE),
+                    ActionContract.SIZE_PRODUCE_UNIT_TYPE);
+                int rawAttackTargetLocal = ExtractBranchValue(
+                    actionFlat,
+                    cellBaseOffset + ActionContract.BranchOffset(ActionContract.BRANCH_ATTACK_TARGET),
+                    ActionContract.SIZE_ATTACK_TARGET);
                 bool[] legalActionTypeMask = BuildLegalActionTypeMask(maskSet, cellIndex);
                 bool[] legalMoveDirMask = BuildLegalMoveDirectionMask(maskSet, cellIndex);
                 UnitActionType rawActionTypeTop1 = action.ActionType;
                 UnitActionType maskedActionType = action.ActionType;
                 int maskedMoveDir = rawMoveDir;
+                int maskedHarvestDir = rawHarvestDir;
+                int maskedReturnDir = rawReturnDir;
+                int maskedProduceDir = rawProduceDir;
+                int maskedProduceUnitType = rawProduceUnitType;
+                int maskedAttackTargetLocal = rawAttackTargetLocal;
                 bool branchMaskAppliedForMove = false;
                 bool maskedMoveDirLegal = true;
                 string moveDirFallbackReason = string.Empty;
+                bool branchParameterMaskApplied = false;
+                string branchParameterMaskReason = string.Empty;
 
                 // Track what the model chose before mask constraint
                 IncrementActionDict(preMaskHistogram, action.ActionType);
@@ -246,79 +309,21 @@ namespace RTS.ML
                 if (maskSet != null)
                 {
                     ActorActionMask actorMask = maskSet.GetActorMaskByFlatIndex(cellIndex);
-                    if (actorMask != null && !actorMask.IsActionTypeEnabled(action.ActionType))
-                    {
-                        // Masked out: skip (safe fallback to NoOp)
-                        maskedOutChoicesCount++;
-                        fallbackToNoopCount++;
-                        maskedActionType = UnitActionType.NoOp;
-                        moveDirFallbackReason = "action_type_masked_out";
-                        cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
-                            cellIndex,
-                            rawActionTypeTop1,
-                            rawMoveDir,
-                            maskedActionType,
-                            maskedMoveDir,
-                            legalActionTypeMask,
-                            legalMoveDirMask,
-                            maskedMoveDirLegal,
-                            branchMaskAppliedForMove,
-                            moveDirFallbackReason,
-                            UnitActionType.NoOp,
-                            0,
-                            true);
-                        continue;
-                    }
-
                     if (action.ActionType == UnitActionType.Move && actorMask != null)
                     {
                         branchMaskAppliedForMove = true;
-                        bool hasAnyLegalMoveDir = false;
-                        for (int d = 0; d < actorMask.MoveDirectionMask.Length; d++)
-                        {
-                            if (actorMask.MoveDirectionMask[d])
-                            {
-                                hasAnyLegalMoveDir = true;
-                                break;
-                            }
-                        }
-
-                        if (!hasAnyLegalMoveDir)
-                        {
-                            // Required Stage10D.20S behavior: Move cannot be selected without a legal direction.
-                            maskedOutChoicesCount++;
-                            fallbackToNoopCount++;
-                            maskedActionType = UnitActionType.NoOp;
-                            moveDirFallbackReason = "no_legal_move_dir";
-                            cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
-                                cellIndex,
-                                rawActionTypeTop1,
+                        if (!TrySelectMaskedBranchValue(
+                                actorMask.MoveDirectionMask,
                                 rawMoveDir,
-                                maskedActionType,
-                                maskedMoveDir,
-                                legalActionTypeMask,
-                                legalMoveDirMask,
-                                false,
-                                branchMaskAppliedForMove,
-                                moveDirFallbackReason,
-                                UnitActionType.NoOp,
-                                0,
-                                true);
-                            continue;
-                        }
-
-                        bool rawMoveDirLegal = rawMoveDir >= 0
-                            && rawMoveDir < actorMask.MoveDirectionMask.Length
-                            && actorMask.MoveDirectionMask[rawMoveDir];
-
-                        if (!rawMoveDirLegal)
+                                out int selectedMoveDir,
+                                out bool moveDirReplaced,
+                                out string moveDirReason))
                         {
-                            // Stage10D.20S: do not submit Move with illegal masked direction.
                             maskedOutChoicesCount++;
                             fallbackToNoopCount++;
                             maskedActionType = UnitActionType.NoOp;
+                            moveDirFallbackReason = moveDirReason;
                             maskedMoveDirLegal = false;
-                            moveDirFallbackReason = "illegal_move_dir_after_mask";
                             cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
                                 cellIndex,
                                 rawActionTypeTop1,
@@ -336,7 +341,14 @@ namespace RTS.ML
                             continue;
                         }
 
-                        if (TryGetMoveTargetFlat(actorMask, rawMoveDir, out int selectedMoveTargetFlat)
+                        maskedMoveDir = selectedMoveDir;
+                        if (moveDirReplaced)
+                        {
+                            moveDirFallbackReason = "masked_to_sole_legal_move_dir";
+                            action = RebuildActionWithDirection(action, (Direction)selectedMoveDir);
+                        }
+
+                        if (TryGetMoveTargetFlat(actorMask, selectedMoveDir, out int selectedMoveTargetFlat)
                             && reservedMoveTargetsThisDecode.Contains(selectedMoveTargetFlat))
                         {
                             // Same execution window safety gate: do not submit another Move into an
@@ -365,6 +377,67 @@ namespace RTS.ML
 
                         maskedMoveDirLegal = true;
                     }
+                    else if (actorMask != null && action.ActionType != UnitActionType.NoOp)
+                    {
+                        if (!TryApplyParameterMask(
+                                action,
+                                actorMask,
+                                rawHarvestDir,
+                                rawReturnDir,
+                                rawProduceDir,
+                                rawProduceUnitType,
+                                rawAttackTargetLocal,
+                                out AgentAction parameterMaskedAction,
+                                out string parameterMaskReason))
+                        {
+                            maskedOutChoicesCount++;
+                            fallbackToNoopCount++;
+                            maskedActionType = UnitActionType.NoOp;
+                            moveDirFallbackReason = parameterMaskReason;
+                            cellTelemetryByFlat[cellIndex] = new MaskAwareCellTelemetry(
+                                cellIndex,
+                                rawActionTypeTop1,
+                                rawMoveDir,
+                                maskedActionType,
+                                maskedMoveDir,
+                                legalActionTypeMask,
+                                legalMoveDirMask,
+                                true,
+                                branchMaskAppliedForMove,
+                                moveDirFallbackReason,
+                                UnitActionType.NoOp,
+                                0,
+                                true);
+                            continue;
+                        }
+
+                        action = parameterMaskedAction;
+                        if (!string.IsNullOrWhiteSpace(parameterMaskReason))
+                        {
+                            moveDirFallbackReason = parameterMaskReason;
+                            branchParameterMaskApplied = true;
+                            branchParameterMaskReason = parameterMaskReason;
+                            switch (action.ActionType)
+                            {
+                                case UnitActionType.Harvest:
+                                    maskedHarvestDir = (int)action.Direction;
+                                    break;
+                                case UnitActionType.Return:
+                                    maskedReturnDir = (int)action.Direction;
+                                    break;
+                                case UnitActionType.Produce:
+                                    maskedProduceDir = (int)action.Direction;
+                                    maskedProduceUnitType = (int)action.ProduceUnitType;
+                                    break;
+                                case UnitActionType.Attack:
+                                    if (TryGetAttackTargetLocalIndex(action.ActorPosition, action.AttackTargetPosition, out int maskedAttackLocal))
+                                    {
+                                        maskedAttackTargetLocal = maskedAttackLocal;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
                 }
 
                 if (action.ActionType == UnitActionType.NoOp)
@@ -391,7 +464,7 @@ namespace RTS.ML
                 if (action.ActionType == UnitActionType.Move
                     && maskSet != null
                     && maskSet.GetActorMaskByFlatIndex(cellIndex) is ActorActionMask selectedActorMask
-                    && TryGetMoveTargetFlat(selectedActorMask, rawMoveDir, out int selectedTargetFlat))
+                    && TryGetMoveTargetFlat(selectedActorMask, maskedMoveDir, out int selectedTargetFlat))
                 {
                     reservedMoveTargetsThisDecode.Add(selectedTargetFlat);
                 }
@@ -408,11 +481,156 @@ namespace RTS.ML
                     branchMaskAppliedForMove,
                     moveDirFallbackReason,
                     action.ActionType,
-                    action.ActionType == UnitActionType.Move ? rawMoveDir : 0,
-                    action.ActionType != UnitActionType.Move || maskedMoveDirLegal);
+                    action.ActionType == UnitActionType.Move ? maskedMoveDir : 0,
+                    action.ActionType != UnitActionType.Move || maskedMoveDirLegal,
+                    rawHarvestDir,
+                    rawReturnDir,
+                    rawProduceDir,
+                    rawProduceUnitType,
+                    rawAttackTargetLocal,
+                    maskedHarvestDir,
+                    maskedReturnDir,
+                    maskedProduceDir,
+                    maskedProduceUnitType,
+                    maskedAttackTargetLocal,
+                    branchParameterMaskApplied,
+                    branchParameterMaskReason);
             }
 
             return results;
+        }
+
+        private static bool TryApplyParameterMask(
+            AgentAction action,
+            ActorActionMask actorMask,
+            int rawHarvestDir,
+            int rawReturnDir,
+            int rawProduceDir,
+            int rawProduceUnitType,
+            int rawAttackTargetLocal,
+            out AgentAction maskedAction,
+            out string reason)
+        {
+            maskedAction = action;
+            reason = string.Empty;
+
+            switch (action.ActionType)
+            {
+                case UnitActionType.Harvest:
+                    if (!TrySelectMaskedBranchValue(actorMask.HarvestDirectionMask, rawHarvestDir, out int harvestDir, out bool harvestReplaced, out reason))
+                        return false;
+                    if (harvestReplaced)
+                    {
+                        maskedAction = RebuildActionWithDirection(action, (Direction)harvestDir);
+                        reason = "masked_to_sole_legal_harvest_dir";
+                    }
+                    return true;
+
+                case UnitActionType.Return:
+                    if (!TrySelectMaskedBranchValue(actorMask.ReturnDirectionMask, rawReturnDir, out int returnDir, out bool returnReplaced, out reason))
+                        return false;
+                    if (returnReplaced)
+                    {
+                        maskedAction = RebuildActionWithDirection(action, (Direction)returnDir);
+                        reason = "masked_to_sole_legal_return_dir";
+                    }
+                    return true;
+
+                case UnitActionType.Produce:
+                    if (!TrySelectMaskedBranchValue(actorMask.ProduceDirectionMask, rawProduceDir, out int produceDir, out bool produceDirReplaced, out reason))
+                        return false;
+                    if (!TrySelectMaskedBranchValue(actorMask.ProduceUnitTypeMask, rawProduceUnitType, out int produceType, out bool produceTypeReplaced, out reason))
+                        return false;
+                    if (produceDirReplaced || produceTypeReplaced)
+                    {
+                        maskedAction = new AgentAction(
+                            action.ActorPosition,
+                            action.ActionType,
+                            (Direction)produceDir,
+                            (ProducibleUnit)produceType,
+                            action.AttackTargetPosition,
+                            action.IsValid,
+                            action.InvalidationReason,
+                            action.SourceType);
+                        reason = produceDirReplaced && produceTypeReplaced
+                            ? "masked_to_sole_legal_produce_dir_and_type"
+                            : produceDirReplaced
+                                ? "masked_to_sole_legal_produce_dir"
+                                : "masked_to_sole_legal_produce_unit_type";
+                    }
+                    return true;
+
+                case UnitActionType.Attack:
+                    if (!TrySelectMaskedBranchValue(actorMask.AttackTargetLocalMask, rawAttackTargetLocal, out int attackTargetLocal, out bool attackReplaced, out reason))
+                        return false;
+                    if (attackReplaced
+                        && ActionContractMappings.TryGetAttackTargetPosition(action.ActorPosition, attackTargetLocal, out GridPosition targetPosition))
+                    {
+                        maskedAction = new AgentAction(
+                            action.ActorPosition,
+                            action.ActionType,
+                            action.Direction,
+                            action.ProduceUnitType,
+                            targetPosition,
+                            action.IsValid,
+                            action.InvalidationReason,
+                            action.SourceType);
+                        reason = "masked_to_sole_legal_attack_target";
+                    }
+                    return true;
+
+                default:
+                    return true;
+            }
+        }
+
+        private static bool TrySelectMaskedBranchValue(bool[] mask, int rawValue, out int selectedValue, out bool replaced, out string reason)
+        {
+            selectedValue = rawValue;
+            replaced = false;
+            reason = string.Empty;
+
+            if (mask == null || mask.Length == 0)
+                return true;
+
+            if (rawValue >= 0 && rawValue < mask.Length && mask[rawValue])
+                return true;
+
+            int legalCount = 0;
+            int onlyLegal = -1;
+            for (int i = 0; i < mask.Length; i++)
+            {
+                if (!mask[i])
+                    continue;
+
+                legalCount++;
+                onlyLegal = i;
+            }
+
+            if (legalCount == 1)
+            {
+                selectedValue = onlyLegal;
+                replaced = true;
+                return true;
+            }
+
+            reason = legalCount == 0
+                ? "no_legal_parameter_value"
+                : "illegal_parameter_value_with_multiple_legal_values";
+            return false;
+        }
+
+        private static AgentAction RebuildActionWithDirection(AgentAction action, Direction direction)
+        {
+            return new AgentAction(
+                action.ActorPosition,
+                action.ActionType,
+                direction,
+                action.ProduceUnitType,
+                action.AttackTargetPosition,
+                action.IsValid,
+                action.InvalidationReason,
+                action.SourceType);
         }
 
         private static bool TryGetMoveTargetFlat(ActorActionMask actorMask, int rawMoveDir, out int targetFlat)
@@ -431,6 +649,22 @@ namespace RTS.ML
 
             targetFlat = target.ToFlatIndex();
             return targetFlat >= 0 && targetFlat < ActionContract.TotalCells;
+        }
+
+        private static bool TryGetAttackTargetLocalIndex(GridPosition actorPosition, GridPosition targetPosition, out int localIndex)
+        {
+            for (int i = 0; i < ActionContract.SIZE_ATTACK_TARGET; i++)
+            {
+                if (ActionContractMappings.TryGetAttackTargetPosition(actorPosition, i, out GridPosition candidate)
+                    && candidate.Equals(targetPosition))
+                {
+                    localIndex = i;
+                    return true;
+                }
+            }
+
+            localIndex = 24;
+            return false;
         }
 
         private static bool[] BuildLegalActionTypeMask(ActionMaskSet maskSet, int cellIndex)

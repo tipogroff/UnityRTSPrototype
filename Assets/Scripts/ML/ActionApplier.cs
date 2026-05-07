@@ -601,6 +601,12 @@ namespace RTS.ML
         {
             reason = "";
 
+            if (HasAliveBarracks(unit.Owner))
+            {
+                reason = "Cannot build Barracks: owner already has one alive Barracks";
+                return false;
+            }
+
             var config = _matchBootstrap?.GetConfig();
             var barracksDefinition = config?.GetDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
@@ -632,6 +638,21 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private bool HasAliveBarracks(Owner owner)
+        {
+            var units = _unitRegistry.GetUnitsByOwner(owner);
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive && unit.Type == UnitType.Barracks)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsProduceIndexAllowedForBuilding(UnitType buildingType, int produceBranchIndex)

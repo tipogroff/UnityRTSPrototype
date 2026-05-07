@@ -1,0 +1,3387 @@
+{
+  "status": "fail",
+  "generated_at_utc": "2026-05-07T17:04:42Z",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+  "unity_coordinate_semantics": {
+    "flat_formula": "flat = y * 24 + x",
+    "direction_order": "0=North(+Y), 1=East(+X), 2=South(-Y), 3=West(-X)",
+    "attack_target_local": "row-major 7x7 offsets dx=-3..3, dy=-3..3; center=24"
+  },
+  "totals": {
+    "attack_bad_target_count": 0,
+    "attack_total": 650,
+    "harvest_bad_target_count": 307,
+    "harvest_total": 789,
+    "move_bad_target_count": 38316,
+    "move_total": 301632,
+    "produce_bad_target_count": 1560,
+    "produce_total": 14934,
+    "return_bad_target_count": 333,
+    "return_total": 772
+  },
+  "source_invalid_non_noop_total": 0,
+  "splits": [
+    {
+      "split": "bc_train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_train.npz",
+      "samples": 70278,
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "source_valid_action_histogram": {
+        "NoOp": 825161,
+        "Move": 254498,
+        "Harvest": 665,
+        "Return": 643,
+        "Produce": 12569,
+        "Attack": 542
+      },
+      "harvest_total": 665,
+      "harvest_bad_target_count": 261,
+      "move_total": 254498,
+      "move_bad_target_count": 32376,
+      "return_total": 643,
+      "return_bad_target_count": 282,
+      "produce_total": 12569,
+      "produce_bad_target_count": 1303,
+      "attack_total": 542,
+      "attack_bad_target_count": 0,
+      "failing_examples": [
+        {
+          "split": "bc_train",
+          "sample": 0,
+          "flat": 25,
+          "label": "Harvest",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            2,
+            1,
+            3,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 1,
+            "flat": 24,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 1,
+              "flat": 24,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_resource_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 27,
+          "flat": 26,
+          "label": "Return",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            3,
+            3,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 0,
+              "flat": 2,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_friendly_base_unity_return_semantics"
+        },
+        {
+          "split": "bc_train",
+          "sample": 45,
+          "flat": 25,
+          "label": "Harvest",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            2,
+            1,
+            3,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 1,
+            "flat": 24,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 1,
+              "flat": 24,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_resource_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 72,
+          "flat": 2,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            3,
+            0,
+            0,
+            3,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 0,
+              "flat": 1,
+              "owner": "Neutral",
+              "unit": "Resource",
+              "unit_resource": true,
+              "occupied": true,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 72,
+          "flat": 26,
+          "label": "Return",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            3,
+            3,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 0,
+              "flat": 2,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_friendly_base_unity_return_semantics"
+        },
+        {
+          "split": "bc_train",
+          "sample": 111,
+          "flat": 1,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": -1,
+            "y": -1,
+            "flat": null,
+            "decoded_cell": {
+              "inside": false
+            }
+          },
+          "reason": "target_out_of_bounds"
+        },
+        {
+          "split": "bc_train",
+          "sample": 111,
+          "flat": 26,
+          "label": "Return",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            3,
+            3,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 0,
+              "flat": 2,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_friendly_base_unity_return_semantics"
+        },
+        {
+          "split": "bc_train",
+          "sample": 111,
+          "flat": 48,
+          "label": "Harvest",
+          "actor": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            2,
+            1,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 3,
+              "flat": 72,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_resource_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 121,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 0,
+              "flat": 1,
+              "owner": "Neutral",
+              "unit": "Resource",
+              "unit_resource": true,
+              "occupied": true,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 130,
+          "flat": 27,
+          "label": "Move",
+          "actor": {
+            "x": 3,
+            "y": 1,
+            "flat": 27,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 2,
+            "flat": 51,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 2,
+              "flat": 51,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 164,
+          "flat": 72,
+          "label": "Move",
+          "actor": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 2,
+              "flat": 48,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 173,
+          "flat": 1,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": -1,
+            "y": -1,
+            "flat": null,
+            "decoded_cell": {
+              "inside": false
+            }
+          },
+          "reason": "target_out_of_bounds"
+        },
+        {
+          "split": "bc_train",
+          "sample": 173,
+          "flat": 2,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": -1,
+            "y": -1,
+            "flat": null,
+            "decoded_cell": {
+              "inside": false
+            }
+          },
+          "reason": "target_out_of_bounds"
+        },
+        {
+          "split": "bc_train",
+          "sample": 173,
+          "flat": 74,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 3,
+            "flat": 74,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 2,
+            "flat": 50,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 2,
+              "flat": 50,
+              "owner": "Player1",
+              "unit": "Base",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 180,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 189,
+          "flat": 1,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": -1,
+            "y": -1,
+            "flat": null,
+            "decoded_cell": {
+              "inside": false
+            }
+          },
+          "reason": "target_out_of_bounds"
+        },
+        {
+          "split": "bc_train",
+          "sample": 189,
+          "flat": 48,
+          "label": "Harvest",
+          "actor": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            2,
+            1,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 3,
+              "flat": 72,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_resource_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 189,
+          "flat": 72,
+          "label": "Move",
+          "actor": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 2,
+              "flat": 48,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 204,
+          "flat": 2,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            3,
+            0,
+            0,
+            3,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 0,
+              "flat": 1,
+              "owner": "Neutral",
+              "unit": "Resource",
+              "unit_resource": true,
+              "occupied": true,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_train",
+          "sample": 204,
+          "flat": 26,
+          "label": "Return",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            3,
+            3,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 0,
+              "flat": 2,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_friendly_base_unity_return_semantics"
+        }
+      ]
+    },
+    {
+      "split": "bc_validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_validation.npz",
+      "samples": 12402,
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "source_valid_action_histogram": {
+        "NoOp": 145258,
+        "Move": 45191,
+        "Harvest": 120,
+        "Return": 123,
+        "Produce": 2270,
+        "Attack": 101
+      },
+      "harvest_total": 120,
+      "harvest_bad_target_count": 45,
+      "move_total": 45191,
+      "move_bad_target_count": 5690,
+      "return_total": 123,
+      "return_bad_target_count": 50,
+      "produce_total": 2270,
+      "produce_bad_target_count": 239,
+      "attack_total": 101,
+      "attack_bad_target_count": 0,
+      "failing_examples": [
+        {
+          "split": "bc_validation",
+          "sample": 15,
+          "flat": 2,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            3,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 0,
+              "flat": 1,
+              "owner": "Neutral",
+              "unit": "Resource",
+              "unit_resource": true,
+              "occupied": true,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 23,
+          "flat": 2,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            3,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 0,
+              "flat": 1,
+              "owner": "Neutral",
+              "unit": "Resource",
+              "unit_resource": true,
+              "occupied": true,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 23,
+          "flat": 48,
+          "label": "Harvest",
+          "actor": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            2,
+            1,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 3,
+              "flat": 72,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_resource_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 23,
+          "flat": 72,
+          "label": "Move",
+          "actor": {
+            "x": 0,
+            "y": 3,
+            "flat": 72,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": 0,
+            "y": 2,
+            "flat": 48,
+            "decoded_cell": {
+              "inside": true,
+              "x": 0,
+              "y": 2,
+              "flat": 48,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 49,
+          "flat": 26,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 2,
+            "flat": 50,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 2,
+              "flat": 50,
+              "owner": "Player1",
+              "unit": "Base",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 50,
+          "flat": 26,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 2,
+            "flat": 50,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 2,
+              "flat": 50,
+              "owner": "Player1",
+              "unit": "Base",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 51,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 52,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 53,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 54,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 54,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 55,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 55,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 56,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 56,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 57,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 57,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 66,
+          "flat": 1,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 0,
+            "flat": 1,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          "target": {
+            "x": -1,
+            "y": -1,
+            "flat": null,
+            "decoded_cell": {
+              "inside": false
+            }
+          },
+          "reason": "target_out_of_bounds"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 66,
+          "flat": 26,
+          "label": "Return",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            3,
+            3,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 0,
+            "flat": 2,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 0,
+              "flat": 2,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "target_not_friendly_base_unity_return_semantics"
+        },
+        {
+          "split": "bc_validation",
+          "sample": 69,
+          "flat": 26,
+          "label": "Move",
+          "actor": {
+            "x": 2,
+            "y": 1,
+            "flat": 26,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 2,
+            "y": 2,
+            "flat": 50,
+            "decoded_cell": {
+              "inside": true,
+              "x": 2,
+              "y": 2,
+              "flat": 50,
+              "owner": "Player1",
+              "unit": "Base",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        }
+      ]
+    },
+    {
+      "split": "bc_debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_debug.npz",
+      "samples": 512,
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "source_valid_action_histogram": {
+        "NoOp": 6120,
+        "Move": 1943,
+        "Harvest": 4,
+        "Return": 6,
+        "Produce": 95,
+        "Attack": 7
+      },
+      "harvest_total": 4,
+      "harvest_bad_target_count": 1,
+      "move_total": 1943,
+      "move_bad_target_count": 250,
+      "return_total": 6,
+      "return_bad_target_count": 1,
+      "produce_total": 95,
+      "produce_bad_target_count": 18,
+      "attack_total": 7,
+      "attack_bad_target_count": 0,
+      "failing_examples": [
+        {
+          "split": "bc_debug",
+          "sample": 1,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 1,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 3,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 3,
+          "flat": 173,
+          "label": "Move",
+          "actor": {
+            "x": 5,
+            "y": 7,
+            "flat": 173,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 8,
+            "flat": 197,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 8,
+              "flat": 197,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 6,
+          "flat": 199,
+          "label": "Move",
+          "actor": {
+            "x": 7,
+            "y": 8,
+            "flat": 199,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 7,
+            "y": 9,
+            "flat": 223,
+            "decoded_cell": {
+              "inside": true,
+              "x": 7,
+              "y": 9,
+              "flat": 223,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 11,
+          "flat": 201,
+          "label": "Move",
+          "actor": {
+            "x": 9,
+            "y": 8,
+            "flat": 201,
+            "owner": "Player1",
+            "unit": "Light",
+            "owner_index": 1,
+            "unit_index": 4
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 9,
+            "y": 9,
+            "flat": 225,
+            "decoded_cell": {
+              "inside": true,
+              "x": 9,
+              "y": 9,
+              "flat": 225,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 13,
+          "flat": 173,
+          "label": "Move",
+          "actor": {
+            "x": 5,
+            "y": 7,
+            "flat": 173,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 8,
+            "flat": 197,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 8,
+              "flat": 197,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 14,
+          "flat": 198,
+          "label": "Move",
+          "actor": {
+            "x": 6,
+            "y": 8,
+            "flat": 198,
+            "owner": "Player1",
+            "unit": "Light",
+            "owner_index": 1,
+            "unit_index": 4
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 6,
+            "y": 9,
+            "flat": 222,
+            "decoded_cell": {
+              "inside": true,
+              "x": 6,
+              "y": 9,
+              "flat": 222,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 14,
+          "flat": 199,
+          "label": "Move",
+          "actor": {
+            "x": 7,
+            "y": 8,
+            "flat": 199,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 7,
+            "y": 9,
+            "flat": 223,
+            "decoded_cell": {
+              "inside": true,
+              "x": 7,
+              "y": 9,
+              "flat": 223,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 35,
+          "flat": 198,
+          "label": "Move",
+          "actor": {
+            "x": 6,
+            "y": 8,
+            "flat": 198,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 6,
+            "y": 9,
+            "flat": 222,
+            "decoded_cell": {
+              "inside": true,
+              "x": 6,
+              "y": 9,
+              "flat": 222,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 35,
+          "flat": 199,
+          "label": "Move",
+          "actor": {
+            "x": 7,
+            "y": 8,
+            "flat": 199,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 7,
+            "y": 9,
+            "flat": 223,
+            "decoded_cell": {
+              "inside": true,
+              "x": 7,
+              "y": 9,
+              "flat": 223,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 39,
+          "flat": 411,
+          "label": "Move",
+          "actor": {
+            "x": 3,
+            "y": 17,
+            "flat": 411,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 18,
+            "flat": 435,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 18,
+              "flat": 435,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 42,
+          "flat": 411,
+          "label": "Move",
+          "actor": {
+            "x": 3,
+            "y": 17,
+            "flat": 411,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 18,
+            "flat": 435,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 18,
+              "flat": 435,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 46,
+          "flat": 25,
+          "label": "Move",
+          "actor": {
+            "x": 1,
+            "y": 1,
+            "flat": 25,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "target": {
+            "x": 1,
+            "y": 2,
+            "flat": 49,
+            "decoded_cell": {
+              "inside": true,
+              "x": 1,
+              "y": 2,
+              "flat": 49,
+              "owner": "Player1",
+              "unit": "Worker",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 48,
+          "flat": 29,
+          "label": "Produce",
+          "actor": {
+            "x": 5,
+            "y": 1,
+            "flat": 29,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            1,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 0,
+            "flat": 5,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 0,
+              "flat": 5,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 48,
+          "flat": 98,
+          "label": "Produce",
+          "actor": {
+            "x": 2,
+            "y": 4,
+            "flat": 98,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            4,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          "target": {
+            "x": 3,
+            "y": 4,
+            "flat": 99,
+            "decoded_cell": {
+              "inside": true,
+              "x": 3,
+              "y": 4,
+              "flat": 99,
+              "owner": "Neutral",
+              "unit": "empty",
+              "unit_resource": false,
+              "occupied": false,
+              "friendly": false,
+              "hostile": false
+            }
+          },
+          "reason": "worker_produce_not_barracks_index_2"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 49,
+          "flat": 173,
+          "label": "Move",
+          "actor": {
+            "x": 5,
+            "y": 7,
+            "flat": 173,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 8,
+            "flat": 197,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 8,
+              "flat": 197,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 50,
+          "flat": 173,
+          "label": "Move",
+          "actor": {
+            "x": 5,
+            "y": 7,
+            "flat": 173,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 8,
+            "flat": 197,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 8,
+              "flat": 197,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 52,
+          "flat": 149,
+          "label": "Move",
+          "actor": {
+            "x": 5,
+            "y": 6,
+            "flat": 149,
+            "owner": "Player1",
+            "unit": "Light",
+            "owner_index": 1,
+            "unit_index": 4
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 5,
+            "y": 7,
+            "flat": 173,
+            "decoded_cell": {
+              "inside": true,
+              "x": 5,
+              "y": 7,
+              "flat": 173,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        },
+        {
+          "split": "bc_debug",
+          "sample": 52,
+          "flat": 225,
+          "label": "Move",
+          "actor": {
+            "x": 9,
+            "y": 9,
+            "flat": 225,
+            "owner": "Player1",
+            "unit": "Worker",
+            "owner_index": 1,
+            "unit_index": 3
+          },
+          "action_branches": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target": {
+            "x": 9,
+            "y": 10,
+            "flat": 249,
+            "decoded_cell": {
+              "inside": true,
+              "x": 9,
+              "y": 10,
+              "flat": 249,
+              "owner": "Player1",
+              "unit": "Light",
+              "unit_resource": false,
+              "occupied": true,
+              "friendly": true,
+              "hostile": false
+            }
+          },
+          "reason": "target_occupied_under_unity_obs"
+        }
+      ]
+    }
+  ],
+  "first_20_failing_examples": [
+    {
+      "split": "bc_train",
+      "sample": 0,
+      "flat": 25,
+      "label": "Harvest",
+      "actor": {
+        "x": 1,
+        "y": 1,
+        "flat": 25,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        2,
+        1,
+        3,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 1,
+        "flat": 24,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 1,
+          "flat": 24,
+          "owner": "Neutral",
+          "unit": "empty",
+          "unit_resource": false,
+          "occupied": false,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_resource_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 27,
+      "flat": 26,
+      "label": "Return",
+      "actor": {
+        "x": 2,
+        "y": 1,
+        "flat": 26,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        3,
+        3,
+        0,
+        2,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "decoded_cell": {
+          "inside": true,
+          "x": 2,
+          "y": 0,
+          "flat": 2,
+          "owner": "Neutral",
+          "unit": "empty",
+          "unit_resource": false,
+          "occupied": false,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_friendly_base_unity_return_semantics"
+    },
+    {
+      "split": "bc_train",
+      "sample": 45,
+      "flat": 25,
+      "label": "Harvest",
+      "actor": {
+        "x": 1,
+        "y": 1,
+        "flat": 25,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        2,
+        1,
+        3,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 1,
+        "flat": 24,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 1,
+          "flat": 24,
+          "owner": "Neutral",
+          "unit": "empty",
+          "unit_resource": false,
+          "occupied": false,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_resource_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 72,
+      "flat": 2,
+      "label": "Move",
+      "actor": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        3,
+        0,
+        0,
+        3,
+        2,
+        0
+      ],
+      "target": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "decoded_cell": {
+          "inside": true,
+          "x": 1,
+          "y": 0,
+          "flat": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "unit_resource": true,
+          "occupied": true,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 72,
+      "flat": 26,
+      "label": "Return",
+      "actor": {
+        "x": 2,
+        "y": 1,
+        "flat": 26,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        3,
+        3,
+        0,
+        2,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "decoded_cell": {
+          "inside": true,
+          "x": 2,
+          "y": 0,
+          "flat": 2,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_friendly_base_unity_return_semantics"
+    },
+    {
+      "split": "bc_train",
+      "sample": 111,
+      "flat": 1,
+      "label": "Move",
+      "actor": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": -1,
+        "y": -1,
+        "flat": null,
+        "decoded_cell": {
+          "inside": false
+        }
+      },
+      "reason": "target_out_of_bounds"
+    },
+    {
+      "split": "bc_train",
+      "sample": 111,
+      "flat": 26,
+      "label": "Return",
+      "actor": {
+        "x": 2,
+        "y": 1,
+        "flat": 26,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        3,
+        3,
+        0,
+        2,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "decoded_cell": {
+          "inside": true,
+          "x": 2,
+          "y": 0,
+          "flat": 2,
+          "owner": "Neutral",
+          "unit": "empty",
+          "unit_resource": false,
+          "occupied": false,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_friendly_base_unity_return_semantics"
+    },
+    {
+      "split": "bc_train",
+      "sample": 111,
+      "flat": 48,
+      "label": "Harvest",
+      "actor": {
+        "x": 0,
+        "y": 2,
+        "flat": 48,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        2,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 3,
+        "flat": 72,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 3,
+          "flat": 72,
+          "owner": "Neutral",
+          "unit": "empty",
+          "unit_resource": false,
+          "occupied": false,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_resource_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 121,
+      "flat": 25,
+      "label": "Move",
+      "actor": {
+        "x": 1,
+        "y": 1,
+        "flat": 25,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "decoded_cell": {
+          "inside": true,
+          "x": 1,
+          "y": 0,
+          "flat": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "unit_resource": true,
+          "occupied": true,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 130,
+      "flat": 27,
+      "label": "Move",
+      "actor": {
+        "x": 3,
+        "y": 1,
+        "flat": 27,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 3,
+        "y": 2,
+        "flat": 51,
+        "decoded_cell": {
+          "inside": true,
+          "x": 3,
+          "y": 2,
+          "flat": 51,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 164,
+      "flat": 72,
+      "label": "Move",
+      "actor": {
+        "x": 0,
+        "y": 3,
+        "flat": 72,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 2,
+        "flat": 48,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 2,
+          "flat": 48,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 173,
+      "flat": 1,
+      "label": "Move",
+      "actor": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": -1,
+        "y": -1,
+        "flat": null,
+        "decoded_cell": {
+          "inside": false
+        }
+      },
+      "reason": "target_out_of_bounds"
+    },
+    {
+      "split": "bc_train",
+      "sample": 173,
+      "flat": 2,
+      "label": "Move",
+      "actor": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": -1,
+        "y": -1,
+        "flat": null,
+        "decoded_cell": {
+          "inside": false
+        }
+      },
+      "reason": "target_out_of_bounds"
+    },
+    {
+      "split": "bc_train",
+      "sample": 173,
+      "flat": 74,
+      "label": "Move",
+      "actor": {
+        "x": 2,
+        "y": 3,
+        "flat": 74,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 2,
+        "y": 2,
+        "flat": 50,
+        "decoded_cell": {
+          "inside": true,
+          "x": 2,
+          "y": 2,
+          "flat": 50,
+          "owner": "Player1",
+          "unit": "Base",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 180,
+      "flat": 25,
+      "label": "Move",
+      "actor": {
+        "x": 1,
+        "y": 1,
+        "flat": 25,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      "target": {
+        "x": 1,
+        "y": 2,
+        "flat": 49,
+        "decoded_cell": {
+          "inside": true,
+          "x": 1,
+          "y": 2,
+          "flat": 49,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 189,
+      "flat": 1,
+      "label": "Move",
+      "actor": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": -1,
+        "y": -1,
+        "flat": null,
+        "decoded_cell": {
+          "inside": false
+        }
+      },
+      "reason": "target_out_of_bounds"
+    },
+    {
+      "split": "bc_train",
+      "sample": 189,
+      "flat": 48,
+      "label": "Harvest",
+      "actor": {
+        "x": 0,
+        "y": 2,
+        "flat": 48,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        2,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 3,
+        "flat": 72,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 3,
+          "flat": 72,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_resource_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 189,
+      "flat": 72,
+      "label": "Move",
+      "actor": {
+        "x": 0,
+        "y": 3,
+        "flat": 72,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        2,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "target": {
+        "x": 0,
+        "y": 2,
+        "flat": 48,
+        "decoded_cell": {
+          "inside": true,
+          "x": 0,
+          "y": 2,
+          "flat": 48,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 204,
+      "flat": 2,
+      "label": "Move",
+      "actor": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        1,
+        3,
+        0,
+        0,
+        3,
+        2,
+        0
+      ],
+      "target": {
+        "x": 1,
+        "y": 0,
+        "flat": 1,
+        "decoded_cell": {
+          "inside": true,
+          "x": 1,
+          "y": 0,
+          "flat": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "unit_resource": true,
+          "occupied": true,
+          "friendly": false,
+          "hostile": false
+        }
+      },
+      "reason": "target_occupied_under_unity_obs"
+    },
+    {
+      "split": "bc_train",
+      "sample": 204,
+      "flat": 26,
+      "label": "Return",
+      "actor": {
+        "x": 2,
+        "y": 1,
+        "flat": 26,
+        "owner": "Player1",
+        "unit": "Worker",
+        "owner_index": 1,
+        "unit_index": 3
+      },
+      "action_branches": [
+        3,
+        3,
+        0,
+        2,
+        1,
+        2,
+        0
+      ],
+      "target": {
+        "x": 2,
+        "y": 0,
+        "flat": 2,
+        "decoded_cell": {
+          "inside": true,
+          "x": 2,
+          "y": 0,
+          "flat": 2,
+          "owner": "Player1",
+          "unit": "Worker",
+          "unit_resource": false,
+          "occupied": true,
+          "friendly": true,
+          "hostile": false
+        }
+      },
+      "reason": "target_not_friendly_base_unity_return_semantics"
+    }
+  ]
+}

@@ -521,6 +521,12 @@ namespace RTS.ML
             // Worker builds Barracks on an adjacent free cell.
             // v2 produce branch uses UnitType order, so Barracks build intent is slot 2.
             // MatchManager routes Worker-Produce to TryWorkerBuildBarracks.
+            if (HasAliveBarracks(unit.Owner))
+            {
+                if (DiagnosticLogging) Debug.Log($"[ActionMaskBuilder] {unit.Owner} worker@{unit.GridPos}: build-barracks masked — owner already has a Barracks");
+                return;
+            }
+
             UnitDefinition barracksDefinition = GetUnitDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
             {
@@ -560,6 +566,21 @@ namespace RTS.ML
             // See ActionContractMappings.IsWorkerBuildBarracksAction for the canonical rule.
             actorMask.ProduceUnitTypeMask[2] = true;
             actorMask.ActionTypeMask[(int)UnitActionType.Produce] = true;
+        }
+
+        private bool HasAliveBarracks(Owner owner)
+        {
+            var units = _unitRegistry.GetUnitsByOwner(owner);
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive && unit.Type == UnitType.Barracks)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void BuildAttackMask(UnitRuntime unit, ActorActionMask actorMask)

@@ -1116,6 +1116,12 @@ namespace RTS.Gameplay
 
         private bool TryWorkerBuildBarracks(UnitRuntime worker, Direction direction, GameConfig config)
         {
+            if (CountAliveBarracks(worker.Owner) > 0)
+            {
+                Debug.LogWarning($"[MatchManager] Worker build Barracks: {worker.Owner} already has a living Barracks");
+                return false;
+            }
+
             GridPosition targetCell = worker.GridPos.Neighbour(direction);
 
             if (!_gridManager.IsInside(targetCell))
@@ -1609,6 +1615,27 @@ namespace RTS.Gameplay
             }
 
             return baseCount;
+        }
+
+        private int CountAliveBarracks(Owner owner)
+        {
+            if (_unitRegistry == null)
+            {
+                return 0;
+            }
+
+            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            int barracksCount = 0;
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive && unit.Type == UnitType.Barracks)
+                {
+                    barracksCount++;
+                }
+            }
+
+            return barracksCount;
         }
 
         private static bool IsPlayerOwner(Owner owner)

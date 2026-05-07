@@ -502,13 +502,25 @@ namespace RTS.ML
             public int attack_target_local;
             public string raw_action_type_top1;
             public int raw_move_dir_top1;
+            public int raw_harvest_dir_top1;
+            public int raw_return_dir_top1;
+            public int raw_produce_dir_top1;
+            public int raw_produce_unit_type_top1;
+            public int raw_attack_target_local_top1;
             public string masked_action_type;
             public int masked_move_dir;
+            public int masked_harvest_dir;
+            public int masked_return_dir;
+            public int masked_produce_dir;
+            public int masked_produce_unit_type;
+            public int masked_attack_target_local;
             public bool[] legal_action_type_mask;
             public bool[] legal_move_dir_mask;
             public bool masked_move_dir_legal;
             public bool branch_mask_applied_for_move;
             public string move_dir_mask_fallback_reason;
+            public bool branch_parameter_mask_applied;
+            public string branch_parameter_mask_reason;
             public string decoder_received_action_type;
             public int decoder_received_move_dir;
             public bool decoder_received_move_dir_legal;
@@ -1757,10 +1769,20 @@ namespace RTS.ML
                     ? maskTelemetry.RawActionTypeTop1.ToString()
                     : predictedActionTypeName;
                 int rawMoveDirTop1 = hasMaskTelemetry ? maskTelemetry.RawMoveDirTop1 : moveDirFinal;
+                int rawHarvestDirTop1 = hasMaskTelemetry ? maskTelemetry.RawHarvestDirTop1 : harvestDirFinal;
+                int rawReturnDirTop1 = hasMaskTelemetry ? maskTelemetry.RawReturnDirTop1 : returnDirFinal;
+                int rawProduceDirTop1 = hasMaskTelemetry ? maskTelemetry.RawProduceDirTop1 : produceDirFinal;
+                int rawProduceUnitTypeTop1 = hasMaskTelemetry ? maskTelemetry.RawProduceUnitTypeTop1 : produceUnitTypeFinal;
+                int rawAttackTargetLocalTop1 = hasMaskTelemetry ? maskTelemetry.RawAttackTargetLocalTop1 : attackTargetLocalFinal;
                 string maskedActionType = hasMaskTelemetry
                     ? maskTelemetry.MaskedActionType.ToString()
                     : predictedActionTypeName;
                 int maskedMoveDir = hasMaskTelemetry ? maskTelemetry.MaskedMoveDir : moveDirFinal;
+                int maskedHarvestDir = hasMaskTelemetry ? maskTelemetry.MaskedHarvestDir : harvestDirFinal;
+                int maskedReturnDir = hasMaskTelemetry ? maskTelemetry.MaskedReturnDir : returnDirFinal;
+                int maskedProduceDir = hasMaskTelemetry ? maskTelemetry.MaskedProduceDir : produceDirFinal;
+                int maskedProduceUnitType = hasMaskTelemetry ? maskTelemetry.MaskedProduceUnitType : produceUnitTypeFinal;
+                int maskedAttackTargetLocal = hasMaskTelemetry ? maskTelemetry.MaskedAttackTargetLocal : attackTargetLocalFinal;
                 bool[] legalActionTypeMask = hasMaskTelemetry ? CopyBoolArray(maskTelemetry.LegalActionTypeMask) : Array.Empty<bool>();
                 bool[] legalMoveDirMask = hasMaskTelemetry ? CopyBoolArray(maskTelemetry.LegalMoveDirMask) : Array.Empty<bool>();
                 if (!hasMaskTelemetry
@@ -1777,6 +1799,10 @@ namespace RTS.ML
                     : (predictedActionType == UnitActionType.Move);
                 string moveDirMaskFallbackReason = hasMaskTelemetry
                     ? (maskTelemetry.MoveDirMaskFallbackReason ?? string.Empty)
+                    : string.Empty;
+                bool branchParameterMaskApplied = hasMaskTelemetry && maskTelemetry.BranchParameterMaskApplied;
+                string branchParameterMaskReason = hasMaskTelemetry
+                    ? (maskTelemetry.BranchParameterMaskReason ?? string.Empty)
                     : string.Empty;
 
                 if (!runtimeIsFriendlyActor)
@@ -1949,13 +1975,25 @@ namespace RTS.ML
                     attack_target_local = attackTargetLocalFinal,
                     raw_action_type_top1 = rawActionTypeTop1,
                     raw_move_dir_top1 = rawMoveDirTop1,
+                    raw_harvest_dir_top1 = rawHarvestDirTop1,
+                    raw_return_dir_top1 = rawReturnDirTop1,
+                    raw_produce_dir_top1 = rawProduceDirTop1,
+                    raw_produce_unit_type_top1 = rawProduceUnitTypeTop1,
+                    raw_attack_target_local_top1 = rawAttackTargetLocalTop1,
                     masked_action_type = maskedActionType,
                     masked_move_dir = maskedMoveDir,
+                    masked_harvest_dir = maskedHarvestDir,
+                    masked_return_dir = maskedReturnDir,
+                    masked_produce_dir = maskedProduceDir,
+                    masked_produce_unit_type = maskedProduceUnitType,
+                    masked_attack_target_local = maskedAttackTargetLocal,
                     legal_action_type_mask = legalActionTypeMask,
                     legal_move_dir_mask = legalMoveDirMask,
                     masked_move_dir_legal = maskedMoveDirLegal,
                     branch_mask_applied_for_move = branchMaskAppliedForMove,
                     move_dir_mask_fallback_reason = moveDirMaskFallbackReason,
+                    branch_parameter_mask_applied = branchParameterMaskApplied,
+                    branch_parameter_mask_reason = branchParameterMaskReason,
                     decoder_received_action_type = decoderReceivedActionTypeValue.ToString(),
                     decoder_received_move_dir = decoderReceivedMoveDir,
                     decoder_received_move_dir_legal = decoderReceivedMoveDirLegal,
