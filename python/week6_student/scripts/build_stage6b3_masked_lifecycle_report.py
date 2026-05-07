@@ -56,11 +56,16 @@ def _branch_values(row: dict[str, Any], prefix: str) -> dict[str, int]:
     }
 
 
-def build_report(artifact_dir: Path) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
-    manifest_path = artifact_dir / "stage6b3_semantic_obs_fix_run_manifest.json"
+def build_report(
+    artifact_dir: Path,
+    prefix: str,
+    manifest_name: str,
+    parity_step_dir: str,
+) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    manifest_path = artifact_dir / manifest_name
     manifest = _load_json(manifest_path)
 
-    snapshot_paths = sorted(artifact_dir.glob("stage6b3_masked_lifecycle_snapshot_step*.json"), key=_step_from_name)
+    snapshot_paths = sorted(artifact_dir.glob(f"{prefix}_snapshot_step*.json"), key=_step_from_name)
     global_paths = sorted(artifact_dir.glob("stage10d10_global_runtime_cell_table_step*.jsonl"), key=_step_from_name)
     snapshots = [(_step_from_name(path), _load_json(path)) for path in snapshot_paths]
 
@@ -246,7 +251,7 @@ def build_report(artifact_dir: Path) -> tuple[dict[str, Any], str, dict[str, Any
                 if len(invalid_log_examples) < 20:
                     invalid_log_examples.append(line.strip())
 
-    parity_path = artifact_dir / "step0100_parity" / "stage6b3_unity_visual_inference_analysis.json"
+    parity_path = artifact_dir / parity_step_dir / "stage6b3_unity_visual_inference_analysis.json"
     if parity_path.exists():
         parity_report = _load_json(parity_path)
         parity = parity_report.get("offline_vs_unity_adapter_logits") or parity_report.get("parity", {})
@@ -410,16 +415,24 @@ def build_report(artifact_dir: Path) -> tuple[dict[str, Any], str, dict[str, Any
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifact-dir", required=True)
+    parser.add_argument("--prefix", default="stage6b3_masked_lifecycle")
+    parser.add_argument("--manifest-name", default="stage6b3_semantic_obs_fix_run_manifest.json")
+    parser.add_argument("--parity-step-dir", default="step0100_parity")
     args = parser.parse_args()
 
     artifact_dir = Path(args.artifact_dir).resolve()
-    report, markdown, histogram, invalid_attempt_report, economy_timeline = build_report(artifact_dir)
+    report, markdown, histogram, invalid_attempt_report, economy_timeline = build_report(
+        artifact_dir,
+        prefix=args.prefix,
+        manifest_name=args.manifest_name,
+        parity_step_dir=args.parity_step_dir,
+    )
 
-    report_path = artifact_dir / "stage6b3_masked_lifecycle_report.json"
-    md_path = artifact_dir / "stage6b3_masked_lifecycle_report.md"
-    economy_path = artifact_dir / "stage6b3_masked_lifecycle_economy_timeline.json"
-    histogram_path = artifact_dir / "stage6b3_masked_lifecycle_command_acceptance_histogram.json"
-    invalid_path = artifact_dir / "stage6b3_masked_lifecycle_invalid_attempt_report.json"
+    report_path = artifact_dir / f"{args.prefix}_report.json"
+    md_path = artifact_dir / f"{args.prefix}_report.md"
+    economy_path = artifact_dir / f"{args.prefix}_economy_timeline.json"
+    histogram_path = artifact_dir / f"{args.prefix}_command_acceptance_histogram.json"
+    invalid_path = artifact_dir / f"{args.prefix}_invalid_attempt_report.json"
 
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     md_path.write_text(markdown, encoding="utf-8")

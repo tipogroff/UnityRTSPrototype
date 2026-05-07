@@ -618,6 +618,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &663000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 663000003}
+  - component: {fileID: 663000002}
+  m_Layer: 0
+  m_Name: Week6Stage6B3StaticManualPlayBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &663000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69563f6968f195b448b07ad5c917eebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.ML.Week6Stage6B3StaticManualPlayBootstrap
+--- !u!4 &663000003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &727644333
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1697,11 +1741,11 @@ MonoBehaviour:
   _maxDecisionRequestsPerEpisode: 200
   _pythonExecutableRelativePath: .venv/Scripts/python.exe
   _bridgeScriptRelativePath: python/week6_student/student_inference_server.py
-  _checkpointRelativePath: python/week6_student/runs/Stage6B2_SourceValidNoOpFix/legacy032_v2_bc_source_valid_noop_fix_best.pt
-  _enableLegalActionMaskForSelection: 0
+  _checkpointRelativePath: python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt
+  _enableLegalActionMaskForSelection: 1
   _enableDynamicOccupancyMoveMaskEnrichment: 1
-  _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
-  _artifactFilePrefix: stage6b2
+  _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b3_static_manual_play_smoke
+  _artifactFilePrefix: stage6b3_static_manual_play
   _artifactRingSlots: 4
   _cleanupTempArtifactsOnReset: 1
   _device: cpu
@@ -1750,7 +1794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.ML.Week6VisualInspectionRunner
   _studentControlledPlayer: 1
-  _autoStartOnPlay: 0
+  _autoStartOnPlay: 1
   _initializeAndPauseOnPlayWhenAutoStartDisabled: 1
   _showOverlay: 1
   _logTerminalSummary: 1
@@ -1771,9 +1815,9 @@ MonoBehaviour:
   _autoVisualPlaybackStepIntervalSeconds: 0.1
   _applyBaseVisualScaleOverrideInInspection: 1
   _baseVisualCellScale: 0.85
-  _jsonReportRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy/stage6b2_episode_diagnostics.json
-  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy
-  _stepSnapshotFilePrefix: stage6b2_snapshot_step
+  _jsonReportRelativePath: python/week6_student/tmp/stage6b3_static_manual_play_smoke/stage6b3_static_manual_play_episode_diagnostics.json
+  _stepSnapshotOutputDirectoryRelativePath: python/week6_student/tmp/stage6b3_static_manual_play_smoke
+  _stepSnapshotFilePrefix: stage6b3_static_manual_play_snapshot_step
 --- !u!4 &2051000303
 Transform:
   m_ObjectHideFlags: 0
