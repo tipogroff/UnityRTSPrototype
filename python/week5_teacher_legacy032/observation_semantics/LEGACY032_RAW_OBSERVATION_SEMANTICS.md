@@ -1,6 +1,6 @@
 # LEGACY032 Raw Observation Semantics (Empirical)
 
-Status: empirical reconstruction only (Stage10D.4)
+Status: source-confirmed production mapping (Stage6B3 semantic observation fix)
 Source dataset: python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z/teacher_rollout_raw.npz
 Input tensor shape: [N, 24, 24, 27]
 
@@ -23,17 +23,20 @@ Key Stage10D.3 findings preserved:
 
 ## Empirical Channel Notes
 
-Observed per-channel behavior indicates binary/one-hot-like structure, but semantic labels remain partially uncertain.
+Source-confirmed raw channel groups from `gym_microrts/envs/vec_env.py`:
 
-High-confidence empirical statements:
-- Raw channel values are mostly binary (0/1).
-- Several shifted windows exhibit stronger one-hot behavior than Unity-declared windows.
-- Legacy raw semantics are not directly interchangeable with Unity v2 runtime semantics.
+| Raw channels | Raw meaning |
+|---:|---|
+| 0..4 | hit point discrete one-hot bin, clipped at 4 |
+| 5..9 | resource/carry discrete one-hot bin, clipped at 4 |
+| 10..12 | owner one-hot: neutral, player0, player1 |
+| 13..20 | unit type one-hot: empty, Resource, Base, Barracks, Worker, Light, Heavy, Ranged |
+| 21..26 | current action one-hot: NoOp, Move, Harvest, Return, Produce, Attack |
 
-Low-confidence or uncertain statements:
-- Exact owner channel placement in raw Legacy032 remains unresolved.
-- Exact unit_type channel placement in raw Legacy032 remains unresolved.
-- Raw current_action and direction channels may be shifted relative to Unity contract indices.
+Important absence:
+- Legacy032 raw observation has no facing/direction planes.
+- Legacy032 raw observation has no active produce-unit-type planes.
+- Legacy032 raw observation has no observation-side attack-target plane.
 
 ## Non-Claims
 
@@ -43,5 +46,5 @@ Low-confidence or uncertain statements:
 
 ## Implication for Stage10D.4
 
-Because inference-time deployment is in Unity, Unity runtime observation semantics must be the canonical target.
-Legacy032 raw observations require explicit, versioned adaptation rules, not reshape-only passthrough.
+Because inference-time deployment is in Unity, Unity runtime observation semantics are the canonical target.
+Legacy032 raw observations require explicit, versioned semantic adaptation rules, not reshape-only passthrough.

@@ -1,0 +1,59 @@
+{
+  "generated_at_utc": "2026-05-07T09:49:37Z",
+  "root_cause_status": "FIXED_OFFLINE",
+  "first_failing_boundary": "BC observation tensor semantic contract",
+  "new_lineage": "Stage6B3_SemanticObservationFix",
+  "artifacts": {
+    "adapted_dataset_dir": "python/week5_teacher_legacy032/teacher_exports/legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z",
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+    "best_checkpoint": "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_best.pt",
+    "final_checkpoint": "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt"
+  },
+  "reports": {
+    "adapted_validation": "python/week5_teacher_legacy032/teacher_exports/legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z/LEGACY032_UNITY_V2_DATASET_VALIDATION_REPORT.json",
+    "bc_action_source_sanity": "python/week6_student/reports/stage6b3_semantic_obs_fix_action_source_sanity.json",
+    "bc_observation_semantic_parity": "python/week6_student/reports/stage6b3_semantic_obs_fix_observation_semantic_parity.json",
+    "old_vs_new_comparison": "python/week6_student/reports/stage6b3_old_vs_new_bc_semantic_comparison.json",
+    "loader_dry_run": "python/week6_student/reports/stage6b3_semantic_obs_fix_loader_dry_run/LEGACY032_BC_READY_DRY_RUN_REPORT.json",
+    "training_summary": "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/training_summary.json",
+    "probe_debug_final": "python/week6_student/reports/stage6b3_semantic_obs_fix_probe_debug_final.json",
+    "probe_validation_final": "python/week6_student/reports/stage6b3_semantic_obs_fix_probe_validation_final.json"
+  },
+  "validation_results": {
+    "adapted_dataset_validation": "pass",
+    "bc_source_valid_action_sanity": "pass",
+    "bc_observation_semantic_parity": "pass",
+    "loader_dry_run": "pass",
+    "old_stage6b2_action_sanity": "pass",
+    "old_stage6b2_observation_semantic_parity": "fail"
+  },
+  "training_probe_results": {
+    "best_epoch": 7,
+    "epochs_completed": 8,
+    "selected_checkpoint_for_unity": "final",
+    "debug_final": {
+      "action_type_accuracy": 0.9998677571614584,
+      "noop_prediction_share": 0.9930046929253472,
+      "source_valid_non_noop_recall": 0.9936739659367396,
+      "source_valid_exact_action_type_recall": 0.9912408759124087,
+      "source_invalid_false_non_noop_rate": 0.0000313876479142908,
+      "go_for_unity_visual_inference": true
+    },
+    "validation_final": {
+      "action_type_accuracy": 0.9998975299682847,
+      "noop_prediction_share": 0.9932747742299629,
+      "source_valid_non_noop_recall": 0.9955862357493986,
+      "source_valid_exact_action_type_recall": 0.9940591988285744,
+      "source_invalid_false_non_noop_rate": 0.00002776783043610313,
+      "go_for_unity_visual_inference": true
+    }
+  },
+  "go_no_go": "GO_FOR_UNITY_VISUAL_INFERENCE_WITH_FINAL_CHECKPOINT",
+  "remaining_risks": [
+    "Legacy032 has no raw facing/direction planes; adapter defaults typed entities to dir_south to match Unity early fallback.",
+    "Legacy032 has no raw produce-unit observation planes; adapter emits zero unless Unity runtime later has active production queue state.",
+    "Legacy032 has no raw attack-target observation plane; adapter derives a deterministic representative target from board occupancy.",
+    "The known corner resource layout is normalized from Legacy032 vertical second resources to Unity visual-inspection horizontal second resources when the target cell is empty.",
+    "Unity runtime logits parity and visual-scene behavior still need to be run before decoder/applier validation."
+  ]
+}

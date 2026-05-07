@@ -1,0 +1,34 @@
+{
+  "generated_at_utc": "2026-05-07T08:58:00Z",
+  "old_stage6b2_source_valid_noopfix_bc": {
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+    "source_valid_action_sane": "pass",
+    "observation_semantic_parity": "fail",
+    "action_source_sanity_report": "python/week6_student/reports/stage6b3_old_stage6b2_action_source_sanity.json",
+    "observation_semantic_parity_report": "python/week6_student/reports/stage6b3_old_stage6b2_observation_semantic_parity.json",
+    "representative_failures": [
+      "worker cells count == 0",
+      "base cells count == 0",
+      "unit_type multihot detected",
+      "B2 does not decode as friendly Worker under Unity semantics",
+      "C3 does not decode as friendly Base under Unity semantics"
+    ]
+  },
+  "new_stage6b3_semantic_observation_fix_bc": {
+    "bc_ready_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+    "source_valid_action_sane": "pass",
+    "observation_semantic_parity": "pass",
+    "action_source_sanity_report": "python/week6_student/reports/stage6b3_semantic_obs_fix_action_source_sanity.json",
+    "observation_semantic_parity_report": "python/week6_student/reports/stage6b3_semantic_obs_fix_observation_semantic_parity.json",
+    "representative_passes": [
+      "train/validation/debug actor cells > 0",
+      "train/validation/debug worker cells > 0",
+      "train/validation/debug base cells > 0",
+      "source-invalid cells remain NoOp",
+      "B2 decodes as friendly Worker",
+      "C3 decodes as friendly Base",
+      "A1/B1 decode as neutral Resource"
+    ]
+  },
+  "decision": "GO_FOR_STAGE6B3_TRAINING"
+}

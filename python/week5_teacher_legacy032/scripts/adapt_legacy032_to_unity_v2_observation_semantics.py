@@ -4,11 +4,23 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
 import numpy as np
+
+THIS_FILE = Path(__file__).resolve()
+LEGACY032_DIR = THIS_FILE.parents[1]
+if str(LEGACY032_DIR) not in sys.path:
+    sys.path.insert(0, str(LEGACY032_DIR))
+
+from semantic_observation_adapter_legacy032_to_unity_v2 import (
+    Legacy032ToUnityV2AdapterConfig,
+    Legacy032ToUnityV2SemanticObservationAdapter,
+    semantic_mapping_table,
+)
 
 
 TARGET_OBS_SHAPE = (576, 27)
@@ -187,9 +199,9 @@ def _build_markdown(report: Dict[str, Any]) -> str:
     lines.append("## Mapping")
     lines.append(f"- mapping_file: {report['mapping_file']}")
     lines.append(f"- mapping_file_hash: {report['mapping_file_hash']}")
-    lines.append(f"- channels_applied: {report['channels_applied_count']}")
-    lines.append(f"- unavailable_channels: {report['unavailable_channels']}")
-    lines.append(f"- critical_unavailable_channels: {report['critical_unavailable_channels']}")
+    lines.append(f"- adapter_module: {report['adapter_module']}")
+    lines.append(f"- channel_rules_count: {len(report['semantic_mapping_table'])}")
+    lines.append(f"- approximations: {len(report['approximations'])}")
     lines.append("")
     lines.append("## Data Integrity")
     lines.append(f"- adapted_has_nan: {report['adapted_has_nan']}")
@@ -230,14 +242,15 @@ def main() -> int:
         raise RuntimeError(f"Missing mapping json: {mapping_json}")
 
     mapping = json.loads(mapping_json.read_text(encoding="utf-8"))
-    channels = mapping.get("channels", [])
-    by_target: Dict[int, Dict[str, Any]] = {}
-    for rec in channels:
-        by_target[int(rec["target_channel"])] = rec
 
     with np.load(raw_npz, allow_pickle=False) as npz:
         raw_obs_hwc = np.asarray(npz["observation_t"], dtype=np.float32)
         actions = np.asarray(npz["per_cell_action_t"], dtype=np.int16)
+        source_valid_action_mask = (
+            np.asarray(npz["source_valid_action_mask_t"], dtype=np.bool_)
+            if "source_valid_action_mask_t" in npz
+            else None
+        )
 
         episode_id = np.asarray(npz["episode_id"], dtype=np.int32)
         step_id = np.asarray(npz["step_id"], dtype=np.int32)
@@ -253,41 +266,24 @@ def main() -> int:
         raise RuntimeError(f"Unexpected action shape: {actions.shape}")
 
     n = int(raw_obs_hwc.shape[0])
-    raw_obs = raw_obs_hwc.reshape(n, 576, 27)
-    adapted_obs = np.zeros((n, 576, 27), dtype=np.float32)
-
-    unavailable_channels: List[int] = []
-    channel_application: Dict[str, Any] = {}
     hard_failures: List[str] = []
     warnings: List[str] = []
 
-    for t in range(27):
-        if t not in by_target:
-            hard_failures.append(f"missing mapping rule for target channel {t}")
-            continue
-        rec = by_target[t]
-        info = _apply_channel_rule(adapted_obs, t, rec, raw_obs, actions, unavailable_channels)
-        channel_application[str(t)] = info
-
-    critical_ranges = {
-        "owner": [2, 3, 4],
-        "unit_type": [5, 6, 7, 8, 9, 10, 11],
-        "current_action": [12, 13, 14, 15, 16, 17],
-        "direction": [18, 19, 20, 21],
-    }
-    critical_unavailable = sorted(
-        [
-            c
-            for c in unavailable_channels
-            if any(c in r for r in critical_ranges.values())
-        ]
+    adapter_config = Legacy032ToUnityV2AdapterConfig(
+        player_perspective="player0",
+        default_direction="south",
+        apply_unity_corner_resource_layout=True,
+        derive_representative_attack_target=True,
     )
+    adapter = Legacy032ToUnityV2SemanticObservationAdapter(adapter_config)
+    adapted_obs = adapter.adapt(raw_obs_hwc, restore_input_rank=False)
+    semantic_table = semantic_mapping_table()
+    approximations = [
+        row for row in semantic_table if str(row.get("approximation_or_risk", "")).strip()
+    ]
 
-    if critical_unavailable and not bool(args.allow_critical_unavailable):
-        hard_failures.append(
-            "critical channels unavailable and allow-critical-unavailable=false: "
-            + str(critical_unavailable)
-        )
+    if source_valid_action_mask is None:
+        hard_failures.append("source_valid_action_mask_t missing from raw rollout")
 
     has_nan = bool(np.isnan(adapted_obs).any())
     has_inf = bool(np.isinf(adapted_obs).any())
@@ -297,39 +293,59 @@ def main() -> int:
         hard_failures.append("adapted observations contain Inf")
 
     adapted_dataset = run_dir / "adapted_dataset.npz"
-    np.savez_compressed(
-        adapted_dataset,
-        observations=adapted_obs,
-        actions=actions,
-        episode_id=episode_id,
-        step_id=step_id,
-        reward_t=reward_t,
-        done_t=done_t,
-        terminated_t=terminated_t,
-        truncated_t=truncated_t,
-        action_mask_available_t=action_mask_available_t,
-    )
+    save_payload = {
+        "observations": adapted_obs,
+        "actions": actions,
+        "episode_id": episode_id,
+        "step_id": step_id,
+        "reward_t": reward_t,
+        "done_t": done_t,
+        "terminated_t": terminated_t,
+        "truncated_t": truncated_t,
+        "action_mask_available_t": action_mask_available_t,
+    }
+    if source_valid_action_mask is not None:
+        save_payload["source_valid_action_mask"] = source_valid_action_mask
+    np.savez_compressed(adapted_dataset, **save_payload)
 
     mapping_hash = _sha256(mapping_json)
 
     manifest = {
         "generated_at_utc": _now_iso(),
         "teacher_lineage": "legacy032",
+        "source_pipeline": "gym_microrts==0.3.2",
         "observation_semantics_version": str(mapping.get("observation_semantics_version", "unknown")),
         "source_observation_semantics": "legacy032_raw_empirical",
         "target_observation_semantics": "unity_v2_runtime",
+        "target_action_contract": "unity_v2_legacy032_gridnet",
         "mapping_file": str(mapping_json),
         "mapping_file_hash": mapping_hash,
+        "semantic_adapter_module": "semantic_observation_adapter_legacy032_to_unity_v2",
+        "semantic_adapter_config": {
+            "player_perspective": adapter_config.player_perspective,
+            "default_direction": adapter_config.default_direction,
+            "apply_unity_corner_resource_layout": adapter_config.apply_unity_corner_resource_layout,
+            "derive_representative_attack_target": adapter_config.derive_representative_attack_target,
+        },
         "conversion_timestamp": _now_iso(),
         "observation_shape_per_sample": [576, 27],
         "action_shape_per_sample": [576, 7],
+        "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
+        "flatten_order": "row_major",
+        "flat_cell_index_formula": "row * 24 + col",
+        "global_vector_policy": "excluded_from_strict_bc_encoder_path",
+        "attack_target_semantics": "local_7x7_49",
+        "source_valid_action_mask_present": bool(source_valid_action_mask is not None),
+        "source_invalid_cells_forced_to_noop": True,
+        "direct_weight_transfer_claim": False,
+        "semantic_parity_claim": False,
         "explicit_non_claims": [
-            "No claim of exact Gym-microRTS to Unity semantic parity.",
+            "Observation channels are semantically adapted to Unity v2 runtime contract with documented approximations.",
             "No retraining/PPO/checkpoint mutation performed.",
             "No runtime semantic mutation in Unity ActionApplier/MatchManager."
         ],
-        "critical_unavailable_channels": critical_unavailable,
-        "unavailable_channels": sorted(unavailable_channels),
+        "semantic_mapping_table": semantic_table,
+        "approximations": approximations,
     }
     _json_dump(run_dir / "adapted_manifest.json", manifest)
 
@@ -347,10 +363,10 @@ def main() -> int:
         "raw_observation_shape": [int(x) for x in raw_obs_hwc.shape],
         "adapted_observation_shape": [int(x) for x in adapted_obs.shape],
         "actions_shape": [int(x) for x in actions.shape],
-        "channels_applied_count": int(len(channel_application)),
-        "channel_application": channel_application,
-        "unavailable_channels": sorted(unavailable_channels),
-        "critical_unavailable_channels": critical_unavailable,
+        "adapter_module": "semantic_observation_adapter_legacy032_to_unity_v2",
+        "semantic_mapping_table": semantic_table,
+        "approximations": approximations,
+        "source_valid_action_mask_present": bool(source_valid_action_mask is not None),
         "adapted_has_nan": has_nan,
         "adapted_has_inf": has_inf,
         "adapted_min": float(np.min(adapted_obs)),
@@ -373,7 +389,7 @@ def main() -> int:
                 "conversion_report_json": str(run_dir / "observation_semantic_conversion_report.json"),
                 "conversion_report_md": str(run_dir / "observation_semantic_conversion_report.md"),
                 "adapted_manifest": str(run_dir / "adapted_manifest.json"),
-                "critical_unavailable_channels": critical_unavailable,
+                "approximations_count": len(approximations),
                 "hard_failures_count": len(hard_failures),
             },
             ensure_ascii=True,

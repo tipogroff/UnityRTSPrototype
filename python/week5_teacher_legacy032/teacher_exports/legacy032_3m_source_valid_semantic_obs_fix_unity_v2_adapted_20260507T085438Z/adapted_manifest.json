@@ -1,0 +1,206 @@
+{
+  "generated_at_utc": "2026-05-07T08:55:31Z",
+  "teacher_lineage": "legacy032",
+  "source_pipeline": "gym_microrts==0.3.2",
+  "source_export_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+  "source_rollout_file": "teacher_rollout_raw.npz",
+  "source_manifest_file": "teacher_rollout_manifest.json",
+  "target_action_contract": "unity_v2_legacy032_gridnet",
+  "observation_semantics_version": "unity_v2_runtime_semantic_obs_fix",
+  "semantic_adapter_module": "semantic_observation_adapter_legacy032_to_unity_v2",
+  "semantic_adapter_config": {
+    "player_perspective": "player0",
+    "default_direction": "south",
+    "apply_unity_corner_resource_layout": true,
+    "derive_representative_attack_target": true
+  },
+  "semantic_mapping_table": [
+    {
+      "raw_channel_index": "0..4",
+      "raw_meaning": "hit point discrete one-hot bin, clipped at 4",
+      "target_unity_channel_index": 0,
+      "target_meaning": "hit_points scalar",
+      "approximation_or_risk": "coarse normalized by unit type full HP bin"
+    },
+    {
+      "raw_channel_index": "5..9",
+      "raw_meaning": "resource/carry discrete one-hot bin, clipped at 4",
+      "target_unity_channel_index": 1,
+      "target_meaning": "resources scalar",
+      "approximation_or_risk": "coarse normalized as bin/4"
+    },
+    {
+      "raw_channel_index": 10,
+      "raw_meaning": "absolute owner neutral",
+      "target_unity_channel_index": 2,
+      "target_meaning": "owner_neutral",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 11,
+      "raw_meaning": "absolute owner player0",
+      "target_unity_channel_index": 3,
+      "target_meaning": "owner_friendly / owner_player1 relative to acting player",
+      "approximation_or_risk": "exact for Player1-perspective export from player0 teacher"
+    },
+    {
+      "raw_channel_index": 12,
+      "raw_meaning": "absolute owner player1",
+      "target_unity_channel_index": 4,
+      "target_meaning": "owner_enemy / owner_player2 relative to acting player",
+      "approximation_or_risk": "exact for Player1-perspective export from player0 teacher"
+    },
+    {
+      "raw_channel_index": 13,
+      "raw_meaning": "empty/no-unit sentinel",
+      "target_unity_channel_index": null,
+      "target_meaning": "no Unity unit_type channel",
+      "approximation_or_risk": "used to suppress unit/action/direction on empty cells"
+    },
+    {
+      "raw_channel_index": 14,
+      "raw_meaning": "unit Resource",
+      "target_unity_channel_index": 5,
+      "target_meaning": "unit_resource",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 15,
+      "raw_meaning": "unit Base",
+      "target_unity_channel_index": 6,
+      "target_meaning": "unit_base",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 16,
+      "raw_meaning": "unit Barracks",
+      "target_unity_channel_index": 7,
+      "target_meaning": "unit_barracks",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 17,
+      "raw_meaning": "unit Worker",
+      "target_unity_channel_index": 8,
+      "target_meaning": "unit_worker",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 18,
+      "raw_meaning": "unit Light",
+      "target_unity_channel_index": 9,
+      "target_meaning": "unit_light",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 19,
+      "raw_meaning": "unit Heavy",
+      "target_unity_channel_index": 10,
+      "target_meaning": "unit_heavy",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 20,
+      "raw_meaning": "unit Ranged",
+      "target_unity_channel_index": 11,
+      "target_meaning": "unit_ranged",
+      "approximation_or_risk": ""
+    },
+    {
+      "raw_channel_index": 21,
+      "raw_meaning": "current action NoOp",
+      "target_unity_channel_index": 12,
+      "target_meaning": "action_noop",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": 22,
+      "raw_meaning": "current action Move",
+      "target_unity_channel_index": 13,
+      "target_meaning": "action_move",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": 23,
+      "raw_meaning": "current action Harvest",
+      "target_unity_channel_index": 14,
+      "target_meaning": "action_harvest",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": 24,
+      "raw_meaning": "current action Return",
+      "target_unity_channel_index": 15,
+      "target_meaning": "action_return",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": 25,
+      "raw_meaning": "current action Produce",
+      "target_unity_channel_index": 16,
+      "target_meaning": "action_produce",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": 26,
+      "raw_meaning": "current action Attack",
+      "target_unity_channel_index": 17,
+      "target_meaning": "action_attack",
+      "approximation_or_risk": "copied only for typed cells; empty cells are zero-action"
+    },
+    {
+      "raw_channel_index": "unavailable",
+      "raw_meaning": "Legacy032 raw observation has no facing/direction planes",
+      "target_unity_channel_index": 20,
+      "target_meaning": "dir_south",
+      "approximation_or_risk": "default south for typed cells, matching Unity early corner fallback"
+    },
+    {
+      "raw_channel_index": "unavailable",
+      "raw_meaning": "Legacy032 raw observation has no active produce-unit plane",
+      "target_unity_channel_index": null,
+      "target_meaning": "produce_worker..produce_ranged",
+      "approximation_or_risk": "set all zero"
+    },
+    {
+      "raw_channel_index": "board-derived",
+      "raw_meaning": "Legacy032 raw observation has no attack target plane",
+      "target_unity_channel_index": 26,
+      "target_meaning": "attack_target_index",
+      "approximation_or_risk": "optional representative local 7x7 enemy target derived from board"
+    },
+    {
+      "raw_channel_index": "layout",
+      "raw_meaning": "Legacy032 vertical corner resource pair",
+      "target_unity_channel_index": null,
+      "target_meaning": "Unity horizontal corner resource pair",
+      "approximation_or_risk": "known map-level static resource remap A2->B1 and X23->W24 when target cell is empty"
+    }
+  ],
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "flatten_order": "row_major",
+  "flat_cell_index_formula": "row * 24 + col",
+  "global_vector_policy": "excluded_from_strict_bc_encoder_path",
+  "attack_target_semantics": "local_7x7_49",
+  "source_valid_action_mask_present": true,
+  "source_invalid_cells_forced_to_noop": true,
+  "direct_weight_transfer_claim": false,
+  "semantic_parity_claim": false,
+  "notes": "Legacy032 raw rollout observation channels are semantically adapted to Unity v2 runtime contract; final parity is gated by check_bc_ready_observation_semantic_parity.py."
+}

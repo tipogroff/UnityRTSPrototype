@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import traceback
 from collections import Counter
 from datetime import datetime, timezone
@@ -10,6 +11,17 @@ from pathlib import Path
 from typing import Any, Dict, List, Sequence
 
 import numpy as np
+
+THIS_FILE = Path(__file__).resolve()
+LEGACY032_DIR = THIS_FILE.parents[1]
+if str(LEGACY032_DIR) not in sys.path:
+    sys.path.insert(0, str(LEGACY032_DIR))
+
+from semantic_observation_adapter_legacy032_to_unity_v2 import (
+    Legacy032ToUnityV2AdapterConfig,
+    Legacy032ToUnityV2SemanticObservationAdapter,
+    semantic_mapping_table,
+)
 
 
 TARGET_OBS_SHAPE = (576, 27)
@@ -271,8 +283,8 @@ def _build_markdown_summary(summary: Dict[str, Any]) -> str:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description=(
-            "Adapt Legacy032 raw rollout to Unity v2 tensor contract only. "
-            "No semantic remap, no validator, no BC packaging."
+            "Adapt Legacy032 raw rollout to Unity v2 action and semantic observation contract. "
+            "No validator, no BC packaging."
         )
     )
     p.add_argument("--raw-rollout-dir", required=True)
@@ -399,8 +411,16 @@ def main() -> int:
         hard_failures,
     )
 
-    # Row-major flattening preserves flat_cell_index = row * 24 + col.
-    observations = source_observation.reshape(source_n, TARGET_OBS_SHAPE[0], TARGET_OBS_SHAPE[1]).astype(np.float32, copy=False)
+    adapter_config = Legacy032ToUnityV2AdapterConfig(
+        player_perspective="player0",
+        default_direction="south",
+        apply_unity_corner_resource_layout=True,
+        derive_representative_attack_target=True,
+    )
+    observations = Legacy032ToUnityV2SemanticObservationAdapter(adapter_config).adapt(
+        source_observation,
+        restore_input_rank=False,
+    )
     actions = source_actions.astype(np.int16, copy=False)
 
     _require(
@@ -516,6 +536,15 @@ def main() -> int:
         "source_rollout_file": "teacher_rollout_raw.npz",
         "source_manifest_file": "teacher_rollout_manifest.json",
         "target_action_contract": "unity_v2_legacy032_gridnet",
+        "observation_semantics_version": "unity_v2_runtime_semantic_obs_fix",
+        "semantic_adapter_module": "semantic_observation_adapter_legacy032_to_unity_v2",
+        "semantic_adapter_config": {
+            "player_perspective": adapter_config.player_perspective,
+            "default_direction": adapter_config.default_direction,
+            "apply_unity_corner_resource_layout": adapter_config.apply_unity_corner_resource_layout,
+            "derive_representative_attack_target": adapter_config.derive_representative_attack_target,
+        },
+        "semantic_mapping_table": semantic_mapping_table(),
         "observation_shape_per_sample": [576, 27],
         "action_shape_per_sample": [576, 7],
         "branch_sizes": [6, 4, 4, 4, 4, 7, 49],
@@ -527,7 +556,7 @@ def main() -> int:
         "source_invalid_cells_forced_to_noop": bool(source_manifest.get("source_invalid_cells_forced_to_noop", False)),
         "direct_weight_transfer_claim": False,
         "semantic_parity_claim": False,
-        "notes": "Legacy032 raw rollout adapted to Unity v2 tensor contract only; Unity runtime semantic parity is not claimed.",
+        "notes": "Legacy032 raw rollout observation channels are semantically adapted to Unity v2 runtime contract; final parity is gated by check_bc_ready_observation_semantic_parity.py.",
     }
     _json_dump(adapted_manifest_path, adapted_manifest)
 

@@ -1,0 +1,4303 @@
+{
+  "generated_at_utc": "2026-05-07T08:20:00Z",
+  "root_cause_status": "FOUND",
+  "authoritative_layout_source": "Stage6B2 visual step1 snapshot, treating current corner ?RTS-like layout as authoritative per user clarification",
+  "coordinate_contract": {
+    "visual_label": "A1 is x=0,y=0; B2 is x=1,y=1",
+    "unity_xy": "x=column from left, y=row from top",
+    "flat_index": "flat=y*24+x=row*24+col",
+    "microrts_alignment": "same top-left origin interpretation for this investigation"
+  },
+  "authoritative_layout_table": [
+    {
+      "owner": "Neutral",
+      "type": "Resource",
+      "visual_cell": "A1",
+      "unity_x": 0,
+      "unity_y": 0,
+      "flat_index": 0,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Neutral",
+      "type": "Resource",
+      "visual_cell": "B1",
+      "unity_x": 1,
+      "unity_y": 0,
+      "flat_index": 1,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Player1",
+      "type": "Worker",
+      "visual_cell": "B2",
+      "unity_x": 1,
+      "unity_y": 1,
+      "flat_index": 25,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Player1",
+      "type": "Base",
+      "visual_cell": "C3",
+      "unity_x": 2,
+      "unity_y": 2,
+      "flat_index": 50,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Player2",
+      "type": "Base",
+      "visual_cell": "V22",
+      "unity_x": 21,
+      "unity_y": 21,
+      "flat_index": 525,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Player2",
+      "type": "Worker",
+      "visual_cell": "W23",
+      "unity_x": 22,
+      "unity_y": 22,
+      "flat_index": 550,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Player2",
+      "type": "Barracks",
+      "visual_cell": "X23",
+      "unity_x": 23,
+      "unity_y": 22,
+      "flat_index": 551,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Neutral",
+      "type": "Resource",
+      "visual_cell": "W24",
+      "unity_x": 22,
+      "unity_y": 23,
+      "flat_index": 574,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    },
+    {
+      "owner": "Neutral",
+      "type": "Resource",
+      "visual_cell": "X24",
+      "unity_x": 23,
+      "unity_y": 23,
+      "flat_index": 575,
+      "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+    }
+  ],
+  "runtime_state_verification": {
+    "scene_name": "Week6_StudentVisualInspection",
+    "manifest_scene_path": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "step": 1,
+    "player1_resources": 60,
+    "player2_resources": 57,
+    "runtime_units_resources": [
+      {
+        "owner": "Neutral",
+        "type": "Resource",
+        "visual_cell": "A1",
+        "unity_x": 0,
+        "unity_y": 0,
+        "flat_index": 0,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Neutral",
+        "type": "Resource",
+        "visual_cell": "B1",
+        "unity_x": 1,
+        "unity_y": 0,
+        "flat_index": 1,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Player1",
+        "type": "Worker",
+        "visual_cell": "B2",
+        "unity_x": 1,
+        "unity_y": 1,
+        "flat_index": 25,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Player1",
+        "type": "Base",
+        "visual_cell": "C3",
+        "unity_x": 2,
+        "unity_y": 2,
+        "flat_index": 50,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Player2",
+        "type": "Base",
+        "visual_cell": "V22",
+        "unity_x": 21,
+        "unity_y": 21,
+        "flat_index": 525,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Player2",
+        "type": "Worker",
+        "visual_cell": "W23",
+        "unity_x": 22,
+        "unity_y": 22,
+        "flat_index": 550,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Player2",
+        "type": "Barracks",
+        "visual_cell": "X23",
+        "unity_x": 23,
+        "unity_y": 22,
+        "flat_index": 551,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Neutral",
+        "type": "Resource",
+        "visual_cell": "W24",
+        "unity_x": 22,
+        "unity_y": 23,
+        "flat_index": 574,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      },
+      {
+        "owner": "Neutral",
+        "type": "Resource",
+        "visual_cell": "X24",
+        "unity_x": 23,
+        "unity_y": 23,
+        "flat_index": 575,
+        "microrts_coordinate_interpretation": "x=col from left, y=row from top, flat=y*24+x"
+      }
+    ],
+    "grid_occupancy_unitregistry_resource_manager_note": "Current Stage6B2 artifact exposes unit_positions from runtime diagnostics; separate GridManager/UnitRegistry/ResourceManager lists are not serialized in this snapshot. Unit positions and observation decode are internally aligned by flatten_alignment_checks."
+  },
+  "unity_observation_export": {
+    "source_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\tmp\\stage6b2_source_valid_noopfix_visual_inference\\stage10d12r_full_raw_runtime_observation_step0001.json",
+    "shape_hwc": [
+      24,
+      24,
+      27
+    ],
+    "shape_flat": [
+      576,
+      27
+    ],
+    "channel_names": [
+      "hit_points",
+      "resources",
+      "owner_neutral",
+      "owner_friendly",
+      "owner_enemy",
+      "unit_resource",
+      "unit_base",
+      "unit_barracks",
+      "unit_worker",
+      "unit_light",
+      "unit_heavy",
+      "unit_ranged",
+      "action_noop",
+      "action_move",
+      "action_harvest",
+      "action_return",
+      "action_produce",
+      "action_attack",
+      "dir_north",
+      "dir_east",
+      "dir_south",
+      "dir_west",
+      "produce_worker",
+      "produce_light",
+      "produce_heavy",
+      "produce_ranged",
+      "attack_target_index"
+    ],
+    "actor_cells": [
+      {
+        "label": "B2",
+        "x": 1,
+        "y": 1,
+        "flat_index": 25,
+        "owner_decoded_unity_semantics": "Player1",
+        "unit_decoded_unity_semantics": "Worker",
+        "current_action": "NoOp",
+        "direction": "south",
+        "active_channels": [
+          {
+            "channel": 0,
+            "name": "hit_points",
+            "value": 1.0
+          },
+          {
+            "channel": 3,
+            "name": "owner_friendly",
+            "value": 1.0
+          },
+          {
+            "channel": 8,
+            "name": "unit_worker",
+            "value": 1.0
+          },
+          {
+            "channel": 12,
+            "name": "action_noop",
+            "value": 1.0
+          },
+          {
+            "channel": 20,
+            "name": "dir_south",
+            "value": 1.0
+          }
+        ],
+        "neighborhood_3x3": [
+          {
+            "label": "A1",
+            "x": 0,
+            "y": 0,
+            "flat_index": 0,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B1",
+            "x": 1,
+            "y": 0,
+            "flat_index": 1,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C1",
+            "x": 2,
+            "y": 0,
+            "flat_index": 2,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A2",
+            "x": 0,
+            "y": 1,
+            "flat_index": 24,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B2",
+            "x": 1,
+            "y": 1,
+            "flat_index": 25,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Worker",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 8,
+                "name": "unit_worker",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C2",
+            "x": 2,
+            "y": 1,
+            "flat_index": 26,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A3",
+            "x": 0,
+            "y": 2,
+            "flat_index": 48,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B3",
+            "x": 1,
+            "y": 2,
+            "flat_index": 49,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C3",
+            "x": 2,
+            "y": 2,
+            "flat_index": 50,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Base",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 6,
+                "name": "unit_base",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          }
+        ],
+        "neighborhood_5x5": [
+          {
+            "label": "A1",
+            "x": 0,
+            "y": 0,
+            "flat_index": 0,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B1",
+            "x": 1,
+            "y": 0,
+            "flat_index": 1,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C1",
+            "x": 2,
+            "y": 0,
+            "flat_index": 2,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D1",
+            "x": 3,
+            "y": 0,
+            "flat_index": 3,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A2",
+            "x": 0,
+            "y": 1,
+            "flat_index": 24,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B2",
+            "x": 1,
+            "y": 1,
+            "flat_index": 25,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Worker",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 8,
+                "name": "unit_worker",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C2",
+            "x": 2,
+            "y": 1,
+            "flat_index": 26,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D2",
+            "x": 3,
+            "y": 1,
+            "flat_index": 27,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A3",
+            "x": 0,
+            "y": 2,
+            "flat_index": 48,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B3",
+            "x": 1,
+            "y": 2,
+            "flat_index": 49,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C3",
+            "x": 2,
+            "y": 2,
+            "flat_index": 50,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Base",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 6,
+                "name": "unit_base",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D3",
+            "x": 3,
+            "y": 2,
+            "flat_index": 51,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A4",
+            "x": 0,
+            "y": 3,
+            "flat_index": 72,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B4",
+            "x": 1,
+            "y": 3,
+            "flat_index": 73,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C4",
+            "x": 2,
+            "y": 3,
+            "flat_index": 74,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D4",
+            "x": 3,
+            "y": 3,
+            "flat_index": 75,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "C3",
+        "x": 2,
+        "y": 2,
+        "flat_index": 50,
+        "owner_decoded_unity_semantics": "Player1",
+        "unit_decoded_unity_semantics": "Base",
+        "current_action": "NoOp",
+        "direction": "south",
+        "active_channels": [
+          {
+            "channel": 0,
+            "name": "hit_points",
+            "value": 1.0
+          },
+          {
+            "channel": 3,
+            "name": "owner_friendly",
+            "value": 1.0
+          },
+          {
+            "channel": 6,
+            "name": "unit_base",
+            "value": 1.0
+          },
+          {
+            "channel": 12,
+            "name": "action_noop",
+            "value": 1.0
+          },
+          {
+            "channel": 20,
+            "name": "dir_south",
+            "value": 1.0
+          }
+        ],
+        "neighborhood_3x3": [
+          {
+            "label": "B2",
+            "x": 1,
+            "y": 1,
+            "flat_index": 25,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Worker",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 8,
+                "name": "unit_worker",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C2",
+            "x": 2,
+            "y": 1,
+            "flat_index": 26,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D2",
+            "x": 3,
+            "y": 1,
+            "flat_index": 27,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B3",
+            "x": 1,
+            "y": 2,
+            "flat_index": 49,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C3",
+            "x": 2,
+            "y": 2,
+            "flat_index": 50,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Base",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 6,
+                "name": "unit_base",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D3",
+            "x": 3,
+            "y": 2,
+            "flat_index": 51,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B4",
+            "x": 1,
+            "y": 3,
+            "flat_index": 73,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C4",
+            "x": 2,
+            "y": 3,
+            "flat_index": 74,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D4",
+            "x": 3,
+            "y": 3,
+            "flat_index": 75,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          }
+        ],
+        "neighborhood_5x5": [
+          {
+            "label": "A1",
+            "x": 0,
+            "y": 0,
+            "flat_index": 0,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B1",
+            "x": 1,
+            "y": 0,
+            "flat_index": 1,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "Resource",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 1,
+                "name": "resources",
+                "value": 1.0
+              },
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              },
+              {
+                "channel": 5,
+                "name": "unit_resource",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C1",
+            "x": 2,
+            "y": 0,
+            "flat_index": 2,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D1",
+            "x": 3,
+            "y": 0,
+            "flat_index": 3,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "E1",
+            "x": 4,
+            "y": 0,
+            "flat_index": 4,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A2",
+            "x": 0,
+            "y": 1,
+            "flat_index": 24,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B2",
+            "x": 1,
+            "y": 1,
+            "flat_index": 25,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Worker",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 8,
+                "name": "unit_worker",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C2",
+            "x": 2,
+            "y": 1,
+            "flat_index": 26,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D2",
+            "x": 3,
+            "y": 1,
+            "flat_index": 27,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "E2",
+            "x": 4,
+            "y": 1,
+            "flat_index": 28,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A3",
+            "x": 0,
+            "y": 2,
+            "flat_index": 48,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B3",
+            "x": 1,
+            "y": 2,
+            "flat_index": 49,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C3",
+            "x": 2,
+            "y": 2,
+            "flat_index": 50,
+            "owner_decoded_unity_semantics": "Player1",
+            "unit_decoded_unity_semantics": "Base",
+            "current_action": "NoOp",
+            "direction": "south",
+            "active_channels": [
+              {
+                "channel": 0,
+                "name": "hit_points",
+                "value": 1.0
+              },
+              {
+                "channel": 3,
+                "name": "owner_friendly",
+                "value": 1.0
+              },
+              {
+                "channel": 6,
+                "name": "unit_base",
+                "value": 1.0
+              },
+              {
+                "channel": 12,
+                "name": "action_noop",
+                "value": 1.0
+              },
+              {
+                "channel": 20,
+                "name": "dir_south",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D3",
+            "x": 3,
+            "y": 2,
+            "flat_index": 51,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "E3",
+            "x": 4,
+            "y": 2,
+            "flat_index": 52,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A4",
+            "x": 0,
+            "y": 3,
+            "flat_index": 72,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B4",
+            "x": 1,
+            "y": 3,
+            "flat_index": 73,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C4",
+            "x": 2,
+            "y": 3,
+            "flat_index": 74,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D4",
+            "x": 3,
+            "y": 3,
+            "flat_index": 75,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "E4",
+            "x": 4,
+            "y": 3,
+            "flat_index": 76,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "A5",
+            "x": 0,
+            "y": 4,
+            "flat_index": 96,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "B5",
+            "x": 1,
+            "y": 4,
+            "flat_index": 97,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "C5",
+            "x": 2,
+            "y": 4,
+            "flat_index": 98,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "D5",
+            "x": 3,
+            "y": 4,
+            "flat_index": 99,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          },
+          {
+            "label": "E5",
+            "x": 4,
+            "y": 4,
+            "flat_index": 100,
+            "owner_decoded_unity_semantics": "Neutral",
+            "unit_decoded_unity_semantics": "none",
+            "current_action": "none",
+            "direction": "none",
+            "active_channels": [
+              {
+                "channel": 2,
+                "name": "owner_neutral",
+                "value": 1.0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "observation_group_metrics": {
+    "unity_step1": {
+      "owner": {
+        "sum_min": 1.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_eq_1": 1.0,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "owner_neutral": 0.9930555820465088,
+          "owner_friendly": 0.0034722222480922937,
+          "owner_enemy": 0.0034722222480922937
+        }
+      },
+      "unit_type": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9861111111111112,
+        "share_sum_eq_1": 0.013888888888888888,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "unit_resource": 0.0069444444961845875,
+          "unit_base": 0.0034722222480922937,
+          "unit_barracks": 0.0,
+          "unit_worker": 0.0034722222480922937,
+          "unit_light": 0.0,
+          "unit_heavy": 0.0,
+          "unit_ranged": 0.0
+        }
+      },
+      "current_action": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9861111111111112,
+        "share_sum_eq_1": 0.013888888888888888,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "action_noop": 0.013888888992369175,
+          "action_move": 0.0,
+          "action_harvest": 0.0,
+          "action_return": 0.0,
+          "action_produce": 0.0,
+          "action_attack": 0.0
+        }
+      },
+      "direction": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9861111111111112,
+        "share_sum_eq_1": 0.013888888888888888,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "dir_north": 0.0,
+          "dir_east": 0.0,
+          "dir_south": 0.013888888992369175,
+          "dir_west": 0.0
+        }
+      },
+      "produce": {
+        "sum_min": 0.0,
+        "sum_max": 0.0,
+        "share_sum_eq_0": 1.0,
+        "share_sum_eq_1": 0.0,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "produce_worker": 0.0,
+          "produce_light": 0.0,
+          "produce_heavy": 0.0,
+          "produce_ranged": 0.0
+        }
+      },
+      "scalar_means": {
+        "hit_points": 0.013888888992369175,
+        "resources": 0.0069444444961845875,
+        "attack_target_index": 0.0006023242603987455
+      }
+    },
+    "bc_train": {
+      "owner": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.984525962961382,
+        "share_sum_eq_1": 0.01547403703861806,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "owner_neutral": 0.0003143764624837786,
+          "owner_friendly": 0.0012137313606217504,
+          "owner_enemy": 0.013945928774774075
+        }
+      },
+      "unit_type": {
+        "sum_min": 1.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_eq_1": 0.01887832469304445,
+        "share_sum_gt_1": 0.9811216753069556,
+        "channel_means": {
+          "unit_resource": 0.9902445673942566,
+          "unit_base": 0.005607862491160631,
+          "unit_barracks": 0.0002045942092081532,
+          "unit_worker": 0.00030778066138736904,
+          "unit_light": 0.0036333382595330477,
+          "unit_heavy": 0.9247267246246338,
+          "unit_ranged": 0.05639537423849106
+        }
+      },
+      "current_action": {
+        "sum_min": 0.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.011219258002346237,
+        "share_sum_eq_1": 0.9699024173046094,
+        "share_sum_gt_1": 0.01887832469304445,
+        "channel_means": {
+          "action_noop": 0.018878323957324028,
+          "action_move": 0.9201642870903015,
+          "action_harvest": 0.004562040790915489,
+          "action_return": 0.0027989535592496395,
+          "action_produce": 0.0016703999135643244,
+          "action_attack": 0.0595850870013237
+        }
+      },
+      "direction": {
+        "sum_min": 0.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.03650517112989366,
+        "share_sum_eq_1": 0.9573291122004357,
+        "share_sum_gt_1": 0.00616571666967061,
+        "channel_means": {
+          "dir_north": 0.011219258420169353,
+          "dir_east": 0.0,
+          "dir_south": 0.0,
+          "dir_west": 0.9584420323371887
+        }
+      },
+      "produce": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9585204621882618,
+        "share_sum_eq_1": 0.041479537811738146,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "produce_worker": 0.039471566677093506,
+          "produce_light": 0.0005045932484790683,
+          "produce_heavy": 0.00021842816204298288,
+          "produce_ranged": 0.0012849514605477452
+        }
+      },
+      "scalar_means": {
+        "hit_points": 0.9201642870903015,
+        "resources": 0.06436170637607574,
+        "attack_target_index": 7.917464972706512e-05
+      }
+    },
+    "bc_validation": {
+      "owner": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9845260453063126,
+        "share_sum_eq_1": 0.015473954693687397,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "owner_neutral": 0.00032504837145097554,
+          "owner_friendly": 0.0012190013658255339,
+          "owner_enemy": 0.01392990443855524
+        }
+      },
+      "unit_type": {
+        "sum_min": 1.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.0,
+        "share_sum_eq_1": 0.018563874106326938,
+        "share_sum_gt_1": 0.981436125893673,
+        "channel_means": {
+          "unit_resource": 0.9902758598327637,
+          "unit_base": 0.005578177515417337,
+          "unit_barracks": 0.00019458106544334441,
+          "unit_worker": 0.00029593121143989265,
+          "unit_light": 0.0036554643884301186,
+          "unit_heavy": 0.9251359701156616,
+          "unit_ranged": 0.056300144642591476
+        }
+      },
+      "current_action": {
+        "sum_min": 0.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.011229007642136572,
+        "share_sum_eq_1": 0.9702071182515365,
+        "share_sum_gt_1": 0.018563874106326938,
+        "channel_means": {
+          "action_noop": 0.018563874065876007,
+          "action_move": 0.9205732941627502,
+          "action_harvest": 0.004562715999782085,
+          "action_return": 0.00279258843511343,
+          "action_produce": 0.001672837301157415,
+          "action_attack": 0.05916958302259445
+        }
+      },
+      "direction": {
+        "sum_min": 0.0,
+        "sum_max": 2.0,
+        "share_sum_eq_0": 0.03619725873067068,
+        "share_sum_eq_1": 0.9576464201562472,
+        "share_sum_gt_1": 0.006156321113082119,
+        "channel_means": {
+          "dir_north": 0.011229007504880428,
+          "dir_east": 0.0,
+          "dir_south": 0.0,
+          "dir_west": 0.9587300419807434
+        }
+      },
+      "produce": {
+        "sum_min": 0.0,
+        "sum_max": 1.0,
+        "share_sum_eq_0": 0.9587985080811339,
+        "share_sum_eq_1": 0.041201491918866136,
+        "share_sum_gt_1": 0.0,
+        "channel_means": {
+          "produce_worker": 0.03921564668416977,
+          "produce_light": 0.00048659267486073077,
+          "produce_heavy": 0.00022243836428970098,
+          "produce_ranged": 0.0012768157757818699
+        }
+      },
+      "scalar_means": {
+        "hit_points": 0.9205732941627502,
+        "resources": 0.06395278126001358,
+        "attack_target_index": 6.845334428362548e-05
+      }
+    }
+  },
+  "bc_counts_under_unity_channel_semantics": {
+    "train": {
+      "unity_semantics_actor_cells_count": 0,
+      "unity_semantics_worker_count": 0,
+      "unity_semantics_base_count": 0,
+      "worker_action_distribution": "none",
+      "base_action_distribution": "none",
+      "actor_action_distribution": "none",
+      "source_valid_cells_mean_per_sample": 15.567859073963403,
+      "source_valid_action_distribution": {
+        "NoOp": 825161,
+        "Move": 254498,
+        "Harvest": 665,
+        "Return": 643,
+        "Produce": 12569,
+        "Attack": 542
+      }
+    },
+    "validation": {
+      "unity_semantics_actor_cells_count": 0,
+      "unity_semantics_worker_count": 0,
+      "unity_semantics_base_count": 0,
+      "worker_action_distribution": "none",
+      "base_action_distribution": "none",
+      "actor_action_distribution": "none",
+      "source_valid_cells_mean_per_sample": 15.567085953878406,
+      "source_valid_action_distribution": {
+        "NoOp": 145258,
+        "Move": 45191,
+        "Harvest": 120,
+        "Return": 123,
+        "Produce": 2270,
+        "Attack": 101
+      }
+    }
+  },
+  "nearest_bc_comparison": {
+    "train": [
+      {
+        "split": "train",
+        "actor_flat": 25,
+        "actor_label": "B2",
+        "unit": "Worker",
+        "target_action": "Harvest",
+        "same_flat_action_distribution": {
+          "NoOp": 68961,
+          "Move": 1166,
+          "Harvest": 151,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "exact_same_flat_unity_vector_count": 0,
+        "exact_any_cell_unity_vector_count": 0,
+        "same_flat_target_label_stats": {
+          "count": 151,
+          "mean_active_channels_gt_0_05": [
+            {
+              "channel": 1,
+              "name": "resources",
+              "mean": 1.0
+            },
+            {
+              "channel": 5,
+              "name": "unit_resource",
+              "mean": 1.0
+            },
+            {
+              "channel": 11,
+              "name": "unit_ranged",
+              "mean": 1.0
+            },
+            {
+              "channel": 17,
+              "name": "action_attack",
+              "mean": 1.0
+            },
+            {
+              "channel": 21,
+              "name": "dir_west",
+              "mean": 1.0
+            }
+          ],
+          "l2_mean_to_unity": 3.1622776985168457
+        },
+        "nearest_same_flat_target_cells": [
+          {
+            "sample_index": 0,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 43623,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 43666,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 43711,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 43849,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ],
+        "nearest_any_target_action_cells": [
+          {
+            "sample_index": 0,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 44153,
+            "flat_index": 48,
+            "label": "A3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "A3",
+              "x": 0,
+              "y": 2,
+              "flat_index": 48,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 44186,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 44195,
+            "flat_index": 1,
+            "label": "B1",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B1",
+              "x": 1,
+              "y": 0,
+              "flat_index": 1,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 44222,
+            "flat_index": 48,
+            "label": "A3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "A3",
+              "x": 0,
+              "y": 2,
+              "flat_index": 48,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "split": "train",
+        "actor_flat": 50,
+        "actor_label": "C3",
+        "unit": "Base",
+        "target_action": "Produce",
+        "same_flat_action_distribution": {
+          "NoOp": 69498,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 780,
+          "Attack": 0
+        },
+        "exact_same_flat_unity_vector_count": 0,
+        "exact_any_cell_unity_vector_count": 0,
+        "same_flat_target_label_stats": {
+          "count": 780,
+          "mean_active_channels_gt_0_05": [
+            {
+              "channel": 4,
+              "name": "owner_enemy",
+              "mean": 1.0
+            },
+            {
+              "channel": 5,
+              "name": "unit_resource",
+              "mean": 1.0
+            },
+            {
+              "channel": 11,
+              "name": "unit_ranged",
+              "mean": 1.0
+            },
+            {
+              "channel": 15,
+              "name": "action_return",
+              "mean": 1.0
+            },
+            {
+              "channel": 21,
+              "name": "dir_west",
+              "mean": 1.0
+            }
+          ],
+          "l2_mean_to_unity": 3.1622776985168457
+        },
+        "nearest_same_flat_target_cells": [
+          {
+            "sample_index": 0,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 48891,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              2,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 48931,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 48974,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              2,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 48975,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              2,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ],
+        "nearest_any_target_action_cells": [
+          {
+            "sample_index": 705,
+            "flat_index": 412,
+            "label": "E18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              3,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "E18",
+              "x": 4,
+              "y": 17,
+              "flat_index": 412,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 34497,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              2,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 39243,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 34498,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              2,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 44346,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              2,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "validation": [
+      {
+        "split": "validation",
+        "actor_flat": 25,
+        "actor_label": "B2",
+        "unit": "Worker",
+        "target_action": "Harvest",
+        "same_flat_action_distribution": {
+          "NoOp": 12157,
+          "Move": 221,
+          "Harvest": 24,
+          "Return": 0,
+          "Produce": 0,
+          "Attack": 0
+        },
+        "exact_same_flat_unity_vector_count": 0,
+        "exact_any_cell_unity_vector_count": 0,
+        "same_flat_target_label_stats": {
+          "count": 24,
+          "mean_active_channels_gt_0_05": [
+            {
+              "channel": 1,
+              "name": "resources",
+              "mean": 1.0
+            },
+            {
+              "channel": 5,
+              "name": "unit_resource",
+              "mean": 1.0
+            },
+            {
+              "channel": 11,
+              "name": "unit_ranged",
+              "mean": 1.0
+            },
+            {
+              "channel": 17,
+              "name": "action_attack",
+              "mean": 1.0
+            },
+            {
+              "channel": 21,
+              "name": "dir_west",
+              "mean": 1.0
+            }
+          ],
+          "l2_mean_to_unity": 3.1622776985168457
+        },
+        "nearest_same_flat_target_cells": [
+          {
+            "sample_index": 10,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9821,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9793,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9744,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9089,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ],
+        "nearest_any_target_action_cells": [
+          {
+            "sample_index": 10,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9008,
+            "flat_index": 1,
+            "label": "B1",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              2,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B1",
+              "x": 1,
+              "y": 0,
+              "flat_index": 1,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9004,
+            "flat_index": 48,
+            "label": "A3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "A3",
+              "x": 0,
+              "y": 2,
+              "flat_index": 48,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 8990,
+            "flat_index": 48,
+            "label": "A3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "A3",
+              "x": 0,
+              "y": 2,
+              "flat_index": 48,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 8985,
+            "flat_index": 25,
+            "label": "B2",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Harvest",
+            "target_branches": [
+              2,
+              1,
+              3,
+              0,
+              2,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "B2",
+              "x": 1,
+              "y": 1,
+              "flat_index": 25,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "split": "validation",
+        "actor_flat": 50,
+        "actor_label": "C3",
+        "unit": "Base",
+        "target_action": "Produce",
+        "same_flat_action_distribution": {
+          "NoOp": 12235,
+          "Move": 0,
+          "Harvest": 0,
+          "Return": 0,
+          "Produce": 167,
+          "Attack": 0
+        },
+        "exact_same_flat_unity_vector_count": 0,
+        "exact_any_cell_unity_vector_count": 0,
+        "same_flat_target_label_stats": {
+          "count": 167,
+          "mean_active_channels_gt_0_05": [
+            {
+              "channel": 4,
+              "name": "owner_enemy",
+              "mean": 1.0
+            },
+            {
+              "channel": 5,
+              "name": "unit_resource",
+              "mean": 1.0
+            },
+            {
+              "channel": 11,
+              "name": "unit_ranged",
+              "mean": 1.0
+            },
+            {
+              "channel": 15,
+              "name": "action_return",
+              "mean": 1.0
+            },
+            {
+              "channel": 21,
+              "name": "dir_west",
+              "mean": 1.0
+            }
+          ],
+          "l2_mean_to_unity": 3.1622776985168457
+        },
+        "nearest_same_flat_target_cells": [
+          {
+            "sample_index": 10,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 7882,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 7883,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 7884,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 8475,
+            "flat_index": 50,
+            "label": "C3",
+            "l2_cell": 3.1622776985168457,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              2,
+              3,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "C3",
+              "x": 2,
+              "y": 2,
+              "flat_index": 50,
+              "owner_decoded_unity_semantics": "Player2",
+              "unit_decoded_unity_semantics": "Resource",
+              "current_action": "Return",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 4,
+                  "name": "owner_enemy",
+                  "value": 1.0
+                },
+                {
+                  "channel": 5,
+                  "name": "unit_resource",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 15,
+                  "name": "action_return",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ],
+        "nearest_any_target_action_cells": [
+          {
+            "sample_index": 985,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 120,
+            "flat_index": 412,
+            "label": "E18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              3,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "E18",
+              "x": 4,
+              "y": 17,
+              "flat_index": 412,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 9096,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 6888,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              2,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "sample_index": 6886,
+            "flat_index": 411,
+            "label": "D18",
+            "l2_cell": 2.8284270763397217,
+            "target_action": "Produce",
+            "target_branches": [
+              4,
+              0,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "decoded_under_unity_semantics": {
+              "label": "D18",
+              "x": 3,
+              "y": 17,
+              "flat_index": 411,
+              "owner_decoded_unity_semantics": "none",
+              "unit_decoded_unity_semantics": "Base",
+              "current_action": "Attack",
+              "direction": "west",
+              "active_channels": [
+                {
+                  "channel": 1,
+                  "name": "resources",
+                  "value": 1.0
+                },
+                {
+                  "channel": 6,
+                  "name": "unit_base",
+                  "value": 1.0
+                },
+                {
+                  "channel": 11,
+                  "name": "unit_ranged",
+                  "value": 1.0
+                },
+                {
+                  "channel": 17,
+                  "name": "action_attack",
+                  "value": 1.0
+                },
+                {
+                  "channel": 21,
+                  "name": "dir_west",
+                  "value": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "suspicious_constant_cues": {
+    "unity_step1": {
+      "hit_points_share_gt_0_5": 0.013888888888888888,
+      "resources_share_gt_0_5": 0.006944444444444444,
+      "action_noop_share_gt_0_5": 0.013888888888888888,
+      "action_move_share_gt_0_5": 0.0,
+      "action_harvest_share_gt_0_5": 0.0,
+      "action_return_share_gt_0_5": 0.0,
+      "action_produce_share_gt_0_5": 0.0,
+      "action_attack_share_gt_0_5": 0.0,
+      "dir_north_share_gt_0_5": 0.0,
+      "dir_east_share_gt_0_5": 0.0,
+      "dir_south_share_gt_0_5": 0.013888888888888888,
+      "dir_west_share_gt_0_5": 0.0,
+      "produce_worker_share_gt_0_5": 0.0,
+      "produce_light_share_gt_0_5": 0.0,
+      "produce_heavy_share_gt_0_5": 0.0,
+      "produce_ranged_share_gt_0_5": 0.0,
+      "attack_target_index_share_gt_0_5": 0.0
+    },
+    "bc_train": {
+      "hit_points_share_gt_0_5": 0.9201642593620257,
+      "resources_share_gt_0_5": 0.06436170359935621,
+      "action_noop_share_gt_0_5": 0.01887832469304445,
+      "action_move_share_gt_0_5": 0.9201642593620257,
+      "action_harvest_share_gt_0_5": 0.004562040910542575,
+      "action_return_share_gt_0_5": 0.002798953600146719,
+      "action_produce_share_gt_0_5": 0.0016703998564431416,
+      "action_attack_share_gt_0_5": 0.059585088268495595,
+      "dir_north_share_gt_0_5": 0.011219258002346237,
+      "dir_east_share_gt_0_5": 0.0,
+      "dir_south_share_gt_0_5": 0.0,
+      "dir_west_share_gt_0_5": 0.9584412875374307,
+      "produce_worker_share_gt_0_5": 0.03947156491204771,
+      "produce_light_share_gt_0_5": 0.0005045932661082495,
+      "produce_heavy_share_gt_0_5": 0.00021842816307300215,
+      "produce_ranged_share_gt_0_5": 0.0012849514705091842,
+      "attack_target_index_share_gt_0_5": 7.917465083114361e-05
+    },
+    "bc_validation": {
+      "hit_points_share_gt_0_5": 0.920573266632622,
+      "resources_share_gt_0_5": 0.06395277867369062,
+      "action_noop_share_gt_0_5": 0.018563874106326938,
+      "action_move_share_gt_0_5": 0.920573266632622,
+      "action_harvest_share_gt_0_5": 0.004562716138974,
+      "action_return_share_gt_0_5": 0.002792588337006576,
+      "action_produce_share_gt_0_5": 0.0016728372663907256,
+      "action_attack_share_gt_0_5": 0.059169583982870144,
+      "dir_north_share_gt_0_5": 0.011229007642136572,
+      "dir_east_share_gt_0_5": 0.0,
+      "dir_south_share_gt_0_5": 0.0,
+      "dir_west_share_gt_0_5": 0.9587300547402748,
+      "produce_worker_share_gt_0_5": 0.03921564510204447,
+      "produce_light_share_gt_0_5": 0.00048659266426562026,
+      "produce_heavy_share_gt_0_5": 0.00022243836119622282,
+      "produce_ranged_share_gt_0_5": 0.0012768157913598166,
+      "attack_target_index_share_gt_0_5": 6.845334085900124e-05
+    }
+  },
+  "prior_reference_stage10d6_control": {
+    "report": "python/week6_student/reports/stage10d6_observation_channel_comparison_corrected.json",
+    "note": "That older semantic-adapted dataset had unit_type.share_sum_eq_1?0.055 and B2/C3 means matching Worker/Base. Current source_valid_noopfix BC-ready does not."
+  },
+  "first_failing_boundary": "BC_OBSERVATION_SEMANTICS_DO_NOT_MATCH_UNITY_RUNTIME_OBSERVATION_CONTRACT",
+  "classification": [
+    "A_RUNTIME_SCENE_CORRECT_BUT_UNITY_OBSERVATION_CHANNELS_SEMANTICALLY_DIFFER_FROM_BC_EXPECTATIONS",
+    "D_CURRENT_ACTION_DIRECTION_RESOURCE_ENCODING_CREATE_STRONG_NOOP_DISTRIBUTION_MISMATCH"
+  ],
+  "patch_or_proposed_fix": "Do not touch decoder/applier. Fix the Stage6B2 BC artifact/input pipeline so student trains on semantic-adapted Unity-runtime observation tensors, not raw reshaped legacy032 observation planes. Rebuild BC-ready from explicit mapping spec and validate group metrics before retraining student.",
+  "regression_check": [
+    "Stage6B2 checkpoint load and bridge parity already OK",
+    "Flat mapping checks pass for B2=25 and C3=50",
+    "Unity observation HWC/flat export exists and actor channels decode correctly under Unity semantics",
+    "BC train/validation fail semantic channel distribution checks under Unity semantics"
+  ],
+  "remaining_risks": [
+    "Current artifact does not contain separate serialized Grid occupancy/UnitRegistry/ResourceManager lists; only unit_positions and observation alignment checks are available from existing run",
+    "Need Unity MCP run to capture richer step0 state if required",
+    "After rebuilding semantic BC artifact, still need confirm teacher labels for corner state are non-NoOp before student retrain"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "generated_at_utc": "2026-05-07T08:55:31Z",
+  "source_rollout_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+  "sample_index": 0,
+  "sample": {
+    "episode_id": 0,
+    "step_id": 0,
+    "reward_t": 2.0,
+    "done_t": false,
+    "terminated_t": false,
+    "truncated_t": false,
+    "action_mask_available_t": true,
+    "observation_first_cell_first_8_features": [
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    "action_first_cell": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

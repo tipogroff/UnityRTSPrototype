@@ -1,1150 +1,147 @@
 {
-  "mapping_spec_version": "stage10d6_v1",
-  "observation_semantics_version": "unity_v2_runtime_stage10d6",
-  "source_observation_semantics": "legacy032_raw_source_plus_controlled_probe",
+  "mapping_spec_version": "stage6b3_semantic_obs_fix_v1",
+  "observation_semantics_version": "unity_v2_runtime_semantic_obs_fix",
+  "source_observation_semantics": "legacy032_gym_microrts_0_3_2_raw_grid_obs",
   "target_observation_semantics": "unity_v2_runtime",
   "owner_mode_target": "perspective_friendly_enemy",
-  "owner_mode_ambiguous": false,
-  "notes": [
-    "This mapping is explicit and versioned.",
-    "No silent channel remap is allowed.",
-    "Unknown channels are represented explicitly as unavailable with fallback behavior.",
-    "owner/unit_type mapping recovered in Stage10D.5 from source-code encoder audit and controlled raw observation probe",
-    "raw channel 13 is empty/no-unit slot and is intentionally not mapped to Unity unit_type",
-    "mapping spec patched in Stage10D.6 from Stage10D.5 candidate; archived pre-patch spec at observation_semantics/archive/legacy032_to_unity_v2_observation_mapping.stage10d4_before_stage10d6_patch.json",
-    "patch applied at 2026-05-03T08:51:02Z",
-    "owner/unit_type mapping recovered in Stage10D.5 from source-code encoder audit and controlled raw observation probe",
-    "raw channel 13 is empty/no-unit slot and is intentionally not mapped to Unity unit_type",
-    "mapping spec patched in Stage10D.6 from Stage10D.5 candidate; archived pre-patch spec at observation_semantics/archive/legacy032_to_unity_v2_observation_mapping.stage10d4_before_stage10d6_patch.json",
-    "patch applied at 2026-05-03T08:52:02Z"
+  "player_perspective": "player0_as_unity_player1_friendly",
+  "source_evidence": [
+    "gym_microrts/envs/vec_env.py declares num_planes=[5,5,3,len(unitTypes)+1,6]",
+    "gym_microrts/envs/vec_env.py _encode_obs encodes each group as one-hot planes",
+    "controlled Stage10D.5 probe confirmed owner channels 10..12 and unit type channels 13..20",
+    "Stage6B2 Unity runtime snapshot is authoritative for target 27-channel contract"
   ],
   "channels": [
     {
-      "target_channel": 0,
-      "target_name": "hit_points",
-      "source": {
-        "type": "unavailable",
-        "reason": "raw channel identity for normalized HP remains unresolved from empirical evidence"
-      },
-      "confidence": "unavailable",
-      "validation_rule": "range_0_1_scalar",
-      "fallback_behavior": "set_zero_and_flag_unavailable"
+      "raw_channel_index": "0..4",
+      "raw_meaning": "hit point discrete one-hot bin, clipped at 4",
+      "target_unity_channel_index": 0,
+      "target_meaning": "hit_points scalar",
+      "approximation_or_risk": "coarse normalized by decoded unit type full HP bin"
     },
     {
-      "target_channel": 1,
-      "target_name": "resources",
-      "source": {
-        "type": "raw_channel",
-        "index": 1
-      },
-      "confidence": "empirical",
-      "validation_rule": "range_0_1_scalar",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "5..9",
+      "raw_meaning": "resource/carry discrete one-hot bin, clipped at 4",
+      "target_unity_channel_index": 1,
+      "target_meaning": "resources scalar",
+      "approximation_or_risk": "coarse normalized as bin/4"
     },
     {
-      "target_channel": 2,
-      "target_name": "owner_neutral",
-      "source": {
-        "type": "raw_channel",
-        "index": 10
-      },
-      "confidence": "exact",
-      "validation_rule": "owner_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
-        "controlled_state_evidence": {
-          "raw_owner_neutral": 10,
-          "raw_owner_player0": 11,
-          "raw_owner_player1": 12,
-          "proxy_agreement": true
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            10,
-            12
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 1.0,
-            "share_sum_eq_0": 0.0,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "actor_dominant_local": 1,
-          "actor_margin": 1.0,
-          "player0_peak_local": 1,
-          "player1_peak_local": 2,
-          "player_peaks_distinct": true,
-          "means": {
-            "actor_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player0_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player1_cells": [
-              0.32666015625,
-              0.0,
-              0.67333984375
-            ]
-          },
-          "score": 2.8
-        },
-        "confidence": "exact"
-      }
+      "raw_channel_index": 10,
+      "raw_meaning": "absolute owner neutral",
+      "target_unity_channel_index": 2,
+      "target_meaning": "owner_neutral"
     },
     {
-      "target_channel": 3,
-      "target_name": "owner_friendly",
-      "source": {
-        "type": "raw_channel",
-        "index": 11
-      },
-      "confidence": "exact",
-      "validation_rule": "owner_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
-        "controlled_state_evidence": {
-          "raw_owner_neutral": 10,
-          "raw_owner_player0": 11,
-          "raw_owner_player1": 12,
-          "proxy_agreement": true
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            10,
-            12
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 1.0,
-            "share_sum_eq_0": 0.0,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "actor_dominant_local": 1,
-          "actor_margin": 1.0,
-          "player0_peak_local": 1,
-          "player1_peak_local": 2,
-          "player_peaks_distinct": true,
-          "means": {
-            "actor_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player0_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player1_cells": [
-              0.32666015625,
-              0.0,
-              0.67333984375
-            ]
-          },
-          "score": 2.8
-        },
-        "confidence": "exact"
-      }
+      "raw_channel_index": 11,
+      "raw_meaning": "absolute owner player0",
+      "target_unity_channel_index": 3,
+      "target_meaning": "owner_friendly",
+      "approximation_or_risk": "exact for Player1-perspective student because Legacy032 teacher acts as player0"
     },
     {
-      "target_channel": 4,
-      "target_name": "owner_enemy",
-      "source": {
-        "type": "raw_channel",
-        "index": 12
-      },
-      "confidence": "exact",
-      "validation_rule": "owner_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "gym_microrts/envs/vec_env.py num_planes=[5,5,3,...] and _encode_obs group offsets",
-        "controlled_state_evidence": {
-          "raw_owner_neutral": 10,
-          "raw_owner_player0": 11,
-          "raw_owner_player1": 12,
-          "proxy_agreement": true
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            10,
-            12
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 1.0,
-            "share_sum_eq_0": 0.0,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "actor_dominant_local": 1,
-          "actor_margin": 1.0,
-          "player0_peak_local": 1,
-          "player1_peak_local": 2,
-          "player_peaks_distinct": true,
-          "means": {
-            "actor_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player0_cells": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "player1_cells": [
-              0.32666015625,
-              0.0,
-              0.67333984375
-            ]
-          },
-          "score": 2.8
-        },
-        "confidence": "exact"
-      }
+      "raw_channel_index": 12,
+      "raw_meaning": "absolute owner player1",
+      "target_unity_channel_index": 4,
+      "target_meaning": "owner_enemy",
+      "approximation_or_risk": "exact for Player1-perspective student because Legacy032 teacher acts as player0"
     },
     {
-      "target_channel": 5,
-      "target_name": "unit_type_resource",
-      "source": {
-        "type": "raw_channel",
-        "index": 14
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 13,
+      "raw_meaning": "empty/no-unit sentinel",
+      "target_unity_channel_index": null,
+      "target_meaning": "no Unity unit_type channel; suppress unit/action/direction on empty cells"
     },
     {
-      "target_channel": 6,
-      "target_name": "unit_type_base",
-      "source": {
-        "type": "raw_channel",
-        "index": 15
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 14,
+      "raw_meaning": "unit Resource",
+      "target_unity_channel_index": 5,
+      "target_meaning": "unit_resource"
     },
     {
-      "target_channel": 7,
-      "target_name": "unit_type_barracks",
-      "source": {
-        "type": "raw_channel",
-        "index": 16
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 15,
+      "raw_meaning": "unit Base",
+      "target_unity_channel_index": 6,
+      "target_meaning": "unit_base"
     },
     {
-      "target_channel": 8,
-      "target_name": "unit_type_worker",
-      "source": {
-        "type": "raw_channel",
-        "index": 17
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 16,
+      "raw_meaning": "unit Barracks",
+      "target_unity_channel_index": 7,
+      "target_meaning": "unit_barracks"
     },
     {
-      "target_channel": 9,
-      "target_name": "unit_type_light",
-      "source": {
-        "type": "raw_channel",
-        "index": 18
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 17,
+      "raw_meaning": "unit Worker",
+      "target_unity_channel_index": 8,
+      "target_meaning": "unit_worker"
     },
     {
-      "target_channel": 10,
-      "target_name": "unit_type_heavy",
-      "source": {
-        "type": "raw_channel",
-        "index": 19
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 18,
+      "raw_meaning": "unit Light",
+      "target_unity_channel_index": 9,
+      "target_meaning": "unit_light"
     },
     {
-      "target_channel": 11,
-      "target_name": "unit_type_ranged",
-      "source": {
-        "type": "raw_channel",
-        "index": 20
-      },
-      "confidence": "exact",
-      "validation_rule": "unit_type_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag_if_runtime_validation_fails",
-      "evidence": {
-        "source_file_evidence": "group offset/unit_types from vec_env.py and UTT ordering",
-        "controlled_state_evidence": {
-          "raw_unit_type_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Barracks": 16,
-            "Worker": 17,
-            "Light": 18,
-            "Heavy": 19,
-            "Ranged": 20
-          },
-          "controlled_observed_channels": {
-            "Resource": 14,
-            "Base": 15,
-            "Worker": 17
-          },
-          "controlled_observed_agree_with_source_exact": true,
-          "proxy_window_agree_with_source_exact_start13": false
-        },
-        "rollout_proxy_evidence": {
-          "window": [
-            18,
-            24
-          ],
-          "onehot_metrics": {
-            "share_sum_eq_1": 0.9991917080349393,
-            "share_sum_eq_0": 0.0008082919650607639,
-            "share_sum_le_1": 1.0,
-            "share_sum_gt_1": 0.0
-          },
-          "worker_proxy_peak_local": 3,
-          "base_proxy_peak_local": 3,
-          "combat_proxy_peak_local": 0,
-          "resource_proxy_peak_local": 3,
-          "worker_proxy_margin": 1.0,
-          "base_proxy_margin": 1.0,
-          "resource_proxy_margin": 0.97711181640625,
-          "means": {
-            "harvest_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "produce_actor": [
-              0.0,
-              0.0,
-              0.0,
-              1.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "attack_actor": [
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0,
-              0.0
-            ],
-            "resource_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.98565673828125,
-              0.008544921875,
-              0.00579833984375,
-              0.0
-            ],
-            "empty_cells": [
-              0.0,
-              0.0,
-              0.0,
-              0.994140625,
-              0.005859375,
-              0.0,
-              0.0
-            ]
-          },
-          "score": 3.6862670898437497
-        },
-        "confidence": "empirical_high"
-      }
+      "raw_channel_index": 19,
+      "raw_meaning": "unit Heavy",
+      "target_unity_channel_index": 10,
+      "target_meaning": "unit_heavy"
     },
     {
-      "target_channel": 12,
-      "target_name": "current_action_noop",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 0
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": 20,
+      "raw_meaning": "unit Ranged",
+      "target_unity_channel_index": 11,
+      "target_meaning": "unit_ranged"
     },
     {
-      "target_channel": 13,
-      "target_name": "current_action_move",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 1
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "21..26",
+      "raw_meaning": "current unit action one-hot NoOp,Move,Harvest,Return,Produce,Attack",
+      "target_unity_channel_index": "12..17",
+      "target_meaning": "current_action one-hot",
+      "approximation_or_risk": "copied only for typed cells; empty cells are all-zero like Unity runtime empties"
     },
     {
-      "target_channel": 14,
-      "target_name": "current_action_harvest",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 2
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "unavailable",
+      "raw_meaning": "Legacy032 raw observation has no facing/direction planes",
+      "target_unity_channel_index": 20,
+      "target_meaning": "dir_south",
+      "approximation_or_risk": "default south for typed cells, matching Unity early corner fallback"
     },
     {
-      "target_channel": 15,
-      "target_name": "current_action_return",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 3
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "unavailable",
+      "raw_meaning": "Legacy032 raw observation has no active produce-unit plane",
+      "target_unity_channel_index": "22..25",
+      "target_meaning": "produce_worker..produce_ranged",
+      "approximation_or_risk": "set all zero"
     },
     {
-      "target_channel": 16,
-      "target_name": "current_action_produce",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 4
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "board-derived",
+      "raw_meaning": "Legacy032 raw observation has no attack target plane",
+      "target_unity_channel_index": 26,
+      "target_meaning": "attack_target_index",
+      "approximation_or_risk": "representative local 7x7 enemy target derived from board for friendly attack-capable units"
     },
     {
-      "target_channel": 17,
-      "target_name": "current_action_attack",
-      "source": {
-        "type": "derived_action_type_one_hot",
-        "class_index": 5
-      },
-      "confidence": "derived",
-      "validation_rule": "current_action_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 18,
-      "target_name": "direction_north",
-      "source": {
-        "type": "derived_direction_one_hot",
-        "class_index": 0
-      },
-      "confidence": "derived",
-      "validation_rule": "direction_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 19,
-      "target_name": "direction_east",
-      "source": {
-        "type": "derived_direction_one_hot",
-        "class_index": 1
-      },
-      "confidence": "derived",
-      "validation_rule": "direction_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 20,
-      "target_name": "direction_south",
-      "source": {
-        "type": "derived_direction_one_hot",
-        "class_index": 2
-      },
-      "confidence": "derived",
-      "validation_rule": "direction_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 21,
-      "target_name": "direction_west",
-      "source": {
-        "type": "derived_direction_one_hot",
-        "class_index": 3
-      },
-      "confidence": "derived",
-      "validation_rule": "direction_one_hot_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 22,
-      "target_name": "produce_worker",
-      "source": {
-        "type": "derived_produce_type_one_hot",
-        "class_index": 0,
-        "raw_produce_to_unity_map": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3
-        }
-      },
-      "confidence": "derived",
-      "validation_rule": "produce_one_hot_or_zero_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 23,
-      "target_name": "produce_light",
-      "source": {
-        "type": "derived_produce_type_one_hot",
-        "class_index": 1,
-        "raw_produce_to_unity_map": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3
-        }
-      },
-      "confidence": "derived",
-      "validation_rule": "produce_one_hot_or_zero_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 24,
-      "target_name": "produce_heavy",
-      "source": {
-        "type": "derived_produce_type_one_hot",
-        "class_index": 2,
-        "raw_produce_to_unity_map": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3
-        }
-      },
-      "confidence": "derived",
-      "validation_rule": "produce_one_hot_or_zero_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 25,
-      "target_name": "produce_ranged",
-      "source": {
-        "type": "derived_produce_type_one_hot",
-        "class_index": 3,
-        "raw_produce_to_unity_map": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3
-        }
-      },
-      "confidence": "derived",
-      "validation_rule": "produce_one_hot_or_zero_group",
-      "fallback_behavior": "set_zero_and_flag"
-    },
-    {
-      "target_channel": 26,
-      "target_name": "attack_target",
-      "source": {
-        "type": "derived_attack_target_scalar",
-        "formula": "if action_type==attack then (attack_target_local+1)/49 else 0"
-      },
-      "confidence": "derived",
-      "validation_rule": "range_0_1_scalar",
-      "fallback_behavior": "set_zero_and_flag"
+      "raw_channel_index": "layout",
+      "raw_meaning": "Legacy032 basesWorkers24x24.xml stores second corner resource vertically",
+      "target_unity_channel_index": null,
+      "target_meaning": "Unity visual-inspection horizontal corner resource layout",
+      "approximation_or_risk": "known static resource remap A2->B1 and X23->W24 when target cell is empty"
     }
   ],
   "group_validation": {
-    "owner": {
-      "target_range": [
-        2,
-        4
-      ],
-      "rule": "sum in {0,1}; values in {0,1}",
-      "multi_hot_forbidden": true
-    },
-    "unit_type": {
-      "target_range": [
-        5,
-        11
-      ],
-      "rule": "sum in {0,1}; values in {0,1}",
-      "multi_hot_forbidden": true
-    },
-    "current_action": {
-      "target_range": [
-        12,
-        17
-      ],
-      "rule": "sum in {0,1}; values in {0,1}",
-      "multi_hot_forbidden": true
-    },
-    "direction": {
-      "target_range": [
-        18,
-        21
-      ],
-      "rule": "sum in {0,1}; values in {0,1}",
-      "multi_hot_forbidden": true
-    },
-    "produce": {
-      "target_range": [
-        22,
-        25
-      ],
-      "rule": "sum in {0,1}; values in {0,1}",
-      "multi_hot_forbidden": true
-    }
+    "owner": {"target_range": [2, 4], "multi_hot_forbidden": true},
+    "unit_type": {"target_range": [5, 11], "multi_hot_forbidden": true},
+    "current_action": {"target_range": [12, 17], "multi_hot_forbidden": true},
+    "direction": {"target_range": [18, 21], "multi_hot_forbidden": true},
+    "produce": {"target_range": [22, 25], "multi_hot_forbidden": true}
   },
-  "critical_target_groups": [
-    "owner",
-    "unit_type",
-    "current_action",
-    "direction"
+  "hard_gates": [
+    "B2 decodes as friendly Worker",
+    "C3 decodes as friendly Base",
+    "A1 and B1 decode as neutral Resource",
+    "source-invalid target cells remain NoOp",
+    "target action type must be compatible with decoded actor type"
   ]
 }

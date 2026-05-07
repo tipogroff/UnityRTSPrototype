@@ -1,0 +1,724 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "duration_sec": 375.8488376,
+      "train_loss": 0.2814975318922238,
+      "train_batches": 550,
+      "selection_metric": 1.9621728460590082,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9993588623698687,
+      "branch_accuracies": {
+        "action_type": 0.9993588623698687,
+        "move_dir": 0.9283485649797526,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 0.9951541850220265,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 1.0
+      },
+      "noop_prediction_share": 0.9931080504488523,
+      "source_valid_non_noop_recall": 0.9709444618763727,
+      "source_valid_non_noop_exact_action_type_recall": 0.9631210124463968,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 0.00030702875725722317,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7092930,
+          901,
+          1102,
+          72,
+          513,
+          229
+        ],
+        [
+          1057,
+          43825,
+          155,
+          91,
+          63,
+          0
+        ],
+        [
+          1,
+          0,
+          119,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          25,
+          0,
+          97,
+          1,
+          0
+        ],
+        [
+          310,
+          17,
+          0,
+          0,
+          1943,
+          0
+        ],
+        [
+          21,
+          22,
+          0,
+          0,
+          0,
+          58
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7094319,
+        "1": 44790,
+        "2": 1376,
+        "3": 260,
+        "4": 2520,
+        "5": 287
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 2,
+      "duration_sec": 385.41638570000003,
+      "train_loss": 0.029440079058774493,
+      "train_batches": 550,
+      "selection_metric": 1.9888713475917899,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9997214270995718,
+      "branch_accuracies": {
+        "action_type": 0.9997214270995718,
+        "move_dir": 0.9711225686530504,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 0.9982378854625551,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 1.0
+      },
+      "noop_prediction_share": 0.9931466866903188,
+      "source_valid_non_noop_recall": 0.9932015479552349,
+      "source_valid_non_noop_exact_action_type_recall": 0.989268904926263,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 0.00011898443404485641,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7094270,
+          599,
+          146,
+          58,
+          459,
+          215
+        ],
+        [
+          273,
+          44800,
+          65,
+          43,
+          9,
+          1
+        ],
+        [
+          0,
+          3,
+          117,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0,
+          117,
+          0,
+          0
+        ],
+        [
+          49,
+          48,
+          0,
+          0,
+          2173,
+          0
+        ],
+        [
+          3,
+          13,
+          0,
+          0,
+          0,
+          85
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7094595,
+        "1": 45469,
+        "2": 328,
+        "3": 218,
+        "4": 2641,
+        "5": 301
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 3,
+      "duration_sec": 391.54777649999994,
+      "train_loss": 0.015603667142038995,
+      "train_batches": 550,
+      "selection_metric": 1.98762544120445,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9994154168682471,
+      "branch_accuracies": {
+        "action_type": 0.9994154168682471,
+        "move_dir": 0.9598813923126286,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 0.9977973568281938,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 0.9900990099009901
+      },
+      "noop_prediction_share": 0.992830457453099,
+      "source_valid_non_noop_recall": 0.9954607258654953,
+      "source_valid_non_noop_exact_action_type_recall": 0.9885367639368267,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 0.00032673960062378345,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7092119,
+          1168,
+          127,
+          76,
+          1318,
+          939
+        ],
+        [
+          205,
+          44668,
+          143,
+          83,
+          79,
+          13
+        ],
+        [
+          0,
+          0,
+          120,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          122,
+          0,
+          0
+        ],
+        [
+          12,
+          6,
+          0,
+          0,
+          2249,
+          3
+        ],
+        [
+          0,
+          3,
+          0,
+          0,
+          0,
+          98
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7092336,
+        "1": 45846,
+        "2": 390,
+        "3": 281,
+        "4": 3646,
+        "5": 1053
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 4,
+      "duration_sec": 378.639189,
+      "train_loss": 0.019003136709163135,
+      "train_batches": 550,
+      "selection_metric": 1.9944251081487818,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9997550238312817,
+      "branch_accuracies": {
+        "action_type": 0.9997550238312817,
+        "move_dir": 0.9757252550286561,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 1.0,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 0.9900990099009901
+      },
+      "noop_prediction_share": 0.9931184094411296,
+      "source_valid_non_noop_recall": 0.9969668444723355,
+      "source_valid_non_noop_exact_action_type_recall": 0.9947495031900428,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 7.941887254263693e-05,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7094248,
+          859,
+          11,
+          29,
+          420,
+          180
+        ],
+        [
+          137,
+          44971,
+          40,
+          27,
+          15,
+          1
+        ],
+        [
+          0,
+          1,
+          119,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          7,
+          0,
+          116,
+          0,
+          0
+        ],
+        [
+          6,
+          9,
+          0,
+          0,
+          2255,
+          0
+        ],
+        [
+          2,
+          6,
+          0,
+          0,
+          0,
+          93
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7094393,
+        "1": 45853,
+        "2": 170,
+        "3": 172,
+        "4": 2690,
+        "5": 274
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 5,
+      "duration_sec": 370.09629930000006,
+      "train_loss": 0.009003947238353165,
+      "train_batches": 550,
+      "selection_metric": 1.993164051967861,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9997893204949022,
+      "branch_accuracies": {
+        "action_type": 0.9997893204949022,
+        "move_dir": 0.9717200327498838,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 0.9691629955947136,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 1.0
+      },
+      "noop_prediction_share": 0.9931620851923525,
+      "source_valid_non_noop_recall": 0.996862252902416,
+      "source_valid_non_noop_exact_action_type_recall": 0.9934525677230415,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 7.783625008254815e-05,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7094555,
+          708,
+          35,
+          3,
+          348,
+          98
+        ],
+        [
+          137,
+          44920,
+          99,
+          26,
+          8,
+          1
+        ],
+        [
+          0,
+          0,
+          120,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          121,
+          0,
+          0
+        ],
+        [
+          11,
+          22,
+          0,
+          0,
+          2237,
+          0
+        ],
+        [
+          2,
+          5,
+          0,
+          0,
+          0,
+          94
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7094705,
+        "1": 45657,
+        "2": 254,
+        "3": 150,
+        "4": 2593,
+        "5": 193
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 6,
+      "duration_sec": 357.211411,
+      "train_loss": 0.010509744282303887,
+      "train_batches": 550,
+      "selection_metric": 1.993836594872392,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9999080289469441,
+      "branch_accuracies": {
+        "action_type": 0.9999080289469441,
+        "move_dir": 0.9813458431988671,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 0.9995594713656387,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 0.9900990099009901
+      },
+      "noop_prediction_share": 0.9932858331541508,
+      "source_valid_non_noop_recall": 0.9956071540633825,
+      "source_valid_non_noop_exact_action_type_recall": 0.9939546072586549,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 2.604133320691537e-05,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7095379,
+          148,
+          2,
+          15,
+          156,
+          47
+        ],
+        [
+          168,
+          44955,
+          22,
+          26,
+          20,
+          0
+        ],
+        [
+          0,
+          2,
+          118,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          122,
+          0,
+          0
+        ],
+        [
+          41,
+          4,
+          0,
+          0,
+          2225,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0,
+          0,
+          96
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7095589,
+        "1": 45114,
+        "2": 142,
+        "3": 163,
+        "4": 2401,
+        "5": 143
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 7,
+      "duration_sec": 354.42144750000034,
+      "train_loss": 0.00659561394163492,
+      "train_batches": 550,
+      "selection_metric": 1.994634724327973,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9998650531276317,
+      "branch_accuracies": {
+        "action_type": 0.9998650531276317,
+        "move_dir": 0.9816335110973424,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 1.0,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 1.0
+      },
+      "noop_prediction_share": 0.9932289986830081,
+      "source_valid_non_noop_recall": 0.9968204162744483,
+      "source_valid_non_noop_exact_action_type_recall": 0.9948122581319946,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 4.258693165329806e-05,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7095031,
+          264,
+          10,
+          10,
+          402,
+          30
+        ],
+        [
+          144,
+          44962,
+          25,
+          39,
+          21,
+          0
+        ],
+        [
+          0,
+          1,
+          119,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          122,
+          0,
+          0
+        ],
+        [
+          7,
+          5,
+          0,
+          0,
+          2258,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0,
+          0,
+          96
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7095183,
+        "1": 45237,
+        "2": 154,
+        "3": 171,
+        "4": 2681,
+        "5": 126
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    },
+    {
+      "epoch": 8,
+      "duration_sec": 354.3537706000002,
+      "train_loss": 0.0060612589584409515,
+      "train_batches": 550,
+      "selection_metric": 1.993928960966423,
+      "validation_batches": 97,
+      "action_type_accuracy": 0.9998975299682847,
+      "branch_accuracies": {
+        "action_type": 0.9998975299682847,
+        "move_dir": 0.9816777676971078,
+        "harvest_dir": 1.0,
+        "return_dir": 1.0,
+        "produce_dir": 1.0,
+        "produce_unit_type": 1.0,
+        "attack_target_local": 1.0
+      },
+      "noop_prediction_share": 0.9932747742299629,
+      "source_valid_non_noop_recall": 0.9955862357493986,
+      "source_valid_non_noop_exact_action_type_recall": 0.9940591988285744,
+      "source_valid_non_noop_count": 47805,
+      "source_invalid_false_non_noop_rate": 2.776783043610313e-05,
+      "source_invalid_cell_count": 6950489,
+      "action_type_confusion_matrix": [
+        [
+          7095299,
+          154,
+          6,
+          2,
+          264,
+          22
+        ],
+        [
+          189,
+          44941,
+          19,
+          30,
+          12,
+          0
+        ],
+        [
+          0,
+          4,
+          116,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          123,
+          0,
+          0
+        ],
+        [
+          21,
+          4,
+          0,
+          0,
+          2245,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0,
+          0,
+          96
+        ]
+      ],
+      "predicted_action_type_histogram": {
+        "0": 7095510,
+        "1": 45107,
+        "2": 141,
+        "3": 155,
+        "4": 2521,
+        "5": 118
+      },
+      "target_action_type_histogram": {
+        "0": 7095747,
+        "1": 45191,
+        "2": 120,
+        "3": 123,
+        "4": 2270,
+        "5": 101
+      }
+    }
+  ]
+}

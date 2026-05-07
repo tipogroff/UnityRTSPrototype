@@ -1,0 +1,396 @@
+{
+  "generated_at_utc": "2026-05-07T08:55:59Z",
+  "status": "pass",
+  "adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z",
+  "input_artifacts": {
+    "adapted_dataset": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z\\adapted_dataset.npz",
+    "adapted_manifest": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z\\adapted_manifest.json"
+  },
+  "sample_count": 82680,
+  "manifest_checks": {
+    "teacher_lineage": {
+      "pass": true,
+      "expected": "legacy032",
+      "actual": "legacy032"
+    },
+    "source_pipeline": {
+      "pass": true,
+      "expected": "gym_microrts==0.3.2",
+      "actual": "gym_microrts==0.3.2"
+    },
+    "target_action_contract": {
+      "pass": true,
+      "expected": "unity_v2_legacy032_gridnet",
+      "actual": "unity_v2_legacy032_gridnet"
+    },
+    "observation_shape_per_sample": {
+      "pass": true,
+      "expected": [
+        576,
+        27
+      ],
+      "actual": [
+        576,
+        27
+      ]
+    },
+    "action_shape_per_sample": {
+      "pass": true,
+      "expected": [
+        576,
+        7
+      ],
+      "actual": [
+        576,
+        7
+      ]
+    },
+    "branch_sizes": {
+      "pass": true,
+      "expected": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ],
+      "actual": [
+        6,
+        4,
+        4,
+        4,
+        4,
+        7,
+        49
+      ]
+    },
+    "flatten_order": {
+      "pass": true,
+      "expected": "row_major",
+      "actual": "row_major"
+    },
+    "flat_cell_index_formula": {
+      "pass": true,
+      "expected": "row * 24 + col",
+      "actual": "row * 24 + col"
+    },
+    "global_vector_policy": {
+      "pass": true,
+      "expected": "excluded_from_strict_bc_encoder_path",
+      "actual": "excluded_from_strict_bc_encoder_path"
+    },
+    "attack_target_semantics": {
+      "pass": true,
+      "expected": "local_7x7_49",
+      "actual": "local_7x7_49"
+    },
+    "direct_weight_transfer_claim": {
+      "pass": true,
+      "expected": false,
+      "actual": false
+    },
+    "semantic_parity_claim": {
+      "pass": true,
+      "expected": false,
+      "actual": false
+    }
+  },
+  "dataset_checks": {
+    "required_array_observations": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_actions": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_episode_id": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_step_id": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_reward_t": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_done_t": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_terminated_t": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_truncated_t": {
+      "pass": true,
+      "detail": "present"
+    },
+    "required_array_action_mask_available_t": {
+      "pass": true,
+      "detail": "present"
+    },
+    "observations_shape": {
+      "pass": true,
+      "detail": "expected [N,576,27], actual [82680, 576, 27]"
+    },
+    "actions_shape": {
+      "pass": true,
+      "detail": "expected [N,576,7], actual [82680, 576, 7]"
+    },
+    "sample_count_gt_zero": {
+      "pass": true,
+      "detail": "N=82680"
+    },
+    "sample_count_match_obs_actions": {
+      "pass": true,
+      "detail": "obs_N=82680, action_N=82680"
+    },
+    "observations_dtype_float32": {
+      "pass": true,
+      "detail": "dtype=float32"
+    },
+    "actions_integer_dtype": {
+      "pass": true,
+      "detail": "dtype=int16"
+    },
+    "episode_id_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "step_id_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "reward_t_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "done_t_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "terminated_t_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "truncated_t_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "action_mask_available_t_shape": {
+      "pass": true,
+      "detail": "expected [82680], actual [82680]"
+    },
+    "observations_no_nan": {
+      "pass": true,
+      "detail": "has_nan=False"
+    },
+    "observations_no_inf": {
+      "pass": true,
+      "detail": "has_inf=False"
+    },
+    "branch_0_bounds": {
+      "pass": true,
+      "detail": "size=6, min=0, max=5"
+    },
+    "branch_1_bounds": {
+      "pass": true,
+      "detail": "size=4, min=0, max=3"
+    },
+    "branch_2_bounds": {
+      "pass": true,
+      "detail": "size=4, min=0, max=3"
+    },
+    "branch_3_bounds": {
+      "pass": true,
+      "detail": "size=4, min=0, max=2"
+    },
+    "branch_4_bounds": {
+      "pass": true,
+      "detail": "size=4, min=0, max=3"
+    },
+    "branch_5_bounds": {
+      "pass": true,
+      "detail": "size=7, min=0, max=4"
+    },
+    "branch_6_bounds": {
+      "pass": true,
+      "detail": "size=49, min=0, max=31"
+    },
+    "source_valid_action_mask_present": {
+      "pass": true,
+      "detail": "present"
+    },
+    "source_valid_action_mask_shape": {
+      "pass": true,
+      "detail": "expected [82680,576], actual [82680, 576]"
+    },
+    "source_invalid_cells_action_type_noop": {
+      "pass": true,
+      "detail": "source_invalid_non_noop_count=0"
+    },
+    "semantic_actor_cells_count_gt_zero": {
+      "pass": true,
+      "detail": "actor_cells_count=2685075"
+    },
+    "semantic_worker_cells_count_gt_zero": {
+      "pass": true,
+      "detail": "worker_cells_count=1992383"
+    },
+    "semantic_base_cells_count_gt_zero": {
+      "pass": true,
+      "detail": "base_cells_count=82680"
+    },
+    "semantic_unit_type_no_multihot": {
+      "pass": true,
+      "detail": "0"
+    },
+    "semantic_action_type_no_multihot": {
+      "pass": true,
+      "detail": "0"
+    },
+    "semantic_corner_b2_friendly_worker": {
+      "pass": true,
+      "detail": "True"
+    },
+    "semantic_corner_c3_friendly_base": {
+      "pass": true,
+      "detail": "True"
+    },
+    "semantic_corner_a1_neutral_resource": {
+      "pass": true,
+      "detail": "True"
+    },
+    "semantic_corner_b1_neutral_resource": {
+      "pass": true,
+      "detail": "True"
+    }
+  },
+  "observation_shape": [
+    82680,
+    576,
+    27
+  ],
+  "action_shape": [
+    82680,
+    576,
+    7
+  ],
+  "observation_dtype": "float32",
+  "action_dtype": "int16",
+  "observation_min": 0.0,
+  "observation_max": 1.0,
+  "observation_out_of_range_share": 0.0,
+  "nan_inf_checks": {
+    "observation_has_nan": false,
+    "observation_has_inf": false
+  },
+  "branch_min_max": [
+    {
+      "branch": 0,
+      "size": 6,
+      "min": 0,
+      "max": 5,
+      "in_bounds": true
+    },
+    {
+      "branch": 1,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 2,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 3,
+      "size": 4,
+      "min": 0,
+      "max": 2,
+      "in_bounds": true
+    },
+    {
+      "branch": 4,
+      "size": 4,
+      "min": 0,
+      "max": 3,
+      "in_bounds": true
+    },
+    {
+      "branch": 5,
+      "size": 7,
+      "min": 0,
+      "max": 4,
+      "in_bounds": true
+    },
+    {
+      "branch": 6,
+      "size": 49,
+      "min": 0,
+      "max": 31,
+      "in_bounds": true
+    }
+  ],
+  "action_type_histogram": {
+    "noop": 47306958,
+    "move": 299689,
+    "harvest": 785,
+    "return": 766,
+    "produce": 14839,
+    "attack": 643
+  },
+  "produce_unit_type_histogram": {
+    "1": 960,
+    "2": 10053,
+    "3": 947,
+    "4": 2879
+  },
+  "attack_target_local_histogram": {
+    "17": 68,
+    "23": 52,
+    "25": 351,
+    "31": 172
+  },
+  "attack_target_local_diversity": {
+    "count": 643,
+    "unique_targets": 4,
+    "max_target_index": 31
+  },
+  "action_mask_available_share": 1.0,
+  "source_valid_action_mask": {
+    "present": true,
+    "shape": [
+      82680,
+      576
+    ],
+    "shape_ok": true,
+    "source_valid_cells_mean": 15.567743105950653,
+    "source_invalid_non_noop_count": 0
+  },
+  "semantic_checks": {
+    "actor_cells_count": 2685075,
+    "worker_cells_count": 1992383,
+    "base_cells_count": 82680,
+    "unit_type_multihot_count": 0,
+    "action_type_multihot_count": 0,
+    "b2_friendly_worker": true,
+    "c3_friendly_base": true,
+    "a1_neutral_resource": true,
+    "b1_neutral_resource": true
+  },
+  "hard_failures": [],
+  "warnings": [
+    "high noop share: noop_share=0.993349"
+  ],
+  "decision": "GO_FOR_BC_READY_PACKAGER"
+}

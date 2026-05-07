@@ -1,0 +1,106 @@
+{
+  "status": "pass",
+  "generated_at_utc": "2026-05-07T09:48:32Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix\\legacy032_v2_bc_source_valid_semantic_obs_fix_best.pt",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+  "split": "bc_debug",
+  "samples": 512,
+  "action_type_accuracy": 0.9998338487413194,
+  "branch_accuracies": {
+    "action_type": 0.9998338487413194,
+    "move_dir": 0.979927946474524,
+    "harvest_dir": 1.0,
+    "return_dir": 1.0,
+    "produce_dir": 1.0,
+    "produce_unit_type": 1.0,
+    "attack_target_local": 1.0
+  },
+  "noop_prediction_share": 0.9929267035590278,
+  "predicted_action_type_histogram": {
+    "0": 292826,
+    "1": 1952,
+    "2": 7,
+    "3": 8,
+    "4": 111,
+    "5": 8
+  },
+  "target_action_type_histogram": {
+    "0": 292857,
+    "1": 1943,
+    "2": 4,
+    "3": 6,
+    "4": 95,
+    "5": 7
+  },
+  "source_valid_non_noop_recall": 0.9965936739659368,
+  "source_valid_non_noop_exact_action_type_recall": 0.994647201946472,
+  "source_valid_non_noop_count": 2055,
+  "source_invalid_false_non_noop_rate": 6.27752958285816e-05,
+  "source_invalid_cell_count": 286737,
+  "semantic_target_compatibility_accuracy": {
+    "harvest_predicted_on_worker_cells": 0.8571428571428571,
+    "produce_predicted_on_base_barracks_or_worker_cells": 1.0,
+    "non_noop_predicted_on_possible_actor_cells": 0.99856184084372,
+    "pred_harvest_total": 7,
+    "pred_produce_total": 111,
+    "pred_non_noop_total": 2086
+  },
+  "action_type_confusion_matrix_rows_target_cols_pred": [
+    [
+      292819,
+      17,
+      2,
+      1,
+      16,
+      2
+    ],
+    [
+      6,
+      1934,
+      1,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      6,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      94,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      6
+    ]
+  ],
+  "acceptance": {
+    "action_type_accuracy_far_above_random": true,
+    "source_invalid_false_non_noop_rate_low": true,
+    "source_valid_non_noop_recall_meaningful": true,
+    "not_all_noop": true,
+    "semantic_predicted_actions_compatible": false
+  },
+  "go_for_unity_visual_inference": false
+}

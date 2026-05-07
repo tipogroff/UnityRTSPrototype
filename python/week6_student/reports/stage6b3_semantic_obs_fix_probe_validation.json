@@ -1,0 +1,106 @@
+{
+  "status": "pass",
+  "generated_at_utc": "2026-05-07T09:48:57Z",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix\\legacy032_v2_bc_source_valid_semantic_obs_fix_best.pt",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+  "split": "bc_validation",
+  "samples": 12402,
+  "action_type_accuracy": 0.9998650531276317,
+  "branch_accuracies": {
+    "action_type": 0.9998650531276317,
+    "move_dir": 0.9816335110973424,
+    "harvest_dir": 1.0,
+    "return_dir": 1.0,
+    "produce_dir": 1.0,
+    "produce_unit_type": 1.0,
+    "attack_target_local": 1.0
+  },
+  "noop_prediction_share": 0.9932289986830081,
+  "predicted_action_type_histogram": {
+    "0": 7095183,
+    "1": 45237,
+    "2": 154,
+    "3": 171,
+    "4": 2681,
+    "5": 126
+  },
+  "target_action_type_histogram": {
+    "0": 7095747,
+    "1": 45191,
+    "2": 120,
+    "3": 123,
+    "4": 2270,
+    "5": 101
+  },
+  "source_valid_non_noop_recall": 0.9968204162744483,
+  "source_valid_non_noop_exact_action_type_recall": 0.9948122581319946,
+  "source_valid_non_noop_count": 47805,
+  "source_invalid_false_non_noop_rate": 4.258693165329806e-05,
+  "source_invalid_cell_count": 6950489,
+  "semantic_target_compatibility_accuracy": {
+    "harvest_predicted_on_worker_cells": 0.9545454545454546,
+    "produce_predicted_on_base_barracks_or_worker_cells": 1.0,
+    "non_noop_predicted_on_possible_actor_cells": 0.9994004424321363,
+    "pred_harvest_total": 154,
+    "pred_produce_total": 2681,
+    "pred_non_noop_total": 48369
+  },
+  "action_type_confusion_matrix_rows_target_cols_pred": [
+    [
+      7095031,
+      264,
+      10,
+      10,
+      402,
+      30
+    ],
+    [
+      144,
+      44962,
+      25,
+      39,
+      21,
+      0
+    ],
+    [
+      0,
+      1,
+      119,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      122,
+      0,
+      0
+    ],
+    [
+      7,
+      5,
+      0,
+      0,
+      2258,
+      0
+    ],
+    [
+      1,
+      4,
+      0,
+      0,
+      0,
+      96
+    ]
+  ],
+  "acceptance": {
+    "action_type_accuracy_far_above_random": true,
+    "source_invalid_false_non_noop_rate_low": true,
+    "source_valid_non_noop_recall_meaningful": true,
+    "not_all_noop": true,
+    "semantic_predicted_actions_compatible": true
+  },
+  "go_for_unity_visual_inference": true
+}

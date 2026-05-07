@@ -1,0 +1,211 @@
+{
+  "status": "pass",
+  "generated_at_utc": "2026-05-07T09:48:17Z",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+  "output_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix",
+  "best_checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix\\legacy032_v2_bc_source_valid_semantic_obs_fix_best.pt",
+  "final_checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix\\legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt",
+  "best_epoch": 7,
+  "epochs_completed": 8,
+  "best_metric": 1.994634724327973,
+  "best_metrics": {
+    "epoch": 7,
+    "duration_sec": 354.42144750000034,
+    "train_loss": 0.00659561394163492,
+    "train_batches": 550,
+    "selection_metric": 1.994634724327973,
+    "validation_batches": 97,
+    "action_type_accuracy": 0.9998650531276317,
+    "branch_accuracies": {
+      "action_type": 0.9998650531276317,
+      "move_dir": 0.9816335110973424,
+      "harvest_dir": 1.0,
+      "return_dir": 1.0,
+      "produce_dir": 1.0,
+      "produce_unit_type": 1.0,
+      "attack_target_local": 1.0
+    },
+    "noop_prediction_share": 0.9932289986830081,
+    "source_valid_non_noop_recall": 0.9968204162744483,
+    "source_valid_non_noop_exact_action_type_recall": 0.9948122581319946,
+    "source_valid_non_noop_count": 47805,
+    "source_invalid_false_non_noop_rate": 4.258693165329806e-05,
+    "source_invalid_cell_count": 6950489,
+    "action_type_confusion_matrix": [
+      [
+        7095031,
+        264,
+        10,
+        10,
+        402,
+        30
+      ],
+      [
+        144,
+        44962,
+        25,
+        39,
+        21,
+        0
+      ],
+      [
+        0,
+        1,
+        119,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        122,
+        0,
+        0
+      ],
+      [
+        7,
+        5,
+        0,
+        0,
+        2258,
+        0
+      ],
+      [
+        1,
+        4,
+        0,
+        0,
+        0,
+        96
+      ]
+    ],
+    "predicted_action_type_histogram": {
+      "0": 7095183,
+      "1": 45237,
+      "2": 154,
+      "3": 171,
+      "4": 2681,
+      "5": 126
+    },
+    "target_action_type_histogram": {
+      "0": 7095747,
+      "1": 45191,
+      "2": 120,
+      "3": 123,
+      "4": 2270,
+      "5": 101
+    }
+  },
+  "final_metrics": {
+    "epoch": 8,
+    "duration_sec": 354.3537706000002,
+    "train_loss": 0.0060612589584409515,
+    "train_batches": 550,
+    "selection_metric": 1.993928960966423,
+    "validation_batches": 97,
+    "action_type_accuracy": 0.9998975299682847,
+    "branch_accuracies": {
+      "action_type": 0.9998975299682847,
+      "move_dir": 0.9816777676971078,
+      "harvest_dir": 1.0,
+      "return_dir": 1.0,
+      "produce_dir": 1.0,
+      "produce_unit_type": 1.0,
+      "attack_target_local": 1.0
+    },
+    "noop_prediction_share": 0.9932747742299629,
+    "source_valid_non_noop_recall": 0.9955862357493986,
+    "source_valid_non_noop_exact_action_type_recall": 0.9940591988285744,
+    "source_valid_non_noop_count": 47805,
+    "source_invalid_false_non_noop_rate": 2.776783043610313e-05,
+    "source_invalid_cell_count": 6950489,
+    "action_type_confusion_matrix": [
+      [
+        7095299,
+        154,
+        6,
+        2,
+        264,
+        22
+      ],
+      [
+        189,
+        44941,
+        19,
+        30,
+        12,
+        0
+      ],
+      [
+        0,
+        4,
+        116,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        123,
+        0,
+        0
+      ],
+      [
+        21,
+        4,
+        0,
+        0,
+        2245,
+        0
+      ],
+      [
+        1,
+        4,
+        0,
+        0,
+        0,
+        96
+      ]
+    ],
+    "predicted_action_type_histogram": {
+      "0": 7095510,
+      "1": 45107,
+      "2": 141,
+      "3": 155,
+      "4": 2521,
+      "5": 118
+    },
+    "target_action_type_histogram": {
+      "0": 7095747,
+      "1": 45191,
+      "2": 120,
+      "3": 123,
+      "4": 2270,
+      "5": 101
+    }
+  },
+  "config": {
+    "bc_ready_dir": "python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+    "output_dir": "python\\week6_student\\checkpoints\\Stage6B3_SemanticObservationFix",
+    "run_label": "legacy032_v2_bc_source_valid_semantic_obs_fix",
+    "device": "cpu",
+    "epochs": 8,
+    "batch_size": 128,
+    "learning_rate": 0.0003,
+    "weight_decay": 1e-05,
+    "seed": 17,
+    "num_workers": 0,
+    "invalid_noop_weight": 0.05,
+    "branch_loss_weight": 0.5,
+    "early_stopping_patience": 4
+  },
+  "constraints": {
+    "no_teacher_training": true,
+    "no_ppo": true,
+    "no_unity_runtime_changes": true
+  }
+}

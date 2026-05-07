@@ -1,0 +1,77 @@
+{
+  "status": "pass",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+  "min_noop_share": 0.75,
+  "splits": [
+    {
+      "split": "bc_train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_train.npz",
+      "samples": 70278,
+      "action_shape": [
+        70278,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 40211211,
+        "move": 254498,
+        "harvest": 665,
+        "return": 643,
+        "produce": 12569,
+        "attack": 542
+      },
+      "noop_share": 0.9933568144843811,
+      "source_valid_action_mask_present": true,
+      "source_valid_cells_mean": 15.567859073963403,
+      "source_invalid_non_noop": 0,
+      "failures": []
+    },
+    {
+      "split": "bc_validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_validation.npz",
+      "samples": 12402,
+      "action_shape": [
+        12402,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 7095747,
+        "move": 45191,
+        "harvest": 120,
+        "return": 123,
+        "produce": 2270,
+        "attack": 101
+      },
+      "noop_share": 0.9933079510025264,
+      "source_valid_action_mask_present": true,
+      "source_valid_cells_mean": 15.567085953878406,
+      "source_invalid_non_noop": 0,
+      "failures": []
+    },
+    {
+      "split": "bc_debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_debug.npz",
+      "samples": 512,
+      "action_shape": [
+        512,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 292857,
+        "move": 1943,
+        "harvest": 4,
+        "return": 6,
+        "produce": 95,
+        "attack": 7
+      },
+      "noop_share": 0.9930318196614584,
+      "source_valid_action_mask_present": true,
+      "source_valid_cells_mean": 15.966796875,
+      "source_invalid_non_noop": 0,
+      "failures": []
+    }
+  ],
+  "failures": []
+}

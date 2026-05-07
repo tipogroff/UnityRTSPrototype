@@ -1,0 +1,307 @@
+{
+  "status": "pass",
+  "generated_at_utc": "2026-05-07T08:57:29Z",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+  "unity_channel_semantics": "runtime 27-channel contract",
+  "allow_worker_produce_runtime_rule": true,
+  "splits": [
+    {
+      "split": "bc_train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_train.npz",
+      "samples": 70278,
+      "actor_cells_count": 2282892,
+      "worker_cells_count": 1694156,
+      "base_cells_count": 70278,
+      "action_type_histogram": {
+        "noop": 40211211,
+        "move": 254498,
+        "harvest": 665,
+        "return": 643,
+        "produce": 12569,
+        "attack": 542
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 0,
+      "action_type_multihot_count": 0,
+      "direction_multihot_count": 0,
+      "impossible_resource_ranged_count": 0,
+      "target_compatibility": {
+        "harvest_bad": 0,
+        "return_bad": 0,
+        "produce_bad": 0,
+        "attack_bad": 0,
+        "non_noop_bad_actor": 0
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "Player1",
+          "unit": "Worker",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            8,
+            12,
+            20
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player1",
+          "unit": "Base",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            6,
+            12,
+            20
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "split": "bc_validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_validation.npz",
+      "samples": 12402,
+      "actor_cells_count": 402183,
+      "worker_cells_count": 298227,
+      "base_cells_count": 12402,
+      "action_type_histogram": {
+        "noop": 7095747,
+        "move": 45191,
+        "harvest": 120,
+        "return": 123,
+        "produce": 2270,
+        "attack": 101
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 0,
+      "action_type_multihot_count": 0,
+      "direction_multihot_count": 0,
+      "impossible_resource_ranged_count": 0,
+      "target_compatibility": {
+        "harvest_bad": 0,
+        "return_bad": 0,
+        "produce_bad": 0,
+        "attack_bad": 0,
+        "non_noop_bad_actor": 0
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "Player1",
+          "unit": "Worker",
+          "current_action": "Harvest",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            8,
+            14,
+            20
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player1",
+          "unit": "Base",
+          "current_action": "Produce",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            6,
+            16,
+            20
+          ]
+        }
+      },
+      "failures": []
+    },
+    {
+      "split": "bc_debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z\\bc_debug.npz",
+      "samples": 512,
+      "actor_cells_count": 16871,
+      "worker_cells_count": 12535,
+      "base_cells_count": 512,
+      "action_type_histogram": {
+        "noop": 292857,
+        "move": 1943,
+        "harvest": 4,
+        "return": 6,
+        "produce": 95,
+        "attack": 7
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 0,
+      "action_type_multihot_count": 0,
+      "direction_multihot_count": 0,
+      "impossible_resource_ranged_count": 0,
+      "target_compatibility": {
+        "harvest_bad": 0,
+        "return_bad": 0,
+        "produce_bad": 0,
+        "attack_bad": 0,
+        "non_noop_bad_actor": 0
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "Neutral",
+          "unit": "Resource",
+          "current_action": "NoOp",
+          "direction": "south",
+          "active_channels": [
+            0,
+            1,
+            2,
+            5,
+            12,
+            20
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "Player1",
+          "unit": "Worker",
+          "current_action": "Move",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            8,
+            13,
+            20
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player1",
+          "unit": "Base",
+          "current_action": "Produce",
+          "direction": "south",
+          "active_channels": [
+            0,
+            3,
+            6,
+            16,
+            20
+          ]
+        }
+      },
+      "failures": []
+    }
+  ],
+  "failures": []
+}

@@ -362,6 +362,7 @@ def main() -> int:
         "source_valid_cells_mean": None,
         "source_invalid_non_noop_count": None,
     }
+    semantic_checks: Dict[str, Any] = {}
 
     if adapted_dataset_path.exists():
         npz = np.load(str(adapted_dataset_path), allow_pickle=True)
@@ -524,6 +525,34 @@ def main() -> int:
                 obs_max = float(np.max(observations))
                 out_of_range = np.logical_or(observations < 0.0, observations > 1.0)
                 out_of_range_share = float(np.mean(out_of_range.astype(np.float64)))
+                owner_friendly = observations[..., 3] > 0.5
+                unit_base = observations[..., 6] > 0.5
+                unit_worker = observations[..., 8] > 0.5
+                actor_cells = owner_friendly & (
+                    (observations[..., 6] > 0.5)
+                    | (observations[..., 7] > 0.5)
+                    | (observations[..., 8] > 0.5)
+                    | (observations[..., 9] > 0.5)
+                    | (observations[..., 10] > 0.5)
+                    | (observations[..., 11] > 0.5)
+                )
+                semantic_checks = {
+                    "actor_cells_count": int(np.count_nonzero(actor_cells)),
+                    "worker_cells_count": int(np.count_nonzero(owner_friendly & unit_worker)),
+                    "base_cells_count": int(np.count_nonzero(owner_friendly & unit_base)),
+                    "unit_type_multihot_count": int(np.count_nonzero(np.sum(observations[..., 5:12] > 0.5, axis=-1) > 1)),
+                    "action_type_multihot_count": int(np.count_nonzero(np.sum(observations[..., 12:18] > 0.5, axis=-1) > 1)),
+                    "b2_friendly_worker": bool(observations[0, 25, 3] > 0.5 and observations[0, 25, 8] > 0.5),
+                    "c3_friendly_base": bool(observations[0, 50, 3] > 0.5 and observations[0, 50, 6] > 0.5),
+                    "a1_neutral_resource": bool(observations[0, 0, 2] > 0.5 and observations[0, 0, 5] > 0.5),
+                    "b1_neutral_resource": bool(observations[0, 1, 2] > 0.5 and observations[0, 1, 5] > 0.5),
+                }
+                for key in ("actor_cells_count", "worker_cells_count", "base_cells_count"):
+                    add_dataset_check(f"semantic_{key}_gt_zero", int(semantic_checks[key]) > 0, f"{key}={semantic_checks[key]}")
+                add_dataset_check("semantic_unit_type_no_multihot", semantic_checks["unit_type_multihot_count"] == 0, str(semantic_checks["unit_type_multihot_count"]))
+                add_dataset_check("semantic_action_type_no_multihot", semantic_checks["action_type_multihot_count"] == 0, str(semantic_checks["action_type_multihot_count"]))
+                for key in ("b2_friendly_worker", "c3_friendly_base", "a1_neutral_resource", "b1_neutral_resource"):
+                    add_dataset_check(f"semantic_corner_{key}", bool(semantic_checks[key]), str(semantic_checks[key]))
             else:
                 obs_min = None
                 obs_max = None
@@ -656,6 +685,7 @@ def main() -> int:
         "attack_target_local_diversity": attack_diversity,
         "action_mask_available_share": float(action_mask_share),
         "source_valid_action_mask": source_valid_action_mask_report,
+        "semantic_checks": semantic_checks,
         "hard_failures": hard_failures,
         "warnings": warnings,
         "decision": decision,

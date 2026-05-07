@@ -1,0 +1,395 @@
+{
+  "status": "fail",
+  "generated_at_utc": "2026-05-07T08:58:00Z",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+  "unity_channel_semantics": "runtime 27-channel contract",
+  "allow_worker_produce_runtime_rule": true,
+  "splits": [
+    {
+      "split": "bc_train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_train.npz",
+      "samples": 70278,
+      "actor_cells_count": 49098,
+      "worker_cells_count": 0,
+      "base_cells_count": 0,
+      "action_type_histogram": {
+        "noop": 40211211,
+        "move": 254498,
+        "harvest": 665,
+        "return": 643,
+        "produce": 12569,
+        "attack": 542
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 39715931,
+      "action_type_multihot_count": 764197,
+      "direction_multihot_count": 249589,
+      "impossible_resource_ranged_count": 2202812,
+      "target_compatibility": {
+        "harvest_bad": 665,
+        "return_bad": 643,
+        "produce_bad": 12569,
+        "attack_bad": 490,
+        "non_noop_bad_actor": 262257
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Harvest",
+          "direction": "west",
+          "active_channels": [
+            1,
+            9,
+            10,
+            14,
+            21
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Move",
+          "direction": "west",
+          "active_channels": [
+            0,
+            5,
+            10,
+            13,
+            21
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Attack",
+          "direction": "west",
+          "active_channels": [
+            1,
+            5,
+            11,
+            17,
+            21
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player2",
+          "unit": "none",
+          "current_action": "Return",
+          "direction": "west",
+          "active_channels": [
+            4,
+            5,
+            11,
+            15,
+            21
+          ]
+        }
+      },
+      "failures": [
+        "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+        "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+        "B2 expected Player1 Worker, got owner=none unit=none active=[1, 5, 11, 17, 21]",
+        "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 21]",
+        "worker cells count == 0",
+        "base cells count == 0",
+        "unit_type multihot detected: 39715931",
+        "action_type multihot detected: 764197",
+        "direction multihot detected: 249589",
+        "impossible unit_resource + unit_ranged cells: 2202812",
+        "Harvest labels on non-friendly-worker cells: 665",
+        "Return labels on non-friendly-worker cells: 643",
+        "Produce labels on incompatible producer cells: 12569",
+        "Attack labels on incompatible attacker cells: 490",
+        "non-NoOp labels on impossible actor cells: 262257"
+      ]
+    },
+    {
+      "split": "bc_validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_validation.npz",
+      "samples": 12402,
+      "actor_cells_count": 8707,
+      "worker_cells_count": 0,
+      "base_cells_count": 0,
+      "action_type_histogram": {
+        "noop": 7095747,
+        "move": 45191,
+        "harvest": 120,
+        "return": 123,
+        "produce": 2270,
+        "attack": 101
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 7010940,
+      "action_type_multihot_count": 132612,
+      "direction_multihot_count": 43978,
+      "impossible_resource_ranged_count": 387887,
+      "target_compatibility": {
+        "harvest_bad": 120,
+        "return_bad": 123,
+        "produce_bad": 2270,
+        "attack_bad": 90,
+        "non_noop_bad_actor": 46600
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Harvest",
+          "direction": "west",
+          "active_channels": [
+            1,
+            9,
+            10,
+            14,
+            21
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Move",
+          "direction": "west",
+          "active_channels": [
+            0,
+            5,
+            10,
+            13,
+            21
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Attack",
+          "direction": "none",
+          "active_channels": [
+            1,
+            5,
+            11,
+            17,
+            23
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player2",
+          "unit": "none",
+          "current_action": "Return",
+          "direction": "none",
+          "active_channels": [
+            4,
+            5,
+            11,
+            15,
+            25
+          ]
+        }
+      },
+      "failures": [
+        "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+        "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+        "B2 expected Player1 Worker, got owner=none unit=none active=[1, 5, 11, 17, 23]",
+        "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 25]",
+        "worker cells count == 0",
+        "base cells count == 0",
+        "unit_type multihot detected: 7010940",
+        "action_type multihot detected: 132612",
+        "direction multihot detected: 43978",
+        "impossible unit_resource + unit_ranged cells: 387887",
+        "Harvest labels on non-friendly-worker cells: 120",
+        "Return labels on non-friendly-worker cells: 123",
+        "Produce labels on incompatible producer cells: 2270",
+        "Attack labels on incompatible attacker cells: 90",
+        "non-NoOp labels on impossible actor cells: 46600"
+      ]
+    },
+    {
+      "split": "bc_debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z\\bc_debug.npz",
+      "samples": 512,
+      "actor_cells_count": 372,
+      "worker_cells_count": 0,
+      "base_cells_count": 0,
+      "action_type_histogram": {
+        "noop": 292857,
+        "move": 1943,
+        "harvest": 4,
+        "return": 6,
+        "produce": 95,
+        "attack": 7
+      },
+      "owner_multihot_count": 0,
+      "unit_type_multihot_count": 289155,
+      "action_type_multihot_count": 5757,
+      "direction_multihot_count": 1931,
+      "impossible_resource_ranged_count": 16293,
+      "target_compatibility": {
+        "harvest_bad": 4,
+        "return_bad": 6,
+        "produce_bad": 95,
+        "attack_bad": 7,
+        "non_noop_bad_actor": 1999
+      },
+      "source_valid_action_mask_present": true,
+      "source_invalid_non_noop": 0,
+      "known_corner_decodes": {
+        "A1": {
+          "x": 0,
+          "y": 0,
+          "flat_index": 0,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Harvest",
+          "direction": "west",
+          "active_channels": [
+            1,
+            9,
+            10,
+            14,
+            21
+          ]
+        },
+        "B1": {
+          "x": 1,
+          "y": 0,
+          "flat_index": 1,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Move",
+          "direction": "west",
+          "active_channels": [
+            0,
+            5,
+            10,
+            13,
+            21
+          ]
+        },
+        "B2": {
+          "x": 1,
+          "y": 1,
+          "flat_index": 25,
+          "owner": "none",
+          "unit": "none",
+          "current_action": "Attack",
+          "direction": "none",
+          "active_channels": [
+            1,
+            6,
+            11,
+            17,
+            22
+          ]
+        },
+        "C3": {
+          "x": 2,
+          "y": 2,
+          "flat_index": 50,
+          "owner": "Player2",
+          "unit": "none",
+          "current_action": "Return",
+          "direction": "none",
+          "active_channels": [
+            4,
+            5,
+            11,
+            15,
+            25
+          ]
+        }
+      },
+      "failures": [
+        "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+        "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+        "B2 expected Player1 Worker, got owner=none unit=none active=[1, 6, 11, 17, 22]",
+        "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 25]",
+        "worker cells count == 0",
+        "base cells count == 0",
+        "unit_type multihot detected: 289155",
+        "action_type multihot detected: 5757",
+        "direction multihot detected: 1931",
+        "impossible unit_resource + unit_ranged cells: 16293",
+        "Harvest labels on non-friendly-worker cells: 4",
+        "Return labels on non-friendly-worker cells: 6",
+        "Produce labels on incompatible producer cells: 95",
+        "Attack labels on incompatible attacker cells: 7",
+        "non-NoOp labels on impossible actor cells: 1999"
+      ]
+    }
+  ],
+  "failures": [
+    "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+    "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+    "B2 expected Player1 Worker, got owner=none unit=none active=[1, 5, 11, 17, 21]",
+    "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 21]",
+    "worker cells count == 0",
+    "base cells count == 0",
+    "unit_type multihot detected: 39715931",
+    "action_type multihot detected: 764197",
+    "direction multihot detected: 249589",
+    "impossible unit_resource + unit_ranged cells: 2202812",
+    "Harvest labels on non-friendly-worker cells: 665",
+    "Return labels on non-friendly-worker cells: 643",
+    "Produce labels on incompatible producer cells: 12569",
+    "Attack labels on incompatible attacker cells: 490",
+    "non-NoOp labels on impossible actor cells: 262257",
+    "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+    "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+    "B2 expected Player1 Worker, got owner=none unit=none active=[1, 5, 11, 17, 23]",
+    "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 25]",
+    "worker cells count == 0",
+    "base cells count == 0",
+    "unit_type multihot detected: 7010940",
+    "action_type multihot detected: 132612",
+    "direction multihot detected: 43978",
+    "impossible unit_resource + unit_ranged cells: 387887",
+    "Harvest labels on non-friendly-worker cells: 120",
+    "Return labels on non-friendly-worker cells: 123",
+    "Produce labels on incompatible producer cells: 2270",
+    "Attack labels on incompatible attacker cells: 90",
+    "non-NoOp labels on impossible actor cells: 46600",
+    "A1 expected Neutral Resource, got owner=none unit=none active=[1, 9, 10, 14, 21]",
+    "B1 expected Neutral Resource, got owner=none unit=none active=[0, 5, 10, 13, 21]",
+    "B2 expected Player1 Worker, got owner=none unit=none active=[1, 6, 11, 17, 22]",
+    "C3 expected Player1 Base, got owner=Player2 unit=none active=[4, 5, 11, 15, 25]",
+    "worker cells count == 0",
+    "base cells count == 0",
+    "unit_type multihot detected: 289155",
+    "action_type multihot detected: 5757",
+    "direction multihot detected: 1931",
+    "impossible unit_resource + unit_ranged cells: 16293",
+    "Harvest labels on non-friendly-worker cells: 4",
+    "Return labels on non-friendly-worker cells: 6",
+    "Produce labels on incompatible producer cells: 95",
+    "Attack labels on incompatible attacker cells: 7",
+    "non-NoOp labels on impossible actor cells: 1999"
+  ]
+}

@@ -83,10 +83,10 @@ class SourceValidDataset(Dataset[tuple[Tensor, Tensor, Tensor]]):
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Train source-valid-aware BC student for Legacy032 NoOp-fix lineage.")
+    p = argparse.ArgumentParser(description="Train source-valid-aware BC student for Legacy032 semantic-observation-fix lineage.")
     p.add_argument("--bc-ready-dir", type=Path, required=True)
     p.add_argument("--output-dir", type=Path, required=True)
-    p.add_argument("--run-label", type=str, default="legacy032_v2_bc_source_valid_noop_fix")
+    p.add_argument("--run-label", type=str, default="legacy032_v2_bc_source_valid_semantic_obs_fix")
     p.add_argument("--device", type=str, default="cpu")
     p.add_argument("--epochs", type=int, default=8)
     p.add_argument("--batch-size", type=int, default=128)

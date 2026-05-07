@@ -78,6 +78,12 @@ def main() -> int:
     valid_actor_exact = 0
     invalid_total = 0
     invalid_pred_non_noop = 0
+    pred_harvest_total = 0
+    pred_harvest_on_worker = 0
+    pred_produce_total = 0
+    pred_produce_on_producer = 0
+    pred_non_noop_total = 0
+    pred_non_noop_on_actor = 0
 
     with torch.no_grad():
         for x, y, source_valid in loader:
@@ -87,6 +93,22 @@ def main() -> int:
             logits = model(x)
             action_target = y[..., 0]
             action_pred = torch.argmax(logits["action_type_logits"], dim=-1)
+            obs_flat = x.reshape(x.shape[0], 576, 27)
+            friendly = obs_flat[..., 3] > 0.5
+            worker = friendly & (obs_flat[..., 8] > 0.5)
+            producer = friendly & (
+                (obs_flat[..., 6] > 0.5)
+                | (obs_flat[..., 7] > 0.5)
+                | (obs_flat[..., 8] > 0.5)
+            )
+            actor = friendly & (
+                (obs_flat[..., 6] > 0.5)
+                | (obs_flat[..., 7] > 0.5)
+                | (obs_flat[..., 8] > 0.5)
+                | (obs_flat[..., 9] > 0.5)
+                | (obs_flat[..., 10] > 0.5)
+                | (obs_flat[..., 11] > 0.5)
+            )
             total += int(action_target.numel())
             action_correct += int(action_pred.eq(action_target).sum().item())
 
@@ -107,6 +129,16 @@ def main() -> int:
             invalid = ~source_valid
             invalid_total += int(invalid.sum().item())
             invalid_pred_non_noop += int(action_pred[invalid].ne(0).sum().item()) if bool(invalid.any()) else 0
+
+            pred_harvest = action_pred.eq(2)
+            pred_produce = action_pred.eq(4)
+            pred_non_noop = action_pred.ne(0)
+            pred_harvest_total += int(pred_harvest.sum().item())
+            pred_harvest_on_worker += int((pred_harvest & worker).sum().item())
+            pred_produce_total += int(pred_produce.sum().item())
+            pred_produce_on_producer += int((pred_produce & producer).sum().item())
+            pred_non_noop_total += int(pred_non_noop.sum().item())
+            pred_non_noop_on_actor += int((pred_non_noop & actor).sum().item())
 
             pred_np = action_pred.detach().cpu().numpy()
             target_np = action_target.detach().cpu().numpy()
@@ -134,12 +166,25 @@ def main() -> int:
         "source_valid_non_noop_count": int(valid_actor_total),
         "source_invalid_false_non_noop_rate": float(invalid_pred_non_noop / invalid_total) if invalid_total else 0.0,
         "source_invalid_cell_count": int(invalid_total),
+        "semantic_target_compatibility_accuracy": {
+            "harvest_predicted_on_worker_cells": float(pred_harvest_on_worker / pred_harvest_total) if pred_harvest_total else 1.0,
+            "produce_predicted_on_base_barracks_or_worker_cells": float(pred_produce_on_producer / pred_produce_total) if pred_produce_total else 1.0,
+            "non_noop_predicted_on_possible_actor_cells": float(pred_non_noop_on_actor / pred_non_noop_total) if pred_non_noop_total else 1.0,
+            "pred_harvest_total": int(pred_harvest_total),
+            "pred_produce_total": int(pred_produce_total),
+            "pred_non_noop_total": int(pred_non_noop_total),
+        },
         "action_type_confusion_matrix_rows_target_cols_pred": cm.tolist(),
         "acceptance": {
             "action_type_accuracy_far_above_random": bool((action_correct / total) > 0.35) if total else False,
             "source_invalid_false_non_noop_rate_low": bool((invalid_pred_non_noop / invalid_total) < 0.05) if invalid_total else False,
             "source_valid_non_noop_recall_meaningful": bool((valid_actor_pred_non_noop / valid_actor_total) > 0.10) if valid_actor_total else False,
             "not_all_noop": bool(pred_hist.get(0, 0) < total),
+            "semantic_predicted_actions_compatible": bool(
+                (pred_harvest_total == 0 or pred_harvest_on_worker / pred_harvest_total >= 0.95)
+                and (pred_produce_total == 0 or pred_produce_on_producer / pred_produce_total >= 0.95)
+                and (pred_non_noop_total == 0 or pred_non_noop_on_actor / pred_non_noop_total >= 0.95)
+            ),
         },
     }
     report["go_for_unity_visual_inference"] = bool(all(report["acceptance"].values()))

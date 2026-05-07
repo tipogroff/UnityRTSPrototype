@@ -98,13 +98,13 @@ def main() -> int:
     if not raw_rollout_dir.exists():
         raise RuntimeError(f"Missing raw rollout dir: {raw_rollout_dir}")
 
-    # Confirm spec has been patched to stage10d6_v1
+    # Confirm spec has been patched to the production semantic-observation fix.
     spec = json.loads(mapping_json.read_text(encoding="utf-8"))
     spec_version = spec.get("mapping_spec_version", "")
-    if spec_version != "stage10d6_v1":
+    if spec_version != "stage6b3_semantic_obs_fix_v1":
         print(
             f"[stage10d6][ADAPTER] WARNING: mapping spec version is '{spec_version}', "
-            "expected 'stage10d6_v1'. Aborting rebuild until spec is patched.",
+            "expected 'stage6b3_semantic_obs_fix_v1'. Aborting rebuild until spec is patched.",
             file=sys.stderr,
         )
         return 1
