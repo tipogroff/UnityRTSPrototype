@@ -345,6 +345,11 @@ def main() -> int:
 
     source_observation = np.asarray(npz["observation_t"], dtype=np.float32)
     source_actions = np.asarray(npz["per_cell_action_t"])
+    source_valid_action_mask = (
+        np.asarray(npz["source_valid_action_mask_t"], dtype=np.bool_)
+        if "source_valid_action_mask_t" in npz
+        else None
+    )
 
     _require(
         source_observation.ndim == 4 and tuple(source_observation.shape[1:]) == SOURCE_OBS_SHAPE,
@@ -374,6 +379,16 @@ def main() -> int:
         bool(args.fail_on_contract_mismatch),
         hard_failures,
     )
+    if source_valid_action_mask is not None:
+        _require(
+            source_valid_action_mask.ndim == 2 and tuple(source_valid_action_mask.shape) == (source_n, SOURCE_ACTION_SHAPE[0]),
+            (
+                "source_valid_action_mask_t shape mismatch; "
+                f"expected [{source_n},{SOURCE_ACTION_SHAPE[0]}], actual {list(source_valid_action_mask.shape)}"
+            ),
+            bool(args.fail_on_contract_mismatch),
+            hard_failures,
+        )
 
     src_nan = bool(np.isnan(source_observation).any())
     src_inf = bool(np.isinf(source_observation).any())
@@ -436,17 +451,23 @@ def main() -> int:
             hard_failures,
         )
 
+    save_payload = {
+        "observations": observations,
+        "actions": actions,
+        "episode_id": episode_id,
+        "step_id": step_id,
+        "reward_t": reward_t,
+        "done_t": done_t,
+        "terminated_t": terminated_t,
+        "truncated_t": truncated_t,
+        "action_mask_available_t": action_mask_available_t,
+    }
+    if source_valid_action_mask is not None:
+        save_payload["source_valid_action_mask"] = source_valid_action_mask
+
     np.savez_compressed(
         adapted_dataset_path,
-        observations=observations,
-        actions=actions,
-        episode_id=episode_id,
-        step_id=step_id,
-        reward_t=reward_t,
-        done_t=done_t,
-        terminated_t=terminated_t,
-        truncated_t=truncated_t,
-        action_mask_available_t=action_mask_available_t,
+        **save_payload,
     )
 
     action_type_col = actions[:, :, 0].astype(np.int32, copy=False)
@@ -502,6 +523,8 @@ def main() -> int:
         "flat_cell_index_formula": "row * 24 + col",
         "global_vector_policy": "excluded_from_strict_bc_encoder_path",
         "attack_target_semantics": "local_7x7_49",
+        "source_valid_action_mask_present": bool(source_valid_action_mask is not None),
+        "source_invalid_cells_forced_to_noop": bool(source_manifest.get("source_invalid_cells_forced_to_noop", False)),
         "direct_weight_transfer_claim": False,
         "semantic_parity_claim": False,
         "notes": "Legacy032 raw rollout adapted to Unity v2 tensor contract only; Unity runtime semantic parity is not claimed.",

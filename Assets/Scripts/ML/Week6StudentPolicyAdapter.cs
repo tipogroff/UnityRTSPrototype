@@ -319,15 +319,16 @@ namespace RTS.ML
     {
         private const string CanonicalStage6A2CheckpointRelativePath =
             "python/week6_student/runs/legacy032_v2_bc_short_stage6a2/legacy032_v2_bc_short_stage6a2_smoke_checkpoint.pt";
-        // Stage6B2: bind to full BC checkpoint (Stage6B1 best, epoch 5, val_loss 1.8362, model_variant=transfer)
-        private const string CanonicalStage6B1CheckpointRelativePath =
-            "python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt";
+        // Stage6B2: source-valid NoOp fix checkpoint from the clean legacy032 Unity v2 BC lineage.
+        private const string CanonicalStage6B2CheckpointRelativePath =
+            "python/week6_student/runs/Stage6B2_SourceValidNoOpFix/legacy032_v2_bc_source_valid_noop_fix_best.pt";
         private const string ExpectedActionContractVersion = "v2_gridnet_compatible";
 
         [Serializable]
         private sealed class BridgeReadyEnvelope
         {
             public string status;
+            public string action_contract_version;
             public string checkpoint_path;
             public int checkpoint_epoch;
             public string checkpoint_model_variant;
@@ -489,7 +490,7 @@ namespace RTS.ML
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
         [SerializeField] private string _pythonExecutableRelativePath = ".venv/Scripts/python.exe";
         [SerializeField] private string _bridgeScriptRelativePath = "python/week6_student/student_inference_server.py";
-        [SerializeField] private string _checkpointRelativePath = CanonicalStage6B1CheckpointRelativePath;
+        [SerializeField] private string _checkpointRelativePath = CanonicalStage6B2CheckpointRelativePath;
         [SerializeField] private bool _enableLegalActionMaskForSelection = false;
         [SerializeField] private bool _enableDynamicOccupancyMoveMaskEnrichment = true;
         [SerializeField] private string _artifactDirectoryRelativePath = "python/week6_student/tmp/day5_sanity";
@@ -1099,8 +1100,16 @@ namespace RTS.ML
                     return false;
                 }
 
-                if (!string.IsNullOrWhiteSpace(ready.checkpoint_model_variant)
-                    && !string.Equals(ready.checkpoint_model_variant, "transfer", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(ready.action_contract_version, ExpectedActionContractVersion, StringComparison.Ordinal))
+                {
+                    error =
+                        "Student bridge action contract is incompatible. " +
+                        $"Expected {ExpectedActionContractVersion}, got {ready.action_contract_version}";
+                    ShutdownBridge();
+                    return false;
+                }
+
+                if (!IsAcceptedCheckpointModelVariant(ready.checkpoint_model_variant))
                 {
                     error =
                         "Student bridge checkpoint model variant is incompatible. " +
@@ -1127,6 +1136,13 @@ namespace RTS.ML
                 ShutdownBridge();
                 return false;
             }
+        }
+
+        private static bool IsAcceptedCheckpointModelVariant(string modelVariant)
+        {
+            return string.IsNullOrWhiteSpace(modelVariant)
+                || string.Equals(modelVariant, "transfer", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(modelVariant, "unknown", StringComparison.OrdinalIgnoreCase);
         }
 
         private void OnBridgeErrorDataReceived(object sender, DataReceivedEventArgs args)

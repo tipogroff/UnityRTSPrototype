@@ -1,0 +1,35 @@
+{
+  "generated_at_utc": "2026-05-06T22:53:33Z",
+  "teacher_lineage": "legacy032",
+  "source_pipeline": "gym_microrts==0.3.2",
+  "source_export_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+  "source_rollout_file": "teacher_rollout_raw.npz",
+  "source_manifest_file": "teacher_rollout_manifest.json",
+  "target_action_contract": "unity_v2_legacy032_gridnet",
+  "observation_shape_per_sample": [
+    576,
+    27
+  ],
+  "action_shape_per_sample": [
+    576,
+    7
+  ],
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "flatten_order": "row_major",
+  "flat_cell_index_formula": "row * 24 + col",
+  "global_vector_policy": "excluded_from_strict_bc_encoder_path",
+  "attack_target_semantics": "local_7x7_49",
+  "source_valid_action_mask_present": true,
+  "source_invalid_cells_forced_to_noop": true,
+  "direct_weight_transfer_claim": false,
+  "semantic_parity_claim": false,
+  "notes": "Legacy032 raw rollout adapted to Unity v2 tensor contract only; Unity runtime semantic parity is not claimed."
+}

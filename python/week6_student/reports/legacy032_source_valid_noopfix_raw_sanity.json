@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "raw_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+  "npz_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z\\teacher_rollout_raw.npz",
+  "manifest_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z\\teacher_rollout_manifest.json",
+  "observation_t_shape": [
+    82680,
+    24,
+    24,
+    27
+  ],
+  "per_cell_action_t_shape": [
+    82680,
+    576,
+    7
+  ],
+  "source_valid_action_mask_t_exists": true,
+  "manifest_source_invalid_cells_forced_to_noop": true,
+  "manifest_source_valid_action_mask_stored": true,
+  "step_mode": "training_compatible",
+  "export_mode": "deterministic",
+  "noop_share_all_cells": 0.9933494849621028,
+  "source_valid_cells_mean": 15.567743105950653,
+  "source_valid_action_count_min": 0,
+  "source_valid_action_count_max": 36,
+  "source_valid_action_count_mean": 15.567743105950653,
+  "source_valid_non_noop_count_nonzero_steps": 75831,
+  "source_valid_non_noop_count_total": 316722,
+  "selected_non_noop_count_total_before_storage_noop_fix": 316722,
+  "stored_source_valid_non_noop_labels": 316722,
+  "stored_source_invalid_non_noop_labels": 0,
+  "action_type_histogram_all_cells": {
+    "0": 47306958,
+    "1": 299689,
+    "2": 785,
+    "3": 766,
+    "4": 14839,
+    "5": 643
+  },
+  "action_type_histogram_source_valid_cells": {
+    "0": 970419,
+    "1": 299689,
+    "2": 785,
+    "3": 766,
+    "4": 14839,
+    "5": 643
+  },
+  "action_type_histogram_source_invalid_cells": {
+    "0": 46336539,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "failures": []
+}

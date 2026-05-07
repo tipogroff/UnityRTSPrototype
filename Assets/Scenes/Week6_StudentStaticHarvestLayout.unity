@@ -1697,7 +1697,7 @@ MonoBehaviour:
   _maxDecisionRequestsPerEpisode: 200
   _pythonExecutableRelativePath: .venv/Scripts/python.exe
   _bridgeScriptRelativePath: python/week6_student/student_inference_server.py
-  _checkpointRelativePath: python/week6_student/runs/legacy032_v2_full_bc_stage6b1/legacy032_v2_full_bc_stage6b1_best.pt
+  _checkpointRelativePath: python/week6_student/runs/Stage6B2_SourceValidNoOpFix/legacy032_v2_bc_source_valid_noop_fix_best.pt
   _enableLegalActionMaskForSelection: 0
   _enableDynamicOccupancyMoveMaskEnrichment: 1
   _artifactDirectoryRelativePath: python/week6_student/tmp/stage6b2_unity_sanity/student_live_policy

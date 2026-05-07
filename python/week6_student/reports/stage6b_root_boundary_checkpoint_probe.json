@@ -1,0 +1,56 @@
+{
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_best.pt",
+  "samples": 256,
+  "cells": 147456,
+  "checkpoint_epoch": 5,
+  "model_variant": "transfer",
+  "label_action_type_histogram": {
+    "2": 24661,
+    "1": 24875,
+    "0": 24905,
+    "4": 24525,
+    "5": 24054,
+    "3": 24436
+  },
+  "pred_action_type_histogram": {
+    "3": 39626,
+    "2": 7400,
+    "5": 10086,
+    "4": 71067,
+    "1": 14954,
+    "0": 4323
+  },
+  "pred_noop_share": 0.029317220052083332,
+  "label_non_noop_cells": 122551,
+  "predict_non_noop_on_label_non_noop_share": 0.9714649411265514,
+  "branch_accuracy": {
+    "action_type": {
+      "active_count": 147456,
+      "accuracy": 0.168701171875
+    },
+    "move_dir": {
+      "active_count": 24875,
+      "accuracy": 0.2527035175879397
+    },
+    "harvest_dir": {
+      "active_count": 24661,
+      "accuracy": 0.2511658083613803
+    },
+    "return_dir": {
+      "active_count": 24436,
+      "accuracy": 0.24926338189556393
+    },
+    "produce_dir": {
+      "active_count": 24525,
+      "accuracy": 0.2505606523955148
+    },
+    "produce_unit_type": {
+      "active_count": 24525,
+      "accuracy": 0.1434046890927625
+    },
+    "attack_target_local": {
+      "active_count": 24054,
+      "accuracy": 0.020412405421135777
+    }
+  }
+}

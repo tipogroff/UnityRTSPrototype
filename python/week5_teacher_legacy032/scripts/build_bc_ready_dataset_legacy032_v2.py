@@ -345,9 +345,12 @@ def main() -> int:
         "truncated_t": np.asarray(npz["truncated_t"]),
         "action_mask_available_t": np.asarray(npz["action_mask_available_t"]),
     }
+    if "source_valid_action_mask" in npz:
+        arrays["source_valid_action_mask"] = np.asarray(npz["source_valid_action_mask"], dtype=np.bool_)
 
     observations = arrays["observations"]
     actions = arrays["actions"]
+    source_valid_action_mask = arrays.get("source_valid_action_mask")
 
     _require(
         observations.ndim == 3 and tuple(observations.shape[1:]) == EXPECTED_OBS_SHAPE,
@@ -368,6 +371,30 @@ def main() -> int:
 
     _require(observations.dtype == np.float32, f"observations dtype must be float32, got {observations.dtype}", bool(args.fail_on_contract_mismatch), hard_failures)
     _require(actions.dtype.kind in {"i", "u"}, f"actions dtype must be integer, got {actions.dtype}", bool(args.fail_on_contract_mismatch), hard_failures)
+    _require(
+        source_valid_action_mask is not None,
+        "source_valid_action_mask missing from adapted dataset",
+        bool(args.fail_on_contract_mismatch),
+        hard_failures,
+    )
+    if source_valid_action_mask is not None:
+        _require(
+            source_valid_action_mask.ndim == 2 and tuple(source_valid_action_mask.shape) == (n, EXPECTED_ACTION_SHAPE[0]),
+            (
+                "source_valid_action_mask shape mismatch: "
+                f"expected [{n},{EXPECTED_ACTION_SHAPE[0]}], got {list(source_valid_action_mask.shape)}"
+            ),
+            bool(args.fail_on_contract_mismatch),
+            hard_failures,
+        )
+        invalid_action_type = actions[:, :, 0][~source_valid_action_mask]
+        invalid_non_noop = int(np.count_nonzero(invalid_action_type != 0))
+        _require(
+            invalid_non_noop == 0,
+            f"source-invalid cells must be NoOp in BC targets; found {invalid_non_noop} non-NoOp labels",
+            bool(args.fail_on_contract_mismatch),
+            hard_failures,
+        )
 
     for name in ["episode_id", "step_id", "reward_t", "done_t", "terminated_t", "truncated_t", "action_mask_available_t"]:
         arr = arrays[name]
@@ -421,6 +448,17 @@ def main() -> int:
     debug_stats = _compute_action_stats(debug_arrays["actions"])
 
     for label, stats in [("train", train_stats), ("validation", val_stats), ("debug", debug_stats)]:
+        _require(
+            stats["noop_share"] >= 0.75,
+            (
+                f"implausibly low NoOp share in {label}: {stats['noop_share']:.6f}. "
+                "This usually means source-invalid/off-actor cells were stored as supervised non-NoOp labels."
+            ),
+            bool(args.fail_on_contract_mismatch),
+            hard_failures,
+        )
+
+    for label, stats in [("train", train_stats), ("validation", val_stats), ("debug", debug_stats)]:
         if stats["noop_share"] >= 0.98:
             warnings.append(f"high noop share in {label}: noop_share={stats['noop_share']:.6f}")
         if stats["produce_diversity"] <= 1:
@@ -452,6 +490,8 @@ def main() -> int:
         "flat_cell_index_formula": "row * 24 + col",
         "global_vector_policy": "excluded_from_strict_bc_encoder_path",
         "attack_target_semantics": "local_7x7_49",
+        "source_valid_action_mask_present": bool(source_valid_action_mask is not None),
+        "source_invalid_cells_forced_to_noop": bool(manifest.get("source_invalid_cells_forced_to_noop", False)),
         "split": {
             "seed": int(args.seed),
             "validation_split": float(val_split),
@@ -489,6 +529,7 @@ def main() -> int:
             "validation": float(share_val),
             "debug": float(share_debug),
         },
+        "source_valid_action_mask_present": bool(source_valid_action_mask is not None),
         "warnings": warnings,
         "hard_failures": hard_failures,
         "decision": decision,

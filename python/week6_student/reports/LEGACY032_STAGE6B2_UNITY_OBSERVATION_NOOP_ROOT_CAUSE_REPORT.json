@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2026-05-07T07:50:00Z",
+  "root_cause_status": "FOUND",
+  "first_failing_boundary": "A_RUNTIME_SCENE_STATE_LAYOUT_MISMATCH_BEFORE_POLICY_INPUT",
+  "scene_evidence": {
+    "previous_visual_inference_scene": "Assets/Scenes/Week6_StudentVisualInspection.unity",
+    "intended_static_scene": "Assets/Scenes/Week6_StudentStaticHarvestLayout.unity",
+    "static_batch_manifest": "python/week6_student/tmp/stage6b2_static_source_valid_noopfix_visual_inference/stage6b2_static_source_valid_noopfix_run_manifest.json",
+    "static_batch_manifest_scene": "Assets/Scenes/Week6_StudentStaticHarvestLayout.unity",
+    "static_batch_step1_snapshot": "python/week6_student/tmp/stage6b2_static_source_valid_noopfix_visual_inference/stage6b2_static_source_valid_noopfix_snapshot_step0001.json",
+    "static_batch_actual_player1_layout": [
+      {
+        "unit": "Worker",
+        "cell": "B2",
+        "flat": 25
+      },
+      {
+        "unit": "Base",
+        "cell": "C3",
+        "flat": 50
+      }
+    ],
+    "intended_static_layout_from_stage6b3s": [
+      {
+        "unit": "Worker",
+        "cell": "C3",
+        "flat": 50
+      },
+      {
+        "unit": "Base",
+        "cell": "D4",
+        "flat": 75
+      },
+      {
+        "unit": "Resource",
+        "cell": "B2",
+        "flat": 25
+      },
+      {
+        "unit": "Resource",
+        "cell": "B3",
+        "flat": 49
+      }
+    ]
+  },
+  "observation_exports": {
+    "visual_inspection_npz": "python/week6_student/tmp/stage6b2_unity_observation_noop_root_cause_probe/stage6b2_unity_observation_step0001_export.npz",
+    "static_batch_npz": "python/week6_student/tmp/stage6b2_static_unity_observation_noop_root_cause_probe/stage6b2_unity_observation_step0001_export.npz",
+    "shape_hwc": [
+      24,
+      24,
+      27
+    ],
+    "shape_flat": [
+      576,
+      27
+    ],
+    "actor_cells_in_captured_runtime_state": [
+      25,
+      50
+    ]
+  },
+  "offline_vs_unity_logits_parity": {
+    "exact_adapter_observation_bin_parity": "ok",
+    "checked_adapter_slots": 4,
+    "max_abs_action_type_logit_delta_range": [
+      7.62939453125e-06,
+      1.0967254638671875e-05
+    ],
+    "prediction_mismatches": 0,
+    "worker_b2_offline_top1": "NoOp p=0.9995264",
+    "base_c3_offline_top1": "NoOp p=0.9996098"
+  },
+  "bc_nearest_sample_comparison": {
+    "probe_report": "python/week6_student/tmp/stage6b2_unity_observation_noop_root_cause_probe/stage6b2_unity_observation_noop_root_cause_probe_report.json",
+    "bc_dir": "python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+    "exact_unity_actor_signature_matches_train": 0,
+    "exact_unity_actor_signature_matches_validation": 0,
+    "same_owner_unit_candidate_count_under_unity_channel_semantics": 0,
+    "same_flat_b2_train_targets": {
+      "NoOp": 68961,
+      "Move": 1166,
+      "Harvest": 151,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    "same_flat_c3_train_targets": {
+      "NoOp": 69498,
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 780,
+      "Attack": 0
+    },
+    "full_nearest_targets_at_unity_actor_flats": "nearest train/validation full observations decode B2/C3 as resource/noop rather than Player1 worker/base act state",
+    "bc_manifest_semantic_parity_claim": false
+  },
+  "classification": [
+    "A_WRONG_SCENE_LAYOUT_WAS_USED",
+    "B_UNITY_OBSERVATION_DIFFERS_FROM_BC_EXPECTED_TENSOR"
+  ],
+  "next_step": "Fix/bind the visual inference runner so the actual runtime state is the authored static harvest layout before making decoder/applier/runtime changes. Then rerun this observation parity probe; if layout is fixed but BC signature remains unmatched, move to observation semantic adapter or student data revision."
+}

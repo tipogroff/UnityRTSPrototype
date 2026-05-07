@@ -170,6 +170,12 @@ def _build_markdown(report: Dict[str, Any]) -> str:
     lines.append(f"- attack_target_local_diversity.unique_targets: {div['unique_targets']}")
     lines.append(f"- attack_target_local_diversity.max_target_index: {div['max_target_index']}")
     lines.append(f"- action_mask_available_share: {report['action_mask_available_share']}")
+    if "source_valid_action_mask" in report:
+        svm = report["source_valid_action_mask"]
+        lines.append(f"- source_valid_action_mask_present: {svm['present']}")
+        lines.append(f"- source_valid_action_mask_shape: {svm['shape']}")
+        lines.append(f"- source_valid_cells_mean: {svm['source_valid_cells_mean']}")
+        lines.append(f"- source_invalid_non_noop_count: {svm['source_invalid_non_noop_count']}")
     lines.append("")
 
     lines.append("## 8. Warnings")
@@ -348,6 +354,14 @@ def main() -> int:
     terminated_t = np.empty((0,), dtype=np.bool_)
     truncated_t = np.empty((0,), dtype=np.bool_)
     action_mask_available_t = np.empty((0,), dtype=np.bool_)
+    source_valid_action_mask = None
+    source_valid_action_mask_report: Dict[str, Any] = {
+        "present": False,
+        "shape": [],
+        "shape_ok": False,
+        "source_valid_cells_mean": None,
+        "source_invalid_non_noop_count": None,
+    }
 
     if adapted_dataset_path.exists():
         npz = np.load(str(adapted_dataset_path), allow_pickle=True)
@@ -381,6 +395,8 @@ def main() -> int:
             terminated_t = np.asarray(npz["terminated_t"])
             truncated_t = np.asarray(npz["truncated_t"])
             action_mask_available_t = np.asarray(npz["action_mask_available_t"])
+            if "source_valid_action_mask" in npz:
+                source_valid_action_mask = np.asarray(npz["source_valid_action_mask"], dtype=np.bool_)
 
             obs_shape_ok = observations.ndim == 3 and tuple(observations.shape[1:]) == EXPECTED_OBS_SHAPE
             act_shape_ok = actions.ndim == 3 and tuple(actions.shape[1:]) == EXPECTED_ACTION_SHAPE
@@ -463,6 +479,45 @@ def main() -> int:
 
             action_mask_bool = action_mask_available_t.astype(np.bool_, copy=False)
             action_mask_share = float(np.mean(action_mask_bool.astype(np.float64))) if n_obs > 0 else 0.0
+
+            source_valid_action_mask_report = {
+                "present": bool(source_valid_action_mask is not None),
+                "shape": list(source_valid_action_mask.shape) if source_valid_action_mask is not None else [],
+                "shape_ok": False,
+                "source_valid_cells_mean": None,
+                "source_invalid_non_noop_count": None,
+            }
+            add_dataset_check(
+                "source_valid_action_mask_present",
+                source_valid_action_mask is not None,
+                "present" if source_valid_action_mask is not None else "missing",
+            )
+            if source_valid_action_mask is not None:
+                source_mask_shape_ok = (
+                    source_valid_action_mask.ndim == 2
+                    and tuple(source_valid_action_mask.shape) == (n_obs, EXPECTED_ACTION_SHAPE[0])
+                )
+                source_valid_action_mask_report["shape_ok"] = bool(source_mask_shape_ok)
+                add_dataset_check(
+                    "source_valid_action_mask_shape",
+                    source_mask_shape_ok,
+                    (
+                        f"expected [{n_obs},{EXPECTED_ACTION_SHAPE[0]}], "
+                        f"actual {list(source_valid_action_mask.shape)}"
+                    ),
+                )
+                if source_mask_shape_ok and actions.ndim == 3 and actions.shape[2] == 7:
+                    invalid_action_type = actions[:, :, 0][~source_valid_action_mask]
+                    invalid_non_noop = int(np.count_nonzero(invalid_action_type != 0))
+                    source_valid_action_mask_report["source_valid_cells_mean"] = float(
+                        source_valid_action_mask.sum(axis=1).mean()
+                    ) if n_obs > 0 else 0.0
+                    source_valid_action_mask_report["source_invalid_non_noop_count"] = invalid_non_noop
+                    add_dataset_check(
+                        "source_invalid_cells_action_type_noop",
+                        invalid_non_noop == 0,
+                        f"source_invalid_non_noop_count={invalid_non_noop}",
+                    )
 
             if observations.size > 0:
                 obs_min = float(np.min(observations))
@@ -600,6 +655,7 @@ def main() -> int:
         "attack_target_local_histogram": _hist_to_sorted_dict(attack_counter),
         "attack_target_local_diversity": attack_diversity,
         "action_mask_available_share": float(action_mask_share),
+        "source_valid_action_mask": source_valid_action_mask_report,
         "hard_failures": hard_failures,
         "warnings": warnings,
         "decision": decision,

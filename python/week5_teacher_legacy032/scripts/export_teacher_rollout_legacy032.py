@@ -195,6 +195,7 @@ def _run_single_mode(
     terminated_t: List[bool] = []
     truncated_t: List[bool] = []
     action_mask_available_t: List[bool] = []
+    source_valid_action_mask_t: List[np.ndarray] = []
     source_valid_action_count_t: List[int] = []
     selected_non_noop_count_t: List[int] = []
     source_valid_non_noop_count_t: List[int] = []
@@ -272,9 +273,12 @@ def _run_single_mode(
 
                 selected_non_noop = int(np.count_nonzero(env_action[0, :, 0] != 0))
                 mask_source_valid = int(np.count_nonzero(mask_np[0, :, 0] > 0))
+                source_valid_mask = np.asarray(mask_np[0, :, 0] > 0, dtype=np.bool_)
+                supervised_action = env_action[0].copy()
+                supervised_action[~source_valid_mask, :] = 0
 
                 observation_t.append(np.asarray(obs, dtype=np.float32)[0])
-                per_cell_action_t.append(env_action[0].astype(np.int16, copy=False))
+                per_cell_action_t.append(supervised_action.astype(np.int16, copy=False))
                 episode_id.append(int(ep))
                 step_id.append(int(st))
                 reward_t.append(reward_value)
@@ -282,6 +286,7 @@ def _run_single_mode(
                 terminated_t.append(terminated_flag)
                 truncated_t.append(truncated_flag)
                 action_mask_available_t.append(bool(mask_available))
+                source_valid_action_mask_t.append(source_valid_mask)
                 source_valid_action_count_t.append(int(sv_count))
                 selected_non_noop_count_t.append(int(selected_non_noop))
                 source_valid_non_noop_count_t.append(int(sv_non_noop))
@@ -312,6 +317,7 @@ def _run_single_mode(
     term_arr = np.asarray(terminated_t, dtype=np.bool_)
     trunc_arr = np.asarray(truncated_t, dtype=np.bool_)
     mask_avail_arr = np.asarray(action_mask_available_t, dtype=np.bool_)
+    source_valid_mask_arr = np.asarray(source_valid_action_mask_t, dtype=np.bool_)
 
     sv_count_arr = np.asarray(source_valid_action_count_t, dtype=np.int32)
     sel_non_noop_arr = np.asarray(selected_non_noop_count_t, dtype=np.int32)
@@ -329,6 +335,7 @@ def _run_single_mode(
         terminated_t=term_arr,
         truncated_t=trunc_arr,
         action_mask_available_t=mask_avail_arr,
+        source_valid_action_mask_t=source_valid_mask_arr,
         source_valid_action_count_t=sv_count_arr,
         selected_non_noop_count_t=sel_non_noop_arr,
         source_valid_non_noop_count_t=sv_non_noop_arr,
@@ -352,11 +359,13 @@ def _run_single_mode(
         "map_path": str(args.map_path),
         "observation_shape": list(EXPECTED_OBS_SHAPE),
         "raw_action_nvec": list(EXPECTED_RAW_ACTION_NVEC),
-        "stored_action_format": "per_cell_policy_branches",
+        "stored_action_format": "supervised_per_cell_policy_branches_source_invalid_noop",
         "stored_action_dtype": str(act_arr.dtype),
         "stored_action_shape": ["T", 576, 7],
         "stored_action_branch_sizes": list(BRANCH_SIZES),
         "exported_per_cell_branch_sizes": list(BRANCH_SIZES),
+        "source_invalid_cells_forced_to_noop": True,
+        "source_valid_action_mask_stored": True,
         "env_step_action_format": "training_compatible_java_valid_actions" if args.step_mode == "training_compatible" else "raw_grid_action_diagnostic_only",
         "step_mode": str(args.step_mode),
         "mask_required": bool(args.require_mask),
@@ -382,7 +391,8 @@ def _run_single_mode(
         "step_mode_is_final_evidence_valid": bool(args.step_mode == "training_compatible" and bool(args.require_mask)),
         "cli_args": vars(args),
         "notes": [
-            "Stored action is per-cell policy branch action [T,576,7]; env.step action is separate training-compatible Java payload.",
+            "Stored supervised action is per-cell policy branch action [T,576,7] with source-invalid cells forced to NoOp.",
+            "Raw sampled policy branches are still filtered through the training-compatible Java payload for env.step.",
             "Raw env.step([N,576,7]) path is diagnostic only and not valid final export evidence.",
             "Masking is pre-sampling and diagnostic; Unity runtime validation remains authoritative.",
         ],

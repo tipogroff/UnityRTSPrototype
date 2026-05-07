@@ -1,0 +1,88 @@
+{
+  "status": "pass",
+  "checkpoint": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\legacy032_v2_full_bc_stage6b1\\legacy032_v2_full_bc_stage6b1_best.pt",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+  "split": "bc_validation",
+  "samples": 5601,
+  "source_valid_action_mask_present": false,
+  "action_type_accuracy": 0.17124329236842628,
+  "branch_accuracies": {
+    "action_type": 0.17124329236842628,
+    "move_dir": 0.25503785832654297,
+    "harvest_dir": 0.24997093448445276,
+    "return_dir": 0.24970299594047532,
+    "produce_dir": 0.2502502333636987,
+    "produce_unit_type": 0.14448305723315003,
+    "attack_target_local": 0.020537246550340314
+  },
+  "noop_prediction_share": 0.03605382967327263,
+  "predicted_action_type_histogram": {
+    "0": 116316,
+    "1": 357041,
+    "2": 186001,
+    "3": 855181,
+    "4": 1460019,
+    "5": 251618
+  },
+  "target_action_type_histogram": {
+    "0": 548451,
+    "1": 546115,
+    "2": 533278,
+    "3": 532821,
+    "4": 533502,
+    "5": 532009
+  },
+  "source_valid_non_noop_recall": null,
+  "source_invalid_false_non_noop_rate": null,
+  "source_valid_metrics_unavailable_reason": "old corrupted Stage5P4 BC-ready split has no source_valid_action_mask",
+  "action_type_confusion_matrix_rows_target_cols_pred": [
+    [
+      24731,
+      64333,
+      30991,
+      142623,
+      243998,
+      41775
+    ],
+    [
+      19583,
+      68601,
+      30868,
+      142199,
+      242832,
+      42032
+    ],
+    [
+      17977,
+      56048,
+      31390,
+      142580,
+      243547,
+      41736
+    ],
+    [
+      18031,
+      55754,
+      30993,
+      142382,
+      243540,
+      42121
+    ],
+    [
+      18063,
+      56262,
+      31100,
+      142598,
+      243441,
+      42038
+    ],
+    [
+      17931,
+      56043,
+      30659,
+      142799,
+      242661,
+      41916
+    ]
+  ]
+}

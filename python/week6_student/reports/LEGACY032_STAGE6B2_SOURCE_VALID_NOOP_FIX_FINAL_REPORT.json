@@ -1,0 +1,63 @@
+{
+  "status": "complete",
+  "go_no_go_unity_visual_inference": "GO",
+  "artifacts": {
+    "raw_rollout_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_rollouts\\legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+    "adapted_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports\\legacy032_3m_source_valid_noopfix_unity_v2_adapted_20260506T225257Z",
+    "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+    "student_checkpoint_best": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\Stage6B2_SourceValidNoOpFix\\legacy032_v2_bc_source_valid_noop_fix_best.pt",
+    "student_checkpoint_final": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\Stage6B2_SourceValidNoOpFix\\legacy032_v2_bc_source_valid_noop_fix_final.pt",
+    "report_paths": {
+      "raw": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_source_valid_noopfix_raw_sanity.json",
+      "adapted": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_source_valid_noopfix_adapted_sanity.json",
+      "old_sanity": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_old_stage5p4_bc_ready_action_source_sanity.json",
+      "new_sanity": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_source_valid_noopfix_bc_ready_action_source_sanity.json",
+      "old_probe": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_old_stage6b1_probe_corrupted_bc_validation.json",
+      "new_probe_debug": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_stage6b2_source_valid_noopfix_probe_bc_debug.json",
+      "new_probe_val": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\reports\\legacy032_stage6b2_source_valid_noopfix_probe_bc_validation.json",
+      "training": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week6_student\\runs\\Stage6B2_SourceValidNoOpFix\\training_summary.json"
+    }
+  },
+  "old_bad_dataset_stats": {
+    "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+    "status": "fail",
+    "train_noop_share": 0.16981181610064477,
+    "validation_noop_share": 0.17000033476164972,
+    "source_valid_action_mask_present": false
+  },
+  "new_dataset_stats": {
+    "raw_noop_share_all_cells": 0.9933494849621028,
+    "raw_source_invalid_non_noop_labels": 0,
+    "raw_source_valid_non_noop_labels": 316722,
+    "bc_train_noop_share": 0.9933568144843811,
+    "bc_validation_noop_share": 0.9933079510025264,
+    "bc_source_invalid_non_noop": 0
+  },
+  "old_stage6b1_probe": {
+    "action_type_accuracy": 0.17124329236842628,
+    "noop_prediction_share": 0.03605382967327263,
+    "source_valid_metrics": "unavailable_missing_mask"
+  },
+  "new_stage6b2_probe_validation": {
+    "action_type_accuracy": 0.9997686025103478,
+    "branch_accuracies": {
+      "action_type": 0.9997686025103478,
+      "move_dir": 0.9810581753003916,
+      "harvest_dir": 1.0,
+      "return_dir": 1.0,
+      "produce_dir": 0.9991189427312775,
+      "produce_unit_type": 1.0,
+      "attack_target_local": 1.0
+    },
+    "noop_prediction_share": 0.9931192493594223,
+    "source_valid_non_noop_recall": 0.9971341909842066,
+    "source_valid_non_noop_exact_action_type_recall": 0.996485723250706,
+    "source_invalid_false_non_noop_rate": 0.00011380494235729313,
+    "go_for_unity_visual_inference": true
+  },
+  "remaining_risks": [
+    "Deterministic export is cleaner for BC but less behaviorally diverse than stochastic export.",
+    "Offline probe validates BC split behavior only; Unity runtime observation parity still needs visual inference verification.",
+    "The source-valid-aware trainer is a focused new BC trainer, not the old Stage6B1 objective."
+  ]
+}

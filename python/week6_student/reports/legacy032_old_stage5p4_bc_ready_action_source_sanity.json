@@ -1,0 +1,93 @@
+{
+  "status": "fail",
+  "bc_ready_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+  "min_noop_share": 0.75,
+  "splits": [
+    {
+      "split": "bc_train",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z\\bc_train.npz",
+      "samples": 31742,
+      "action_shape": [
+        31742,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 3104736,
+        "move": 3097324,
+        "harvest": 3018513,
+        "return": 3019071,
+        "produce": 3024991,
+        "attack": 3018757
+      },
+      "noop_share": 0.16981181610064477,
+      "source_valid_action_mask_present": false,
+      "source_valid_cells_mean": null,
+      "source_invalid_non_noop": null,
+      "failures": [
+        "source_valid_action_mask missing",
+        "NoOp share 0.169812 < 0.750000; off-actor labels likely not forced to NoOp"
+      ]
+    },
+    {
+      "split": "bc_validation",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z\\bc_validation.npz",
+      "samples": 5601,
+      "action_shape": [
+        5601,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 548451,
+        "move": 546115,
+        "harvest": 533278,
+        "return": 532821,
+        "produce": 533502,
+        "attack": 532009
+      },
+      "noop_share": 0.17000033476164972,
+      "source_valid_action_mask_present": false,
+      "source_valid_cells_mean": null,
+      "source_invalid_non_noop": null,
+      "failures": [
+        "source_valid_action_mask missing",
+        "NoOp share 0.170000 < 0.750000; off-actor labels likely not forced to NoOp"
+      ]
+    },
+    {
+      "split": "bc_debug",
+      "path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_exports_bc\\legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z\\bc_debug.npz",
+      "samples": 512,
+      "action_shape": [
+        512,
+        576,
+        7
+      ],
+      "action_type_histogram": {
+        "noop": 49952,
+        "move": 49922,
+        "harvest": 48706,
+        "return": 48757,
+        "produce": 48724,
+        "attack": 48851
+      },
+      "noop_share": 0.1693793402777778,
+      "source_valid_action_mask_present": false,
+      "source_valid_cells_mean": null,
+      "source_invalid_non_noop": null,
+      "failures": [
+        "source_valid_action_mask missing",
+        "NoOp share 0.169379 < 0.750000; off-actor labels likely not forced to NoOp"
+      ]
+    }
+  ],
+  "failures": [
+    "source_valid_action_mask missing",
+    "NoOp share 0.169812 < 0.750000; off-actor labels likely not forced to NoOp",
+    "source_valid_action_mask missing",
+    "NoOp share 0.170000 < 0.750000; off-actor labels likely not forced to NoOp",
+    "source_valid_action_mask missing",
+    "NoOp share 0.169379 < 0.750000; off-actor labels likely not forced to NoOp"
+  ]
+}
