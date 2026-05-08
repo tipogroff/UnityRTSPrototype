@@ -327,10 +327,14 @@ namespace RTS.ML
         /// </summary>
         internal int ApplyActions(IReadOnlyList<AgentAction> actions, Owner playerPerspective, ActionMaskSet maskAtSelection, string sourceActionFormat)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ActionApply);
             ResetDiagnostics();
 
             if (actions == null || actions.Count == 0)
+            {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionApply, perfStart);
                 return 0;
+            }
 
             // First-wins conflict resolution: track actor positions commanded this step.
             var processedActors = new System.Collections.Generic.HashSet<GridPosition>();
@@ -351,6 +355,7 @@ namespace RTS.ML
                 ApplyAction(action, playerPerspective, maskAtSelection, sourceActionFormat);
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionApply, perfStart);
             return AcceptedActionsLastStep;
         }
 

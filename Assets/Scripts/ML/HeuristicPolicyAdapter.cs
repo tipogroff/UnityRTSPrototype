@@ -218,9 +218,11 @@ namespace RTS.ML
 
         private (int acceptedTotal, int rejectedTotal) ExecuteDecisionStepWithCountsInternal(bool useCanonicalStepInput, in RlLoopStepInput stepInput)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.HeuristicDecision);
             EnsurePipeline();
             if (!CanRun())
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.HeuristicDecision, perfStart);
                 return (0, 0);
             }
 
@@ -254,6 +256,7 @@ namespace RTS.ML
                 rejected += p2Result.rejected;
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.HeuristicDecision, perfStart);
             return (accepted, rejected);
         }
 

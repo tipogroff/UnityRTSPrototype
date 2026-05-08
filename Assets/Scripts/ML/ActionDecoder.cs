@@ -132,11 +132,13 @@ namespace RTS.ML
         /// </summary>
         public List<AgentAction> DecodeTransferCompatibleBatch(int[] actionFlat, Owner playerPerspective)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ActionDecode);
             var results = new List<AgentAction>();
 
             if (actionFlat == null)
             {
                 Debug.LogWarning("[ActionDecoder] DecodeTransferCompatibleBatch: actionFlat is null");
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
@@ -144,6 +146,7 @@ namespace RTS.ML
             if (actionFlat.Length != expectedLength)
             {
                 Debug.LogWarning($"[ActionDecoder] DecodeTransferCompatibleBatch: array length {actionFlat.Length} != expected {expectedLength}");
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
@@ -158,6 +161,7 @@ namespace RTS.ML
                 }
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
             return results;
         }
 
@@ -172,16 +176,19 @@ namespace RTS.ML
             Owner playerPerspective,
             IReadOnlyList<int> eligibleCellIndices)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ActionDecode);
             var results = new List<AgentAction>();
 
             if (actionFlat == null)
             {
                 Debug.LogWarning("[ActionDecoder] DecodeTransferCompatibleBatchFiltered: actionFlat is null");
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
             if (eligibleCellIndices == null || eligibleCellIndices.Count == 0)
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
@@ -189,6 +196,7 @@ namespace RTS.ML
             if (actionFlat.Length != expectedLength)
             {
                 Debug.LogWarning($"[ActionDecoder] DecodeTransferCompatibleBatchFiltered: array length {actionFlat.Length} != expected {expectedLength}");
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
@@ -204,6 +212,7 @@ namespace RTS.ML
                 }
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
             return results;
         }
 
@@ -233,6 +242,7 @@ namespace RTS.ML
             out Dictionary<UnitActionType, int> postMaskHistogram,
             out Dictionary<int, MaskAwareCellTelemetry> cellTelemetryByFlat)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ActionDecode);
             maskedOutChoicesCount = 0;
             fallbackToNoopCount = 0;
             preMaskHistogram = new Dictionary<UnitActionType, int>();
@@ -242,12 +252,16 @@ namespace RTS.ML
             var reservedMoveTargetsThisDecode = new HashSet<int>();
 
             if (actionFlat == null || eligibleCellIndices == null || eligibleCellIndices.Count == 0)
+            {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
+            }
 
             int expectedLength = ActionContract.TotalActionFlatSize;
             if (actionFlat.Length != expectedLength)
             {
                 Debug.LogWarning($"[ActionDecoder] DecodeTransferCompatibleBatchMaskAware: array length {actionFlat.Length} != expected {expectedLength}");
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
                 return results;
             }
 
@@ -497,6 +511,7 @@ namespace RTS.ML
                     branchParameterMaskReason);
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ActionDecode, perfStart);
             return results;
         }
 

@@ -52,6 +52,8 @@ namespace RTS.Gameplay
         [Header("Runtime")]
         [SerializeField] private bool _autoStartOnPlay = true;
         [SerializeField] private bool _autoStepInFixedUpdate = true;
+        [Tooltip("Minimum wall-clock simulation interval for automatic decisions. 0 keeps the historical every-FixedUpdate behavior.")]
+        [SerializeField] private float _decisionTickIntervalSeconds = 0f;
         [SerializeField] private bool _useHeuristicAI = true;
         [SerializeField] private HeuristicExecutionPath _heuristicExecutionPath = HeuristicExecutionPath.Day5PolicyPipeline;
         [SerializeField] private bool _logLifecycleEvents;
@@ -73,6 +75,7 @@ namespace RTS.Gameplay
         private RuntimeRewardCollector _runtimeRewardCollector;
         private MlPolicyPipelineFacade _policyPipelineFacade;
         private RlLoopCoordinator _rlLoopCoordinator;
+        private float _decisionTickAccumulatorSeconds;
 
         public RewardStepTrace LastRewardStepTrace { get; private set; }
         public RewardBreakdown LastRewardBreakdown { get; private set; }
@@ -87,6 +90,16 @@ namespace RTS.Gameplay
         {
             get => _autoStepInFixedUpdate;
             set => _autoStepInFixedUpdate = value;
+        }
+
+        public float DecisionTickIntervalSeconds
+        {
+            get => _decisionTickIntervalSeconds;
+            set
+            {
+                _decisionTickIntervalSeconds = Mathf.Max(0f, value);
+                _decisionTickAccumulatorSeconds = 0f;
+            }
         }
         public RewardEpisodeSummary CurrentRewardEpisodeSummary =>
             _runtimeRewardCollector != null ? _runtimeRewardCollector.CurrentEpisodeSummary : default;
@@ -144,6 +157,17 @@ namespace RTS.Gameplay
                 return;
             }
 
+            if (_decisionTickIntervalSeconds > 0f)
+            {
+                _decisionTickAccumulatorSeconds += Time.fixedDeltaTime;
+                if (_decisionTickAccumulatorSeconds + 0.0001f < _decisionTickIntervalSeconds)
+                {
+                    return;
+                }
+
+                _decisionTickAccumulatorSeconds = 0f;
+            }
+
             StepMatchWithHeuristics();
         }
 
@@ -184,6 +208,7 @@ namespace RTS.Gameplay
                 // Reset RL loop coordinator for the new episode.
                 _rlLoopCoordinator?.ResetLoop();
                 LastRlLoopStepReport = default;
+                _decisionTickAccumulatorSeconds = 0f;
 
                 // Инициализируем HeuristicDriver
                 if (_useHeuristicAI && _heuristicDriver != null)

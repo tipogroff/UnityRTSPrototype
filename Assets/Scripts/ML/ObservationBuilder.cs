@@ -231,10 +231,13 @@ namespace RTS.ML
         /// </summary>
         public float[] BuildObservation(Owner playerId, ObservationMode mode = ObservationMode.LegacyGymCompatible)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ObservationBuild);
+
             if (playerId == Owner.Neutral)
             {
                 Debug.LogWarning("[ObservationBuilder] BuildObservation called with Owner.Neutral. Caching empty observation.");
                 Array.Clear(_observationBuffer, 0, _observationBuffer.Length);
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ObservationBuild, perfStart);
                 return _observationBuffer;
             }
 
@@ -267,6 +270,7 @@ namespace RTS.ML
                     break;
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.ObservationBuild, perfStart);
             return _observationBuffer;
         }
 

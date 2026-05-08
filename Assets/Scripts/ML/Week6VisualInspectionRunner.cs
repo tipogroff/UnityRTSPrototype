@@ -21,6 +21,13 @@ using Handles = UnityEditor.Handles;
 
 namespace RTS.ML
 {
+    public enum Week6VisualRuntimeMode
+    {
+        Demo = 0,
+        Diagnostic = 1,
+        Profiler = 2
+    }
+
     [DisallowMultipleComponent]
     public sealed class Week6VisualInspectionRunner : MonoBehaviour
     {
@@ -32,6 +39,17 @@ namespace RTS.ML
         [SerializeField] private bool _logTerminalSummary = true;
         [SerializeField] private bool _showGridLabels = true;
         [SerializeField] private bool _showActionMarkers = true;
+
+        [Header("Performance Runtime Mode")]
+        [SerializeField] private Week6VisualRuntimeMode _runtimeMode = Week6VisualRuntimeMode.Demo;
+        [SerializeField] private bool _demoMode = true;
+        [SerializeField] private bool _enableOverlay = false;
+        [SerializeField] private bool _enableJsonTrace = false;
+        [SerializeField] private int _diagnosticSamplingInterval = 10;
+        [SerializeField] private int _targetFrameRate = 30;
+        [SerializeField] private float _decisionTickIntervalSeconds = 0.2f;
+        [SerializeField] private bool _enableProfilerCounters = true;
+        [SerializeField] private string _performanceSummaryRelativePath = "stage6b3_playmode_performance_summary.json";
 
         [Header("Overlay")]
         [SerializeField] private Vector2 _overlayPosition = new Vector2(14f, 14f);
@@ -51,6 +69,9 @@ namespace RTS.ML
         [SerializeField] private bool _autoVisualPlaybackOnPlay = false;
         [SerializeField] private int _autoVisualPlaybackMaxSteps = 100;
         [SerializeField] private float _autoVisualPlaybackStepIntervalSeconds = 0.35f;
+        [SerializeField] private bool _writePlayModeStopDiagnostics = true;
+        [SerializeField] private string _playModeStopDiagnosticsRelativeDir = "python/week6_student/tmp/stage6b3_static_playmode_stop";
+        [SerializeField] private string _softIdleDiagnosticsRelativeDir = "python/week6_student/tmp/stage6b3_static_soft_idle_diagnostic";
 
         [Header("Visual Usability")]
         [SerializeField] private bool _applyBaseVisualScaleOverrideInInspection = true;
@@ -134,6 +155,22 @@ namespace RTS.ML
             new Dictionary<string, Queue<string>>(StringComparer.Ordinal);
         private readonly List<Stage6R5CCommandTerminalEventRow> _stage6r5cTerminalEvents =
             new List<Stage6R5CCommandTerminalEventRow>();
+        private readonly Dictionary<int, Stage6B3PlayModeStepTrace> _playModeStepTraceByStep =
+            new Dictionary<int, Stage6B3PlayModeStepTrace>();
+        private readonly Dictionary<int, int> _heuristicEvaluationsPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _heuristicNonNoOpPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _heuristicAcceptedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _heuristicRejectedPerStep =
+            new Dictionary<int, int>();
+        private bool _playModeStopDiagnosticsWritten;
+        private bool _performanceSummaryWritten;
+        private int _lastStudentAcceptedForTrace;
+        private int _lastStudentRejectedForTrace;
+        private int _lastBaselineAcceptedForTrace;
+        private int _lastBaselineRejectedForTrace;
 
         private GUIStyle _statusBannerStyle;
         private GUIStyle _worldLabelStyle;
@@ -733,6 +770,109 @@ namespace RTS.ML
             public string[] unit_type_prediction_histogram;
         }
 
+        [Serializable]
+        private sealed class Stage6B3PlayModeStepTrace
+        {
+            // General
+            public int step;
+            public int frame;
+            public float unity_time;
+            public string match_phase;
+            public bool terminal;
+            public string terminal_reason;
+            public bool episode_running;
+            public bool episode_auto_step;
+            public string victory_winner;
+            public string victory_reason;
+            public bool runner_enabled;
+            public bool adapter_enabled;
+            public float time_scale;
+
+            // Player1 / Stage6B3
+            public bool policy_decision_requested;
+            public int student_selected_non_noop_count;
+            public int student_selected_noop_count;
+            public int student_mask_non_noop_available_count;
+            public int student_commands_built;
+            public int student_commands_accepted;
+            public int student_commands_rejected;
+            public int student_decision_cap_remaining;
+            public string student_runtime_error;
+
+            // Player2 / scripted bot
+            public bool scripted_decision_requested;
+            public int heuristic_action_evaluations;
+            public int scripted_non_noop_count;
+            public int scripted_accepted_count;
+            public int scripted_rejected_count;
+
+            // Backward compat aliases kept for existing trace readers
+            public int student_accepted_delta;
+            public int student_rejected_delta;
+            public int baseline_accepted_delta;
+            public int baseline_rejected_delta;
+
+            // Runtime state
+            public int player1_units_alive;
+            public int player2_units_alive;
+            public int player1_bases;
+            public int player2_bases;
+            public int player1_resources;
+            public int player2_resources;
+            public int player1_workers;
+            public int player2_workers;
+            public int player1_workers_carrying;
+            public int player2_workers_carrying;
+            public int player1_production_busy_count;
+            public int player2_production_busy_count;
+            public int active_resource_nodes;
+            public int total_remaining_resources;
+            public int pending_commands;
+        }
+
+        [Serializable]
+        private sealed class Stage6B3PlayModeStopSummary
+        {
+            public string generated_at_utc;
+            public string scene;
+            public string stop_reason;
+            public int stop_step;
+            public int stop_frame;
+            public float stop_unity_time;
+            public bool auto_playback_enabled;
+            public bool auto_playback_running;
+            public int auto_playback_max_steps;
+            public int auto_playback_remaining_steps;
+            public int scripted_first_stop_step;
+            public int student_first_stop_step;
+            public bool matchmanager_still_advancing;
+            public string match_phase;
+            public bool episode_running;
+            public bool episode_auto_step;
+            public int trace_row_count;
+            public int max_observed_step;
+            public bool step_80_boundary_cleared;
+            public int student_selected_non_noop_total;
+            public int student_selected_noop_total;
+            public int student_commands_accepted_total;
+            public int student_commands_rejected_total;
+            public int scripted_non_noop_total;
+            public int scripted_accepted_total;
+            public int scripted_rejected_total;
+            public int student_mask_non_noop_available_at_stop;
+            public int student_decision_cap_remaining_at_stop;
+            public int player1_workers_at_stop;
+            public int player2_workers_at_stop;
+            public int player1_workers_carrying_at_stop;
+            public int player2_workers_carrying_at_stop;
+            public int player1_production_busy_count_at_stop;
+            public int player2_production_busy_count_at_stop;
+            public int player1_bases_at_stop;
+            public int player2_bases_at_stop;
+            public int active_resource_nodes_at_stop;
+            public int total_remaining_resources_at_stop;
+        }
+
         private readonly struct RuntimeRejectionInfo
         {
             public RuntimeRejectionInfo(string reason, MatchCommand command)
@@ -1060,6 +1200,7 @@ namespace RTS.ML
 
         private void Start()
         {
+            ApplyRuntimePerformanceSettings();
             ConfigureCameraForVisualInspection();
             _autoPlaybackEnabledRuntime = _autoVisualPlaybackOnPlay;
 
@@ -1078,14 +1219,112 @@ namespace RTS.ML
             }
         }
 
+        public void ConfigureRuntimePerformanceMode(
+            Week6VisualRuntimeMode mode,
+            bool demoMode,
+            bool enableOverlay,
+            bool enableJsonTrace,
+            int diagnosticSamplingInterval,
+            int targetFrameRate,
+            float decisionTickIntervalSeconds)
+        {
+            _runtimeMode = mode;
+            _demoMode = demoMode;
+            _enableOverlay = enableOverlay;
+            _enableJsonTrace = enableJsonTrace;
+            _diagnosticSamplingInterval = Mathf.Max(1, diagnosticSamplingInterval);
+            _targetFrameRate = targetFrameRate;
+            _decisionTickIntervalSeconds = Mathf.Max(0f, decisionTickIntervalSeconds);
+            ApplyRuntimePerformanceSettings();
+        }
+
+        private void ApplyRuntimePerformanceSettings()
+        {
+            bool demo = _demoMode || _runtimeMode == Week6VisualRuntimeMode.Demo;
+            bool profiler = !_demoMode && _runtimeMode == Week6VisualRuntimeMode.Profiler;
+
+            if (demo || profiler)
+            {
+                _enableOverlay = false;
+                _enableJsonTrace = false;
+                _showOverlay = false;
+                _showGridLabels = false;
+                _showActionMarkers = false;
+                _writePlayModeStopDiagnostics = false;
+            }
+            else
+            {
+                _showOverlay = _enableOverlay;
+                _writePlayModeStopDiagnostics = _enableJsonTrace;
+            }
+
+            _diagnosticSamplingInterval = Mathf.Max(1, _diagnosticSamplingInterval);
+            _decisionTickIntervalSeconds = Mathf.Max(0f, _decisionTickIntervalSeconds);
+
+            if (_targetFrameRate > 0)
+            {
+                QualitySettings.vSyncCount = 0;
+                Application.targetFrameRate = _targetFrameRate;
+            }
+
+            if (_episodeController != null)
+            {
+                _episodeController.DecisionTickIntervalSeconds = _decisionTickIntervalSeconds;
+            }
+
+            _performanceSummaryWritten = false;
+            Stage6B3PerformanceCounters.Configure(
+                _enableProfilerCounters,
+                ResolveRuntimeModeLabel(),
+                SceneManager.GetActiveScene().path,
+                _targetFrameRate,
+                _decisionTickIntervalSeconds);
+        }
+
+        private bool ShouldSampleDiagnosticsStep(int step)
+        {
+            if (!_enableJsonTrace)
+            {
+                return false;
+            }
+
+            int interval = Mathf.Max(1, _diagnosticSamplingInterval);
+            return step <= 5 || step % interval == 0;
+        }
+
+        private bool ShouldRefreshVisualDiagnostics(int step)
+        {
+            if (!_enableOverlay && !_showGridLabels && !_showActionMarkers && !_enableJsonTrace)
+            {
+                return false;
+            }
+
+            int interval = Mathf.Max(1, _diagnosticSamplingInterval);
+            return _enableOverlay || step <= 5 || step % interval == 0;
+        }
+
+        private string ResolveRuntimeModeLabel()
+        {
+            if (_demoMode)
+            {
+                return "Demo";
+            }
+
+            return _runtimeMode.ToString();
+        }
+
         private void OnDisable()
         {
+            WritePerformanceSummary("runner_disabled");
             UnsubscribeFromMatchEvents();
             UnsubscribeHeuristicEvents();
         }
 
         private void Update()
         {
+            Stage6B3PerformanceCounters.RecordFrame(Time.unscaledDeltaTime);
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.VisualRunnerUpdate);
+
             ResolveReferences();
             HandleKeyboardShortcuts();
             ApplyVisualScaleOverrides();
@@ -1093,6 +1332,7 @@ namespace RTS.ML
 
             if (!_sessionActive || _episodeController == null || _matchManager == null)
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.VisualRunnerUpdate, perfStart);
                 return;
             }
 
@@ -1105,14 +1345,24 @@ namespace RTS.ML
             int currentStep = _matchManager.Step;
             if (currentStep == _lastCollectedStep)
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.VisualRunnerUpdate, perfStart);
                 return;
             }
 
             _lastCollectedStep = currentStep;
 
-            if (_episodeController.TryGetWeek6StudentExecutionReport(_studentControlledPlayer, out StudentPolicyExecutionReport report))
+            bool hasStudentReport = false;
+            StudentPolicyExecutionReport report = default;
+
+            if (_episodeController.TryGetWeek6StudentExecutionReport(_studentControlledPlayer, out report))
             {
-                RecordStage6R5CLifecycleForStep(currentStep, report);
+                hasStudentReport = true;
+                bool sampleDiagnostics = ShouldSampleDiagnosticsStep(currentStep);
+                if (sampleDiagnostics)
+                {
+                    RecordStage6R5CLifecycleForStep(currentStep, report);
+                }
+
                 _acceptedStudentCommands += report.AcceptedCount;
                 _invalidStudentCommands += report.RejectedCount;
                 _ignoredStudentCommands = _runtimeRejectedStudentCommands;
@@ -1126,23 +1376,29 @@ namespace RTS.ML
                 _totalFallbackToNoop += report.MaskAwareDiagnostics.FallbackToNoopCount;
                 _totalMaskedOutActionChoices += report.MaskAwareDiagnostics.MaskedOutActionTypeChoicesCount;
 
-                _diagnosticsCollector?.RecordStudentDecodedActions(report.DecodedActions);
-                _diagnosticsCollector?.RecordStudentRejectionReasons(report.RejectionReasons);
-                _diagnosticsCollector?.RecordStudentFilterDiagnostics(report.FilterDiagnostics);
-                _diagnosticsCollector?.RecordStudentMaskAwareDiagnostics(report.MaskAwareDiagnostics);
+                if (sampleDiagnostics)
+                {
+                    _diagnosticsCollector?.RecordStudentDecodedActions(report.DecodedActions);
+                    _diagnosticsCollector?.RecordStudentRejectionReasons(report.RejectionReasons);
+                    _diagnosticsCollector?.RecordStudentFilterDiagnostics(report.FilterDiagnostics);
+                    _diagnosticsCollector?.RecordStudentMaskAwareDiagnostics(report.MaskAwareDiagnostics);
+                }
 
                 MergeActionHistogram(_aggregateActionTypeHistogram, report.MaskAwareDiagnostics.PostMaskHistogram);
                 MergeActionHistogram(_aggregateActorActionTypeHistogram, report.MaskAwareDiagnostics.PostMaskHistogram);
 
-                _latestMaskAwareCellTelemetryByFlat.Clear();
-                foreach (KeyValuePair<int, ActionDecoder.MaskAwareCellTelemetry> kvp in report.MaskAwareDiagnostics.CellTelemetryByFlat)
+                if (ShouldRefreshVisualDiagnostics(currentStep))
                 {
-                    _latestMaskAwareCellTelemetryByFlat[kvp.Key] = kvp.Value;
-                }
-                _latestLegalMaskByFlat.Clear();
-                foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in report.MaskAwareDiagnostics.LegalMaskByFlat)
-                {
-                    _latestLegalMaskByFlat[kvp.Key] = kvp.Value;
+                    _latestMaskAwareCellTelemetryByFlat.Clear();
+                    foreach (KeyValuePair<int, ActionDecoder.MaskAwareCellTelemetry> kvp in report.MaskAwareDiagnostics.CellTelemetryByFlat)
+                    {
+                        _latestMaskAwareCellTelemetryByFlat[kvp.Key] = kvp.Value;
+                    }
+                    _latestLegalMaskByFlat.Clear();
+                    foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in report.MaskAwareDiagnostics.LegalMaskByFlat)
+                    {
+                        _latestLegalMaskByFlat[kvp.Key] = kvp.Value;
+                    }
                 }
 
                 for (int i = 0; i < report.RejectionReasons.Count; i++)
@@ -1156,14 +1412,28 @@ namespace RTS.ML
                 _latestLegalMaskByFlat.Clear();
             }
 
-            if (currentStep > 0)
+            if (_enableJsonTrace)
             {
-                _diagnosticsCollector?.RecordStepCompleted();
-                FinalizeStage6R5CCompletedSteps(currentStep);
+                RecordPlayModeStepTrace(currentStep, hasStudentReport, report);
             }
 
-            RefreshLatestDiagnosticsFromArtifacts();
-            BuildActorRowsForOverlay();
+            if (currentStep > 0)
+            {
+                if (ShouldSampleDiagnosticsStep(currentStep))
+                {
+                    _diagnosticsCollector?.RecordStepCompleted();
+                    FinalizeStage6R5CCompletedSteps(currentStep);
+                }
+            }
+
+            if (ShouldRefreshVisualDiagnostics(currentStep))
+            {
+                long refreshStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.VisualDiagnosticsRefresh);
+                RefreshLatestDiagnosticsFromArtifacts();
+                BuildActorRowsForOverlay();
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.VisualDiagnosticsRefresh, refreshStart);
+            }
+
             _lastStepSnapshotReady = true;
 
             EpisodeEndReport terminalReport = _episodeController.LastTerminalReport;
@@ -1171,15 +1441,18 @@ namespace RTS.ML
             {
                 _lastTerminalReason = terminalReport.TerminalReason.ToString();
             }
+
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.VisualRunnerUpdate, perfStart);
         }
 
         private void OnGUI()
         {
-            if (!_showOverlay)
+            if (!_showOverlay || !_enableOverlay)
             {
                 return;
             }
 
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.OnGui);
             ResolveReferences();
 
             string studentSide = _studentControlledPlayer.ToString();
@@ -1254,24 +1527,30 @@ namespace RTS.ML
             GUILayout.EndArea();
 
             DrawFocusCellLabels();
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.OnGui, perfStart);
         }
 
         private void OnDrawGizmos()
         {
-            if (!_showActionMarkers)
+            if (!_showActionMarkers && !_showGridLabels)
             {
                 return;
             }
 
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.Gizmos);
             ResolveReferences();
             if (_gridManager == null)
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.Gizmos, perfStart);
                 return;
             }
 
-            DrawUnitMarkers();
-            DrawActorMarkers();
-            DrawBaselineCommandMarkers();
+            if (_showActionMarkers)
+            {
+                DrawUnitMarkers();
+                DrawActorMarkers();
+                DrawBaselineCommandMarkers();
+            }
 
 #if UNITY_EDITOR
             if (_showGridLabels)
@@ -1279,6 +1558,7 @@ namespace RTS.ML
                 DrawGridLabels();
             }
 #endif
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.Gizmos, perfStart);
         }
 
 #if UNITY_EDITOR
@@ -2637,6 +2917,17 @@ namespace RTS.ML
             _stage6r5cLifecycleById.Clear();
             _stage6r5cPendingByEventKey.Clear();
             _stage6r5cTerminalEvents.Clear();
+            _playModeStepTraceByStep.Clear();
+            _heuristicEvaluationsPerStep.Clear();
+            _heuristicNonNoOpPerStep.Clear();
+            _heuristicAcceptedPerStep.Clear();
+            _heuristicRejectedPerStep.Clear();
+            _playModeStopDiagnosticsWritten = false;
+            _performanceSummaryWritten = false;
+            _lastStudentAcceptedForTrace = 0;
+            _lastStudentRejectedForTrace = 0;
+            _lastBaselineAcceptedForTrace = 0;
+            _lastBaselineRejectedForTrace = 0;
 
             ResetActionHistogram(_aggregateActionTypeHistogram);
             ResetActionHistogram(_aggregateActorActionTypeHistogram);
@@ -2706,6 +2997,12 @@ namespace RTS.ML
 
         private void InitializeDiagnosticsCollector()
         {
+            if (!_enableJsonTrace)
+            {
+                _diagnosticsCollector = null;
+                return;
+            }
+
             Owner baseline = _studentControlledPlayer == Owner.Player1 ? Owner.Player2 : Owner.Player1;
             _diagnosticsCollector = new Week6EpisodeDiagnosticsCollector(_studentControlledPlayer, baseline);
         }
@@ -2717,12 +3014,18 @@ namespace RTS.ML
                 return;
             }
 
-            _diagnosticsCollector?.RecordRuntimeAccepted(command);
+            if (_enableJsonTrace)
+            {
+                _diagnosticsCollector?.RecordRuntimeAccepted(command);
+            }
 
             if (command.Owner == _studentControlledPlayer)
             {
                 RecordCommandTelemetry(command, accepted: true, reason: string.Empty);
-                RecordStage6R5CTerminalEvent(command, accepted: true, normalizedReason: string.Empty, rawReason: string.Empty, diagnostics: default);
+                if (_enableJsonTrace)
+                {
+                    RecordStage6R5CTerminalEvent(command, accepted: true, normalizedReason: string.Empty, rawReason: string.Empty, diagnostics: default);
+                }
                 _lastStepApplyCommandCalled = true;
             }
             else
@@ -2751,7 +3054,10 @@ namespace RTS.ML
                 return;
             }
 
-            _diagnosticsCollector?.RecordRuntimeRejected(command, reason);
+            if (_enableJsonTrace)
+            {
+                _diagnosticsCollector?.RecordRuntimeRejected(command, reason);
+            }
 
             if (command.Owner != _studentControlledPlayer)
             {
@@ -2768,7 +3074,10 @@ namespace RTS.ML
 
             string normalizedReason = NormalizeReason(reason);
             RecordCommandTelemetry(command, accepted: false, reason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
-            RecordStage6R5CTerminalEvent(command, accepted: false, normalizedReason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
+            if (_enableJsonTrace)
+            {
+                RecordStage6R5CTerminalEvent(command, accepted: false, normalizedReason: normalizedReason, rawReason: reason, diagnostics: diagnostics);
+            }
             IncrementStringCount(_runtimeRejectionReasons, normalizedReason);
         }
 
@@ -2779,7 +3088,23 @@ namespace RTS.ML
                 return;
             }
 
-            _diagnosticsCollector?.RecordHeuristicActionEvaluation(evaluation);
+            Stage6B3PerformanceCounters.Increment(Stage6B3PerfMetric.HeuristicDecision);
+
+            if (_enableJsonTrace)
+            {
+                _diagnosticsCollector?.RecordHeuristicActionEvaluation(evaluation);
+            }
+
+            int step = _matchManager != null ? _matchManager.Step : -1;
+            if (_enableJsonTrace && step >= 0)
+            {
+                if (!_heuristicEvaluationsPerStep.TryGetValue(step, out int count))
+                {
+                    count = 0;
+                }
+
+                _heuristicEvaluationsPerStep[step] = count + 1;
+            }
 
             if (evaluation.PlayerId == _studentControlledPlayer)
             {
@@ -2793,6 +3118,27 @@ namespace RTS.ML
             _baselineLastReason = string.IsNullOrWhiteSpace(evaluation.RejectionReason)
                 ? "none"
                 : NormalizeReason(evaluation.RejectionReason);
+
+            // Track non-NoOp, accepted, rejected counts per step for soft-idle analysis
+            if (_enableJsonTrace && step >= 0)
+            {
+                bool isNonNoOp = evaluation.ActionType != UnitActionType.NoOp;
+                if (isNonNoOp)
+                {
+                    _heuristicNonNoOpPerStep.TryGetValue(step, out int nnCount);
+                    _heuristicNonNoOpPerStep[step] = nnCount + 1;
+                }
+                if (evaluation.Accepted)
+                {
+                    _heuristicAcceptedPerStep.TryGetValue(step, out int accCount);
+                    _heuristicAcceptedPerStep[step] = accCount + 1;
+                }
+                else if (!string.IsNullOrEmpty(evaluation.RejectionReason))
+                {
+                    _heuristicRejectedPerStep.TryGetValue(step, out int rejCount);
+                    _heuristicRejectedPerStep[step] = rejCount + 1;
+                }
+            }
         }
 
         private void HandleMatchEnded(Owner winner)
@@ -2816,6 +3162,13 @@ namespace RTS.ML
                     _terminalReportWritten = true;
                 }
 
+                // Flush soft-idle diagnostics when episode ends in continuous mode
+                // (StopAutoPlayback is not called in continuous mode)
+                if (!_manualStepMode && !_autoPlaybackEnabledRuntime)
+                {
+                    WritePlayModeStopDiagnostics("episode_terminal_continuous_mode");
+                }
+
                 if (_logTerminalSummary)
                 {
                     Debug.Log(
@@ -2826,9 +3179,53 @@ namespace RTS.ML
             }
         }
 
+        private void OnApplicationQuit()
+        {
+            // Flush soft-idle diagnostics when user exits Play Mode in continuous mode
+            if (_writePlayModeStopDiagnostics && !_playModeStopDiagnosticsWritten && _playModeStepTraceByStep.Count > 0)
+            {
+                WritePlayModeStopDiagnostics("application_quit_continuous_mode");
+            }
+
+            WritePerformanceSummary("application_quit");
+        }
+
+        private void WritePerformanceSummary(string note)
+        {
+            if (_performanceSummaryWritten || !Application.isPlaying || !Stage6B3PerformanceCounters.Enabled)
+            {
+                return;
+            }
+
+            string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(projectRoot))
+            {
+                return;
+            }
+
+            string outputPath = Path.GetFullPath(Path.Combine(projectRoot, _performanceSummaryRelativePath));
+            StudentBridgeRuntimeSnapshot runtime = _studentAdapter != null
+                ? _studentAdapter.GetRuntimeSnapshot()
+                : default;
+
+            Stage6B3PerformanceCounters.WriteSummary(
+                outputPath,
+                GetCurrentStep(),
+                GetCurrentStep() > 80,
+                _studentAdapter != null && _studentAdapter.EnableLegalActionMaskForSelection,
+                GetCheckpointPathLabel(),
+                _acceptedStudentCommands,
+                _invalidStudentCommands,
+                runtime.DecisionRequestsSent,
+                runtime.DecisionRequestsSucceeded,
+                note);
+
+            _performanceSummaryWritten = true;
+        }
+
         private void WriteCompactDiagnosticsReport()
         {
-            if (_diagnosticsCollector == null || _episodeController == null)
+            if (!_enableJsonTrace || _diagnosticsCollector == null || _episodeController == null)
             {
                 return;
             }
@@ -2856,7 +3253,8 @@ namespace RTS.ML
 
             if (GetKeyDownCompat(KeyCode.D))
             {
-                _showOverlay = !_showOverlay;
+                _enableOverlay = !_enableOverlay;
+                _showOverlay = _enableOverlay;
             }
 
             if (GetKeyDownCompat(KeyCode.G))
@@ -2969,13 +3367,13 @@ namespace RTS.ML
 
             if (_episodeController.LastTerminalReport.IsTerminal)
             {
-                StopAutoPlayback();
+                StopAutoPlayback("terminal_reached");
                 return;
             }
 
             if (_autoPlaybackRemainingSteps <= 0)
             {
-                StopAutoPlayback();
+                StopAutoPlayback("step_budget_reached");
                 return;
             }
 
@@ -2992,7 +3390,7 @@ namespace RTS.ML
 
             if (after <= before)
             {
-                StopAutoPlayback();
+                StopAutoPlayback("step_stalled");
             }
         }
 
@@ -3006,10 +3404,366 @@ namespace RTS.ML
             StartVisualInspectionMatch(pauseBeforeFirstDecision: true);
         }
 
-        private void StopAutoPlayback()
+        private void StopAutoPlayback(string reason = "manual_or_disabled")
         {
             _autoPlaybackRunning = false;
             _autoPlaybackRemainingSteps = 0;
+
+            int step = _matchManager != null ? _matchManager.Step : -1;
+            Debug.LogWarning(
+                "[Week6VisualInspectionRunner][AutoPlaybackStop] "
+                + "reason=" + reason
+                + ", step=" + step
+                + ", frame=" + Time.frameCount
+                + ", time=" + Time.time.ToString("F3", CultureInfo.InvariantCulture)
+                + ", manualStepMode=" + _manualStepMode
+                + ", autoStepInFixedUpdate=" + (_episodeController != null && _episodeController.AutoStepInFixedUpdate));
+
+            WritePlayModeStopDiagnostics(reason);
+        }
+
+        private void RecordPlayModeStepTrace(int step, bool hasStudentReport, StudentPolicyExecutionReport report)
+        {
+            if (!_writePlayModeStopDiagnostics || _matchManager == null)
+            {
+                return;
+            }
+
+            MatchStateSnapshot state = _matchManager.GetMatchState();
+            StudentBridgeRuntimeSnapshot runtime = _studentAdapter != null
+                ? _studentAdapter.GetRuntimeSnapshot()
+                : default;
+
+            int studentAcceptedDelta = _acceptedStudentCommands - _lastStudentAcceptedForTrace;
+            int studentRejectedDelta = _invalidStudentCommands - _lastStudentRejectedForTrace;
+            int baselineAcceptedDelta = _baselineAcceptedCount - _lastBaselineAcceptedForTrace;
+            int baselineRejectedDelta = _baselineRejectedCount - _lastBaselineRejectedForTrace;
+
+            _lastStudentAcceptedForTrace = _acceptedStudentCommands;
+            _lastStudentRejectedForTrace = _invalidStudentCommands;
+            _lastBaselineAcceptedForTrace = _baselineAcceptedCount;
+            _lastBaselineRejectedForTrace = _baselineRejectedCount;
+
+            int heuristicEvaluations = _heuristicEvaluationsPerStep.TryGetValue(step, out int count) ? count : 0;
+            int scriptedNonNoOp     = _heuristicNonNoOpPerStep.TryGetValue(step, out int nnc) ? nnc : 0;
+            int scriptedAccepted    = _heuristicAcceptedPerStep.TryGetValue(step, out int acc) ? acc : 0;
+            int scriptedRejected    = _heuristicRejectedPerStep.TryGetValue(step, out int rej) ? rej : 0;
+
+            // Count student non-noop vs noop
+            int studentNonNoop = 0;
+            int studentNoop = 0;
+            if (hasStudentReport && report.DecodedActions != null)
+            {
+                for (int i = 0; i < report.DecodedActions.Count; i++)
+                {
+                    if (report.DecodedActions[i].ActionType != UnitActionType.NoOp)
+                        studentNonNoop++;
+                    else
+                        studentNoop++;
+                }
+            }
+
+            // Count legal mask non-noop slots available for student
+            int maskNonNoopAvailable = 0;
+            foreach (KeyValuePair<int, StudentMaskAwareDiagnostics.ActorLegalMaskTelemetry> kvp in _latestLegalMaskByFlat)
+            {
+                bool[] actionTypeMask = kvp.Value.ActionTypeMask;
+                if (actionTypeMask == null)
+                {
+                    continue;
+                }
+
+                bool hasAnyNonNoOpLegal = false;
+                for (int actionType = 1; actionType < actionTypeMask.Length; actionType++)
+                {
+                    if (actionTypeMask[actionType])
+                    {
+                        hasAnyNonNoOpLegal = true;
+                        break;
+                    }
+                }
+
+                if (hasAnyNonNoOpLegal)
+                {
+                    maskNonNoopAvailable++;
+                }
+            }
+
+            // Decision cap remaining
+            int decisionCapRemaining = -1;
+            if (_studentAdapter != null)
+            {
+                int maxCap = GetPrivateField(_studentAdapter, "_maxDecisionRequestsPerEpisode", -1);
+                int sent   = runtime.DecisionRequestsSent;
+                decisionCapRemaining = maxCap > 0 ? Mathf.Max(0, maxCap - sent) : -1;
+            }
+
+            // Scan unit registry for rich runtime state
+            int p1Workers = 0, p2Workers = 0;
+            int p1Carrying = 0, p2Carrying = 0;
+            int p1ProdBusy = 0, p2ProdBusy = 0;
+            if (_unitRegistry != null)
+            {
+                System.Collections.Generic.List<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+                for (int i = 0; i < allUnits.Count; i++)
+                {
+                    UnitRuntime u = allUnits[i];
+                    if (u == null || !u.IsAlive) continue;
+
+                    if (u.Type == UnitType.Worker)
+                    {
+                        if (u.Owner == Owner.Player1)
+                        {
+                            p1Workers++;
+                            if (u.CarriedResources > 0) p1Carrying++;
+                        }
+                        else if (u.Owner == Owner.Player2)
+                        {
+                            p2Workers++;
+                            if (u.CarriedResources > 0) p2Carrying++;
+                        }
+                    }
+                    else if (u.IsBuilding)
+                    {
+                        BuildingRuntime building = u.GetComponent<BuildingRuntime>();
+                        if (building != null)
+                        {
+                            ProductionQueue pq = building.GetProductionQueue();
+                            if (pq != null && pq.IsProducing)
+                            {
+                                if (u.Owner == Owner.Player1) p1ProdBusy++;
+                                else if (u.Owner == Owner.Player2) p2ProdBusy++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Resource node state
+            int activeNodes = _resourceManager != null ? _resourceManager.GetActiveResourceCount() : -1;
+            int totalResources = _resourceManager != null ? _resourceManager.GetTotalAvailableResources() : -1;
+
+            string terminalReason = _episodeController != null && _episodeController.LastTerminalReport.IsTerminal
+                ? _episodeController.LastTerminalReport.TerminalReason.ToString()
+                : state.EndReason.ToString();
+
+            var trace = new Stage6B3PlayModeStepTrace
+            {
+                step = step,
+                frame = Time.frameCount,
+                unity_time = Time.time,
+                match_phase = state.Phase.ToString(),
+                terminal = (_episodeController != null && _episodeController.LastTerminalReport.IsTerminal) || state.Phase == MatchPhase.Ended,
+                terminal_reason = terminalReason,
+                episode_running = _episodeController != null && _episodeController.IsRunning,
+                episode_auto_step = _episodeController != null && _episodeController.AutoStepInFixedUpdate,
+                victory_winner = state.Winner.ToString(),
+                victory_reason = state.EndReason.ToString(),
+                runner_enabled = isActiveAndEnabled,
+                adapter_enabled = _studentAdapter != null && _studentAdapter.isActiveAndEnabled,
+                time_scale = Time.timeScale,
+
+                policy_decision_requested = hasStudentReport || studentNonNoop > 0,
+                student_selected_non_noop_count = studentNonNoop,
+                student_selected_noop_count = studentNoop,
+                student_mask_non_noop_available_count = maskNonNoopAvailable,
+                student_commands_built = studentAcceptedDelta + studentRejectedDelta,
+                student_commands_accepted = studentAcceptedDelta,
+                student_commands_rejected = studentRejectedDelta,
+                student_decision_cap_remaining = decisionCapRemaining,
+                student_runtime_error = runtime.LastError ?? string.Empty,
+
+                scripted_decision_requested = heuristicEvaluations > 0 || baselineAcceptedDelta > 0 || baselineRejectedDelta > 0,
+                heuristic_action_evaluations = heuristicEvaluations,
+                scripted_non_noop_count = scriptedNonNoOp,
+                scripted_accepted_count = scriptedAccepted,
+                scripted_rejected_count = scriptedRejected,
+
+                // Backward compat
+                student_accepted_delta = studentAcceptedDelta,
+                student_rejected_delta = studentRejectedDelta,
+                baseline_accepted_delta = baselineAcceptedDelta,
+                baseline_rejected_delta = baselineRejectedDelta,
+
+                player1_units_alive = state.Player1UnitCount,
+                player2_units_alive = state.Player2UnitCount,
+                player1_bases = state.Player1BaseCount,
+                player2_bases = state.Player2BaseCount,
+                player1_resources = state.Player1Resources,
+                player2_resources = state.Player2Resources,
+                player1_workers = p1Workers,
+                player2_workers = p2Workers,
+                player1_workers_carrying = p1Carrying,
+                player2_workers_carrying = p2Carrying,
+                player1_production_busy_count = p1ProdBusy,
+                player2_production_busy_count = p2ProdBusy,
+                active_resource_nodes = activeNodes,
+                total_remaining_resources = totalResources,
+                pending_commands = state.PendingCommands,
+            };
+
+            _playModeStepTraceByStep[step] = trace;
+        }
+
+        private void WritePlayModeStopDiagnostics(string reason)
+        {
+            if (!_writePlayModeStopDiagnostics || _playModeStopDiagnosticsWritten)
+            {
+                return;
+            }
+
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+
+            // Soft-idle diagnostic output (primary)
+            string softIdleDir = string.IsNullOrWhiteSpace(_softIdleDiagnosticsRelativeDir)
+                ? null
+                : Path.Combine(projectRoot, _softIdleDiagnosticsRelativeDir);
+
+            // Legacy stop diagnostic output (backward compat)
+            string legacyDir = string.IsNullOrWhiteSpace(_playModeStopDiagnosticsRelativeDir)
+                ? null
+                : Path.Combine(projectRoot, _playModeStopDiagnosticsRelativeDir);
+
+            if (softIdleDir == null && legacyDir == null)
+            {
+                return;
+            }
+
+            var sortedSteps = new List<int>(_playModeStepTraceByStep.Keys);
+            sortedSteps.Sort();
+
+            // Compute stop boundaries
+            int scriptedStopStep = -1;
+            int studentStopStep = -1;
+            bool seenScriptedActive = false;
+            bool seenStudentActive = false;
+            for (int i = 0; i < sortedSteps.Count; i++)
+            {
+                Stage6B3PlayModeStepTrace trace = _playModeStepTraceByStep[sortedSteps[i]];
+                if (trace.scripted_decision_requested)
+                {
+                    seenScriptedActive = true;
+                }
+                else if (seenScriptedActive && scriptedStopStep < 0)
+                {
+                    scriptedStopStep = trace.step;
+                }
+
+                if (trace.policy_decision_requested)
+                {
+                    seenStudentActive = true;
+                }
+                else if (seenStudentActive && studentStopStep < 0)
+                {
+                    studentStopStep = trace.step;
+                }
+            }
+
+            int maxObservedStep = sortedSteps.Count > 0 ? sortedSteps[sortedSteps.Count - 1] : -1;
+            int studentNonNoOpTotal = 0;
+            int studentNoOpTotal = 0;
+            int studentAcceptedTotal = 0;
+            int studentRejectedTotal = 0;
+            int scriptedNonNoOpTotal = 0;
+            int scriptedAcceptedTotal = 0;
+            int scriptedRejectedTotal = 0;
+            for (int i = 0; i < sortedSteps.Count; i++)
+            {
+                Stage6B3PlayModeStepTrace trace = _playModeStepTraceByStep[sortedSteps[i]];
+                studentNonNoOpTotal += trace.student_selected_non_noop_count;
+                studentNoOpTotal += trace.student_selected_noop_count;
+                studentAcceptedTotal += trace.student_commands_accepted;
+                studentRejectedTotal += trace.student_commands_rejected;
+                scriptedNonNoOpTotal += trace.scripted_non_noop_count;
+                scriptedAcceptedTotal += trace.scripted_accepted_count;
+                scriptedRejectedTotal += trace.scripted_rejected_count;
+            }
+
+            Stage6B3PlayModeStepTrace stopTrace = default;
+            bool hasStopTrace = _matchManager != null
+                && _playModeStepTraceByStep.TryGetValue(_matchManager.Step, out stopTrace);
+
+            MatchStateSnapshot state = _matchManager != null ? _matchManager.GetMatchState() : default;
+            var summary = new Stage6B3PlayModeStopSummary
+            {
+                generated_at_utc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                scene = SceneManager.GetActiveScene().path,
+                stop_reason = reason ?? "unknown",
+                stop_step = _matchManager != null ? _matchManager.Step : -1,
+                stop_frame = Time.frameCount,
+                stop_unity_time = Time.time,
+                auto_playback_enabled = _autoPlaybackEnabledRuntime,
+                auto_playback_running = _autoPlaybackRunning,
+                auto_playback_max_steps = _autoVisualPlaybackMaxSteps,
+                auto_playback_remaining_steps = _autoPlaybackRemainingSteps,
+                scripted_first_stop_step = scriptedStopStep,
+                student_first_stop_step = studentStopStep,
+                matchmanager_still_advancing = state.Phase == MatchPhase.Running,
+                match_phase = state.Phase.ToString(),
+                episode_running = _episodeController != null && _episodeController.IsRunning,
+                episode_auto_step = _episodeController != null && _episodeController.AutoStepInFixedUpdate,
+                trace_row_count = sortedSteps.Count,
+                max_observed_step = maxObservedStep,
+                step_80_boundary_cleared = maxObservedStep > 80,
+                student_selected_non_noop_total = studentNonNoOpTotal,
+                student_selected_noop_total = studentNoOpTotal,
+                student_commands_accepted_total = studentAcceptedTotal,
+                student_commands_rejected_total = studentRejectedTotal,
+                scripted_non_noop_total = scriptedNonNoOpTotal,
+                scripted_accepted_total = scriptedAcceptedTotal,
+                scripted_rejected_total = scriptedRejectedTotal,
+                student_mask_non_noop_available_at_stop = hasStopTrace ? stopTrace.student_mask_non_noop_available_count : -1,
+                student_decision_cap_remaining_at_stop = hasStopTrace ? stopTrace.student_decision_cap_remaining : -1,
+                player1_workers_at_stop = hasStopTrace ? stopTrace.player1_workers : -1,
+                player2_workers_at_stop = hasStopTrace ? stopTrace.player2_workers : -1,
+                player1_workers_carrying_at_stop = hasStopTrace ? stopTrace.player1_workers_carrying : -1,
+                player2_workers_carrying_at_stop = hasStopTrace ? stopTrace.player2_workers_carrying : -1,
+                player1_production_busy_count_at_stop = hasStopTrace ? stopTrace.player1_production_busy_count : -1,
+                player2_production_busy_count_at_stop = hasStopTrace ? stopTrace.player2_production_busy_count : -1,
+                player1_bases_at_stop = hasStopTrace ? stopTrace.player1_bases : -1,
+                player2_bases_at_stop = hasStopTrace ? stopTrace.player2_bases : -1,
+                active_resource_nodes_at_stop = hasStopTrace ? stopTrace.active_resource_nodes : -1,
+                total_remaining_resources_at_stop = hasStopTrace ? stopTrace.total_remaining_resources : -1,
+            };
+
+            string summaryJson = JsonUtility.ToJson(summary, true);
+
+            // Write soft-idle diagnostic artifacts (primary)
+            if (softIdleDir != null)
+            {
+                Directory.CreateDirectory(softIdleDir);
+                string softIdleTrace   = Path.Combine(softIdleDir, "stage6b3_static_soft_idle_trace.jsonl");
+                string softIdleSummary = Path.Combine(softIdleDir, "stage6b3_static_soft_idle_summary.json");
+                using (var writer = new StreamWriter(softIdleTrace, false, new UTF8Encoding(true)))
+                {
+                    for (int i = 0; i < sortedSteps.Count; i++)
+                    {
+                        writer.WriteLine(JsonUtility.ToJson(_playModeStepTraceByStep[sortedSteps[i]]));
+                    }
+                }
+                File.WriteAllText(softIdleSummary, summaryJson, Encoding.UTF8);
+                Debug.Log("[Week6VisualInspectionRunner] Soft-idle diagnostics written to: " + softIdleDir);
+            }
+
+            // Write legacy stop diagnostic artifacts (backward compat)
+            if (legacyDir != null)
+            {
+                Directory.CreateDirectory(legacyDir);
+                string legacyTrace   = Path.Combine(legacyDir, "stage6b3_static_playmode_stop_trace.jsonl");
+                string legacySummary = Path.Combine(legacyDir, "stage6b3_static_playmode_stop_diagnostic.json");
+                using (var writer = new StreamWriter(legacyTrace, false, new UTF8Encoding(true)))
+                {
+                    for (int i = 0; i < sortedSteps.Count; i++)
+                    {
+                        writer.WriteLine(JsonUtility.ToJson(_playModeStepTraceByStep[sortedSteps[i]]));
+                    }
+                }
+                File.WriteAllText(legacySummary, summaryJson, Encoding.UTF8);
+            }
+
+            _playModeStopDiagnosticsWritten = true;
+            string writtenTo = softIdleDir ?? legacyDir ?? "(none)";
+            Debug.Log("[Week6VisualInspectionRunner] Playmode stop diagnostics written to: " + writtenTo);
         }
 
         private void ApplyVisualScaleOverrides()

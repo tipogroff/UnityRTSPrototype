@@ -485,6 +485,7 @@ namespace RTS.ML
         [Header("Python bridge")]
         [SerializeField] private bool _verboseLogs;
         [SerializeField] private bool _validateObservationEachStep;
+        [SerializeField] private bool _enableFullRawObservationDiagnostic = true;
         [SerializeField] private int _serverStartupTimeoutMs = 15000;
         [SerializeField] private int _requestTimeoutMs = 5000;
         [SerializeField] private int _maxDecisionRequestsPerEpisode = 200;
@@ -588,6 +589,13 @@ namespace RTS.ML
 
         internal StudentPolicyExecutionReport ExecuteDecision(Owner playerId, in RlLoopStepInput stepInput)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.PolicyInference);
+            StudentPolicyExecutionReport Finish(StudentPolicyExecutionReport result)
+            {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.PolicyInference, perfStart);
+                return result;
+            }
+
             EnsurePipeline();
 
             _inferenceDiagnostics.adapter_invoked = true;
@@ -608,7 +616,7 @@ namespace RTS.ML
             {
                 _inferenceDiagnostics.python_request_status = "skipped_decision_cap";
                 _inferenceDiagnostics.adapter_artifact_missing_reason = "decision_request_cap_reached";
-                return RecordFailure(playerId, false, $"Decision request cap reached ({_maxDecisionRequestsPerEpisode}).");
+                return Finish(RecordFailure(playerId, false, $"Decision request cap reached ({_maxDecisionRequestsPerEpisode})."));
             }
 
             _decisionRequestsSent++;
@@ -617,14 +625,14 @@ namespace RTS.ML
             {
                 _inferenceDiagnostics.python_request_status = "pipeline_not_ready";
                 _inferenceDiagnostics.adapter_artifact_missing_reason = "student_policy_pipeline_not_ready";
-                return RecordFailure(playerId, false, "Student policy pipeline is not ready.");
+                return Finish(RecordFailure(playerId, false, "Student policy pipeline is not ready."));
             }
 
             if (!EnsureBridgeStarted(out string bridgeError))
             {
                 _inferenceDiagnostics.python_request_status = "bridge_start_failed";
                 _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_start_failed";
-                return RecordFailure(playerId, false, bridgeError);
+                return Finish(RecordFailure(playerId, false, bridgeError));
             }
 
             bool canUseCanonical = stepInput.Perspective == playerId
@@ -652,10 +660,10 @@ namespace RTS.ML
                 {
                     _inferenceDiagnostics.python_request_status = "observation_validation_failed";
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "observation_validation_failed";
-                    return RecordFailure(
+                    return Finish(RecordFailure(
                         playerId,
                         canUseCanonical,
-                        "Observation validation failed before student inference: " + validation);
+                        "Observation validation failed before student inference: " + validation));
                 }
             }
 
@@ -674,12 +682,15 @@ namespace RTS.ML
 
                 // Stage10D.12R: Capture full raw runtime observation tensor for diagnostics.
                 // Capture point must remain before bridge request send.
-                string rawTensorJsonPath = Path.Combine(artifactDir, $"stage10d12r_full_raw_runtime_observation_step{_decisionIndex:D4}.json");
-                CaptureFullRawObservationDiagnostic(
-                    observationPackage.SpatialObservation,
-                    playerId,
-                    _decisionIndex,
-                    rawTensorJsonPath);
+                if (_enableFullRawObservationDiagnostic)
+                {
+                    string rawTensorJsonPath = Path.Combine(artifactDir, $"stage10d12r_full_raw_runtime_observation_step{_decisionIndex:D4}.json");
+                    CaptureFullRawObservationDiagnostic(
+                        observationPackage.SpatialObservation,
+                        playerId,
+                        _decisionIndex,
+                        rawTensorJsonPath);
+                }
 
                 var request = new BridgeRequestEnvelope
                 {
@@ -692,21 +703,25 @@ namespace RTS.ML
 
                 _inferenceDiagnostics.python_request_status = "request_sent";
 
+                long bridgeStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.BridgeRoundTrip);
                 _bridgeStdIn.WriteLine(JsonUtility.ToJson(request));
                 _bridgeStdIn.Flush();
 
                 if (!TryReadBridgeLine(_requestTimeoutMs, out string responseLine, out string readError))
                 {
+                    Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.BridgeRoundTrip, bridgeStart);
                     _inferenceDiagnostics.python_response_status = "response_timeout_or_error";
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_response_timeout_or_error";
-                    return RecordFailure(playerId, canUseCanonical, "Student bridge response timeout/error: " + readError);
+                    return Finish(RecordFailure(playerId, canUseCanonical, "Student bridge response timeout/error: " + readError));
                 }
+
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.BridgeRoundTrip, bridgeStart);
 
                 if (string.IsNullOrWhiteSpace(responseLine))
                 {
                     _inferenceDiagnostics.python_response_status = "empty_response_line";
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_empty_response_line";
-                    return RecordFailure(playerId, canUseCanonical, "Student bridge returned an empty response line.");
+                    return Finish(RecordFailure(playerId, canUseCanonical, "Student bridge returned an empty response line."));
                 }
 
                 _inferenceDiagnostics.raw_bridge_response_keys = ExtractTopLevelJsonKeys(responseLine);
@@ -716,7 +731,7 @@ namespace RTS.ML
                 {
                     _inferenceDiagnostics.python_response_status = "response_parse_failed";
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_response_parse_failed";
-                    return RecordFailure(playerId, canUseCanonical, "Cannot parse student bridge response.");
+                    return Finish(RecordFailure(playerId, canUseCanonical, "Cannot parse student bridge response."));
                 }
 
                 _inferenceDiagnostics.python_response_status = string.IsNullOrWhiteSpace(response.status)
@@ -726,19 +741,19 @@ namespace RTS.ML
                 if (!string.Equals(response.status, "ok", StringComparison.Ordinal))
                 {
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "bridge_inference_failed";
-                    return RecordFailure(
+                    return Finish(RecordFailure(
                         playerId,
                         canUseCanonical,
-                        "Student bridge inference failed: " + response.error);
+                        "Student bridge inference failed: " + response.error));
                 }
 
                 if (!File.Exists(response.output_json))
                 {
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_json_not_written";
-                    return RecordFailure(
+                    return Finish(RecordFailure(
                         playerId,
                         canUseCanonical,
-                        "Student bridge did not produce adapter JSON: " + response.output_json);
+                        "Student bridge did not produce adapter JSON: " + response.output_json));
                 }
 
                 string adapterJsonText = File.ReadAllText(response.output_json);
@@ -746,16 +761,16 @@ namespace RTS.ML
                 if (adapterResult == null)
                 {
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_json_parse_failed";
-                    return RecordFailure(playerId, canUseCanonical, "Cannot parse adapter JSON payload.");
+                    return Finish(RecordFailure(playerId, canUseCanonical, "Cannot parse adapter JSON payload."));
                 }
 
                 if (!string.Equals(adapterResult.status, "ok", StringComparison.Ordinal))
                 {
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_status_not_ok";
-                    return RecordFailure(
+                    return Finish(RecordFailure(
                         playerId,
                         canUseCanonical,
-                        "Student adapter payload is not ok: " + adapterResult.error);
+                        "Student adapter payload is not ok: " + adapterResult.error));
                 }
 
                 UpdateInferenceDiagnosticsFromAdapterJson(adapterJsonText, response.output_json);
@@ -763,7 +778,7 @@ namespace RTS.ML
                 if (!ValidateAdapterPayload(adapterResult, out string payloadError))
                 {
                     _inferenceDiagnostics.adapter_artifact_missing_reason = "adapter_payload_validation_failed";
-                    return RecordFailure(playerId, canUseCanonical, payloadError);
+                    return Finish(RecordFailure(playerId, canUseCanonical, payloadError));
                 }
 
                 ActionMaskSet mask = canUseCanonical
@@ -855,13 +870,13 @@ namespace RTS.ML
                 }
 
                 _lastReportByPlayer[playerId] = report;
-                return report;
+                return Finish(report);
             }
             catch (Exception ex)
             {
                 _inferenceDiagnostics.python_response_status = "exception";
                 _inferenceDiagnostics.adapter_artifact_missing_reason = "exception_during_inference";
-                return RecordFailure(playerId, canUseCanonical, "Student live inference failed: " + ex.Message);
+                return Finish(RecordFailure(playerId, canUseCanonical, "Student live inference failed: " + ex.Message));
             }
         }
 
@@ -1308,6 +1323,7 @@ namespace RTS.ML
 
         private static void WriteFloat32Buffer(float[] values, string path)
         {
+            Stage6B3PerformanceCounters.Increment(Stage6B3PerfMetric.JsonWrite);
             using var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
             using var writer = new BinaryWriter(stream);
             for (int i = 0; i < values.Length; i++)
@@ -1453,6 +1469,7 @@ namespace RTS.ML
 
                 // Write diagnostic JSON
                 string json = JsonUtility.ToJson(diagnosticData, true);
+                Stage6B3PerformanceCounters.Increment(Stage6B3PerfMetric.JsonWrite);
                 System.IO.File.WriteAllText(outputJsonPath, json, new System.Text.UTF8Encoding(false));
 
                 bool fileExists = System.IO.File.Exists(outputJsonPath);

@@ -290,6 +290,7 @@ namespace RTS.ML
         /// </summary>
         public ActionMaskSet BuildTransferCompatibleMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
         {
+            long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.LegalMaskBuild);
             var maskSet = new ActionMaskSet(playerId)
             {
                 IsMatchRunning = _matchManager.Phase == MatchPhase.Running,
@@ -299,6 +300,7 @@ namespace RTS.ML
             // Unity-only runtime rule: if the match is not running, actors are masked out.
             if (_matchManager.Phase != MatchPhase.Running)
             {
+                Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.LegalMaskBuild, perfStart);
                 return maskSet;
             }
 
@@ -319,6 +321,7 @@ namespace RTS.ML
                 maskSet.SetActorMask(cellIndex, actorMask);
             }
 
+            Stage6B3PerformanceCounters.End(Stage6B3PerfMetric.LegalMaskBuild, perfStart);
             return maskSet;
         }
 

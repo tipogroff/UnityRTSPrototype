@@ -58,6 +58,8 @@ namespace RTS.ML
         private bool _checkpointExisted;
         private bool _checkpointPathCorrected;
         private bool _legalMaskCorrected;
+        private bool _runnerManualStepCorrected;
+        private bool _runnerAutoPlaybackCorrected;
         private string _resolvedCheckpointPath = string.Empty;
         private string _resolvedCheckpointRelative = string.Empty;
 
@@ -84,6 +86,7 @@ namespace RTS.ML
 
             if (_runnerFound)
             {
+                EnforceRunnerContinuousMode(_runner);
                 _runner.SetCurrentCaptureModeContext(
                     "stage6b3_static_manual_play",
                     Week6PlayerControlMode.StudentInference,
@@ -93,6 +96,35 @@ namespace RTS.ML
             {
                 Debug.LogWarning("[Stage6B3ManualPlayBinding] Week6VisualInspectionRunner not found in scene.");
             }
+        }
+
+        private void EnforceRunnerContinuousMode(Week6VisualInspectionRunner runner)
+        {
+            bool manualStepMode = GetPrivateBool(runner, "_manualStepMode");
+            bool autoPlaybackOnPlay = GetPrivateBool(runner, "_autoVisualPlaybackOnPlay");
+
+            if (manualStepMode)
+            {
+                SetPrivateBool(runner, "_manualStepMode", false);
+                _runnerManualStepCorrected = true;
+                Debug.Log("[Stage6B3ManualPlayBinding] Runner manualStepMode disabled for continuous Play Mode.");
+            }
+
+            if (autoPlaybackOnPlay)
+            {
+                SetPrivateBool(runner, "_autoVisualPlaybackOnPlay", false);
+                _runnerAutoPlaybackCorrected = true;
+                Debug.Log("[Stage6B3ManualPlayBinding] Runner bounded auto-playback disabled for continuous Play Mode.");
+            }
+
+            runner.ConfigureRuntimePerformanceMode(
+                Week6VisualRuntimeMode.Demo,
+                demoMode: true,
+                enableOverlay: false,
+                enableJsonTrace: false,
+                diagnosticSamplingInterval: 10,
+                targetFrameRate: 30,
+                decisionTickIntervalSeconds: 0.2f);
         }
 
         private void Start()
@@ -137,6 +169,16 @@ namespace RTS.ML
             // Update artifact paths to manual-play names
             SetPrivateString(adapter, "_artifactDirectoryRelativePath", ManualPlayArtifactDir);
             SetPrivateString(adapter, "_artifactFilePrefix", ManualPlayArtifactPrefix);
+            SetPrivateBool(adapter, "_verboseLogs", false);
+            SetPrivateBool(adapter, "_enableFullRawObservationDiagnostic", false);
+
+            // Raise per-episode decision cap for continuous mode demo runs (2000 >> typical episode length)
+            int currentCap = GetPrivateInt(adapter, "_maxDecisionRequestsPerEpisode");
+            if (currentCap > 0 && currentCap < 2000)
+            {
+                SetPrivateInt(adapter, "_maxDecisionRequestsPerEpisode", 2000);
+                Debug.Log("[Stage6B3ManualPlayBinding] Decision cap raised: " + currentCap + " → 2000 for continuous demo mode.");
+            }
 
             EnsureDir(Path.Combine(_projectRoot, ManualPlayArtifactDir));
         }
@@ -173,13 +215,17 @@ namespace RTS.ML
                 + "  checkpoint_exists:        " + _checkpointExisted + "\n"
                 + "  checkpoint_corrected:     " + _checkpointPathCorrected + "\n"
                 + "  legal_mask_corrected:     " + _legalMaskCorrected + "\n"
+                + "  runner_manual_corrected:  " + _runnerManualStepCorrected + "\n"
+                + "  runner_autoplay_corrected:" + _runnerAutoPlaybackCorrected + "\n"
+                + "  decision_cap_raised:      " + (GetPrivateInt(_adapter, "_maxDecisionRequestsPerEpisode") == 2000) + "\n"
+                + "  decision_cap_current:     " + (_adapterFound ? GetPrivateInt(_adapter, "_maxDecisionRequestsPerEpisode").ToString() : "n/a") + "\n"
                 + "  policy_source:            student_bc_stage6b3\n"
                 + "  inference_source:         python_bridge\n"
                 + "  fallback_used:            " + fallbackUsed + "\n"
                 + "  heuristic_used:           " + heuristicUsed + "\n"
                 + "  fake_logits_used:         " + fakeLogitsUsed + "\n"
                 + "  legal_parameter_mask:     " + legalMaskActive + "\n"
-                + "  decision_loop:            Week6VisualInspectionRunner (auto-playback)\n"
+                + "  decision_loop:            EpisodeController.FixedUpdate (continuous)\n"
                 + "  player1_controller:       student_policy (Owner.Player1)\n"
                 + "  first_decision:           pending_first_step"
             );
@@ -223,13 +269,15 @@ namespace RTS.ML
                 + "  \"checkpoint_exists\": "         + BoolStr(_checkpointExisted) + ",\n"
                 + "  \"checkpoint_corrected_at_runtime\": " + BoolStr(_checkpointPathCorrected) + ",\n"
                 + "  \"legal_mask_corrected_at_runtime\": " + BoolStr(_legalMaskCorrected) + ",\n"
+                + "  \"runner_manual_mode_corrected\": " + BoolStr(_runnerManualStepCorrected) + ",\n"
+                + "  \"runner_autoplay_mode_corrected\": " + BoolStr(_runnerAutoPlaybackCorrected) + ",\n"
                 + "  \"policy_source\": \"student_bc_stage6b3\",\n"
                 + "  \"inference_source\": \"python_bridge\",\n"
                 + "  \"fallback_used\": false,\n"
                 + "  \"heuristic_used\": false,\n"
                 + "  \"fake_logits_used\": false,\n"
                 + "  \"legal_parameter_mask_enabled\": " + BoolStr(legalMaskActive) + ",\n"
-                + "  \"decision_loop\": \"Week6VisualInspectionRunner_auto_playback\",\n"
+                + "  \"decision_loop\": \"EpisodeController_FixedUpdate_continuous\",\n"
                 + "  \"player1_controller\": \"student_policy\",\n"
                 + "  \"first_decision_requested\": \"pending_first_step\"\n"
                 + "}\n";
@@ -268,6 +316,29 @@ namespace RTS.ML
             {
                 Debug.LogWarning("[Stage6B3ManualPlayBinding] Field not found: " + fieldName);
             }
+        }
+
+        private static void SetPrivateInt(object target, string fieldName, int value)
+        {
+            FieldInfo fi = target.GetType().GetField(fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (fi != null)
+            {
+                fi.SetValue(target, value);
+            }
+            else
+            {
+                Debug.LogWarning("[Stage6B3ManualPlayBinding] Field not found: " + fieldName);
+            }
+        }
+
+        private static int GetPrivateInt(object target, string fieldName)
+        {
+            FieldInfo fi = target.GetType().GetField(fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (fi == null) return 0;
+            object v = fi.GetValue(target);
+            return v is int i ? i : 0;
         }
 
         private static string GetPrivateString(object target, string fieldName)
