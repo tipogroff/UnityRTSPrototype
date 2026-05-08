@@ -165,6 +165,70 @@ namespace RTS.ML
             new Dictionary<int, int>();
         private readonly Dictionary<int, int> _heuristicRejectedPerStep =
             new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedControllerEnabledPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, string> _scriptedControllerReasonPerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _scriptedSkipReasonPerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, int> _scriptedHeuristicCalledPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedHeuristicReturnedActionPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedLegalNonNoOpAvailablePerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedActorCandidatesPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedCanHarvestPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedCanReturnPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedCanProducePerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedCanMovePerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedCanAttackPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedMoveSelectedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedReverseMovePerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedOscillationDetectedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedSameTwoCellLoopPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedDetourUsedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, string> _scriptedDetourReasonPerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _scriptedGoalTypePerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _scriptedGoalCellPerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, int> _scriptedSelectedMoveDirectionPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, string> _scriptedSelectedTargetCellPerStep =
+            new Dictionary<int, string>();
+        private readonly Dictionary<int, int> _scriptedGoalLockedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedGoalLockTicksRemainingPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedReverseBlockedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedRecentCellPenaltyPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedReservedTargetConflictPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedBfsDetourUsedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _scriptedBfsDetourFailedPerStep =
+            new Dictionary<int, int>();
+        private readonly Dictionary<int, float> _scriptedMoveScoreSelectedPerStep =
+            new Dictionary<int, float>();
+        private readonly Dictionary<int, float> _scriptedMoveScoreSecondBestPerStep =
+            new Dictionary<int, float>();
+        private readonly Dictionary<int, string> _scriptedMoveSelectionReasonPerStep =
+            new Dictionary<int, string>();
         private bool _playModeStopDiagnosticsWritten;
         private bool _performanceSummaryWritten;
         private int _lastStudentAcceptedForTrace;
@@ -801,10 +865,47 @@ namespace RTS.ML
 
             // Player2 / scripted bot
             public bool scripted_decision_requested;
+            public bool scripted_controller_enabled;
+            public string scripted_controller_reason;
+            public string scripted_skip_reason;
+            public bool scripted_heuristic_called;
+            public bool scripted_heuristic_returned_action;
             public int heuristic_action_evaluations;
             public int scripted_non_noop_count;
             public int scripted_accepted_count;
             public int scripted_rejected_count;
+            public int scripted_legal_non_noop_available_count;
+            public int scripted_actor_candidates;
+            public int scripted_idle_workers;
+            public int scripted_busy_workers;
+            public int scripted_workers_with_carry;
+            public int scripted_bases_available;
+            public int scripted_resources_available;
+            public int scripted_can_harvest_count;
+            public int scripted_can_return_count;
+            public int scripted_can_produce_count;
+            public int scripted_can_move_count;
+            public int scripted_can_attack_count;
+            public int scripted_move_selected_count;
+            public int scripted_reverse_move_count;
+            public bool scripted_oscillation_detected;
+            public int scripted_same_two_cell_loop_count;
+            public int scripted_detour_used_count;
+            public string scripted_detour_reason;
+            public string scripted_goal_type;
+            public string scripted_goal_cell;
+            public int scripted_selected_move_direction;
+            public string scripted_selected_target_cell;
+            public bool scripted_goal_locked;
+            public int scripted_goal_lock_ticks_remaining;
+            public int scripted_reverse_blocked_count;
+            public int scripted_recent_cell_penalty_count;
+            public int scripted_reserved_target_conflict_count;
+            public int scripted_bfs_detour_used_count;
+            public int scripted_bfs_detour_failed_count;
+            public float scripted_move_score_selected;
+            public float scripted_move_score_second_best;
+            public string scripted_move_selection_reason;
 
             // Backward compat aliases kept for existing trace readers
             public int student_accepted_delta;
@@ -2922,6 +3023,28 @@ namespace RTS.ML
             _heuristicNonNoOpPerStep.Clear();
             _heuristicAcceptedPerStep.Clear();
             _heuristicRejectedPerStep.Clear();
+            _scriptedControllerEnabledPerStep.Clear();
+            _scriptedControllerReasonPerStep.Clear();
+            _scriptedSkipReasonPerStep.Clear();
+            _scriptedHeuristicCalledPerStep.Clear();
+            _scriptedHeuristicReturnedActionPerStep.Clear();
+            _scriptedLegalNonNoOpAvailablePerStep.Clear();
+            _scriptedActorCandidatesPerStep.Clear();
+            _scriptedCanHarvestPerStep.Clear();
+            _scriptedCanReturnPerStep.Clear();
+            _scriptedCanProducePerStep.Clear();
+            _scriptedCanMovePerStep.Clear();
+            _scriptedCanAttackPerStep.Clear();
+            _scriptedMoveSelectedPerStep.Clear();
+            _scriptedReverseMovePerStep.Clear();
+            _scriptedOscillationDetectedPerStep.Clear();
+            _scriptedSameTwoCellLoopPerStep.Clear();
+            _scriptedDetourUsedPerStep.Clear();
+            _scriptedDetourReasonPerStep.Clear();
+            _scriptedGoalTypePerStep.Clear();
+            _scriptedGoalCellPerStep.Clear();
+            _scriptedSelectedMoveDirectionPerStep.Clear();
+            _scriptedSelectedTargetCellPerStep.Clear();
             _playModeStopDiagnosticsWritten = false;
             _performanceSummaryWritten = false;
             _lastStudentAcceptedForTrace = 0;
@@ -2983,6 +3106,8 @@ namespace RTS.ML
 
             _heuristicAdapter.OnActionEvaluated -= HandleHeuristicActionEvaluated;
             _heuristicAdapter.OnActionEvaluated += HandleHeuristicActionEvaluated;
+            _heuristicAdapter.OnDecisionCycleEvaluated -= HandleHeuristicDecisionCycleEvaluated;
+            _heuristicAdapter.OnDecisionCycleEvaluated += HandleHeuristicDecisionCycleEvaluated;
         }
 
         private void UnsubscribeHeuristicEvents()
@@ -2993,6 +3118,7 @@ namespace RTS.ML
             }
 
             _heuristicAdapter.OnActionEvaluated -= HandleHeuristicActionEvaluated;
+            _heuristicAdapter.OnDecisionCycleEvaluated -= HandleHeuristicDecisionCycleEvaluated;
         }
 
         private void InitializeDiagnosticsCollector()
@@ -3139,6 +3265,83 @@ namespace RTS.ML
                     _heuristicRejectedPerStep[step] = rejCount + 1;
                 }
             }
+        }
+
+        private void HandleHeuristicDecisionCycleEvaluated(HeuristicDecisionCycleEvaluation evaluation)
+        {
+            if (!_sessionActive)
+            {
+                return;
+            }
+
+            if (evaluation.PlayerId == _studentControlledPlayer)
+            {
+                return;
+            }
+
+            int step = _matchManager != null ? _matchManager.Step : -1;
+            if (step < 0)
+            {
+                return;
+            }
+
+            _scriptedControllerEnabledPerStep[step] = evaluation.ControlEnabled ? 1 : 0;
+            _scriptedControllerReasonPerStep[step] = string.IsNullOrWhiteSpace(evaluation.ControllerReason)
+                ? "none"
+                : evaluation.ControllerReason;
+            _scriptedSkipReasonPerStep[step] = string.IsNullOrWhiteSpace(evaluation.SkipReason)
+                ? "none"
+                : evaluation.SkipReason;
+
+            if (evaluation.HeuristicCalled)
+            {
+                _scriptedHeuristicCalledPerStep.TryGetValue(step, out int calledCount);
+                _scriptedHeuristicCalledPerStep[step] = calledCount + 1;
+            }
+
+            if (evaluation.EmittedNonNoOpCount > 0)
+            {
+                _scriptedHeuristicReturnedActionPerStep.TryGetValue(step, out int actionCount);
+                _scriptedHeuristicReturnedActionPerStep[step] = actionCount + evaluation.EmittedNonNoOpCount;
+            }
+
+            _scriptedLegalNonNoOpAvailablePerStep[step] = evaluation.LegalNonNoOpAvailableCount;
+            _scriptedActorCandidatesPerStep[step] = evaluation.ActorCandidates;
+            _scriptedCanHarvestPerStep[step] = evaluation.CanHarvestCount;
+            _scriptedCanReturnPerStep[step] = evaluation.CanReturnCount;
+            _scriptedCanProducePerStep[step] = evaluation.CanProduceCount;
+            _scriptedCanMovePerStep[step] = evaluation.CanMoveCount;
+            _scriptedCanAttackPerStep[step] = evaluation.CanAttackCount;
+            _scriptedMoveSelectedPerStep[step] = evaluation.MoveSelectedCount;
+            _scriptedReverseMovePerStep[step] = evaluation.ReverseMoveCount;
+            _scriptedOscillationDetectedPerStep[step] = evaluation.OscillationDetected ? 1 : 0;
+            _scriptedSameTwoCellLoopPerStep[step] = evaluation.SameTwoCellLoopCount;
+            _scriptedDetourUsedPerStep[step] = evaluation.DetourUsedCount;
+            _scriptedDetourReasonPerStep[step] = string.IsNullOrWhiteSpace(evaluation.DetourReason)
+                ? "none"
+                : evaluation.DetourReason;
+            _scriptedGoalTypePerStep[step] = string.IsNullOrWhiteSpace(evaluation.GoalType)
+                ? "None"
+                : evaluation.GoalType;
+            _scriptedGoalCellPerStep[step] = string.IsNullOrWhiteSpace(evaluation.GoalCell)
+                ? "none"
+                : evaluation.GoalCell;
+            _scriptedSelectedMoveDirectionPerStep[step] = evaluation.SelectedMoveDirection;
+            _scriptedSelectedTargetCellPerStep[step] = string.IsNullOrWhiteSpace(evaluation.SelectedTargetCell)
+                ? "none"
+                : evaluation.SelectedTargetCell;
+            _scriptedGoalLockedPerStep[step] = evaluation.GoalLocked ? 1 : 0;
+            _scriptedGoalLockTicksRemainingPerStep[step] = evaluation.GoalLockTicksRemaining;
+            _scriptedReverseBlockedPerStep[step] = evaluation.ReverseBlockedCount;
+            _scriptedRecentCellPenaltyPerStep[step] = evaluation.RecentCellPenaltyCount;
+            _scriptedReservedTargetConflictPerStep[step] = evaluation.ReservedTargetConflictCount;
+            _scriptedBfsDetourUsedPerStep[step] = evaluation.BfsDetourUsedCount;
+            _scriptedBfsDetourFailedPerStep[step] = evaluation.BfsDetourFailedCount;
+            _scriptedMoveScoreSelectedPerStep[step] = evaluation.MoveScoreSelected;
+            _scriptedMoveScoreSecondBestPerStep[step] = evaluation.MoveScoreSecondBest;
+            _scriptedMoveSelectionReasonPerStep[step] = string.IsNullOrWhiteSpace(evaluation.MoveSelectionReason)
+                ? "none"
+                : evaluation.MoveSelectionReason;
         }
 
         private void HandleMatchEnded(Owner winner)
@@ -3448,6 +3651,94 @@ namespace RTS.ML
             int scriptedNonNoOp     = _heuristicNonNoOpPerStep.TryGetValue(step, out int nnc) ? nnc : 0;
             int scriptedAccepted    = _heuristicAcceptedPerStep.TryGetValue(step, out int acc) ? acc : 0;
             int scriptedRejected    = _heuristicRejectedPerStep.TryGetValue(step, out int rej) ? rej : 0;
+            bool scriptedControllerEnabled = _scriptedControllerEnabledPerStep.TryGetValue(step, out int scriptedEnabled) && scriptedEnabled > 0;
+            string scriptedControllerReason = _scriptedControllerReasonPerStep.TryGetValue(step, out string controllerReason)
+                ? controllerReason
+                : "unknown";
+            string scriptedSkipReason = _scriptedSkipReasonPerStep.TryGetValue(step, out string skipReason)
+                ? skipReason
+                : "unknown";
+            bool scriptedHeuristicCalled = _scriptedHeuristicCalledPerStep.TryGetValue(step, out int calledCount) && calledCount > 0;
+            bool scriptedHeuristicReturnedAction = _scriptedHeuristicReturnedActionPerStep.TryGetValue(step, out int emittedCount) && emittedCount > 0;
+            int scriptedLegalNonNoOpAvailable = _scriptedLegalNonNoOpAvailablePerStep.TryGetValue(step, out int legalNonNoOpAvailable)
+                ? legalNonNoOpAvailable
+                : -1;
+            int scriptedActorCandidates = _scriptedActorCandidatesPerStep.TryGetValue(step, out int actorCandidates)
+                ? actorCandidates
+                : -1;
+            int scriptedCanHarvest = _scriptedCanHarvestPerStep.TryGetValue(step, out int canHarvest)
+                ? canHarvest
+                : -1;
+            int scriptedCanReturn = _scriptedCanReturnPerStep.TryGetValue(step, out int canReturn)
+                ? canReturn
+                : -1;
+            int scriptedCanProduce = _scriptedCanProducePerStep.TryGetValue(step, out int canProduce)
+                ? canProduce
+                : -1;
+            int scriptedCanMove = _scriptedCanMovePerStep.TryGetValue(step, out int canMove)
+                ? canMove
+                : -1;
+            int scriptedCanAttack = _scriptedCanAttackPerStep.TryGetValue(step, out int canAttack)
+                ? canAttack
+                : -1;
+            int scriptedMoveSelectedCount = _scriptedMoveSelectedPerStep.TryGetValue(step, out int moveSelectedCount)
+                ? moveSelectedCount
+                : 0;
+            int scriptedReverseMoveCount = _scriptedReverseMovePerStep.TryGetValue(step, out int reverseMoveCount)
+                ? reverseMoveCount
+                : 0;
+            bool scriptedOscillationDetected = _scriptedOscillationDetectedPerStep.TryGetValue(step, out int oscillationDetected)
+                && oscillationDetected > 0;
+            int scriptedSameTwoCellLoopCount = _scriptedSameTwoCellLoopPerStep.TryGetValue(step, out int sameTwoCellLoopCount)
+                ? sameTwoCellLoopCount
+                : 0;
+            int scriptedDetourUsedCount = _scriptedDetourUsedPerStep.TryGetValue(step, out int detourUsedCount)
+                ? detourUsedCount
+                : 0;
+            string scriptedDetourReason = _scriptedDetourReasonPerStep.TryGetValue(step, out string detourReason)
+                ? detourReason
+                : "none";
+            string scriptedGoalType = _scriptedGoalTypePerStep.TryGetValue(step, out string goalType)
+                ? goalType
+                : "None";
+            string scriptedGoalCell = _scriptedGoalCellPerStep.TryGetValue(step, out string goalCell)
+                ? goalCell
+                : "none";
+            int scriptedSelectedMoveDirection = _scriptedSelectedMoveDirectionPerStep.TryGetValue(step, out int selectedMoveDirection)
+                ? selectedMoveDirection
+                : -1;
+            string scriptedSelectedTargetCell = _scriptedSelectedTargetCellPerStep.TryGetValue(step, out string selectedTargetCell)
+                ? selectedTargetCell
+                : "none";
+            bool scriptedGoalLocked = _scriptedGoalLockedPerStep.TryGetValue(step, out int goalLockedCount)
+                && goalLockedCount > 0;
+            int scriptedGoalLockTicksRemaining = _scriptedGoalLockTicksRemainingPerStep.TryGetValue(step, out int goalLockTicksRemaining)
+                ? goalLockTicksRemaining
+                : 0;
+            int scriptedReverseBlockedCount = _scriptedReverseBlockedPerStep.TryGetValue(step, out int reverseBlockedCount)
+                ? reverseBlockedCount
+                : 0;
+            int scriptedRecentCellPenaltyCount = _scriptedRecentCellPenaltyPerStep.TryGetValue(step, out int recentCellPenaltyCount)
+                ? recentCellPenaltyCount
+                : 0;
+            int scriptedReservedTargetConflictCount = _scriptedReservedTargetConflictPerStep.TryGetValue(step, out int reservedTargetConflictCount)
+                ? reservedTargetConflictCount
+                : 0;
+            int scriptedBfsDetourUsedCount = _scriptedBfsDetourUsedPerStep.TryGetValue(step, out int bfsDetourUsedCount)
+                ? bfsDetourUsedCount
+                : 0;
+            int scriptedBfsDetourFailedCount = _scriptedBfsDetourFailedPerStep.TryGetValue(step, out int bfsDetourFailedCount)
+                ? bfsDetourFailedCount
+                : 0;
+            float scriptedMoveScoreSelected = _scriptedMoveScoreSelectedPerStep.TryGetValue(step, out float moveScoreSelected)
+                ? moveScoreSelected
+                : 0f;
+            float scriptedMoveScoreSecondBest = _scriptedMoveScoreSecondBestPerStep.TryGetValue(step, out float moveScoreSecondBest)
+                ? moveScoreSecondBest
+                : 0f;
+            string scriptedMoveSelectionReason = _scriptedMoveSelectionReasonPerStep.TryGetValue(step, out string moveSelectionReason)
+                ? moveSelectionReason
+                : "none";
 
             // Count student non-noop vs noop
             int studentNonNoop = 0;
@@ -3574,10 +3865,47 @@ namespace RTS.ML
                 student_runtime_error = runtime.LastError ?? string.Empty,
 
                 scripted_decision_requested = heuristicEvaluations > 0 || baselineAcceptedDelta > 0 || baselineRejectedDelta > 0,
+                scripted_controller_enabled = scriptedControllerEnabled,
+                scripted_controller_reason = scriptedControllerReason,
+                scripted_skip_reason = scriptedSkipReason,
+                scripted_heuristic_called = scriptedHeuristicCalled,
+                scripted_heuristic_returned_action = scriptedHeuristicReturnedAction,
                 heuristic_action_evaluations = heuristicEvaluations,
                 scripted_non_noop_count = scriptedNonNoOp,
                 scripted_accepted_count = scriptedAccepted,
                 scripted_rejected_count = scriptedRejected,
+                scripted_legal_non_noop_available_count = scriptedLegalNonNoOpAvailable,
+                scripted_actor_candidates = scriptedActorCandidates,
+                scripted_idle_workers = Mathf.Max(0, p2Workers - p2Carrying),
+                scripted_busy_workers = p2Carrying,
+                scripted_workers_with_carry = p2Carrying,
+                scripted_bases_available = state.Player2BaseCount,
+                scripted_resources_available = state.Player2Resources,
+                scripted_can_harvest_count = scriptedCanHarvest,
+                scripted_can_return_count = scriptedCanReturn,
+                scripted_can_produce_count = scriptedCanProduce,
+                scripted_can_move_count = scriptedCanMove,
+                scripted_can_attack_count = scriptedCanAttack,
+                scripted_move_selected_count = scriptedMoveSelectedCount,
+                scripted_reverse_move_count = scriptedReverseMoveCount,
+                scripted_oscillation_detected = scriptedOscillationDetected,
+                scripted_same_two_cell_loop_count = scriptedSameTwoCellLoopCount,
+                scripted_detour_used_count = scriptedDetourUsedCount,
+                scripted_detour_reason = scriptedDetourReason,
+                scripted_goal_type = scriptedGoalType,
+                scripted_goal_cell = scriptedGoalCell,
+                scripted_selected_move_direction = scriptedSelectedMoveDirection,
+                scripted_selected_target_cell = scriptedSelectedTargetCell,
+                scripted_goal_locked = scriptedGoalLocked,
+                scripted_goal_lock_ticks_remaining = scriptedGoalLockTicksRemaining,
+                scripted_reverse_blocked_count = scriptedReverseBlockedCount,
+                scripted_recent_cell_penalty_count = scriptedRecentCellPenaltyCount,
+                scripted_reserved_target_conflict_count = scriptedReservedTargetConflictCount,
+                scripted_bfs_detour_used_count = scriptedBfsDetourUsedCount,
+                scripted_bfs_detour_failed_count = scriptedBfsDetourFailedCount,
+                scripted_move_score_selected = scriptedMoveScoreSelected,
+                scripted_move_score_second_best = scriptedMoveScoreSecondBest,
+                scripted_move_selection_reason = scriptedMoveSelectionReason,
 
                 // Backward compat
                 student_accepted_delta = studentAcceptedDelta,

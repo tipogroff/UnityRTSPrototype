@@ -1,33 +1,33 @@
 ﻿{
-  "generated_at_utc": "2026-05-08T00:26:12.7662523Z",
+  "generated_at_utc": "2026-05-08T05:20:27.4939529Z",
   "mode": "Demo",
   "scene": "Assets/Scenes/Week6_StudentStaticHarvestLayout.unity",
-  "elapsed_seconds": 112.3367,
-  "frames": 2155,
-  "average_fps": 19.1834,
-  "average_frame_ms": 53.905,
-  "max_frame_ms": 7890.0423,
-  "process_cpu_pct_all_cores": 14.2759,
-  "process_cpu_pct_single_core_equivalent": 114.2075,
-  "gc_managed_heap_delta_bytes": 85389312,
+  "elapsed_seconds": 51.0255,
+  "frames": 1034,
+  "average_fps": 20.2644,
+  "average_frame_ms": 53.2866,
+  "max_frame_ms": 4097.6577,
+  "process_cpu_pct_all_cores": 14.7789,
+  "process_cpu_pct_single_core_equivalent": 118.2314,
+  "gc_managed_heap_delta_bytes": 183009280,
   "target_frame_rate": 30,
   "decision_tick_interval_seconds": 0.2,
-  "current_step": 506,
+  "current_step": 239,
   "step_80_boundary_cleared": true,
   "legal_mask_enabled": true,
   "checkpoint_relative_path": "python/week6_student/checkpoints/Stage6B3_SemanticObservationFix/legacy032_v2_bc_source_valid_semantic_obs_fix_final.pt",
-  "accepted_commands": 8340,
+  "accepted_commands": 1086,
   "rejected_commands": 0,
-  "decision_requests_sent": 506,
-  "decision_requests_succeeded": 506,
+  "decision_requests_sent": 239,
+  "decision_requests_succeeded": 239,
   "note": "application_quit",
   "metrics": {
     "Week6VisualInspectionRunner.Update": {
-      "count": 2155,
-      "per_second": 19.1834,
-      "total_ms": 586.4239,
-      "avg_ms": 0.2721,
-      "max_ms": 2.6222
+      "count": 1034,
+      "per_second": 20.2644,
+      "total_ms": 273.6428,
+      "avg_ms": 0.2646,
+      "max_ms": 2.7318
     },
     "Week6VisualInspectionRunner.DiagnosticsRefresh": {
       "count": 0,
@@ -37,53 +37,53 @@
       "max_ms": 0
     },
     "ObservationBuilder.BuildObservation": {
-      "count": 507,
-      "per_second": 4.5132,
-      "total_ms": 90.5689,
-      "avg_ms": 0.1786,
-      "max_ms": 2.5637
+      "count": 240,
+      "per_second": 4.7035,
+      "total_ms": 28.2847,
+      "avg_ms": 0.1179,
+      "max_ms": 2.3805
     },
     "ActionMaskBuilder.BuildTransferCompatibleMask": {
-      "count": 1012,
-      "per_second": 9.0086,
-      "total_ms": 148.4033,
-      "avg_ms": 0.1466,
-      "max_ms": 1.6904
+      "count": 478,
+      "per_second": 9.3679,
+      "total_ms": 33.469,
+      "avg_ms": 0.07,
+      "max_ms": 1.4967
     },
     "Week6StudentPolicyAdapter.ExecuteDecision": {
-      "count": 506,
-      "per_second": 4.5043,
-      "total_ms": 45488.2781,
-      "avg_ms": 89.8978,
-      "max_ms": 1219.5028
+      "count": 239,
+      "per_second": 4.6839,
+      "total_ms": 21487.5242,
+      "avg_ms": 89.906,
+      "max_ms": 1194.511
     },
     "Week6StudentPolicyAdapter.BridgeRoundTrip": {
-      "count": 506,
-      "per_second": 4.5043,
-      "total_ms": 27784.3581,
-      "avg_ms": 54.9098,
-      "max_ms": 92.987
+      "count": 239,
+      "per_second": 4.6839,
+      "total_ms": 12661.9819,
+      "avg_ms": 52.979,
+      "max_ms": 83.849
     },
     "ActionDecoder.Decode": {
-      "count": 506,
-      "per_second": 4.5043,
-      "total_ms": 22.2956,
-      "avg_ms": 0.0441,
-      "max_ms": 1.8183
+      "count": 239,
+      "per_second": 4.6839,
+      "total_ms": 6.0698,
+      "avg_ms": 0.0254,
+      "max_ms": 1.7282
     },
     "ActionApplier.ApplyActions": {
-      "count": 506,
-      "per_second": 4.5043,
-      "total_ms": 29.9971,
-      "avg_ms": 0.0593,
-      "max_ms": 0.3688
+      "count": 239,
+      "per_second": 4.6839,
+      "total_ms": 5.624,
+      "avg_ms": 0.0235,
+      "max_ms": 0.3585
     },
     "HeuristicPolicyAdapter.ExecuteDecision": {
-      "count": 760,
-      "per_second": 6.7654,
-      "total_ms": 53.4738,
-      "avg_ms": 0.0704,
-      "max_ms": 4.2956
+      "count": 4351,
+      "per_second": 85.2711,
+      "total_ms": 64.189,
+      "avg_ms": 0.0148,
+      "max_ms": 6.3168
     },
     "Week6VisualInspectionRunner.OnGUI": {
       "count": 0,
@@ -100,8 +100,8 @@
       "max_ms": 0
     },
     "JSON/File writes": {
-      "count": 506,
-      "per_second": 4.5043,
+      "count": 239,
+      "per_second": 4.6839,
       "total_ms": 0,
       "avg_ms": 0,
       "max_ms": 0
@@ -110,55 +110,55 @@
   "top_instrumented_methods_by_total_ms": [
     {
       "name": "Week6StudentPolicyAdapter.ExecuteDecision",
-      "count": 506,
-      "total_ms": 45488.2781,
-      "avg_ms": 89.8978
+      "count": 239,
+      "total_ms": 21487.5242,
+      "avg_ms": 89.906
     },
     {
       "name": "Week6StudentPolicyAdapter.BridgeRoundTrip",
-      "count": 506,
-      "total_ms": 27784.3581,
-      "avg_ms": 54.9098
+      "count": 239,
+      "total_ms": 12661.9819,
+      "avg_ms": 52.979
     },
     {
       "name": "Week6VisualInspectionRunner.Update",
-      "count": 2155,
-      "total_ms": 586.4239,
-      "avg_ms": 0.2721
-    },
-    {
-      "name": "ActionMaskBuilder.BuildTransferCompatibleMask",
-      "count": 1012,
-      "total_ms": 148.4033,
-      "avg_ms": 0.1466
-    },
-    {
-      "name": "ObservationBuilder.BuildObservation",
-      "count": 507,
-      "total_ms": 90.5689,
-      "avg_ms": 0.1786
+      "count": 1034,
+      "total_ms": 273.6428,
+      "avg_ms": 0.2646
     },
     {
       "name": "HeuristicPolicyAdapter.ExecuteDecision",
-      "count": 760,
-      "total_ms": 53.4738,
-      "avg_ms": 0.0704
+      "count": 4351,
+      "total_ms": 64.189,
+      "avg_ms": 0.0148
     },
     {
-      "name": "ActionApplier.ApplyActions",
-      "count": 506,
-      "total_ms": 29.9971,
-      "avg_ms": 0.0593
+      "name": "ActionMaskBuilder.BuildTransferCompatibleMask",
+      "count": 478,
+      "total_ms": 33.469,
+      "avg_ms": 0.07
+    },
+    {
+      "name": "ObservationBuilder.BuildObservation",
+      "count": 240,
+      "total_ms": 28.2847,
+      "avg_ms": 0.1179
     },
     {
       "name": "ActionDecoder.Decode",
-      "count": 506,
-      "total_ms": 22.2956,
-      "avg_ms": 0.0441
+      "count": 239,
+      "total_ms": 6.0698,
+      "avg_ms": 0.0254
+    },
+    {
+      "name": "ActionApplier.ApplyActions",
+      "count": 239,
+      "total_ms": 5.624,
+      "avg_ms": 0.0235
     },
     {
       "name": "JSON/File writes",
-      "count": 506,
+      "count": 239,
       "total_ms": 0,
       "avg_ms": 0
     }
