@@ -25,6 +25,7 @@ BRANCH_OFFSETS: tuple[int, ...] = (0, 6, 10, 14, 18, 22, 26)
 ACTION_FLAT_SIZE_PER_CELL: int = int(sum(EXPECTED_BC_BRANCH_SIZES))
 TOTAL_ACTION_FLAT_SIZE: int = TOTAL_CELLS * ACTION_FLAT_SIZE_PER_CELL
 ACTION_TYPE_NAMES: tuple[str, ...] = ("NoOp", "Move", "Harvest", "Return", "Produce", "Attack")
+PRODUCE_UNIT_TYPE_NAMES: tuple[str, ...] = ("Resource", "Base", "Barracks", "Worker", "Light", "Heavy", "Ranged")
 OBS_CHANNEL_NAMES: tuple[str, ...] = (
     "hit_points",
     "resources",
@@ -152,7 +153,10 @@ def _build_focus_cell_diagnostic(
 
     action_type_logits = logits_by_key["action_type_logits"][0, flat_index, :].detach().cpu().numpy().astype(np.float64)
     action_type_probs = _softmax(action_type_logits)
+    produce_unit_type_logits = logits_by_key["produce_unit_type_logits"][0, flat_index, :].detach().cpu().numpy().astype(np.float64)
+    produce_unit_type_probs = _softmax(produce_unit_type_logits)
     ranked = np.argsort(-action_type_probs)
+    produce_ranked = np.argsort(-produce_unit_type_probs)
 
     top3 = []
     for idx in ranked[:3]:
@@ -163,6 +167,18 @@ def _build_focus_cell_diagnostic(
                 "class_name": ACTION_TYPE_NAMES[class_id],
                 "logit": float(action_type_logits[class_id]),
                 "probability": float(action_type_probs[class_id]),
+            }
+        )
+
+    produce_top3 = []
+    for idx in produce_ranked[:3]:
+        class_id = int(idx)
+        produce_top3.append(
+            {
+                "class_id": class_id,
+                "class_name": PRODUCE_UNIT_TYPE_NAMES[class_id],
+                "logit": float(produce_unit_type_logits[class_id]),
+                "probability": float(produce_unit_type_probs[class_id]),
             }
         )
 
@@ -194,6 +210,12 @@ def _build_focus_cell_diagnostic(
         "action_type_logits": [float(x) for x in action_type_logits.tolist()],
         "action_type_probabilities": [float(x) for x in action_type_probs.tolist()],
         "action_type_top3": top3,
+        "produce_unit_type_logits": [float(x) for x in produce_unit_type_logits.tolist()],
+        "produce_unit_type_probabilities": [float(x) for x in produce_unit_type_probs.tolist()],
+        "produce_unit_type_top3": produce_top3,
+        "produce_rank_light": int(np.where(produce_ranked == 4)[0][0]) + 1,
+        "produce_rank_heavy": int(np.where(produce_ranked == 5)[0][0]) + 1,
+        "produce_rank_ranged": int(np.where(produce_ranked == 6)[0][0]) + 1,
         "noop_probability": noop_prob,
         "best_non_noop_probability": best_non_noop,
         "noop_margin": noop_margin,
@@ -256,14 +278,18 @@ def _build_global_cell_action_type_diagnostics(
     logits_by_key: Dict[str, torch.Tensor],
 ) -> list[Dict[str, Any]]:
     action_logits = logits_by_key["action_type_logits"][0].detach().cpu().numpy().astype(np.float64)
+    produce_logits_by_cell = logits_by_key["produce_unit_type_logits"][0].detach().cpu().numpy().astype(np.float64)
     rows: list[Dict[str, Any]] = []
 
     for flat_index in range(TOTAL_CELLS):
         row, col = _to_row_col(flat_index)
         cell_channels = obs_hwc[row, col, :].astype(np.float64)
         logits = action_logits[flat_index]
+        produce_logits = produce_logits_by_cell[flat_index]
         probs = _softmax(logits)
+        produce_probs = _softmax(produce_logits)
         ranked = np.argsort(-probs)
+        produce_ranked = np.argsort(-produce_probs)
         predicted_action_type = int(ranked[0])
         best_non_noop = float(np.max(probs[1:])) if probs.shape[0] > 1 else 0.0
 
@@ -276,6 +302,18 @@ def _build_global_cell_action_type_diagnostics(
                     "class_name": ACTION_TYPE_NAMES[class_id],
                     "logit": float(logits[class_id]),
                     "probability": float(probs[class_id]),
+                }
+            )
+
+        produce_top3 = []
+        for idx in produce_ranked[:3]:
+            class_id = int(idx)
+            produce_top3.append(
+                {
+                    "class_id": class_id,
+                    "class_name": PRODUCE_UNIT_TYPE_NAMES[class_id],
+                    "logit": float(produce_logits[class_id]),
+                    "probability": float(produce_probs[class_id]),
                 }
             )
 
@@ -292,6 +330,12 @@ def _build_global_cell_action_type_diagnostics(
                 "predicted_action_type_name": ACTION_TYPE_NAMES[predicted_action_type],
                 "non_noop_probability": float(1.0 - probs[0]),
                 "action_type_top3": top3,
+                "produce_unit_type_logits": [float(x) for x in produce_logits.tolist()],
+                "produce_unit_type_probabilities": [float(x) for x in produce_probs.tolist()],
+                "produce_unit_type_top3": produce_top3,
+                "produce_rank_light": int(np.where(produce_ranked == 4)[0][0]) + 1,
+                "produce_rank_heavy": int(np.where(produce_ranked == 5)[0][0]) + 1,
+                "produce_rank_ranged": int(np.where(produce_ranked == 6)[0][0]) + 1,
             }
         )
 
