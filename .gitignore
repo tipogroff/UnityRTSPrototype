@@ -99,3 +99,6 @@ python/week5_teacher_legacy032/teacher_models/
 
 # Large raw action trace logs (generated, DO NOT COMMIT)
 python/week6_student/reports/stage10d26/*_trace.jsonl
+
+# Documentation archives and generated reports
+docs/
