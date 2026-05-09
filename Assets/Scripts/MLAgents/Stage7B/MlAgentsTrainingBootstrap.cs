@@ -1,0 +1,405 @@
+using System.Collections.Generic;
+using System.Reflection;
+using RTS.Core;
+using RTS.Gameplay;
+using RTS.ML;
+using RTS.MLAgents.Stage7B.Diagnostics;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
+using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace RTS.MLAgents.Stage7B
+{
+    [DisallowMultipleComponent]
+    public sealed class MlAgentsTrainingBootstrap : MonoBehaviour
+    {
+        [Header("Stage7B")]
+        [SerializeField] private Owner _studentPlayer = Owner.Player1;
+        [SerializeField] private Owner _scriptedOpponent = Owner.Player2;
+        [SerializeField] private bool _autoConfigureMlAgents = true;
+        [SerializeField] private bool _stepScriptedOpponent = true;
+        [SerializeField] private bool _ensureWeek6StaticHarvestLayout = true;
+        [SerializeField] private GameConfig _fallbackConfig;
+        [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24;
+        [SerializeField] private int _startResources = 60;
+
+        public GridManager GridManager { get; private set; }
+        public UnitRegistry UnitRegistry { get; private set; }
+        public ResourceManager ResourceManager { get; private set; }
+        public MatchManager MatchManager { get; private set; }
+        public MatchBootstrap MatchBootstrap { get; private set; }
+        public HeuristicPolicyAdapter ScriptedOpponentAdapter { get; private set; }
+        public StudentMlAgent StudentAgent { get; private set; }
+        public bool StepScriptedOpponent => _stepScriptedOpponent;
+        public Owner StudentPlayer => _studentPlayer;
+        public Owner ScriptedOpponent => _scriptedOpponent;
+        public bool DuplicateSpawnDetected { get; private set; }
+
+        private void Awake()
+        {
+            ResolveRuntimeObjects();
+            EnsureWeek6StaticHarvestLayout();
+            ConfigureMatchBootstrap();
+            EnsureMlAgentObject();
+        }
+
+        private void Start()
+        {
+            StartNewEpisode();
+        }
+
+        public void StartNewEpisode()
+        {
+            ResolveRuntimeObjects();
+            EnsureWeek6StaticHarvestLayout();
+            ConfigureMatchBootstrap();
+            CleanupRuntimeObjects();
+            MatchBootstrap.Setup();
+            ConfigureScriptedOpponent();
+            DuplicateSpawnDetected = DetectDuplicateSpawn();
+        }
+
+        public void EnsureReadyForDecision()
+        {
+            ResolveRuntimeObjects();
+            if (MatchManager == null || MatchManager.Phase != MatchPhase.Running)
+            {
+                StartNewEpisode();
+            }
+        }
+
+        private void ResolveRuntimeObjects()
+        {
+            GridManager = EnsureSceneComponent<GridManager>("GridManager");
+            UnitRegistry = EnsureSceneComponent<UnitRegistry>("UnitRegistry");
+            ResourceManager = EnsureSceneComponent<ResourceManager>("ResourceManager");
+            MatchManager = EnsureSceneComponent<MatchManager>("MatchManager");
+            MatchBootstrap = EnsureSceneComponent<MatchBootstrap>("MatchBootstrap");
+            EnsureSceneComponent<VictoryResolver>("VictoryResolver");
+            ScriptedOpponentAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("Stage7B_ScriptedOpponent");
+            EnsureSceneComponent<Stage7BHeuristicDryRunLogger>("Stage7B_HeuristicDryRunLogger");
+            EnsureSceneComponent<Stage7BRuntimeContractDumper>("Stage7B_RuntimeContractDumper");
+        }
+
+        private void EnsureMlAgentObject()
+        {
+            StudentAgent = FindFirstObjectByType<StudentMlAgent>();
+            if (StudentAgent == null)
+            {
+                var host = new GameObject("Stage7B_StudentMlAgent");
+                StudentAgent = host.AddComponent<StudentMlAgent>();
+            }
+
+            StudentAgent.Configure(this, _studentPlayer);
+
+            if (!_autoConfigureMlAgents)
+            {
+                return;
+            }
+
+            BehaviorParameters behavior = StudentAgent.GetComponent<BehaviorParameters>();
+            if (behavior != null)
+            {
+                behavior.BehaviorName = "Stage7B_RTS_Student";
+                behavior.BehaviorType = BehaviorType.HeuristicOnly;
+                behavior.TeamId = _studentPlayer == Owner.Player1 ? 0 : 1;
+                behavior.BrainParameters.VectorObservationSize = ObservationContract.TotalFloats;
+                behavior.BrainParameters.NumStackedVectorObservations = 1;
+                behavior.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(
+                    RTS.MLAgents.Stage7B.CandidateActions.MlAgentsCandidateActionList.BranchSize);
+            }
+
+            DecisionRequester requester = StudentAgent.GetComponent<DecisionRequester>();
+            if (requester != null)
+            {
+                requester.DecisionPeriod = 1;
+                requester.DecisionStep = 0;
+                requester.TakeActionsBetweenDecisions = false;
+            }
+
+            StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
+        }
+
+        private void ConfigureMatchBootstrap()
+        {
+            if (_fallbackConfig == null)
+            {
+                _fallbackConfig = LoadDefaultConfig();
+            }
+
+            SetPrivateField(MatchBootstrap, "_config", _fallbackConfig);
+            SetPrivateField(MatchBootstrap, "_scenarioPreset", _scenarioPreset);
+            SetPrivateField(
+                MatchBootstrap,
+                "_initializationMode",
+                _ensureWeek6StaticHarvestLayout
+                    ? BootstrapInitializationMode.StaticSceneRegistration
+                    : BootstrapInitializationMode.ProceduralSpawn);
+            SetPrivateField(MatchBootstrap, "_day6SanityStartResources", Mathf.Max(0, _startResources));
+            SetPrivateField(MatchBootstrap, "_gridManager", GridManager);
+            SetPrivateField(MatchBootstrap, "_matchManager", MatchManager);
+            SetPrivateField(MatchBootstrap, "_unitRegistry", UnitRegistry);
+            SetPrivateField(MatchBootstrap, "_resourceManager", ResourceManager);
+        }
+
+        private void ConfigureScriptedOpponent()
+        {
+            if (ScriptedOpponentAdapter == null)
+            {
+                return;
+            }
+
+            ScriptedOpponentAdapter.Initialize(GridManager, UnitRegistry, ResourceManager, MatchManager, MatchBootstrap);
+            ScriptedOpponentAdapter.ResetHeuristicState();
+            ScriptedOpponentAdapter.SetPlayerControlModes(
+                _studentPlayer == Owner.Player1 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic,
+                _studentPlayer == Owner.Player2 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic);
+        }
+
+        private void CleanupRuntimeObjects()
+        {
+            if (UnitRegistry != null)
+            {
+                List<UnitRuntime> units = UnitRegistry.GetAllUnits();
+                for (int i = 0; i < units.Count; i++)
+                {
+                    UnitRuntime unit = units[i];
+                    if (unit != null && unit.GetComponent<StaticSceneEntityAuthoring>() == null)
+                    {
+                        Destroy(unit.gameObject);
+                    }
+                }
+
+                UnitRegistry.Clear();
+            }
+
+            GridManager?.InitGrid(GameConstants.MapWidth, GameConstants.MapHeight);
+            ResourceManager?.Clear();
+            MatchManager?.ResetMatch();
+        }
+
+        private void EnsureWeek6StaticHarvestLayout()
+        {
+            if (!_ensureWeek6StaticHarvestLayout)
+            {
+                return;
+            }
+
+            Transform root = EnsureLayoutRoot();
+            EnsureAuthoredEntity(root, "Neutral_Resource_(0, 0)", UnitType.Resource, Owner.Neutral, StaticSceneEntityKind.Resource, new GridPosition(0, 0), GameConstants.MaxResourcesPerPatch);
+            EnsureAuthoredEntity(root, "Neutral_Resource_(1, 0)", UnitType.Resource, Owner.Neutral, StaticSceneEntityKind.Resource, new GridPosition(1, 0), GameConstants.MaxResourcesPerPatch);
+            EnsureAuthoredEntity(root, "Player1_Worker_(1, 1)", UnitType.Worker, Owner.Player1, StaticSceneEntityKind.Unit, new GridPosition(1, 1), 1);
+            EnsureAuthoredEntity(root, "Player1_Base_(2, 2)", UnitType.Base, Owner.Player1, StaticSceneEntityKind.Unit, new GridPosition(2, 2), 1);
+
+            EnsureAuthoredEntity(root, "Neutral_Resource_(23, 23)", UnitType.Resource, Owner.Neutral, StaticSceneEntityKind.Resource, new GridPosition(23, 23), GameConstants.MaxResourcesPerPatch);
+            EnsureAuthoredEntity(root, "Neutral_Resource_(22, 23)", UnitType.Resource, Owner.Neutral, StaticSceneEntityKind.Resource, new GridPosition(22, 23), GameConstants.MaxResourcesPerPatch);
+            EnsureAuthoredEntity(root, "Player2_Worker_(22, 22)", UnitType.Worker, Owner.Player2, StaticSceneEntityKind.Unit, new GridPosition(22, 22), 1);
+            EnsureAuthoredEntity(root, "Player2_Base_(21, 21)", UnitType.Base, Owner.Player2, StaticSceneEntityKind.Unit, new GridPosition(21, 21), 1);
+        }
+
+        private static Transform EnsureLayoutRoot()
+        {
+            GameObject root = GameObject.Find("StaticAuthoredLayout");
+            if (root == null)
+            {
+                root = new GameObject("StaticAuthoredLayout");
+            }
+
+            return root.transform;
+        }
+
+        private static void EnsureAuthoredEntity(
+            Transform root,
+            string objectName,
+            UnitType unitType,
+            Owner owner,
+            StaticSceneEntityKind kind,
+            GridPosition gridPosition,
+            int resourceAmount)
+        {
+            GameObject go = FindExistingAuthoredEntity(objectName);
+            if (go == null)
+            {
+                GameObject prefab = LoadEntityPrefab(unitType);
+                if (prefab != null)
+                {
+                    go = Instantiate(prefab);
+                    go.name = objectName;
+                }
+                else
+                {
+                    PrimitiveType primitive = unitType == UnitType.Worker ? PrimitiveType.Capsule : PrimitiveType.Cube;
+                    go = GameObject.CreatePrimitive(primitive);
+                    go.name = objectName;
+                }
+            }
+
+            go.transform.SetParent(root, true);
+            go.transform.position = gridPosition.ToWorldPosition();
+            go.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+
+            if (unitType == UnitType.Worker)
+            {
+                go.transform.localScale = new Vector3(0.6f, 1f, 0.6f);
+            }
+            else if (unitType == UnitType.Resource)
+            {
+                go.transform.localScale = Vector3.one * 0.6f;
+            }
+            else
+            {
+                go.transform.localScale = Vector3.one;
+            }
+
+            UnitRuntime runtime = go.GetComponent<UnitRuntime>();
+            if (runtime == null)
+            {
+                runtime = go.AddComponent<UnitRuntime>();
+            }
+
+            if ((unitType == UnitType.Base || unitType == UnitType.Barracks)
+                && go.GetComponent<BuildingRuntime>() == null)
+            {
+                go.AddComponent<BuildingRuntime>();
+            }
+
+            StaticSceneEntityAuthoring authored = go.GetComponent<StaticSceneEntityAuthoring>();
+            if (authored == null)
+            {
+                authored = go.AddComponent<StaticSceneEntityAuthoring>();
+            }
+
+            authored.Configure(kind, unitType, owner, gridPosition, resourceAmount);
+        }
+
+        private static GameObject FindExistingAuthoredEntity(string objectName)
+        {
+            StaticSceneEntityAuthoring[] authored = FindObjectsByType<StaticSceneEntityAuthoring>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            GameObject first = null;
+            for (int i = 0; i < authored.Length; i++)
+            {
+                StaticSceneEntityAuthoring entry = authored[i];
+                if (entry == null || entry.name != objectName)
+                {
+                    continue;
+                }
+
+                if (first == null)
+                {
+                    first = entry.gameObject;
+                }
+                else
+                {
+                    Destroy(entry.gameObject);
+                }
+            }
+
+            if (first != null)
+            {
+                return first;
+            }
+
+            GameObject byPath = GameObject.Find("StaticAuthoredLayout/" + objectName);
+            if (byPath != null)
+            {
+                return byPath;
+            }
+
+            return GameObject.Find(objectName);
+        }
+
+        private static GameObject LoadEntityPrefab(UnitType unitType)
+        {
+#if UNITY_EDITOR
+            string path = unitType switch
+            {
+                UnitType.Resource => "Assets/Prefabs/Resource.prefab",
+                UnitType.Base => "Assets/Prefabs/Base.prefab",
+                UnitType.Worker => "Assets/Prefabs/Worker.prefab",
+                UnitType.Barracks => "Assets/Prefabs/Barracks.prefab",
+                UnitType.Light => "Assets/Prefabs/Light.prefab",
+                UnitType.Heavy => "Assets/Prefabs/Heavy.prefab",
+                UnitType.Ranged => "Assets/Prefabs/Ranged.prefab",
+                _ => null
+            };
+
+            return string.IsNullOrWhiteSpace(path) ? null : AssetDatabase.LoadAssetAtPath<GameObject>(path);
+#else
+            return null;
+#endif
+        }
+
+        private bool DetectDuplicateSpawn()
+        {
+            if (UnitRegistry == null)
+            {
+                return false;
+            }
+
+            var occupied = new HashSet<GridPosition>();
+            List<UnitRuntime> units = UnitRegistry.GetAllUnits();
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                if (!occupied.Add(unit.GridPos))
+                {
+                    Debug.LogError($"[Stage7B] Duplicate spawn detected at {unit.GridPos}.");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static T EnsureSceneComponent<T>(string gameObjectName) where T : Component
+        {
+            T existing = FindFirstObjectByType<T>();
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            GameObject host = GameObject.Find(gameObjectName);
+            if (host == null)
+            {
+                host = new GameObject(gameObjectName);
+            }
+
+            T component = host.GetComponent<T>();
+            return component != null ? component : host.AddComponent<T>();
+        }
+
+        private static void SetPrivateField<T>(object target, string fieldName, T value)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            field?.SetValue(target, value);
+        }
+
+        private static GameConfig LoadDefaultConfig()
+        {
+#if UNITY_EDITOR
+            return AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/ML/GameConfig_MVP.asset");
+#else
+            return null;
+#endif
+        }
+    }
+}
