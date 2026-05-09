@@ -45,6 +45,7 @@ namespace RTS.MLAgents.Stage7B
             ResolveRuntimeObjects();
             EnsureWeek6StaticHarvestLayout();
             ConfigureMatchBootstrap();
+            EnsureAcademyAutomaticStepping();
             EnsureMlAgentObject();
         }
 
@@ -58,6 +59,7 @@ namespace RTS.MLAgents.Stage7B
             ResolveRuntimeObjects();
             EnsureWeek6StaticHarvestLayout();
             ConfigureMatchBootstrap();
+            EnsureAcademyAutomaticStepping();
             CleanupRuntimeObjects();
             MatchBootstrap.Setup();
             ConfigureScriptedOpponent();
@@ -123,6 +125,21 @@ namespace RTS.MLAgents.Stage7B
             }
 
             StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
+
+            if (Application.isPlaying && StudentAgent.isActiveAndEnabled)
+            {
+                StudentAgent.enabled = false;
+                StudentAgent.enabled = true;
+            }
+        }
+
+        private static void EnsureAcademyAutomaticStepping()
+        {
+            Academy academy = Academy.Instance;
+            if (academy != null && !academy.AutomaticSteppingEnabled)
+            {
+                academy.AutomaticSteppingEnabled = true;
+            }
         }
 
         private void ConfigureMatchBootstrap()

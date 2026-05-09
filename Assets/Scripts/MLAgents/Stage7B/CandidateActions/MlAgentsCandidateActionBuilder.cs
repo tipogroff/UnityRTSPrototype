@@ -7,7 +7,7 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
 {
     public sealed class MlAgentsCandidateActionBuilder
     {
-        private const int AttackCenterLocalIndex = 24;
+        private const int NonProduceSortUnitTypeIndex = 3;
 
         private readonly ActionMaskBuilder _maskBuilder;
         private readonly List<MlAgentsCandidateAction> _scratch = new List<MlAgentsCandidateAction>(256);
@@ -75,16 +75,21 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
                     continue;
                 }
 
-                var key = new CandidateActionSortKey(actorFlatIndex, actionType, direction, 3, AttackCenterLocalIndex);
+                var key = new CandidateActionSortKey(
+                    actorFlatIndex,
+                    actionType,
+                    direction,
+                    NonProduceSortUnitTypeIndex,
+                    MlAgentsCandidateActionList.AttackTargetCenterIndex);
                 var action = new AgentAction(
                     actorPosition,
                     actionType,
                     (Direction)direction,
-                    (ProducibleUnit)3,
+                    (ProducibleUnit)NonProduceSortUnitTypeIndex,
                     GridPosition.Zero,
                     isValid: true,
                     sourceType: ActionSourceType.Debug);
-                _scratch.Add(new MlAgentsCandidateAction(-1, action, key, AttackCenterLocalIndex, isNoOp: false));
+                _scratch.Add(new MlAgentsCandidateAction(-1, action, key, MlAgentsCandidateActionList.AttackTargetCenterIndex, isNoOp: false));
             }
         }
 
@@ -109,7 +114,12 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
                         continue;
                     }
 
-                    var key = new CandidateActionSortKey(actorFlatIndex, UnitActionType.Produce, direction, produceType, AttackCenterLocalIndex);
+                    var key = new CandidateActionSortKey(
+                        actorFlatIndex,
+                        UnitActionType.Produce,
+                        direction,
+                        produceType,
+                        MlAgentsCandidateActionList.AttackTargetCenterIndex);
                     var action = new AgentAction(
                         actorPosition,
                         UnitActionType.Produce,
@@ -118,7 +128,7 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
                         GridPosition.Zero,
                         isValid: true,
                         sourceType: ActionSourceType.Debug);
-                    _scratch.Add(new MlAgentsCandidateAction(-1, action, key, AttackCenterLocalIndex, isNoOp: false));
+                    _scratch.Add(new MlAgentsCandidateAction(-1, action, key, MlAgentsCandidateActionList.AttackTargetCenterIndex, isNoOp: false));
                 }
             }
         }
@@ -142,12 +152,12 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
                     continue;
                 }
 
-                var key = new CandidateActionSortKey(actorFlatIndex, UnitActionType.Attack, 0, 3, attackLocal);
+                var key = new CandidateActionSortKey(actorFlatIndex, UnitActionType.Attack, 0, NonProduceSortUnitTypeIndex, attackLocal);
                 var action = new AgentAction(
                     actorPosition,
                     UnitActionType.Attack,
                     Direction.North,
-                    (ProducibleUnit)3,
+                    (ProducibleUnit)NonProduceSortUnitTypeIndex,
                     target,
                     isValid: true,
                     sourceType: ActionSourceType.Debug);

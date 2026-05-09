@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using RTS.Core;
+using RTS.MLAgents.Stage7B.CandidateActions;
 using UnityEngine;
 
 namespace RTS.MLAgents.Stage7B.Diagnostics
@@ -20,6 +21,12 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         public string PythonVersion { get; set; } = "unavailable";
         public string MlAgentsPythonVersion { get; set; } = "unavailable";
         public string MlAgentsEnvsPythonVersion { get; set; } = "unavailable";
+        public string DecisionSource { get; private set; } = "decision_requester";
+        public string BehaviorName { get; private set; } = "unknown";
+        public int DiscreteBranchCount { get; private set; } = 1;
+        public int CandidateBranchSize { get; private set; } = MlAgentsCandidateActionList.BranchSize;
+        public int AttackTargetSize { get; private set; } = MlAgentsCandidateActionList.AttackTargetSize;
+        public int AttackTargetCenterIndex { get; private set; } = MlAgentsCandidateActionList.AttackTargetCenterIndex;
 
         public int ObservationLength { get; private set; }
         public int ObservationNanCount { get; private set; }
@@ -35,6 +42,10 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         public int CandidateCountMax { get; private set; }
         public int MaskedEmptySlotsCount { get; private set; }
         public int CandidateOverflowCount { get; private set; }
+        public int InvalidCandidateIndexSelectedCount { get; private set; }
+        public int EmptyCandidateSelectedCount { get; private set; }
+        public int OutOfRangeCandidateSelectedCount { get; private set; }
+        public int FallbackToNoOpCount { get; private set; }
         public int SelectedNoOpCount { get; private set; }
         public int SelectedNonNoOpCount { get; private set; }
         public int AcceptedCommands { get; private set; }
@@ -43,6 +54,25 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         public string TerminalReason { get; private set; } = "none";
         public int ResetCount { get; private set; }
         public bool DuplicateSpawnDetected { get; private set; }
+        public bool Stage6B3FilesTouched { get; private set; }
+
+        public void RecordDecisionSource(string decisionSource)
+        {
+            DecisionSource = string.IsNullOrWhiteSpace(decisionSource) ? "unknown" : decisionSource;
+        }
+
+        public void RecordBehaviorSpec(string behaviorName, int discreteBranchCount, int candidateBranchSize)
+        {
+            BehaviorName = string.IsNullOrWhiteSpace(behaviorName) ? "unknown" : behaviorName;
+            DiscreteBranchCount = Mathf.Max(0, discreteBranchCount);
+            CandidateBranchSize = Mathf.Max(0, candidateBranchSize);
+        }
+
+        public void RecordActionContract(int attackTargetSize, int attackTargetCenterIndex)
+        {
+            AttackTargetSize = Mathf.Max(0, attackTargetSize);
+            AttackTargetCenterIndex = Mathf.Max(0, attackTargetCenterIndex);
+        }
 
         public void RecordObservation(float[] observation)
         {
@@ -129,6 +159,29 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             }
         }
 
+        public void RecordCandidateFallback(bool invalidCandidateIndex, bool emptyCandidate, bool outOfRangeCandidate, bool fallbackToNoOp)
+        {
+            if (invalidCandidateIndex)
+            {
+                InvalidCandidateIndexSelectedCount++;
+            }
+
+            if (emptyCandidate)
+            {
+                EmptyCandidateSelectedCount++;
+            }
+
+            if (outOfRangeCandidate)
+            {
+                OutOfRangeCandidateSelectedCount++;
+            }
+
+            if (fallbackToNoOp)
+            {
+                FallbackToNoOpCount++;
+            }
+        }
+
         public void RecordReward(float reward)
         {
             if (!float.IsNaN(reward) && !float.IsInfinity(reward))
@@ -158,6 +211,12 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             AppendJson(sb, "python version if available", PythonVersion, true);
             AppendJson(sb, "mlagents version if available", MlAgentsPythonVersion, true);
             AppendJson(sb, "mlagents-envs version if available", MlAgentsEnvsPythonVersion, true);
+            AppendJson(sb, "decision_source", DecisionSource, true);
+            AppendJson(sb, "behavior_name", BehaviorName, true);
+            AppendJson(sb, "discrete_branch_count", DiscreteBranchCount, true);
+            AppendJson(sb, "candidate_branch_size", CandidateBranchSize, true);
+            AppendJson(sb, "attack_target_size", AttackTargetSize, true);
+            AppendJson(sb, "attack_target_center_index", AttackTargetCenterIndex, true);
             AppendJson(sb, "observation_length", ObservationLength, true);
             AppendJson(sb, "observation_nan_count", ObservationNanCount, true);
             AppendJson(sb, "observation_min", ObservationMin, true);
@@ -170,6 +229,10 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             AppendJson(sb, "candidate_count_max", CandidateCountMax, true);
             AppendJson(sb, "masked_empty_slots_count", MaskedEmptySlotsCount, true);
             AppendJson(sb, "candidate_overflow_count", CandidateOverflowCount, true);
+            AppendJson(sb, "invalid_candidate_index_selected_count", InvalidCandidateIndexSelectedCount, true);
+            AppendJson(sb, "empty_candidate_selected_count", EmptyCandidateSelectedCount, true);
+            AppendJson(sb, "out_of_range_candidate_selected_count", OutOfRangeCandidateSelectedCount, true);
+            AppendJson(sb, "fallback_to_noop_count", FallbackToNoOpCount, true);
             AppendJson(sb, "selected_noop_count", SelectedNoOpCount, true);
             AppendJson(sb, "selected_non_noop_count", SelectedNonNoOpCount, true);
             AppendJson(sb, "accepted_commands", AcceptedCommands, true);
@@ -178,7 +241,8 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             AppendJson(sb, "reward_sum", RewardSum, true);
             AppendJson(sb, "terminal_reason", TerminalReason, true);
             AppendJson(sb, "reset_count", ResetCount, true);
-            AppendJson(sb, "duplicate_spawn_detected", DuplicateSpawnDetected, false);
+            AppendJson(sb, "duplicate_spawn_detected", DuplicateSpawnDetected, true);
+            AppendJson(sb, "stage6b3_files_touched", Stage6B3FilesTouched, false);
             sb.AppendLine("}");
             return sb.ToString();
         }

@@ -16,10 +16,19 @@ namespace RTS.MLAgents.Stage7B
     [RequireComponent(typeof(DecisionRequester))]
     public sealed class StudentMlAgent : Agent
     {
+        private const string DecisionSourceDecisionRequester = "decision_requester";
+        private const string DecisionSourceManualFixedUpdate = "manual_fixed_update";
+        private const string DecisionSourceDecisionRequesterAndManualDebug = "decision_requester+manual_fixed_update_debug";
+        private const string DecisionSourceDecisionRequesterWatchdogManualFallback = "decision_requester_watchdog_manual_fallback";
+        private const string DecisionSourceNone = "none";
+        private const int DecisionRequesterWatchdogFixedUpdateThreshold = 8;
+
         [Header("Stage7B")]
         [SerializeField] private Owner _playerPerspective = Owner.Player1;
         [SerializeField] private bool _autoResolveBootstrap = true;
-        [SerializeField] private bool _requestDecisionInFixedUpdate = true;
+        [SerializeField] private bool _manualFixedUpdateDecisionRequests;
+        [SerializeField] private bool _allowConcurrentDecisionSourcesForDebug;
+        [SerializeField] private bool _enableDecisionRequesterWatchdogFallback = true;
         [SerializeField] private int _stage7BMaxDecisionsPerEpisode = 256;
         [SerializeField] private bool _logRejectedActions;
 
@@ -32,13 +41,19 @@ namespace RTS.MLAgents.Stage7B
         private ActionApplier _actionApplier;
         private RuntimeRewardCollector _rewardCollector;
         private int _episodeDecisionCount;
+        private string _currentDecisionSource = DecisionSourceDecisionRequester;
+        private bool _loggedDecisionSourceGuard;
+        private bool _decisionRequesterWatchdogFallbackActive;
+        private int _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
+        public string CurrentDecisionSource => _currentDecisionSource;
 
         protected override void OnEnable()
         {
             ConfigureBehaviorParameters();
+            ApplyDecisionSourcePolicy();
             base.OnEnable();
         }
 
@@ -53,6 +68,7 @@ namespace RTS.MLAgents.Stage7B
         {
             ResolveDependencies();
             ConfigureBehaviorParameters();
+            ApplyDecisionSourcePolicy();
         }
 
         public override void OnEpisodeBegin()
@@ -65,13 +81,17 @@ namespace RTS.MLAgents.Stage7B
             ResolveDependencies();
             _rewardCollector?.ResetEpisode();
             _episodeDecisionCount = 0;
+            _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
         }
 
         private void FixedUpdate()
         {
-            if (!_requestDecisionInFixedUpdate)
+            ApplyDecisionSourcePolicy();
+            UpdateDecisionRequesterWatchdog();
+
+            if (!ShouldUseManualFixedUpdateDecisionRequests())
             {
                 return;
             }
@@ -114,6 +134,7 @@ namespace RTS.MLAgents.Stage7B
         public override void OnActionReceived(ActionBuffers actions)
         {
             ResolveDependencies();
+            ApplyDecisionSourcePolicy();
             _bootstrap?.EnsureReadyForDecision();
             BuildCandidates();
 
@@ -124,7 +145,13 @@ namespace RTS.MLAgents.Stage7B
 
             int selectedIndex = actions.DiscreteActions.Length > 0 ? actions.DiscreteActions[0] : 0;
             _episodeDecisionCount++;
+            _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             AgentAction selectedAction = _actionAdapter.Resolve(_currentCandidates, selectedIndex, out MlAgentsCandidateAction candidate);
+            Trace.RecordCandidateFallback(
+                _actionAdapter.LastInvalidCandidateIndexSelected,
+                _actionAdapter.LastEmptyCandidateSelected,
+                _actionAdapter.LastOutOfRangeCandidateSelected,
+                _actionAdapter.LastFallbackToNoOp);
             bool selectedNoOp = candidate.IsEmpty || candidate.IsNoOp || selectedAction.ActionType == UnitActionType.NoOp;
             Trace.RecordActionSelected(selectedNoOp);
 
@@ -253,6 +280,103 @@ namespace RTS.MLAgents.Stage7B
             behavior.BrainParameters.VectorObservationSize = ObservationContract.TotalFloats;
             behavior.BrainParameters.NumStackedVectorObservations = 1;
             behavior.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(MlAgentsCandidateActionList.BranchSize);
+            Trace.RecordBehaviorSpec(behavior.BehaviorName, discreteBranchCount: 1, MlAgentsCandidateActionList.BranchSize);
+            Trace.RecordActionContract(MlAgentsCandidateActionList.AttackTargetSize, MlAgentsCandidateActionList.AttackTargetCenterIndex);
+        }
+
+        private void ApplyDecisionSourcePolicy()
+        {
+            DecisionRequester requester = GetComponent<DecisionRequester>();
+            bool hasRequester = requester != null;
+
+            if (_decisionRequesterWatchdogFallbackActive)
+            {
+                if (hasRequester && requester.enabled)
+                {
+                    requester.enabled = false;
+                }
+
+                _currentDecisionSource = DecisionSourceDecisionRequesterWatchdogManualFallback;
+                Trace.RecordDecisionSource(_currentDecisionSource);
+                return;
+            }
+
+            if (_manualFixedUpdateDecisionRequests)
+            {
+                if (hasRequester && !_allowConcurrentDecisionSourcesForDebug)
+                {
+                    if (requester.enabled)
+                    {
+                        requester.enabled = false;
+                    }
+
+                    if (!_loggedDecisionSourceGuard)
+                    {
+                        Debug.LogWarning("[Stage7B] Disabled DecisionRequester because manual FixedUpdate decision requests are enabled without the explicit debug override.");
+                        _loggedDecisionSourceGuard = true;
+                    }
+
+                    _currentDecisionSource = DecisionSourceManualFixedUpdate;
+                }
+                else if (hasRequester && requester.enabled)
+                {
+                    _currentDecisionSource = DecisionSourceDecisionRequesterAndManualDebug;
+                }
+                else
+                {
+                    _currentDecisionSource = DecisionSourceManualFixedUpdate;
+                }
+            }
+            else if (hasRequester)
+            {
+                if (!requester.enabled)
+                {
+                    requester.enabled = true;
+                }
+
+                _currentDecisionSource = DecisionSourceDecisionRequester;
+                _loggedDecisionSourceGuard = false;
+            }
+            else
+            {
+                _currentDecisionSource = DecisionSourceNone;
+            }
+
+            Trace.RecordDecisionSource(_currentDecisionSource);
+        }
+
+        private bool ShouldUseManualFixedUpdateDecisionRequests()
+        {
+            return _currentDecisionSource == DecisionSourceManualFixedUpdate
+                   || _currentDecisionSource == DecisionSourceDecisionRequesterAndManualDebug
+                   || _currentDecisionSource == DecisionSourceDecisionRequesterWatchdogManualFallback;
+        }
+
+        private void UpdateDecisionRequesterWatchdog()
+        {
+            if (!_enableDecisionRequesterWatchdogFallback
+                || _decisionRequesterWatchdogFallbackActive
+                || _currentDecisionSource != DecisionSourceDecisionRequester)
+            {
+                return;
+            }
+
+            if (_bootstrap == null || _bootstrap.MatchManager == null || _bootstrap.MatchManager.Phase != MatchPhase.Running)
+            {
+                _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+                return;
+            }
+
+            _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester++;
+            if (_fixedUpdatesWithoutDecisionWhileUsingDecisionRequester < DecisionRequesterWatchdogFixedUpdateThreshold)
+            {
+                return;
+            }
+
+            _decisionRequesterWatchdogFallbackActive = true;
+            _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+            ApplyDecisionSourcePolicy();
+            Debug.LogWarning("[Stage7B] DecisionRequester stalled before producing actions. Switched to manual FixedUpdate decision requests via watchdog fallback.");
         }
 
         private void BuildCandidates()

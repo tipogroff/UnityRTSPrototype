@@ -26,8 +26,23 @@ Stage7B adds a Unity-native ML-Agents wrapper around the RTS student without cha
 - ML-Agents `BehaviorParameters` are configured as one discrete branch:
   - branch `0`: `candidate_action_index`
   - branch size: `128`
+- Stage7B follows the current Stage6B3/v2-compatible attack target contract:
+  - `attack_target_local` size: `49`
+  - local window: `7x7`
+  - center index: `24`
 - The wrapper does not expose actor/action/direction/produce/attack branches directly to ML-Agents.
 - It does not expose the full `576`-cell GridNet action output as the ML-Agents action space.
+
+## Decision Source
+
+- Preferred decision source: `DecisionRequester`
+- Manual `FixedUpdate` decision requests are disabled by default and available only through an explicit serialized debug flag.
+- Stage7B contains a one-source-at-a-time watchdog fallback for runtime hardening:
+  - if `DecisionRequester` stalls before producing actions in Play Mode,
+  - it is disabled,
+  - Stage7B switches to `manual_fixed_update` requests exclusively,
+  - and the dry-run artifact records `decision_source = decision_requester_watchdog_manual_fallback`
+- This guard exists to prevent silent stalls while still preventing concurrent dual decision loops.
 
 ## Runtime Authority
 
@@ -41,4 +56,4 @@ The dry-run artifact is written as:
 
 `stage7b_mlagents_heuristic_dryrun.json`
 
-It records ML-Agents package version, observation calls, mask calls, selected candidate counts, accepted/rejected commands, reward sum, terminal/reset state, and duplicate spawn detection.
+It records ML-Agents package version, decision source, behavior/action metadata, observation calls, mask calls, selected candidate counts, candidate fallback counters, accepted/rejected commands, reward sum, terminal/reset state, duplicate spawn detection, and `stage6b3_files_touched`.

@@ -1,0 +1,139 @@
+{
+  "generated_at_utc": "2026-05-09T22:19:53.424843+00:00",
+  "status": "partial",
+  "preflight_mode": "partial_preflight",
+  "source_dataset_path": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "split": "debug",
+  "max_samples_requested": 512,
+  "files_read": [
+    "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_manifest.json",
+    "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_debug.npz"
+  ],
+  "artifacts": {
+    "schema_probe_json": "python\\stage7b_teacher_conversion\\stage7b_teacher_conversion_schema_probe.json",
+    "preview_jsonl": "python\\stage7b_teacher_conversion\\stage7b_teacher_candidate_dataset_preview.jsonl",
+    "report_json": "python\\stage7b_teacher_conversion\\stage7b_teacher_to_candidate_conversion_report.json",
+    "report_md": "python\\stage7b_teacher_conversion\\stage7b_teacher_to_candidate_conversion_report.md"
+  },
+  "schema_probe_exists": true,
+  "preview_exists": true,
+  "contract_detection": {
+    "npz_keys_discovered": {
+      "debug": [
+        "observations",
+        "actions",
+        "episode_id",
+        "step_id",
+        "reward_t",
+        "done_t",
+        "terminated_t",
+        "truncated_t",
+        "action_mask_available_t"
+      ]
+    },
+    "manifest_branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "branch_contract_detected": true,
+    "branch_contract_matches_stage7b": true,
+    "branch_contract_mismatch": false,
+    "attack_target_contract_mismatch": false,
+    "attack_target_size_detected": 49,
+    "attack_target_center_index_detected": 24,
+    "stage7b_attack_target_size": 49,
+    "stage7b_attack_target_center_index": 24,
+    "stage7b_candidate_branch_size": 128,
+    "observation_shape_detected": [
+      512,
+      576,
+      27
+    ],
+    "action_shape_detected": [
+      512,
+      576,
+      7
+    ]
+  },
+  "state_reconstruction": {
+    "reliable": false,
+    "reason": "bc_ready observations/actions do not include full authoritative runtime state needed to reconstruct legal Unity ActionMaskBuilder candidate sets with reliability guarantees"
+  },
+  "match_rate_scope": "partial_preflight_only_no_runtime_state_reconstruction",
+  "metrics": {
+    "total_samples": 512,
+    "processed_samples": 512,
+    "matched_samples": 1,
+    "dropped_samples": 511,
+    "match_rate": 0.001953125,
+    "nonnoop_total": 511,
+    "nonnoop_matched": 0,
+    "nonnoop_match_rate": 0.0,
+    "noop_total": 1,
+    "noop_matched_to_candidate0": 1,
+    "drop_reason_histogram": {
+      "teacher_noop": 0,
+      "no_nonnoop_actor": 0,
+      "multiple_nonnoop_actors": 504,
+      "no_matching_actor": 0,
+      "actor_not_owned": 0,
+      "actor_dead_or_missing": 0,
+      "action_type_unsupported": 0,
+      "action_not_legal_in_unity": 0,
+      "direction_mismatch": 0,
+      "produce_type_mismatch": 0,
+      "attack_target_mismatch": 0,
+      "candidate_overflow": 0,
+      "state_reconstruction_failed": 7,
+      "runtime_desync": 0,
+      "observation_contract_mismatch": 0,
+      "branch_contract_mismatch": 0,
+      "attack_target_contract_mismatch": 0,
+      "dataset_schema_unknown": 0,
+      "npz_array_missing": 0,
+      "manifest_missing_or_invalid": 0,
+      "unknown": 0
+    },
+    "match_by_action_type": {
+      "Move": 0,
+      "Harvest": 0,
+      "Return": 0,
+      "Produce": 0,
+      "Attack": 0
+    },
+    "drop_by_action_type": {
+      "Move": 0,
+      "Harvest": 505,
+      "Return": 0,
+      "Produce": 510,
+      "Attack": 0
+    },
+    "candidate_count_min": null,
+    "candidate_count_mean": null,
+    "candidate_count_max": null,
+    "candidate_overflow_count": 0,
+    "observation_mismatch_count": null,
+    "observation_max_abs_diff": null,
+    "observation_mean_abs_diff": null,
+    "runtime_desync_count": 0,
+    "observation_contract_mismatch_count": 0,
+    "observation_out_of_range_count": 0,
+    "observation_nan_inf_count": 0,
+    "branch_contract_detected": true,
+    "attack_target_size_detected": 49,
+    "attack_target_center_index_detected": 24,
+    "stage7b_attack_target_size": 49,
+    "stage7b_attack_target_center_index": 24
+  },
+  "demo_recording_ready_for_stage7b_6b": false,
+  "recommendation": "switch_stage7b_6b_to_unity_replay_from_raw_or_adapted_teacher_trajectories",
+  "stage6b3_baseline_touched": false,
+  "notes": [
+    "No Unity training, no .demo recording, no PPO/imitation started in this preflight."
+  ]
+}

@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using RTS.MLAgents.Stage7B.CandidateActions;
+using Unity.MLAgents.Policies;
 using UnityEngine;
 
 namespace RTS.MLAgents.Stage7B.Diagnostics
@@ -58,6 +60,8 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 RefreshEnvironmentVersions();
             }
 
+            RefreshRuntimeMetadata();
+
             string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Application.dataPath;
             string path = Path.Combine(projectRoot, _artifactFileName);
             File.WriteAllText(path, _agent.Trace.ToJson());
@@ -76,6 +80,24 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             trace.PythonVersion = RunVersionCommand("python", "--version");
             trace.MlAgentsPythonVersion = RunVersionCommand("python", "-m mlagents.trainers.learn --version");
             trace.MlAgentsEnvsPythonVersion = RunVersionCommand("python", "-m pip show mlagents-envs");
+        }
+
+        private void RefreshRuntimeMetadata()
+        {
+            if (_agent == null)
+            {
+                return;
+            }
+
+            BehaviorParameters behavior = _agent.GetComponent<BehaviorParameters>();
+            _agent.Trace.RecordDecisionSource(_agent.CurrentDecisionSource);
+            _agent.Trace.RecordBehaviorSpec(
+                behavior != null ? behavior.BehaviorName : "unknown",
+                discreteBranchCount: 1,
+                MlAgentsCandidateActionList.BranchSize);
+            _agent.Trace.RecordActionContract(
+                MlAgentsCandidateActionList.AttackTargetSize,
+                MlAgentsCandidateActionList.AttackTargetCenterIndex);
         }
 
         private static string ResolveUnityMlAgentsPackageVersion()

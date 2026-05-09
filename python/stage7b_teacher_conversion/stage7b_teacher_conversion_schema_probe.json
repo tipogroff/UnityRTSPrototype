@@ -1,0 +1,249 @@
+{
+  "dataset_dir": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+  "manifest_path": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_manifest.json",
+  "manifest_valid": true,
+  "strict_format": {
+    "manifest_file": "bc_manifest.json",
+    "observation_key": "observations",
+    "action_key": "actions"
+  },
+  "manifest_branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "split_npz": {
+    "train": {
+      "file": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_train.npz",
+      "exists": true,
+      "keys": [
+        "observations",
+        "actions",
+        "episode_id",
+        "step_id",
+        "reward_t",
+        "done_t",
+        "terminated_t",
+        "truncated_t",
+        "action_mask_available_t"
+      ],
+      "arrays": {
+        "observations": {
+          "shape": [
+            74940,
+            576,
+            27
+          ],
+          "dtype": "float32"
+        },
+        "actions": {
+          "shape": [
+            74940,
+            576,
+            7
+          ],
+          "dtype": "int16"
+        },
+        "episode_id": {
+          "shape": [
+            74940
+          ],
+          "dtype": "int32"
+        },
+        "step_id": {
+          "shape": [
+            74940
+          ],
+          "dtype": "int32"
+        },
+        "reward_t": {
+          "shape": [
+            74940
+          ],
+          "dtype": "float32"
+        },
+        "done_t": {
+          "shape": [
+            74940
+          ],
+          "dtype": "bool"
+        },
+        "terminated_t": {
+          "shape": [
+            74940
+          ],
+          "dtype": "bool"
+        },
+        "truncated_t": {
+          "shape": [
+            74940
+          ],
+          "dtype": "bool"
+        },
+        "action_mask_available_t": {
+          "shape": [
+            74940
+          ],
+          "dtype": "bool"
+        }
+      },
+      "missing_required_keys": []
+    },
+    "validation": {
+      "file": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_validation.npz",
+      "exists": true,
+      "keys": [
+        "observations",
+        "actions",
+        "episode_id",
+        "step_id",
+        "reward_t",
+        "done_t",
+        "terminated_t",
+        "truncated_t",
+        "action_mask_available_t"
+      ],
+      "arrays": {
+        "observations": {
+          "shape": [
+            13225,
+            576,
+            27
+          ],
+          "dtype": "float32"
+        },
+        "actions": {
+          "shape": [
+            13225,
+            576,
+            7
+          ],
+          "dtype": "int16"
+        },
+        "episode_id": {
+          "shape": [
+            13225
+          ],
+          "dtype": "int32"
+        },
+        "step_id": {
+          "shape": [
+            13225
+          ],
+          "dtype": "int32"
+        },
+        "reward_t": {
+          "shape": [
+            13225
+          ],
+          "dtype": "float32"
+        },
+        "done_t": {
+          "shape": [
+            13225
+          ],
+          "dtype": "bool"
+        },
+        "terminated_t": {
+          "shape": [
+            13225
+          ],
+          "dtype": "bool"
+        },
+        "truncated_t": {
+          "shape": [
+            13225
+          ],
+          "dtype": "bool"
+        },
+        "action_mask_available_t": {
+          "shape": [
+            13225
+          ],
+          "dtype": "bool"
+        }
+      },
+      "missing_required_keys": []
+    },
+    "debug": {
+      "file": "python\\week5_teacher_legacy032\\teacher_exports_bc\\day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z\\bc_debug.npz",
+      "exists": true,
+      "keys": [
+        "observations",
+        "actions",
+        "episode_id",
+        "step_id",
+        "reward_t",
+        "done_t",
+        "terminated_t",
+        "truncated_t",
+        "action_mask_available_t"
+      ],
+      "arrays": {
+        "observations": {
+          "shape": [
+            512,
+            576,
+            27
+          ],
+          "dtype": "float32"
+        },
+        "actions": {
+          "shape": [
+            512,
+            576,
+            7
+          ],
+          "dtype": "int16"
+        },
+        "episode_id": {
+          "shape": [
+            512
+          ],
+          "dtype": "int32"
+        },
+        "step_id": {
+          "shape": [
+            512
+          ],
+          "dtype": "int32"
+        },
+        "reward_t": {
+          "shape": [
+            512
+          ],
+          "dtype": "float32"
+        },
+        "done_t": {
+          "shape": [
+            512
+          ],
+          "dtype": "bool"
+        },
+        "terminated_t": {
+          "shape": [
+            512
+          ],
+          "dtype": "bool"
+        },
+        "truncated_t": {
+          "shape": [
+            512
+          ],
+          "dtype": "bool"
+        },
+        "action_mask_available_t": {
+          "shape": [
+            512
+          ],
+          "dtype": "bool"
+        }
+      },
+      "missing_required_keys": []
+    }
+  }
+}

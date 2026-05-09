@@ -25,6 +25,16 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
         public bool IsNoOp { get; }
         public bool IsEmpty => CandidateIndex < 0;
 
+        public static MlAgentsCandidateAction CreateNoOpCandidate(int candidateIndex)
+        {
+            return new MlAgentsCandidateAction(
+                candidateIndex,
+                AgentAction.CreateNoOp(ActionSourceType.Debug),
+                new CandidateActionSortKey(-1, RTS.Core.UnitActionType.NoOp, 0, 0, MlAgentsCandidateActionList.AttackTargetCenterIndex),
+                MlAgentsCandidateActionList.AttackTargetCenterIndex,
+                isNoOp: true);
+        }
+
         public static MlAgentsCandidateAction Empty => new MlAgentsCandidateAction(
             -1,
             AgentAction.CreateNoOp(ActionSourceType.Debug),

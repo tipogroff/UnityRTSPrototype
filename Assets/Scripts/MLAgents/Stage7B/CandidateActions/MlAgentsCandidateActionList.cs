@@ -8,6 +8,8 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
     {
         public const int BranchSize = 128;
         public const int NoOpCandidateIndex = 0;
+        public const int AttackTargetSize = ActionContract.SIZE_ATTACK_TARGET;
+        public const int AttackTargetCenterIndex = ActionContract.SIZE_ATTACK_TARGET / 2;
 
         private readonly MlAgentsCandidateAction[] _slots = new MlAgentsCandidateAction[BranchSize];
         private readonly List<MlAgentsCandidateAction> _available = new List<MlAgentsCandidateAction>(BranchSize);
@@ -45,12 +47,7 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
 
         public void AddNoOp(AgentAction noOp)
         {
-            var candidate = new MlAgentsCandidateAction(
-                NoOpCandidateIndex,
-                noOp,
-                new CandidateActionSortKey(-1, RTS.Core.UnitActionType.NoOp, 0, 0, 24),
-                24,
-                isNoOp: true);
+            var candidate = MlAgentsCandidateAction.CreateNoOpCandidate(NoOpCandidateIndex);
             _slots[NoOpCandidateIndex] = candidate;
             _available.Add(candidate);
         }
@@ -96,6 +93,12 @@ namespace RTS.MLAgents.Stage7B.CandidateActions
             }
 
             return _slots[candidateIndex];
+        }
+
+        public bool TryGetNoOpCandidate(out MlAgentsCandidateAction candidate)
+        {
+            candidate = _slots[NoOpCandidateIndex];
+            return !candidate.IsEmpty;
         }
     }
 }
