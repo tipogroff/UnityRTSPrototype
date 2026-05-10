@@ -51,6 +51,16 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const double TimeoutSeconds7 = 300d;  // pre-processing up to 4096 steps + recording frames
         private const string DemoTempDirectory = "Library/Stage7B_DemoRecordingTemp";
 
+        // Stage7B-7D Clean Demo Recording Smoke
+        private const string MenuPath7D = "RTS/Week7/Stage7B/Run Clean Demo Recording Smoke 7D";
+        private const string MenuPath7DImmediate = "RTS/Week7/Stage7B/Run Clean Demo Recording Smoke 7D (Immediate In Play Mode)";
+        private const string ReportPath7D = "python/stage7b_teacher_replay/stage7b_7d_clean_demo_recording_report.json";
+        private const string PendingKey7D = "RTS.MLAgents.Stage7B.CleanDemoSmoke7D.Pending";
+        private const string StartedAtTicksKey7D = "RTS.MLAgents.Stage7B.CleanDemoSmoke7D.StartedAtTicks";
+        private const string TriggeredKey7D = "RTS.MLAgents.Stage7B.CleanDemoSmoke7D.Triggered";
+        private const string StartedFromEditModeKey7D = "RTS.MLAgents.Stage7B.CleanDemoSmoke7D.StartedFromEditMode";
+        private const double TimeoutSeconds7D = 300d;
+
         // Stage7B-7A Move/Harvest/Produce mismatch audit
         private const string MenuPath7A = "RTS/Week7/Stage7B/Run MHP Mismatch Audit 7A";
         private const string MenuPath7AImmediate = "RTS/Week7/Stage7B/Run MHP Mismatch Audit 7A (Immediate In Play Mode)";
@@ -258,6 +268,63 @@ namespace RTS.MLAgents.Stage7B.Editor
             orchestrator.ConfigureStartupContext(startedFromEditMode: false, enteredPlayMode: false, playModeReady: true);
             orchestrator.RunStage7B7DemoRecordingSmoke();
             Debug.Log("[Stage7B] Stage7B-7 immediate demo recording smoke invoked in Play Mode.");
+        }
+
+        [MenuItem(MenuPath7D)]
+        public static void Run7D()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B] Stage7B-7D menu must be started from Edit Mode.");
+                return;
+            }
+
+            if (EditorSceneManager.GetActiveScene().isDirty)
+            {
+                Debug.LogWarning("[Stage7B] Active scene is dirty; reopening Week7 scene for Stage7B-7D automation.");
+            }
+
+            if (EditorSceneManager.OpenScene(ScenePath) == default)
+            {
+                Debug.LogError("[Stage7B] Failed to open Week7 scene.");
+                return;
+            }
+
+            string report7D = GetAbsoluteProjectPath(ReportPath7D);
+            if (File.Exists(report7D)) File.Delete(report7D);
+
+            SessionState.SetBool(PendingKey7D, true);
+            SessionState.SetBool(TriggeredKey7D, false);
+            SessionState.SetBool(StartedFromEditModeKey7D, true);
+            SessionState.SetString(StartedAtTicksKey7D, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B] Entering Play Mode for Stage7B-7D clean demo recording smoke.");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem(MenuPath7DImmediate)]
+        public static void Run7DImmediateInPlayMode()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[Stage7B] Stage7B-7D immediate menu requires Play Mode.");
+                return;
+            }
+
+            SessionState.SetBool(StartedFromEditModeKey7D, false);
+
+            EnsureDemonstrationRecorderOnStudentAgent();
+
+            RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator orchestrator =
+                UnityEngine.Object.FindFirstObjectByType<RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>();
+            if (orchestrator == null)
+            {
+                var go = new GameObject("Stage7BDemoOrchestrator_7D");
+                orchestrator = go.AddComponent<RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>();
+            }
+
+            orchestrator.ConfigureStartupContext(startedFromEditMode: false, enteredPlayMode: false, playModeReady: true);
+            orchestrator.RunStage7B7DCleanDemoRecordingSmoke();
+            Debug.Log("[Stage7B] Stage7B-7D immediate clean demo recording smoke invoked in Play Mode.");
         }
 
         [MenuItem(MenuPath7A)]
@@ -559,6 +626,49 @@ namespace RTS.MLAgents.Stage7B.Editor
                 }
             }
 
+            // Stage7B-7D poll (clean demo recording smoke)
+            if (SessionState.GetBool(PendingKey7D, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey7D, TimeoutSeconds7D))
+                {
+                    Debug.LogError("[Stage7B] Stage7B-7D clean demo recording smoke timed out.");
+                    EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey7D, false))
+                    {
+                        if (!AreRuntimeServicesReady())
+                        {
+                            return;
+                        }
+
+                        EnsureDemonstrationRecorderOnStudentAgent();
+
+                        RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator orchestrator =
+                            UnityEngine.Object.FindFirstObjectByType<RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>();
+                        if (orchestrator == null)
+                        {
+                            var go = new GameObject("Stage7BDemoOrchestrator_7D");
+                            orchestrator = go.AddComponent<RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>();
+                        }
+
+                        bool startedFromEditMode = SessionState.GetBool(StartedFromEditModeKey7D, true);
+                        orchestrator.ConfigureStartupContext(startedFromEditMode, enteredPlayMode: startedFromEditMode, playModeReady: true);
+                        orchestrator.RunStage7B7DCleanDemoRecordingSmoke();
+                        SessionState.SetBool(TriggeredKey7D, true);
+                        return;
+                    }
+
+                    string report7D = GetAbsoluteProjectPath(ReportPath7D);
+                    if (File.Exists(report7D))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-7D clean demo recording smoke report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
+                }
+            }
+
             // Stage7B-7A poll (M/H/P mismatch audit)
             if (SessionState.GetBool(PendingKey7A, false))
             {
@@ -685,6 +795,13 @@ namespace RTS.MLAgents.Stage7B.Editor
                 SessionState.SetBool(PendingKey7, false);
                 SessionState.SetBool(TriggeredKey7, false);
                 Validate7Report();
+            }
+
+            if (SessionState.GetBool(PendingKey7D, false))
+            {
+                SessionState.SetBool(PendingKey7D, false);
+                SessionState.SetBool(TriggeredKey7D, false);
+                Validate7DReport();
             }
 
             if (SessionState.GetBool(PendingKey7A, false))
@@ -826,6 +943,65 @@ namespace RTS.MLAgents.Stage7B.Editor
                 Debug.LogWarning("[Stage7B] Stage7B-7 NO-GO. Check smoke report for details.");
         }
 
+        private static void Validate7DReport()
+        {
+            string report = GetAbsoluteProjectPath(ReportPath7D);
+            if (!File.Exists(report))
+            {
+                Debug.LogError("[Stage7B] Stage7B-7D clean smoke report was not created: " + report);
+                return;
+            }
+
+            string json = File.ReadAllText(report);
+            Stage7BDemoRecordingSmokeReport parsed = JsonUtility.FromJson<Stage7BDemoRecordingSmokeReport>(json);
+            if (parsed == null)
+            {
+                Debug.LogError("[Stage7B] Stage7B-7D clean smoke report parsing failed: " + report);
+                return;
+            }
+
+            if (TryCopyLatestTempDemoToExpected(
+                    "Assets/Demonstrations/stage7b_teacher_replay_clean_smoke.demo",
+                    out string copiedPath,
+                    out long copiedSize,
+                    out string copyDiag))
+            {
+                parsed.demo_file_path = copiedPath;
+                parsed.demo_file_exists = true;
+                parsed.demo_file_size_bytes = copiedSize;
+                parsed.notes.Add("EditMode finalize: copied temp demo to clean smoke expected path.");
+            }
+            else
+            {
+                parsed.notes.Add("EditMode finalize clean copy not completed: " + copyDiag);
+            }
+
+            bool go = parsed.demo_file_exists
+                && parsed.demo_file_size_bytes > 0
+                && parsed.recorded_decisions > 0
+                && parsed.runtime_apply_rejected_count == 0
+                && parsed.unclassified_produce_dropped == 0
+                && parsed.runtime_services_ready
+                && parsed.source_replay_ready
+                && !parsed.stage6b3_baseline_touched;
+
+            parsed.status = go ? "GO" : "NO_GO";
+            parsed.demo_recording_ready_for_imitation_smoke = go;
+            parsed.generated_at_utc = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            File.WriteAllText(report, JsonUtility.ToJson(parsed, true));
+
+            string mdPath = GetAbsoluteProjectPath("python/stage7b_teacher_replay/stage7b_7d_clean_demo_recording_report.md");
+            File.WriteAllText(mdPath, BuildStage7BSmokeMarkdown(parsed));
+
+            Debug.Log("[Stage7B] Stage7B-7D clean demo recording smoke finished: status=" + parsed.status
+                + ", recorded_decisions=" + parsed.recorded_decisions
+                + ", runtime_apply_rejected=" + parsed.runtime_apply_rejected_count
+                + ", unclassified_produce_dropped=" + parsed.unclassified_produce_dropped
+                + ", demo_file_exists=" + parsed.demo_file_exists
+                + ", demo_file_size_bytes=" + parsed.demo_file_size_bytes);
+        }
+
         private static void Validate7AReport()
         {
             string report = GetAbsoluteProjectPath(ReportPath7A);
@@ -876,6 +1052,15 @@ namespace RTS.MLAgents.Stage7B.Editor
 
         private static bool TryCopyLatestTempDemoToExpected(out string copiedPath, out long copiedSize, out string diagnostics)
         {
+            return TryCopyLatestTempDemoToExpected(
+                "Assets/Demonstrations/stage7b_teacher_replay_smoke.demo",
+                out copiedPath,
+                out copiedSize,
+                out diagnostics);
+        }
+
+        private static bool TryCopyLatestTempDemoToExpected(string expectedRelative, out string copiedPath, out long copiedSize, out string diagnostics)
+        {
             copiedPath = string.Empty;
             copiedSize = 0;
             diagnostics = string.Empty;
@@ -907,7 +1092,6 @@ namespace RTS.MLAgents.Stage7B.Editor
                 }
             }
 
-            string expectedRelative = "Assets/Demonstrations/stage7b_teacher_replay_smoke.demo";
             string expected = Path.GetFullPath(Path.Combine(projectRoot, expectedRelative));
             string expectedDir = Path.GetDirectoryName(expected);
             if (!string.IsNullOrWhiteSpace(expectedDir)) Directory.CreateDirectory(expectedDir);
@@ -923,7 +1107,7 @@ namespace RTS.MLAgents.Stage7B.Editor
         private static string BuildStage7BSmokeMarkdown(Stage7BDemoRecordingSmokeReport r)
         {
             var sb = new StringBuilder(2048);
-            sb.AppendLine("# Stage7B-7 Demo Recording Smoke Report");
+            sb.AppendLine("# Stage7B Clean Demo Recording Smoke Report");
             sb.AppendLine();
             sb.AppendLine("- status: " + r.status);
             sb.AppendLine("- generated_at_utc: " + r.generated_at_utc);
@@ -936,13 +1120,26 @@ namespace RTS.MLAgents.Stage7B.Editor
             sb.AppendLine("- candidate_branch_size: " + r.candidate_branch_size);
             sb.AppendLine("- source_path: " + r.source_path);
             sb.AppendLine("- source_replay_ready: " + r.source_replay_ready.ToString().ToLowerInvariant());
+            sb.AppendLine("- direction_mapping_mode: " + r.direction_mapping_mode);
+            sb.AppendLine("- produce_filtering_enabled: " + r.produce_filtering_enabled.ToString().ToLowerInvariant());
             sb.AppendLine("- runtime_services_ready: " + r.runtime_services_ready.ToString().ToLowerInvariant());
             sb.AppendLine("- runtime_services_wait_seconds: " + r.runtime_services_wait_seconds.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
+            sb.AppendLine("- teacher_commands_total: " + r.teacher_commands_total);
+            sb.AppendLine("- matched_commands: " + r.matched_commands);
+            sb.AppendLine("- dropped_commands: " + r.dropped_commands);
+            sb.AppendLine("- unsupported_worker_build_base_dropped: " + r.unsupported_worker_build_base_dropped);
+            sb.AppendLine("- unity_one_barracks_cap_dropped: " + r.unity_one_barracks_cap_dropped);
+            sb.AppendLine("- unclassified_produce_dropped: " + r.unclassified_produce_dropped);
             sb.AppendLine("- runtime_apply_attempted_count: " + r.runtime_apply_attempted_count);
             sb.AppendLine("- runtime_apply_accepted_count: " + r.runtime_apply_accepted_count);
             sb.AppendLine("- runtime_apply_rejected_count: " + r.runtime_apply_rejected_count);
             sb.AppendLine("- runtime_apply_accept_rate: " + r.runtime_apply_accept_rate.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture));
             sb.AppendLine("- recorded_decisions: " + r.recorded_decisions);
+            sb.AppendLine("- return_commands_recorded: " + r.return_commands_recorded);
+            sb.AppendLine("- move_commands_recorded: " + r.move_commands_recorded);
+            sb.AppendLine("- harvest_commands_recorded: " + r.harvest_commands_recorded);
+            sb.AppendLine("- produce_commands_recorded: " + r.produce_commands_recorded);
+            sb.AppendLine("- attack_commands_recorded: " + r.attack_commands_recorded);
             sb.AppendLine("- stage6b3_baseline_touched: " + r.stage6b3_baseline_touched.ToString().ToLowerInvariant());
             return sb.ToString();
         }

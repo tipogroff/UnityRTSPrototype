@@ -57,6 +57,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         [SerializeField] private Owner _playerPerspective = Owner.Player1;
         [SerializeField] private bool _skipMismatchedCommands = true;
         [SerializeField] private bool _skipNoTeacherCommandSteps = true;
+        [SerializeField] private bool _skipTeacherNoOpCommands = true;
+        [SerializeField] private bool _produceFilteringEnabled = true;
         [SerializeField] private float _runtimeServicesMaxWaitSeconds = 15f;
         [SerializeField] private float _runtimeServicesPollIntervalSeconds = 0.25f;
 
@@ -102,6 +104,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         private bool _startedFromEditMode;
         private bool _enteredPlayMode;
         private bool _playModeReady;
+        private bool _cleanDemo7DMode;
 
         // ── public API for StudentMlAgent ────────────────────────────────────
 
@@ -220,8 +223,11 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 candidate_branch_size = MlAgentsCandidateActionList.BranchSize,
                 max_recorded_decisions = _maxRecordedDecisions,
                 max_episodes = _maxEpisodes,
+                direction_mapping_mode =
+                    Stage7BTeacherReplayActionResolver.CardinalDirectionMappingModeInvertYForLegacy032Teacher,
                 return_mapping_mode =
                     Stage7BTeacherReplayActionResolver.ReturnDirectionMappingModeInvertYForLegacy032Teacher,
+                produce_filtering_enabled = _produceFilteringEnabled,
                 stage6b3_baseline_touched = false,
                 demo_recording_ready_for_imitation_smoke = false,
                 demo_file_path = _expectedDemoRelativePath,
@@ -241,6 +247,29 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             _lastDequeued = null;
             _pendingStop = false;
             _startupCoroutine = StartCoroutine(RunSmokeAfterStartupReady());
+        }
+
+        [ContextMenu("Run Stage7B-7D Clean Demo Recording Smoke")]
+        public void RunStage7B7DCleanDemoRecordingSmoke()
+        {
+            ConfigureStage7B7DCleanDemoDefaults();
+            RunStage7B7DemoRecordingSmoke();
+        }
+
+        public void ConfigureStage7B7DCleanDemoDefaults()
+        {
+            _cleanDemo7DMode = true;
+            _maxRecordedDecisions = 128;
+            _maxEpisodes = 1;
+            _skipMismatchedCommands = true;
+            _skipNoTeacherCommandSteps = true;
+            _skipTeacherNoOpCommands = true;
+            _produceFilteringEnabled = true;
+            _smokeReportJsonPath = "python/stage7b_teacher_replay/stage7b_7d_clean_demo_recording_report.json";
+            _smokeReportMdPath = "python/stage7b_teacher_replay/stage7b_7d_clean_demo_recording_report.md";
+            _traceJsonlPath = "python/stage7b_teacher_replay/stage7b_7d_clean_demo_recording_trace.jsonl";
+            _droppedCommandsJsonlPath = "python/stage7b_teacher_replay/stage7b_7d_clean_demo_dropped_commands.jsonl";
+            _expectedDemoRelativePath = "Assets/Demonstrations/stage7b_teacher_replay_clean_smoke.demo";
         }
 
         private System.Collections.IEnumerator RunSmokeAfterStartupReady()
@@ -331,11 +360,26 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 yield break;
             }
 
-            _report.steps_scanned = steps.Count;
+            var allowedEpisodeIds = new HashSet<int>();
+            int allowedSteps = 0;
+            for (int i = 0; i < steps.Count; i++)
+            {
+                int episodeId = steps[i].episodeId;
+                if (!allowedEpisodeIds.Contains(episodeId))
+                {
+                    if (_maxEpisodes > 0 && allowedEpisodeIds.Count >= _maxEpisodes)
+                    {
+                        continue;
+                    }
 
-            var episodeIds = new HashSet<int>();
-            for (int i = 0; i < steps.Count; i++) episodeIds.Add(steps[i].episodeId);
-            _report.episodes_scanned = episodeIds.Count;
+                    allowedEpisodeIds.Add(episodeId);
+                }
+
+                allowedSteps++;
+            }
+
+            _report.steps_scanned = allowedSteps;
+            _report.episodes_scanned = allowedEpisodeIds.Count;
 
             // ── pre-process: state sync + candidate matching → build queue ────
             // We stop pre-processing once we have enough entries for the smoke.
@@ -344,6 +388,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             for (int si = 0; si < steps.Count && _queue.Count < preProcessLimit; si++)
             {
                 Stage7BTeacherTrajectoryStep step = steps[si];
+                if (!allowedEpisodeIds.Contains(step.episodeId)) continue;
                 if (!step.HasRuntimeStateTJson) continue;
 
                 if (!_synchronizer.TrySynchronizeRuntimeState(step.runtime_state_t_json, out _, out _))
@@ -374,17 +419,31 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 {
                     Stage7BTeacherReplayTeacherCommand command = commands[ci];
 
+                    if (_skipTeacherNoOpCommands && command.action_type == ActionContract.ACTION_NOOP)
+                    {
+                        _report.dropped_commands++;
+                        AddDropReason(_report, "teacher_noop");
+                        _droppedLines.Add(JsonUtility.ToJson(new Stage7BDemoRecordingDroppedEntry
+                        {
+                            episode_id = step.episodeId, step_id = step.stepId,
+                            command_index = ci, action_type = command.action_type,
+                            drop_reason = "teacher_noop",
+                        }));
+                        continue;
+                    }
+
                     if (!_resolver.TryResolveTeacherCommand(
                             command, _playerPerspective,
                             out AgentAction teacherAction, out Stage7BTeacherReplayDropReason resolveDrop))
                     {
                         _report.dropped_commands++;
-                        AddDropReason(_report, ToSnakeCase(resolveDrop));
+                        string dropReason = ClassifyDropReason(command, resolveDrop, grid, registry);
+                        AddDropReason(_report, dropReason);
                         _droppedLines.Add(JsonUtility.ToJson(new Stage7BDemoRecordingDroppedEntry
                         {
                             episode_id = step.episodeId, step_id = step.stepId,
                             command_index = ci, action_type = command.action_type,
-                            drop_reason = ToSnakeCase(resolveDrop),
+                            drop_reason = dropReason,
                         }));
                         continue;
                     }
@@ -392,12 +451,13 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     if (!_matcher.TryMatch(teacherAction, candidates, out int candidateIndex, out Stage7BTeacherReplayDropReason matchDrop))
                     {
                         _report.dropped_commands++;
-                        AddDropReason(_report, ToSnakeCase(matchDrop));
+                        string dropReason = ClassifyDropReason(command, matchDrop, grid, registry);
+                        AddDropReason(_report, dropReason);
                         _droppedLines.Add(JsonUtility.ToJson(new Stage7BDemoRecordingDroppedEntry
                         {
                             episode_id = step.episodeId, step_id = step.stepId,
                             command_index = ci, action_type = command.action_type,
-                            drop_reason = ToSnakeCase(matchDrop),
+                            drop_reason = dropReason,
                         }));
                         if (_skipMismatchedCommands) continue;
                     }
@@ -626,6 +686,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 && demoSize > 0
                 && _report.recorded_decisions > 0
                 && _report.runtime_apply_rejected_count == 0
+                && _report.unclassified_produce_dropped == 0
+                && _report.runtime_services_ready
+                && _report.source_replay_ready
                 && !_report.stage6b3_baseline_touched;
 
             _report.demo_recording_ready_for_imitation_smoke = go;
@@ -840,6 +903,75 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             return sb.ToString();
         }
 
+        private string ClassifyDropReason(
+            Stage7BTeacherReplayTeacherCommand command,
+            Stage7BTeacherReplayDropReason fallbackReason,
+            GridManager grid,
+            UnitRegistry registry)
+        {
+            string fallback = ToSnakeCase(fallbackReason);
+            if (!_produceFilteringEnabled
+                || command == null
+                || command.action_type != ActionContract.ACTION_PRODUCE)
+            {
+                return fallback;
+            }
+
+            GridPosition actorPos = ResolveActorPosition(command);
+            UnitRuntime actor = null;
+            if (actorPos.IsInsideMap() && grid != null)
+            {
+                grid.TryGetOccupant(actorPos, out actor);
+            }
+
+            int rawProduceType = command.produce_unit_type;
+            if (actor != null && actor.Type == UnitType.Worker && rawProduceType == 1)
+            {
+                _report.unsupported_worker_build_base_dropped++;
+                return "unsupported_worker_build_base";
+            }
+
+            if (actor != null
+                && actor.Type == UnitType.Worker
+                && rawProduceType == 2
+                && HasAliveBarracks(registry, actor.Owner))
+            {
+                _report.unity_one_barracks_cap_dropped++;
+                return "runtime_state_semantics_gap_unity_one_barracks_cap";
+            }
+
+            _report.unclassified_produce_dropped++;
+            return "unclassified_produce_" + fallback;
+        }
+
+        private static GridPosition ResolveActorPosition(Stage7BTeacherReplayTeacherCommand command)
+        {
+            if (command != null && command.actor_flat >= 0 && command.actor_flat < ActionContract.TotalCells)
+            {
+                return GridPosition.FromFlatIndex(command.actor_flat);
+            }
+
+            return command != null
+                ? new GridPosition(command.actor_x, command.actor_y)
+                : GridPosition.Zero;
+        }
+
+        private static bool HasAliveBarracks(UnitRegistry registry, Owner owner)
+        {
+            if (registry == null) return false;
+            List<UnitRuntime> units = registry.GetUnitsByOwner(owner);
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive && unit.Type == UnitType.Barracks)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static string ActionTypeToString(int t)
         {
             switch (t)
@@ -873,7 +1005,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         private static string BuildMarkdown(Stage7BDemoRecordingSmokeReport r)
         {
             var sb = new StringBuilder(4096);
-            sb.AppendLine("# Stage7B-7 Demo Recording Smoke Report");
+            sb.AppendLine("# Stage7B-7D Clean Demo Recording Smoke Report");
             sb.AppendLine();
             sb.AppendLine("- status: " + r.status);
             sb.AppendLine("- generated_at_utc: " + r.generated_at_utc);
@@ -886,6 +1018,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             sb.AppendLine("- candidate_branch_size: " + r.candidate_branch_size);
             sb.AppendLine("- source_path: " + r.source_path);
             sb.AppendLine("- source_replay_ready: " + r.source_replay_ready.ToString().ToLowerInvariant());
+            sb.AppendLine("- direction_mapping_mode: " + r.direction_mapping_mode);
+            sb.AppendLine("- produce_filtering_enabled: " + r.produce_filtering_enabled.ToString().ToLowerInvariant());
             sb.AppendLine("- started_from_edit_mode: " + r.started_from_edit_mode.ToString().ToLowerInvariant());
             sb.AppendLine("- entered_play_mode: " + r.entered_play_mode.ToString().ToLowerInvariant());
             sb.AppendLine("- play_mode_ready: " + r.play_mode_ready.ToString().ToLowerInvariant());
@@ -906,6 +1040,12 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             sb.AppendLine("- recorded_decisions: " + r.recorded_decisions);
             sb.AppendLine("- dropped_commands: " + r.dropped_commands);
             sb.AppendLine("- no_teacher_command_steps_skipped: " + r.no_teacher_command_steps_skipped);
+            sb.AppendLine();
+            sb.AppendLine("## Produce Filtering");
+            sb.AppendLine();
+            sb.AppendLine("- unsupported_worker_build_base_dropped: " + r.unsupported_worker_build_base_dropped);
+            sb.AppendLine("- unity_one_barracks_cap_dropped: " + r.unity_one_barracks_cap_dropped);
+            sb.AppendLine("- unclassified_produce_dropped: " + r.unclassified_produce_dropped);
             sb.AppendLine();
             sb.AppendLine("## Runtime Apply");
             sb.AppendLine();
@@ -948,12 +1088,12 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             sb.AppendLine("- stage6b3_baseline_touched: " +
                           r.stage6b3_baseline_touched.ToString().ToLowerInvariant());
             sb.AppendLine("- return_mapping_mode: " + r.return_mapping_mode);
+            sb.AppendLine("- direction_mapping_mode: " + r.direction_mapping_mode);
             sb.AppendLine();
 
             if (r.status == "GO")
             {
-                sb.AppendLine("**Next step before large dataset export or serious training:**");
-                sb.AppendLine("**Stage7B-7A — Move / Harvest / Produce mismatch audit.**");
+                sb.AppendLine("**Stage7B-8 small imitation smoke can proceed.**");
             }
             else
             {
@@ -1008,7 +1148,12 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int runtime_apply_accepted_count;
         public int runtime_apply_rejected_count;
         public float runtime_apply_accept_rate = -1f;
+        public string direction_mapping_mode;
         public string return_mapping_mode;
+        public bool produce_filtering_enabled;
+        public int unsupported_worker_build_base_dropped;
+        public int unity_one_barracks_cap_dropped;
+        public int unclassified_produce_dropped;
         public int return_commands_recorded;
         public int move_commands_recorded;
         public int harvest_commands_recorded;

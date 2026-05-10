@@ -1,0 +1,98 @@
+{
+  "generated_at_utc": "2026-05-10T21:07:51Z",
+  "conclusion": "legacy032 and Unity v2 UnitType order match; no offset and no Light/Heavy/Ranged swap found",
+  "agent_action_label_warning": "AgentAction.ProduceUnitType stores raw v2 indices 0..6 in a ProducibleUnit-typed field; ToString labels for 1/2/3 are legacy ProducibleUnit labels and must not be used as v2 UnitType names.",
+  "legacy032_order_source": "UnitTypeTable.addUnitType order: Resource, Base, Barracks, Worker, Light, Heavy, Ranged",
+  "unity_order_source": "RTS.Core.UnitType and ActionContractMappings.TryMapV2ProduceIndexToUnitType",
+  "rows": [
+    {
+      "legacy032_raw_produce_unit_type": 0,
+      "legacy032_unit_name": "Resource",
+      "unity_v2_unit_type": "Resource",
+      "current_stage7b_agent_action_label": "Worker",
+      "current_stage7b_raw_value": 0,
+      "expected_stage7b_mapping": "Resource",
+      "valid_produce_target_in_unity_runtime": false,
+      "notes": "Resource is never a valid Produce target"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 1,
+      "legacy032_unit_name": "Base",
+      "unity_v2_unit_type": "Base",
+      "current_stage7b_agent_action_label": "Light",
+      "current_stage7b_raw_value": 1,
+      "expected_stage7b_mapping": "Base",
+      "valid_produce_target_in_unity_runtime": false,
+      "notes": "Worker may build Barracks in Unity; legacy032 also allows Worker->Base"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 2,
+      "legacy032_unit_name": "Barracks",
+      "unity_v2_unit_type": "Barracks",
+      "current_stage7b_agent_action_label": "Heavy",
+      "current_stage7b_raw_value": 2,
+      "expected_stage7b_mapping": "Barracks",
+      "valid_produce_target_in_unity_runtime": true,
+      "notes": "Worker may build Barracks in Unity; legacy032 also allows Worker->Base"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 3,
+      "legacy032_unit_name": "Worker",
+      "unity_v2_unit_type": "Worker",
+      "current_stage7b_agent_action_label": "Ranged",
+      "current_stage7b_raw_value": 3,
+      "expected_stage7b_mapping": "Worker",
+      "valid_produce_target_in_unity_runtime": true,
+      "notes": "Base produces Worker only"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 4,
+      "legacy032_unit_name": "Light",
+      "unity_v2_unit_type": "Light",
+      "current_stage7b_agent_action_label": "4",
+      "current_stage7b_raw_value": 4,
+      "expected_stage7b_mapping": "Light",
+      "valid_produce_target_in_unity_runtime": true,
+      "notes": "Barracks produces combat units"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 5,
+      "legacy032_unit_name": "Heavy",
+      "unity_v2_unit_type": "Heavy",
+      "current_stage7b_agent_action_label": "5",
+      "current_stage7b_raw_value": 5,
+      "expected_stage7b_mapping": "Heavy",
+      "valid_produce_target_in_unity_runtime": true,
+      "notes": "Barracks produces combat units"
+    },
+    {
+      "legacy032_raw_produce_unit_type": 6,
+      "legacy032_unit_name": "Ranged",
+      "unity_v2_unit_type": "Ranged",
+      "current_stage7b_agent_action_label": "6",
+      "current_stage7b_raw_value": 6,
+      "expected_stage7b_mapping": "Ranged",
+      "valid_produce_target_in_unity_runtime": true,
+      "notes": "Barracks produces combat units"
+    }
+  ],
+  "rules": {
+    "resource_valid_produce_target": false,
+    "base_can_produce": [
+      "Worker"
+    ],
+    "barracks_can_produce": [
+      "Light",
+      "Heavy",
+      "Ranged"
+    ],
+    "worker_can_produce_legacy032": [
+      "Base",
+      "Barracks"
+    ],
+    "worker_can_produce_unity_current_runtime": [
+      "Barracks"
+    ],
+    "unity_worker_barracks_extra_gate": "owner must not already have an alive Barracks"
+  }
+}
