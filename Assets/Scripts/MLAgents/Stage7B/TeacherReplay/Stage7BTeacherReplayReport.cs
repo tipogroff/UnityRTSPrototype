@@ -97,18 +97,18 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 
         public void RecomputeRates(bool stateSyncReliable)
         {
-            if (stepsReplayAttempted > 0 && stateSyncReliable)
+            if (teacherCommandsTotal > 0 && stateSyncReliable)
             {
-                candidateMatchRate = (float)candidateMatchCount / stepsReplayAttempted;
+                candidateMatchRate = (float)candidateMatchCount / teacherCommandsTotal;
             }
             else
             {
                 candidateMatchRate = -1f;
             }
 
-            if (nonNoOpTotal > 0 && stateSyncReliable)
+            if (teacherNonNoOpCommandsTotal > 0 && stateSyncReliable)
             {
-                nonNoOpCandidateMatchRate = (float)nonNoOpCandidateMatchCount / nonNoOpTotal;
+                nonNoOpCandidateMatchRate = (float)nonNoOpCandidateMatchCount / teacherNonNoOpCommandsTotal;
             }
             else
             {
@@ -142,6 +142,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 case Stage7BTeacherReplayDropReason.BranchContractMismatch: return "branch_contract_mismatch";
                 case Stage7BTeacherReplayDropReason.AttackTargetContractMismatch: return "attack_target_contract_mismatch";
                 case Stage7BTeacherReplayDropReason.StateSyncFailed: return "state_sync_failed";
+                case Stage7BTeacherReplayDropReason.UnityStateApiMissing: return "unity_state_api_missing";
                 case Stage7BTeacherReplayDropReason.ObservationMismatch: return "observation_mismatch";
                 case Stage7BTeacherReplayDropReason.TeacherNoOp: return "teacher_noop";
                 case Stage7BTeacherReplayDropReason.MultipleNonNoOpActors: return "multiple_nonnoop_actors";
@@ -160,6 +161,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 case Stage7BTeacherReplayDropReason.RuntimeDesync: return "runtime_desync";
                 case Stage7BTeacherReplayDropReason.PostStateDesync: return "post_state_desync";
                 case Stage7BTeacherReplayDropReason.TerminalMismatch: return "terminal_mismatch";
+                case Stage7BTeacherReplayDropReason.DuplicateSpawnDetected: return "duplicate_spawn_detected";
                 case Stage7BTeacherReplayDropReason.Unknown: return "unknown";
                 default: return "none";
             }

@@ -44,7 +44,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 }
             }
 
-            dropReason = Stage7BTeacherReplayDropReason.NoMatchingActor;
+            dropReason = Stage7BTeacherReplayDropReason.NoMatchingCandidate;
             return false;
         }
 

@@ -19,6 +19,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         // Supports both replay-ready names seen in NPZ/JSONL exporters.
         public string teacher_commands_t_json;
         public string teacher_commands;
+        public Stage7BTeacherReplayTeacherCommand[] teacher_commands_list;
 
         // Flattened per-cell action branches, expected shape [576, 7] => length 4032.
         public int[] perCellActionBranchesFlat;
@@ -29,5 +30,6 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public bool HasRuntimeStateTp1Json => !string.IsNullOrWhiteSpace(runtime_state_tp1_json);
         public bool HasTeacherCommandsJson =>
             !string.IsNullOrWhiteSpace(teacher_commands_t_json) || !string.IsNullOrWhiteSpace(teacher_commands);
+        public bool HasTeacherCommandList => teacher_commands_list != null && teacher_commands_list.Length > 0;
     }
 }

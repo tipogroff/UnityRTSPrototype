@@ -16,6 +16,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         BranchContractMismatch,
         AttackTargetContractMismatch,
         StateSyncFailed,
+        UnityStateApiMissing,
         ObservationMismatch,
         TeacherNoOp,
         MultipleNonNoOpActors,
@@ -34,6 +35,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         RuntimeDesync,
         PostStateDesync,
         TerminalMismatch,
+        DuplicateSpawnDetected,
         Unknown,
     }
 }
