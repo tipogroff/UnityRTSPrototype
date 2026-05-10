@@ -16,6 +16,7 @@ DEFAULT_OUTPUT = Path("python/stage7b_teacher_replay/stage7b_teacher_replay_sour
 
 SOURCE_GROUPS = (
     "teacher_rollouts",
+    "teacher_replay_exports",
     "teacher_exports",
     "teacher_adapted",
     "teacher_exports_bc",
@@ -55,6 +56,9 @@ def now_iso() -> str:
 def classify_format(group: str, npz_keys: list[str], manifest: dict[str, Any]) -> str:
     schema_version = str(manifest.get("schema_version", "")).strip().lower()
 
+    if group == "teacher_replay_exports" or "replay_ready" in schema_version:
+        return "legacy032_replay_ready_export"
+
     if group == "teacher_rollouts" or "teacher_rollout_raw" in schema_version:
         return "legacy032_teacher_rollout_raw"
     if group in ("teacher_exports", "teacher_adapted") or "adapted" in schema_version:
@@ -72,6 +76,9 @@ def classify_format(group: str, npz_keys: list[str], manifest: dict[str, Any]) -
 def detect_full_state(npz_keys: list[str], sample_info: dict[str, Any]) -> bool:
     # Replay-ready full state would need explicit unit/state snapshot fields.
     explicit_state_keys = {
+        "initial_state_json",
+        "runtime_state_t_json",
+        "runtime_state_tp1_json",
         "runtime_state_t",
         "unit_state_t",
         "units_t",
@@ -95,6 +102,12 @@ def detect_full_state(npz_keys: list[str], sample_info: dict[str, Any]) -> bool:
 
 def score_source(info: SourceInfo) -> int:
     score = 0
+    if info.group == "teacher_replay_exports":
+        score += 220
+    if info.format == "legacy032_replay_ready_export":
+        score += 180
+    if info.replay_ready:
+        score += 300
     if info.group == "teacher_rollouts":
         score += 80
     if info.format == "legacy032_teacher_rollout_raw":

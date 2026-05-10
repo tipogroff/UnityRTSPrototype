@@ -24,9 +24,13 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int episodesReplayAttempted;
         public int stepsTotal;
         public int stepsReplayAttempted;
+        public int teacherCommandsTotal;
+        public int teacherNonNoOpCommandsTotal;
 
         public int stateSyncSuccessCount;
         public int stateSyncFailedCount;
+        public int preObservationMatchCount;
+        public int preObservationMismatchCount;
 
         public int candidateMatchCount;
         public int candidateDropCount;
@@ -40,6 +44,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int runtimeApplyAcceptedCount;
         public int runtimeApplyRejectedCount;
         public float runtimeApplyAcceptRate;
+
+        public int postStateMatchCount;
+        public int postStateMismatchCount;
 
         public int candidateCountMin;
         public float candidateCountMean;
@@ -122,9 +129,14 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         {
             switch (reason)
             {
+                case Stage7BTeacherReplayDropReason.SourceNotReplayReady: return "source_not_replay_ready";
+                case Stage7BTeacherReplayDropReason.ManifestContractMismatch: return "manifest_contract_mismatch";
                 case Stage7BTeacherReplayDropReason.SourceSchemaUnknown: return "source_schema_unknown";
                 case Stage7BTeacherReplayDropReason.MissingInitialState: return "missing_initial_state";
                 case Stage7BTeacherReplayDropReason.MissingRuntimeState: return "missing_runtime_state";
+                case Stage7BTeacherReplayDropReason.MissingRuntimeStateT: return "missing_runtime_state_t";
+                case Stage7BTeacherReplayDropReason.MissingRuntimeStateTp1: return "missing_runtime_state_tp1";
+                case Stage7BTeacherReplayDropReason.MissingTeacherCommands: return "missing_teacher_commands";
                 case Stage7BTeacherReplayDropReason.MissingTeacherAction: return "missing_teacher_action";
                 case Stage7BTeacherReplayDropReason.UnsupportedActionFormat: return "unsupported_action_format";
                 case Stage7BTeacherReplayDropReason.BranchContractMismatch: return "branch_contract_mismatch";
@@ -133,7 +145,11 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 case Stage7BTeacherReplayDropReason.ObservationMismatch: return "observation_mismatch";
                 case Stage7BTeacherReplayDropReason.TeacherNoOp: return "teacher_noop";
                 case Stage7BTeacherReplayDropReason.MultipleNonNoOpActors: return "multiple_nonnoop_actors";
+                case Stage7BTeacherReplayDropReason.ActorNotFound: return "actor_not_found";
+                case Stage7BTeacherReplayDropReason.ActorTypeMismatch: return "actor_type_mismatch";
+                case Stage7BTeacherReplayDropReason.ActorOwnerMismatch: return "actor_owner_mismatch";
                 case Stage7BTeacherReplayDropReason.NoMatchingActor: return "no_matching_actor";
+                case Stage7BTeacherReplayDropReason.NoMatchingCandidate: return "no_matching_candidate";
                 case Stage7BTeacherReplayDropReason.ActionTypeUnsupported: return "action_type_unsupported";
                 case Stage7BTeacherReplayDropReason.ActionNotLegalInUnity: return "action_not_legal_in_unity";
                 case Stage7BTeacherReplayDropReason.DirectionMismatch: return "direction_mismatch";
@@ -142,6 +158,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 case Stage7BTeacherReplayDropReason.CandidateOverflow: return "candidate_overflow";
                 case Stage7BTeacherReplayDropReason.RuntimeApplyRejected: return "runtime_apply_rejected";
                 case Stage7BTeacherReplayDropReason.RuntimeDesync: return "runtime_desync";
+                case Stage7BTeacherReplayDropReason.PostStateDesync: return "post_state_desync";
                 case Stage7BTeacherReplayDropReason.TerminalMismatch: return "terminal_mismatch";
                 case Stage7BTeacherReplayDropReason.Unknown: return "unknown";
                 default: return "none";

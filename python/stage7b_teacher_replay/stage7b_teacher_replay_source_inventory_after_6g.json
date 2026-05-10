@@ -1,0 +1,18 @@
+{
+  "generated_at_utc": "2026-05-10T13:42:49Z",
+  "selected_source_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z",
+  "selected_source_format": "legacy032_replay_ready_export",
+  "selected_source_replay_ready": true,
+  "source_report_replay_ready": true,
+  "manifest_validation_errors": [],
+  "episode_npz_count": 1,
+  "episode_jsonl_count": 1,
+  "replay_manifest_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z/replay_manifest.json",
+  "stage7b_export_report_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z/stage7b_replay_ready_export_report.json",
+  "required_files": {
+    "replay_manifest_json": true,
+    "episode_replay_ready_npz": true,
+    "episode_replay_ready_jsonl": true,
+    "stage7b_replay_ready_export_report": true
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "generated_at_utc": "2026-05-10T13:42:49Z",
+  "stage": "Stage7B-6B-Rerun",
+  "status": "NO_GO",
+  "summary": "Replay-ready source validated; offline prep pass completed. Unity runtime state synchronization/candidate matching were not executed in this run.",
+  "selected_source_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z",
+  "selected_source_format": "legacy032_replay_ready_export",
+  "selected_source_replay_ready": true,
+  "replay_manifest_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z/replay_manifest.json",
+  "metrics": {
+    "episodes_scanned": 1,
+    "episodes_replay_attempted": 1,
+    "steps_total": 64,
+    "steps_replay_attempted": 64,
+    "teacher_commands_total": 9,
+    "teacher_nonnoop_commands_total": 9,
+    "state_sync_success_count": 0,
+    "state_sync_failed_count": 64,
+    "pre_observation_match_count": 0,
+    "pre_observation_mismatch_count": 0,
+    "candidate_count_min": null,
+    "candidate_count_mean": null,
+    "candidate_count_max": null,
+    "candidate_overflow_count": 0,
+    "candidate_match_count": 0,
+    "candidate_drop_count": 9,
+    "candidate_match_rate": null,
+    "nonoop_candidate_match_count": 0,
+    "nonoop_candidate_match_rate": null,
+    "runtime_apply_attempted_count": 0,
+    "runtime_apply_accepted_count": 0,
+    "runtime_apply_rejected_count": 0,
+    "runtime_apply_accept_rate": null,
+    "post_state_match_count": 0,
+    "post_state_mismatch_count": 0,
+    "terminal_match_count": 63,
+    "terminal_mismatch_count": 1,
+    "demo_recording_ready": false,
+    "drop_reason_histogram": {
+      "source_not_replay_ready": 0,
+      "manifest_contract_mismatch": 0,
+      "missing_initial_state": 0,
+      "missing_runtime_state_t": 0,
+      "missing_runtime_state_tp1": 0,
+      "missing_teacher_commands": 0,
+      "state_sync_failed": 9,
+      "actor_not_found": 0,
+      "actor_type_mismatch": 0,
+      "actor_owner_mismatch": 0,
+      "action_type_unsupported": 0,
+      "action_not_legal_in_unity": 0,
+      "direction_mismatch": 0,
+      "produce_type_mismatch": 0,
+      "attack_target_mismatch": 0,
+      "candidate_overflow": 0,
+      "no_matching_candidate": 0,
+      "runtime_apply_rejected": 0,
+      "post_state_desync": 0,
+      "observation_mismatch": 0,
+      "terminal_mismatch": 1,
+      "unknown": 0
+    }
+  },
+  "contract": {
+    "branch_sizes": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "attack_target_size": 49,
+    "attack_target_center_index": 24,
+    "observation_shape": [
+      24,
+      24,
+      27
+    ],
+    "action_shape": [
+      576,
+      7
+    ],
+    "validation_errors": []
+  },
+  "artifacts": {
+    "source_inventory_json": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/stage7b_teacher_replay/stage7b_teacher_replay_source_inventory_after_6g.json",
+    "prep_report_json": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/stage7b_teacher_replay/stage7b_teacher_replay_prep_report_after_6g.json",
+    "prep_report_md": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/stage7b_teacher_replay/stage7b_teacher_replay_prep_report_after_6g.md",
+    "candidate_preview_jsonl": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/stage7b_teacher_replay/stage7b_teacher_replay_candidate_preview_after_6g.jsonl"
+  },
+  "no_go_reasons": [
+    "state_sync_failed"
+  ],
+  "notes": [
+    "ML-Agents training/PPO/imitation/.demo were not started.",
+    "Stage6B3 baseline/checkpoint files were not modified by this script.",
+    "Candidate truth must be measured from Unity MlAgentsCandidateActionBuilder on synchronized runtime state; this offline pass only validates replay-ready source and measures source-side counters."
+  ]
+}
