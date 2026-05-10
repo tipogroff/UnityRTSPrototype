@@ -40,13 +40,18 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int nonNoOpCandidateMatchCount;
         public float nonNoOpCandidateMatchRate;
 
+        public int noTeacherCommandSteps;
         public int runtimeApplyAttemptedCount;
         public int runtimeApplyAcceptedCount;
         public int runtimeApplyRejectedCount;
         public float runtimeApplyAcceptRate;
 
+        public int firstRuntimeRejectStep;
+        public string firstRuntimeRejectActionSummary;
+
         public int postStateMatchCount;
         public int postStateMismatchCount;
+        public string postStateComparisonMode;
 
         public int candidateCountMin;
         public float candidateCountMean;
@@ -61,6 +66,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public List<Stage7BTeacherReplayMetricEntry> dropReasonHistogram = new List<Stage7BTeacherReplayMetricEntry>();
         public List<Stage7BTeacherReplayMetricEntry> matchByActionType = new List<Stage7BTeacherReplayMetricEntry>();
         public List<Stage7BTeacherReplayMetricEntry> dropByActionType = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<Stage7BTeacherReplayMetricEntry> rejectedActionTypeHistogram = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<Stage7BTeacherReplayMetricEntry> runtimeRejectReasonHistogram = new List<Stage7BTeacherReplayMetricEntry>();
         public List<string> notes = new List<string>();
 
         public static Stage7BTeacherReplayReport CreateDefault()
@@ -76,6 +83,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 candidateCountMin = -1,
                 candidateCountMean = -1f,
                 candidateCountMax = -1,
+                firstRuntimeRejectStep = -1,
+                firstRuntimeRejectActionSummary = null,
+                postStateComparisonMode = "not_applicable",
             };
         }
 
@@ -93,6 +103,21 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             }
 
             dropReasonHistogram.Add(new Stage7BTeacherReplayMetricEntry { key = key, value = 1 });
+        }
+
+        public void IncrementHistogram(List<Stage7BTeacherReplayMetricEntry> histogram, string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return;
+            for (int i = 0; i < histogram.Count; i++)
+            {
+                if (histogram[i].key == key)
+                {
+                    histogram[i].value++;
+                    return;
+                }
+            }
+
+            histogram.Add(new Stage7BTeacherReplayMetricEntry { key = key, value = 1 });
         }
 
         public void RecomputeRates(bool stateSyncReliable)

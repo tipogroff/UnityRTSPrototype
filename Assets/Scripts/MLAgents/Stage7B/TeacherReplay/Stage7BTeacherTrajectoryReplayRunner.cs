@@ -21,6 +21,14 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         [SerializeField] private string _unitySyncReportMdPath = "python/stage7b_teacher_replay/stage7b_unity_replay_sync_report.md";
         [SerializeField] private string _candidateTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_unity_replay_candidate_trace.jsonl";
         [SerializeField] private string _stateSyncTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_unity_replay_state_sync_trace.jsonl";
+
+        // Stage7B-6I: Runtime Apply Validation output paths
+        [SerializeField] private string _runtimeApplyReportJsonPath = "python/stage7b_teacher_replay/stage7b_runtime_apply_validation_report.json";
+        [SerializeField] private string _runtimeApplyReportMdPath = "python/stage7b_teacher_replay/stage7b_runtime_apply_validation_report.md";
+        [SerializeField] private string _runtimeApplyTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_runtime_apply_trace.jsonl";
+        [SerializeField] private string _runtimeApplyPostStateTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_runtime_apply_post_state_trace.jsonl";
+        [SerializeField] private string _candidateMismatchDiagnosisJsonPath = "python/stage7b_teacher_replay/stage7b_candidate_mismatch_diagnosis.json";
+
         [SerializeField] private Owner _playerPerspective = Owner.Player1;
         [SerializeField] private bool _enableRuntimeApply;
         [SerializeField] private bool _runOnStart;
@@ -293,6 +301,570 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             WriteFinalArtifacts(report, candidateTraceLines, stateTraceLines);
         }
 
+        [ContextMenu("Run Stage7B-6I Runtime Apply Validation")]
+        public void RunStage7B6IUnityRuntimeApplyValidation()
+        {
+            var report = Stage7BTeacherReplayReport.CreateDefault();
+            report.generatedAtUtc = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            report.summary = "Stage7B-6I Unity runtime apply validation (enableRuntimeApply=true).";
+            report.selectedSourcePath = _replayReadySourceDir;
+            report.selectedSourceFormat = "legacy032_replay_ready_export";
+            report.postStateComparisonMode = "partial";
+
+            var notes = report.notes;
+            notes.Add("Stage7B-6I: runtime apply mode enabled. ActionApplier.ApplyAction called for each matched candidate.");
+            notes.Add("ML-Agents training/PPO/imitation/.demo were not started by this runner.");
+            notes.Add("post_state_comparison_mode=partial: unit count, resource node count, player resources, terminal checked. Per-unit x/y not compared.");
+
+            if (!_loader.TryLoadReplayManifest(_replayReadySourceDir, out Stage7BTeacherReplayManifest manifest, out string manifestDiag))
+            {
+                report.status = "NO_GO";
+                report.IncrementDrop(Stage7BTeacherReplayDropReason.SourceNotReplayReady);
+                notes.Add("Failed to load replay manifest: " + manifestDiag);
+                Write6IArtifacts(report, new List<string>(), new List<string>(), new List<string>(), new List<Stage7BCandidateMismatchDiagnosisEntry>());
+                return;
+            }
+
+            List<string> contractErrors = ValidateManifest(manifest);
+            if (contractErrors.Count > 0)
+            {
+                report.IncrementDrop(Stage7BTeacherReplayDropReason.ManifestContractMismatch);
+                notes.Add("Manifest contract mismatch: " + string.Join("; ", contractErrors));
+            }
+
+            if (!manifest.replay_ready)
+            {
+                report.IncrementDrop(Stage7BTeacherReplayDropReason.SourceNotReplayReady);
+                notes.Add("Manifest replay_ready=false.");
+            }
+
+            if (!_loader.TryLoadReplayReadyJsonl(_replayReadySourceDir, out List<Stage7BTeacherTrajectoryStep> steps, out string loadDiag))
+            {
+                report.status = "NO_GO";
+                report.IncrementDrop(Stage7BTeacherReplayDropReason.MissingRuntimeStateT);
+                notes.Add("Failed to load replay_ready JSONL: " + loadDiag);
+                Write6IArtifacts(report, new List<string>(), new List<string>(), new List<string>(), new List<Stage7BCandidateMismatchDiagnosisEntry>());
+                return;
+            }
+
+            report.episodesScanned = 1;
+            report.episodesReplayAttempted = 1;
+            report.stepsTotal = steps.Count;
+            report.stepsReplayAttempted = steps.Count;
+
+            MatchManager match = MatchManager.Instance;
+            GridManager grid = GridManager.Instance;
+            UnitRegistry registry = UnitRegistry.Instance;
+            MatchBootstrap bootstrap = MatchBootstrap.Instance;
+            ResourceManager resources = ResourceManager.Instance;
+
+            if (match == null || grid == null || registry == null || bootstrap == null || resources == null)
+            {
+                report.status = "NO_GO";
+                report.IncrementDrop(Stage7BTeacherReplayDropReason.UnityStateApiMissing);
+                notes.Add("Unity runtime service missing (MatchManager/GridManager/UnitRegistry/MatchBootstrap/ResourceManager). Open Week7 scene first.");
+                Write6IArtifacts(report, new List<string>(), new List<string>(), new List<string>(), new List<Stage7BCandidateMismatchDiagnosisEntry>());
+                return;
+            }
+
+            var synchronizer = new Stage7BTeacherReplayStateSynchronizer(match, grid, registry, bootstrap, resources);
+            var resolver = new Stage7BTeacherReplayActionResolver();
+            var matcher = new Stage7BTeacherReplayCandidateMatcher();
+            var actionApplier = new ActionApplier(grid, registry, match, resources);
+
+            var applyTraceLines = new List<string>(steps.Count * 2);
+            var postStateTraceLines = new List<string>(steps.Count);
+            var stateSyncTraceLines = new List<string>(steps.Count);
+            var mismatchEntries = new List<Stage7BCandidateMismatchDiagnosisEntry>();
+            var candidateCounts = new List<int>(steps.Count);
+
+            for (int stepIndex = 0; stepIndex < steps.Count; stepIndex++)
+            {
+                Stage7BTeacherTrajectoryStep step = steps[stepIndex];
+
+                var stateTrace = new Stage7BUnityReplayStateTrace
+                {
+                    episode_id = step.episodeId,
+                    step_id = step.stepId,
+                };
+
+                if (!step.HasRuntimeStateTJson)
+                {
+                    report.stateSyncFailedCount++;
+                    report.IncrementDrop(Stage7BTeacherReplayDropReason.MissingRuntimeStateT);
+                    stateTrace.state_sync_success = false;
+                    stateTrace.drop_reason = "missing_runtime_state_t";
+                    stateTrace.message = "runtime_state_t_json missing";
+                    stateSyncTraceLines.Add(JsonUtility.ToJson(stateTrace));
+                    continue;
+                }
+
+                if (!synchronizer.TrySynchronizeRuntimeState(step.runtime_state_t_json, out Stage7BTeacherReplayDropReason syncDrop, out string syncDiagnostics))
+                {
+                    report.stateSyncFailedCount++;
+                    Stage7BTeacherReplayDropReason effectiveDrop = syncDrop == Stage7BTeacherReplayDropReason.None ? Stage7BTeacherReplayDropReason.StateSyncFailed : syncDrop;
+                    report.IncrementDrop(effectiveDrop);
+                    stateTrace.state_sync_success = false;
+                    stateTrace.drop_reason = ToSnakeCase(effectiveDrop);
+                    stateTrace.message = syncDiagnostics;
+                    stateSyncTraceLines.Add(JsonUtility.ToJson(stateTrace));
+                    continue;
+                }
+
+                report.stateSyncSuccessCount++;
+                stateTrace.state_sync_success = true;
+                stateTrace.message = syncDiagnostics;
+
+                var maskBuilder = new ActionMaskBuilder(match, grid, resources, registry, bootstrap);
+                var candidateBuilder = new MlAgentsCandidateActionBuilder(maskBuilder);
+                MlAgentsCandidateActionList candidates = candidateBuilder.Build(_playerPerspective);
+
+                int candidateCount = candidates.CandidateCount;
+                candidateCounts.Add(candidateCount);
+                report.candidateOverflowCount += candidates.OverflowCount;
+                if (candidates.OverflowCount > 0)
+                {
+                    report.IncrementDrop(Stage7BTeacherReplayDropReason.CandidateOverflow);
+                }
+
+                stateTrace.candidate_count = candidateCount;
+                stateTrace.candidate_overflow = candidates.OverflowCount;
+
+                Stage7BTeacherReplayTeacherCommand[] commands = GetTeacherCommands(step);
+                if (commands == null || commands.Length == 0)
+                {
+                    // 6I requirement: no_teacher_command_steps classified separately, NOT as candidateDropCount.
+                    report.noTeacherCommandSteps++;
+                    stateTrace.drop_reason = "no_teacher_command_step";
+                    stateSyncTraceLines.Add(JsonUtility.ToJson(stateTrace));
+                    continue;
+                }
+
+                bool stepHadApply = false;
+
+                for (int commandIndex = 0; commandIndex < commands.Length; commandIndex++)
+                {
+                    Stage7BTeacherReplayTeacherCommand command = commands[commandIndex];
+                    report.teacherCommandsTotal++;
+                    if (command.action_type != 0)
+                    {
+                        report.teacherNonNoOpCommandsTotal++;
+                        report.nonNoOpTotal++;
+                    }
+
+                    var applyTrace = new Stage7BRuntimeApplyTraceEntry
+                    {
+                        episode_id = step.episodeId,
+                        step_id = step.stepId,
+                        command_index = commandIndex,
+                        actor_flat = command.actor_flat,
+                        actor_x = command.actor_x,
+                        actor_y = command.actor_y,
+                        action_type = command.action_type,
+                    };
+
+                    if (!resolver.TryResolveTeacherCommand(command, _playerPerspective, out AgentAction teacherAction, out Stage7BTeacherReplayDropReason resolveDrop))
+                    {
+                        report.IncrementDrop(resolveDrop);
+                        applyTrace.action_summary = "resolve_failed:" + ToSnakeCase(resolveDrop);
+                        applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
+                        continue;
+                    }
+
+                    applyTrace.action_summary = BuildActionSummary(teacherAction);
+
+                    if (!matcher.TryMatch(teacherAction, candidates, out int candidateIndex, out Stage7BTeacherReplayDropReason matchDrop))
+                    {
+                        report.IncrementDrop(matchDrop);
+                        applyTrace.action_summary += " | match_failed:" + ToSnakeCase(matchDrop);
+                        applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
+
+                        // Diagnose mismatch
+                        var diagEntry = DiagnoseMismatch(step.episodeId, step.stepId, commandIndex, command, teacherAction, candidates, matchDrop);
+                        mismatchEntries.Add(diagEntry);
+                        continue;
+                    }
+
+                    report.candidateMatchCount++;
+                    if (command.action_type != 0) report.nonNoOpCandidateMatchCount++;
+
+                    // Runtime apply (always enabled in 6I)
+                    report.runtimeApplyAttemptedCount++;
+                    applyTrace.runtime_apply_attempted = true;
+                    bool applied = actionApplier.ApplyAction(teacherAction, _playerPerspective);
+                    applyTrace.runtime_apply_accepted = applied;
+
+                    if (applied)
+                    {
+                        report.runtimeApplyAcceptedCount++;
+                        stepHadApply = true;
+                    }
+                    else
+                    {
+                        report.runtimeApplyRejectedCount++;
+                        report.IncrementDrop(Stage7BTeacherReplayDropReason.RuntimeApplyRejected);
+
+                        // Capture rejection reason
+                        string rejectReason = "unknown";
+                        if (actionApplier.RejectionReasonsLastStep != null && actionApplier.RejectionReasonsLastStep.Count > 0)
+                        {
+                            rejectReason = actionApplier.RejectionReasonsLastStep[0];
+                        }
+
+                        applyTrace.reject_reason = rejectReason;
+                        report.IncrementHistogram(report.runtimeRejectReasonHistogram, rejectReason);
+                        report.IncrementHistogram(report.rejectedActionTypeHistogram, ActionTypeToString(command.action_type));
+
+                        if (report.firstRuntimeRejectStep < 0)
+                        {
+                            report.firstRuntimeRejectStep = step.stepId;
+                            report.firstRuntimeRejectActionSummary = applyTrace.action_summary + " | reject:" + rejectReason;
+                        }
+                    }
+
+                    applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
+                }
+
+                // Advance match state if any apply was attempted this step
+                if (report.runtimeApplyAttemptedCount > 0 && stepHadApply)
+                {
+                    match.StepMatch();
+                }
+
+                // Post-state comparison
+                if (step.HasRuntimeStateTp1Json)
+                {
+                    bool postMatch = synchronizer.TryComparePostState(step.runtime_state_tp1_json, out bool terminalMatch, out string postDiag);
+                    var postStateEntry = new Stage7BRuntimeApplyPostStateTraceEntry
+                    {
+                        episode_id = step.episodeId,
+                        step_id = step.stepId,
+                        post_state_matched = postMatch,
+                        terminal_matched = terminalMatch,
+                        comparison_mode = "partial",
+                        diagnostics = postDiag,
+                    };
+                    postStateTraceLines.Add(JsonUtility.ToJson(postStateEntry));
+
+                    if (postMatch) report.postStateMatchCount++;
+                    else
+                    {
+                        report.postStateMismatchCount++;
+                        report.IncrementDrop(Stage7BTeacherReplayDropReason.PostStateDesync);
+                    }
+
+                    if (terminalMatch) report.terminalMatchCount++;
+                    else
+                    {
+                        report.terminalMismatchCount++;
+                        report.IncrementDrop(Stage7BTeacherReplayDropReason.TerminalMismatch);
+                    }
+
+                    stateTrace.post_state_message = postDiag;
+                }
+
+                stateSyncTraceLines.Add(JsonUtility.ToJson(stateTrace));
+            }
+
+            FinalizeCandidateCountStats(report, candidateCounts);
+            report.RecomputeRates(stateSyncReliable: report.stateSyncSuccessCount > 0);
+            report.demoRecordingReady = report.stateSyncSuccessCount > 0
+                                       && report.candidateMatchRate >= 0f
+                                       && report.candidateMatchRate >= 0.5f
+                                       && report.runtimeApplyAttemptedCount > 0
+                                       && report.runtimeApplyAcceptRate >= 0.5f
+                                       && report.terminalMismatchCount == 0;
+
+            bool hasContractError = contractErrors.Count > 0 || !manifest.replay_ready;
+            bool hasStateSync = report.stateSyncSuccessCount > 0;
+            bool hasMatchMetrics = report.teacherCommandsTotal > 0 && report.candidateMatchRate >= 0f;
+            bool hasApplyMetrics = report.runtimeApplyAttemptedCount > 0;
+            report.status = hasContractError || !hasStateSync || !hasMatchMetrics || !hasApplyMetrics ? "NO_GO" : "GO";
+
+            notes.Add("no_teacher_command_steps classified separately, not counted in candidateDropCount.");
+            notes.Add("Stage6B3 baseline/checkpoint assets were not modified by this runner.");
+
+            Write6IArtifacts(report, applyTraceLines, postStateTraceLines, stateSyncTraceLines, mismatchEntries);
+        }
+
+        private void Write6IArtifacts(
+            Stage7BTeacherReplayReport report,
+            List<string> applyTraceLines,
+            List<string> postStateTraceLines,
+            List<string> stateSyncTraceLines,
+            List<Stage7BCandidateMismatchDiagnosisEntry> mismatchEntries)
+        {
+            _loader.TrySaveText(_runtimeApplyTraceJsonlPath, string.Join("\n", applyTraceLines), out _);
+            _loader.TrySaveText(_runtimeApplyPostStateTraceJsonlPath, string.Join("\n", postStateTraceLines), out _);
+
+            // Also write the state sync trace for cross-reference
+            _loader.TrySaveText(_stateSyncTraceJsonlPath, string.Join("\n", stateSyncTraceLines), out _);
+
+            // Candidate mismatch diagnosis
+            var diagReport = new Stage7BCandidateMismatchDiagnosisReport
+            {
+                generated_at_utc = report.generatedAtUtc,
+                total_mismatches = mismatchEntries.Count,
+                mismatches = mismatchEntries.ToArray(),
+            };
+            _loader.TrySaveText(_candidateMismatchDiagnosisJsonPath, JsonUtility.ToJson(diagReport, true), out _);
+
+            if (_loader.TrySaveRuntimeReport(_runtimeApplyReportJsonPath, report, out string jsonPath))
+            {
+                _loader.TrySaveText(_runtimeApplyReportMdPath, BuildMarkdown6I(report, mismatchEntries), out _);
+                Debug.Log("[Stage7B][TeacherReplay] Stage7B-6I runtime apply validation report written: " + jsonPath);
+            }
+            else
+            {
+                Debug.LogWarning("[Stage7B][TeacherReplay] Failed to write Stage7B-6I report: " + jsonPath);
+            }
+        }
+
+        private Stage7BCandidateMismatchDiagnosisEntry DiagnoseMismatch(
+            int episodeId, int stepId, int commandIndex,
+            Stage7BTeacherReplayTeacherCommand command,
+            AgentAction teacherAction,
+            MlAgentsCandidateActionList candidates,
+            Stage7BTeacherReplayDropReason dropReason)
+        {
+            var entry = new Stage7BCandidateMismatchDiagnosisEntry
+            {
+                episode_id = episodeId,
+                step_id = stepId,
+                command_index = commandIndex,
+                actor_flat = command.actor_flat,
+                actor_x = command.actor_x,
+                actor_y = command.actor_y,
+                action_type = command.action_type,
+                action_type_name = ActionTypeToString(command.action_type),
+                move_dir = command.move_dir,
+                produce_dir = command.produce_dir,
+                produce_unit_type = command.produce_unit_type,
+                target_x = command.target_x,
+                target_y = command.target_y,
+                drop_reason = ToSnakeCase(dropReason),
+                candidate_count = candidates != null ? candidates.CandidateCount : 0,
+            };
+
+            // Diagnose nearest candidate reason
+            entry.nearest_candidate_reason = FindNearestCandidateReason(teacherAction, candidates);
+
+            // Summarize candidate list
+            entry.candidate_list_summary = BuildCandidateListSummary(candidates);
+
+            return entry;
+        }
+
+        private static string FindNearestCandidateReason(AgentAction teacherAction, MlAgentsCandidateActionList candidates)
+        {
+            if (candidates == null || candidates.AvailableCandidates.Count == 0)
+            {
+                return "no_candidates_available";
+            }
+
+            bool actorFound = false;
+            bool actionTypeFound = false;
+
+            for (int i = 0; i < candidates.AvailableCandidates.Count; i++)
+            {
+                MlAgentsCandidateAction c = candidates.AvailableCandidates[i];
+                if (c.IsEmpty) continue;
+
+                if (c.Action.ActorPosition == teacherAction.ActorPosition)
+                {
+                    actorFound = true;
+                    if (c.Action.ActionType == teacherAction.ActionType)
+                    {
+                        actionTypeFound = true;
+                        // Actor and type match but something else differs
+                        switch (teacherAction.ActionType)
+                        {
+                            case UnitActionType.Move:
+                            case UnitActionType.Harvest:
+                            case UnitActionType.Return:
+                                if (c.Action.Direction != teacherAction.Direction)
+                                    return "direction_mismatch (actor=" + teacherAction.ActorPosition + ", type=" + teacherAction.ActionType + ", teacher_dir=" + teacherAction.Direction + ", cand_dir=" + c.Action.Direction + ")";
+                                break;
+                            case UnitActionType.Produce:
+                                if (c.Action.Direction != teacherAction.Direction)
+                                    return "produce_direction_mismatch (teacher_dir=" + teacherAction.Direction + ")";
+                                if ((int)c.Action.ProduceUnitType != (int)teacherAction.ProduceUnitType)
+                                    return "produce_type_mismatch (teacher=" + teacherAction.ProduceUnitType + ")";
+                                break;
+                            case UnitActionType.Attack:
+                                if (c.Action.AttackTargetPosition != teacherAction.AttackTargetPosition)
+                                    return "attack_target_mismatch (teacher_target=" + teacherAction.AttackTargetPosition + ")";
+                                break;
+                        }
+                    }
+                }
+            }
+
+            if (!actorFound) return "actor_missing_from_candidates (actor=" + teacherAction.ActorPosition + ")";
+            if (!actionTypeFound) return "action_type_missing_from_candidates (actor=" + teacherAction.ActorPosition + ", type=" + teacherAction.ActionType + ")";
+            return "parameter_mismatch (actor and type found but parameters differ)";
+        }
+
+        private static string BuildCandidateListSummary(MlAgentsCandidateActionList candidates)
+        {
+            if (candidates == null) return "null";
+            var sb = new StringBuilder();
+            sb.Append("[");
+            int limit = System.Math.Min(candidates.AvailableCandidates.Count, 20);
+            for (int i = 0; i < limit; i++)
+            {
+                MlAgentsCandidateAction c = candidates.AvailableCandidates[i];
+                if (i > 0) sb.Append(", ");
+                sb.Append("{idx=").Append(c.CandidateIndex)
+                  .Append(",pos=").Append(c.Action.ActorPosition)
+                  .Append(",type=").Append(c.Action.ActionType)
+                  .Append("}");
+            }
+
+            if (candidates.AvailableCandidates.Count > limit)
+            {
+                sb.Append(", ...(").Append(candidates.AvailableCandidates.Count - limit).Append(" more)");
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        private static string BuildActionSummary(AgentAction action)
+        {
+            return "actor=" + action.ActorPosition + ",type=" + action.ActionType
+                   + ",dir=" + action.Direction + ",produce=" + action.ProduceUnitType
+                   + ",target=" + action.AttackTargetPosition;
+        }
+
+        private static string ActionTypeToString(int actionType)
+        {
+            switch (actionType)
+            {
+                case 0: return "noop";
+                case 1: return "move";
+                case 2: return "harvest";
+                case 3: return "return";
+                case 4: return "produce";
+                case 5: return "attack";
+                default: return "unknown_" + actionType;
+            }
+        }
+
+        private static string BuildMarkdown6I(Stage7BTeacherReplayReport report, List<Stage7BCandidateMismatchDiagnosisEntry> mismatchEntries)
+        {
+            var sb = new StringBuilder(4096);
+            sb.AppendLine("# Stage7B-6I Runtime Apply Validation Report");
+            sb.AppendLine();
+            sb.AppendLine("- status: " + report.status);
+            sb.AppendLine("- generated_at_utc: " + report.generatedAtUtc);
+            sb.AppendLine("- source: " + report.selectedSourcePath);
+            sb.AppendLine("- post_state_comparison_mode: " + report.postStateComparisonMode);
+            sb.AppendLine();
+            sb.AppendLine("## Metrics");
+            sb.AppendLine();
+            sb.AppendLine("- episodes_scanned: " + report.episodesScanned);
+            sb.AppendLine("- episodes_replay_attempted: " + report.episodesReplayAttempted);
+            sb.AppendLine("- steps_total: " + report.stepsTotal);
+            sb.AppendLine("- steps_replay_attempted: " + report.stepsReplayAttempted);
+            sb.AppendLine("- teacher_commands_total: " + report.teacherCommandsTotal);
+            sb.AppendLine("- teacher_nonnoop_commands_total: " + report.teacherNonNoOpCommandsTotal);
+            sb.AppendLine("- no_teacher_command_steps: " + report.noTeacherCommandSteps);
+            sb.AppendLine("- state_sync_success_count: " + report.stateSyncSuccessCount);
+            sb.AppendLine("- state_sync_failed_count: " + report.stateSyncFailedCount);
+            sb.AppendLine("- candidate_count_min: " + ValueOrNull(report.candidateCountMin));
+            sb.AppendLine("- candidate_count_mean: " + ValueOrNull(report.candidateCountMean));
+            sb.AppendLine("- candidate_count_max: " + ValueOrNull(report.candidateCountMax));
+            sb.AppendLine("- candidate_match_count: " + report.candidateMatchCount);
+            sb.AppendLine("- candidate_drop_count: " + report.candidateDropCount);
+            sb.AppendLine("- candidate_match_rate: " + ValueOrNull(report.candidateMatchRate));
+            sb.AppendLine("- nonnoop_candidate_match_rate: " + ValueOrNull(report.nonNoOpCandidateMatchRate));
+            sb.AppendLine("- runtime_apply_attempted_count: " + report.runtimeApplyAttemptedCount);
+            sb.AppendLine("- runtime_apply_accepted_count: " + report.runtimeApplyAcceptedCount);
+            sb.AppendLine("- runtime_apply_rejected_count: " + report.runtimeApplyRejectedCount);
+            sb.AppendLine("- runtime_apply_accept_rate: " + ValueOrNull(report.runtimeApplyAcceptRate));
+            sb.AppendLine("- first_runtime_reject_step: " + (report.firstRuntimeRejectStep < 0 ? "none" : report.firstRuntimeRejectStep.ToString()));
+            sb.AppendLine("- first_runtime_reject_action_summary: " + (report.firstRuntimeRejectActionSummary ?? "none"));
+            sb.AppendLine("- post_state_match_count: " + report.postStateMatchCount);
+            sb.AppendLine("- post_state_mismatch_count: " + report.postStateMismatchCount);
+            sb.AppendLine("- terminal_match_count: " + report.terminalMatchCount);
+            sb.AppendLine("- terminal_mismatch_count: " + report.terminalMismatchCount);
+            sb.AppendLine("- demo_recording_ready: " + report.demoRecordingReady.ToString().ToLowerInvariant());
+            sb.AppendLine();
+            sb.AppendLine("## Drop Reasons");
+            sb.AppendLine();
+            for (int i = 0; i < report.dropReasonHistogram.Count; i++)
+            {
+                Stage7BTeacherReplayMetricEntry row = report.dropReasonHistogram[i];
+                sb.AppendLine("- " + row.key + ": " + row.value);
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("## Runtime Reject Reason Histogram");
+            sb.AppendLine();
+            if (report.runtimeRejectReasonHistogram.Count == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                for (int i = 0; i < report.runtimeRejectReasonHistogram.Count; i++)
+                {
+                    Stage7BTeacherReplayMetricEntry row = report.runtimeRejectReasonHistogram[i];
+                    sb.AppendLine("- " + row.key + ": " + row.value);
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("## Rejected Action Type Histogram");
+            sb.AppendLine();
+            if (report.rejectedActionTypeHistogram.Count == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                for (int i = 0; i < report.rejectedActionTypeHistogram.Count; i++)
+                {
+                    Stage7BTeacherReplayMetricEntry row = report.rejectedActionTypeHistogram[i];
+                    sb.AppendLine("- " + row.key + ": " + row.value);
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("## Candidate Mismatch Diagnoses");
+            sb.AppendLine();
+            if (mismatchEntries == null || mismatchEntries.Count == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                for (int i = 0; i < mismatchEntries.Count; i++)
+                {
+                    Stage7BCandidateMismatchDiagnosisEntry d = mismatchEntries[i];
+                    sb.AppendLine("### Mismatch " + (i + 1) + ": episode=" + d.episode_id + " step=" + d.step_id);
+                    sb.AppendLine("- actor_flat: " + d.actor_flat);
+                    sb.AppendLine("- actor_x: " + d.actor_x + ", actor_y: " + d.actor_y);
+                    sb.AppendLine("- action_type: " + d.action_type + " (" + d.action_type_name + ")");
+                    sb.AppendLine("- drop_reason: " + d.drop_reason);
+                    sb.AppendLine("- nearest_candidate_reason: " + d.nearest_candidate_reason);
+                    sb.AppendLine("- candidate_count_at_step: " + d.candidate_count);
+                    sb.AppendLine("- candidate_list_summary: " + d.candidate_list_summary);
+                    sb.AppendLine();
+                }
+            }
+
+            sb.AppendLine("## Notes");
+            sb.AppendLine();
+            for (int i = 0; i < report.notes.Count; i++)
+            {
+                sb.AppendLine("- " + report.notes[i]);
+            }
+
+            return sb.ToString();
+        }
+
         [ContextMenu("Run Stage7B-6B Prep Probe")]
         public void RunPrepProbe()
         {
@@ -508,6 +1080,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             sb.AppendLine("- runtime_apply_accept_rate: " + ValueOrNull(report.runtimeApplyAcceptRate));
             sb.AppendLine("- post_state_match_count: " + report.postStateMatchCount);
             sb.AppendLine("- post_state_mismatch_count: " + report.postStateMismatchCount);
+            sb.AppendLine("- post_state_comparison_mode: " + report.postStateComparisonMode);
             sb.AppendLine("- terminal_match_count: " + report.terminalMatchCount);
             sb.AppendLine("- terminal_mismatch_count: " + report.terminalMismatchCount);
             sb.AppendLine("- demo_recording_ready: " + report.demoRecordingReady.ToString().ToLowerInvariant());
@@ -609,6 +1182,62 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             public string drop_reason;
             public string message;
             public string post_state_message;
+        }
+        [Serializable]
+        private sealed class Stage7BRuntimeApplyTraceEntry
+        {
+            public int episode_id;
+            public int step_id;
+            public int command_index;
+            public int actor_flat;
+            public int actor_x;
+            public int actor_y;
+            public int action_type;
+            public bool runtime_apply_attempted;
+            public bool runtime_apply_accepted;
+            public string reject_reason;
+            public string action_summary;
+        }
+
+        [Serializable]
+        private sealed class Stage7BRuntimeApplyPostStateTraceEntry
+        {
+            public int episode_id;
+            public int step_id;
+            public bool post_state_matched;
+            public bool terminal_matched;
+            public string comparison_mode;
+            public string diagnostics;
+        }
+
+        [Serializable]
+        private sealed class Stage7BCandidateMismatchDiagnosisEntry
+        {
+            public int episode_id;
+            public int step_id;
+            public int command_index;
+            public int actor_flat;
+            public int actor_x;
+            public int actor_y;
+            public int action_type;
+            public string action_type_name;
+            public int move_dir;
+            public int produce_dir;
+            public int produce_unit_type;
+            public int target_x;
+            public int target_y;
+            public string drop_reason;
+            public string nearest_candidate_reason;
+            public int candidate_count;
+            public string candidate_list_summary;
+        }
+
+        [Serializable]
+        private sealed class Stage7BCandidateMismatchDiagnosisReport
+        {
+            public string generated_at_utc;
+            public int total_mismatches;
+            public Stage7BCandidateMismatchDiagnosisEntry[] mismatches;
         }
     }
 }

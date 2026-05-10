@@ -12,6 +12,7 @@ namespace RTS.MLAgents.Stage7B.Editor
     [InitializeOnLoad]
     public static class Stage7BUnityReplaySyncMenu
     {
+        // ── Stage7B-6H ────────────────────────────────────────────────────────
         private const string MenuPath = "RTS/Week7/Stage7B/Run Unity Replay Sync 6H";
         private const string ScenePath = "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity";
         private const string ReportPath = "python/stage7b_teacher_replay/stage7b_unity_replay_sync_report.json";
@@ -19,6 +20,13 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string StartedAtTicksKey = "RTS.MLAgents.Stage7B.UnityReplaySync6H.StartedAtTicks";
         private const string TriggeredKey = "RTS.MLAgents.Stage7B.UnityReplaySync6H.Triggered";
         private const double TimeoutSeconds = 180d;
+
+        // ── Stage7B-6I ────────────────────────────────────────────────────────
+        private const string MenuPath6I = "RTS/Week7/Stage7B/Run Runtime Apply Validation 6I";
+        private const string ReportPath6I = "python/stage7b_teacher_replay/stage7b_runtime_apply_validation_report.json";
+        private const string PendingKey6I = "RTS.MLAgents.Stage7B.RuntimeApply6I.Pending";
+        private const string StartedAtTicksKey6I = "RTS.MLAgents.Stage7B.RuntimeApply6I.StartedAtTicks";
+        private const string TriggeredKey6I = "RTS.MLAgents.Stage7B.RuntimeApply6I.Triggered";
 
         static Stage7BUnityReplaySyncMenu()
         {
@@ -28,6 +36,7 @@ namespace RTS.MLAgents.Stage7B.Editor
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
         }
 
+        // ── 6H Entry Point ────────────────────────────────────────────────────
         [MenuItem(MenuPath)]
         public static void Run()
         {
@@ -62,58 +71,135 @@ namespace RTS.MLAgents.Stage7B.Editor
             EditorApplication.isPlaying = true;
         }
 
-        private static void PollExecution()
+        // ── 6I Entry Point ────────────────────────────────────────────────────
+        [MenuItem(MenuPath6I)]
+        public static void Run6I()
         {
-            if (!SessionState.GetBool(PendingKey, false))
-            {
-                return;
-            }
-
-            if (HasTimedOut())
-            {
-                Debug.LogError("[Stage7B] Stage7B-6H timed out.");
-                EditorApplication.isPlaying = false;
-                return;
-            }
-
             if (Application.isPlaying)
             {
-                if (!SessionState.GetBool(TriggeredKey, false))
+                Debug.LogWarning("[Stage7B] Stage7B-6I menu must be started from Edit Mode.");
+                return;
+            }
+
+            if (EditorSceneManager.GetActiveScene().isDirty)
+            {
+                Debug.LogError("[Stage7B] Save or revert current scene before Stage7B-6I run.");
+                return;
+            }
+
+            if (EditorSceneManager.OpenScene(ScenePath) == default)
+            {
+                Debug.LogError("[Stage7B] Failed to open Week7 scene.");
+                return;
+            }
+
+            string report6I = GetAbsoluteProjectPath(ReportPath6I);
+            if (File.Exists(report6I))
+            {
+                File.Delete(report6I);
+            }
+
+            SessionState.SetBool(PendingKey6I, true);
+            SessionState.SetBool(TriggeredKey6I, false);
+            SessionState.SetString(StartedAtTicksKey6I, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B] Entering Play Mode for Stage7B-6I runtime apply validation.");
+            EditorApplication.isPlaying = true;
+        }
+
+        private static void PollExecution()
+        {
+            // ── 6H poll ──────────────────────────────────────────────────────
+            if (SessionState.GetBool(PendingKey, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey))
                 {
-                    Stage7BTeacherTrajectoryReplayRunner runner = UnityEngine.Object.FindFirstObjectByType<Stage7BTeacherTrajectoryReplayRunner>();
-                    if (runner == null)
+                    Debug.LogError("[Stage7B] Stage7B-6H timed out.");
+                    EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey, false))
                     {
-                        var go = new GameObject("Stage7BTeacherReplayRunner");
-                        runner = go.AddComponent<Stage7BTeacherTrajectoryReplayRunner>();
+                        Stage7BTeacherTrajectoryReplayRunner runner = UnityEngine.Object.FindFirstObjectByType<Stage7BTeacherTrajectoryReplayRunner>();
+                        if (runner == null)
+                        {
+                            var go = new GameObject("Stage7BTeacherReplayRunner");
+                            runner = go.AddComponent<Stage7BTeacherTrajectoryReplayRunner>();
+                        }
+
+                        runner.RunStage7B6HUnityReplaySync();
+                        SessionState.SetBool(TriggeredKey, true);
+                        return;
                     }
 
-                    runner.RunStage7B6HUnityReplaySync();
-                    SessionState.SetBool(TriggeredKey, true);
-                    return;
+                    string report = GetAbsoluteProjectPath(ReportPath);
+                    if (File.Exists(report))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-6H report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
                 }
+            }
 
-                string report = GetAbsoluteProjectPath(ReportPath);
-                if (File.Exists(report))
+            // ── 6I poll ──────────────────────────────────────────────────────
+            if (SessionState.GetBool(PendingKey6I, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey6I))
                 {
-                    Debug.Log("[Stage7B] Stage7B-6H report detected. Exiting Play Mode.");
+                    Debug.LogError("[Stage7B] Stage7B-6I timed out.");
                     EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey6I, false))
+                    {
+                        Stage7BTeacherTrajectoryReplayRunner runner = UnityEngine.Object.FindFirstObjectByType<Stage7BTeacherTrajectoryReplayRunner>();
+                        if (runner == null)
+                        {
+                            var go = new GameObject("Stage7BTeacherReplayRunner");
+                            runner = go.AddComponent<Stage7BTeacherTrajectoryReplayRunner>();
+                        }
+
+                        runner.RunStage7B6IUnityRuntimeApplyValidation();
+                        SessionState.SetBool(TriggeredKey6I, true);
+                        return;
+                    }
+
+                    string report6I = GetAbsoluteProjectPath(ReportPath6I);
+                    if (File.Exists(report6I))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-6I report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
                 }
             }
         }
 
         private static void OnPlayModeChanged(PlayModeStateChange state)
         {
-            if (state != PlayModeStateChange.EnteredEditMode || !SessionState.GetBool(PendingKey, false))
+            if (state != PlayModeStateChange.EnteredEditMode)
             {
                 return;
             }
 
-            SessionState.SetBool(PendingKey, false);
-            SessionState.SetBool(TriggeredKey, false);
-            ValidateReport();
+            if (SessionState.GetBool(PendingKey, false))
+            {
+                SessionState.SetBool(PendingKey, false);
+                SessionState.SetBool(TriggeredKey, false);
+                Validate6HReport();
+            }
+
+            if (SessionState.GetBool(PendingKey6I, false))
+            {
+                SessionState.SetBool(PendingKey6I, false);
+                SessionState.SetBool(TriggeredKey6I, false);
+                Validate6IReport();
+            }
         }
 
-        private static void ValidateReport()
+        private static void ValidateReport() => Validate6HReport();
+
+        private static void Validate6HReport()
         {
             string report = GetAbsoluteProjectPath(ReportPath);
             if (!File.Exists(report))
@@ -134,15 +220,42 @@ namespace RTS.MLAgents.Stage7B.Editor
             Debug.Log("[Stage7B] Stage7B-6H finished: status=" + status + ", teacherCommandsTotal=" + commands + ", stateSyncSuccessCount=" + syncOk);
         }
 
-        private static bool HasTimedOut()
+        private static void Validate6IReport()
         {
-            string startedAtTicks = SessionState.GetString(StartedAtTicksKey, string.Empty);
+            string report = GetAbsoluteProjectPath(ReportPath6I);
+            if (!File.Exists(report))
+            {
+                Debug.LogError("[Stage7B] Stage7B-6I report was not created: " + report);
+                return;
+            }
+
+            string json = File.ReadAllText(report);
+            TryReadString(json, "status", out string status);
+            TryReadInt(json, "stateSyncSuccessCount", out int syncOk);
+            TryReadInt(json, "runtimeApplyAttemptedCount", out int applyAttempted);
+            TryReadInt(json, "runtimeApplyAcceptedCount", out int applyAccepted);
+            TryReadInt(json, "runtimeApplyRejectedCount", out int applyRejected);
+            Debug.Log("[Stage7B] Stage7B-6I finished: status=" + status
+                + ", stateSyncSuccessCount=" + syncOk
+                + ", runtimeApplyAttemptedCount=" + applyAttempted
+                + ", runtimeApplyAcceptedCount=" + applyAccepted
+                + ", runtimeApplyRejectedCount=" + applyRejected);
+        }
+
+        private static bool HasTimedOut(string ticksKey)
+        {
+            string startedAtTicks = SessionState.GetString(ticksKey, string.Empty);
             if (!long.TryParse(startedAtTicks, out long ticks))
             {
                 return false;
             }
 
             return (DateTime.UtcNow - new DateTime(ticks, DateTimeKind.Utc)).TotalSeconds > TimeoutSeconds;
+        }
+
+        private static bool HasTimedOut()
+        {
+            return HasTimedOut(StartedAtTicksKey);
         }
 
         private static string GetAbsoluteProjectPath(string relativePath)

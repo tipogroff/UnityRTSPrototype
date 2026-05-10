@@ -1,0 +1,25 @@
+{
+    "generated_at_utc": "2026-05-10T17:27:21Z",
+    "total_mismatches": 1,
+    "mismatches": [
+        {
+            "episode_id": 0,
+            "step_id": 30,
+            "command_index": 0,
+            "actor_flat": 26,
+            "actor_x": 2,
+            "actor_y": 1,
+            "action_type": 3,
+            "action_type_name": "return",
+            "move_dir": 3,
+            "produce_dir": 1,
+            "produce_unit_type": 2,
+            "target_x": 3,
+            "target_y": -2,
+            "drop_reason": "no_matching_candidate",
+            "nearest_candidate_reason": "direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+            "candidate_count": 11,
+            "candidate_list_summary": "[{idx=0,pos=(0, 0),type=NoOp}, {idx=1,pos=(2, 1),type=Move}, {idx=2,pos=(2, 1),type=Move}, {idx=3,pos=(2, 1),type=Move}, {idx=4,pos=(2, 1),type=Return}, {idx=5,pos=(2, 1),type=Produce}, {idx=6,pos=(2, 1),type=Produce}, {idx=7,pos=(2, 1),type=Produce}, {idx=8,pos=(2, 2),type=Produce}, {idx=9,pos=(2, 2),type=Produce}, {idx=10,pos=(2, 2),type=Produce}]"
+        }
+    ]
+}

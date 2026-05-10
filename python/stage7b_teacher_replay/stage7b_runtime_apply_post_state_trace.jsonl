@@ -1,0 +1,6 @@
+{"episode_id":0,"step_id":0,"post_state_matched":false,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=4/4, resource_nodes=4/4, players_match=False, terminal_match=True"}
+{"episode_id":0,"step_id":20,"post_state_matched":true,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=4/4, resource_nodes=4/4, players_match=True, terminal_match=True"}
+{"episode_id":0,"step_id":30,"post_state_matched":true,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=4/4, resource_nodes=4/4, players_match=True, terminal_match=True"}
+{"episode_id":0,"step_id":40,"post_state_matched":true,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=4/4, resource_nodes=4/4, players_match=True, terminal_match=True"}
+{"episode_id":0,"step_id":50,"post_state_matched":false,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=5/5, resource_nodes=4/4, players_match=False, terminal_match=True"}
+{"episode_id":0,"step_id":60,"post_state_matched":true,"terminal_matched":true,"comparison_mode":"partial","diagnostics":"post_compare unit_count=5/5, resource_nodes=4/4, players_match=True, terminal_match=True"}
