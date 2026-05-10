@@ -1,0 +1,20 @@
+{
+  "generated_at_utc": "2026-05-10T17:48:46Z",
+  "run_dir": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_replay_exports\\stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+  "replay_manifest": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_replay_exports\\stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z\\replay_manifest.json",
+  "episode_files": [
+    "episode_00000.replay_ready.npz",
+    "episode_00001.replay_ready.npz",
+    "episode_00002.replay_ready.npz",
+    "episode_00003.replay_ready.npz",
+    "episode_00004.replay_ready.npz",
+    "episode_00005.replay_ready.npz",
+    "episode_00006.replay_ready.npz",
+    "episode_00007.replay_ready.npz"
+  ],
+  "report_json": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_replay_exports\\stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z\\stage7b_replay_ready_export_report.json",
+  "report_md": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_replay_exports\\stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z\\stage7b_replay_ready_export_report.md",
+  "replay_ready": true,
+  "validation_errors_count": 0,
+  "validation_warnings_count": 0
+}

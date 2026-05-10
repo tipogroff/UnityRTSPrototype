@@ -1,0 +1,137 @@
+{
+    "generatedAtUtc": "2026-05-10T18:16:11Z",
+    "status": "GO",
+    "summary": "Stage7B-6J Return direction mismatch audit on larger replay-ready export.",
+    "selectedSourcePath": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "selectedSourceFormat": "legacy032_replay_ready_export",
+    "episodesScanned": 8,
+    "episodesReplayAttempted": 8,
+    "stepsTotal": 4096,
+    "stepsReplayAttempted": 4096,
+    "teacherCommandsTotal": 2952,
+    "teacherNonNoOpCommandsTotal": 2952,
+    "stateSyncSuccessCount": 4096,
+    "stateSyncFailedCount": 0,
+    "preObservationMatchCount": 0,
+    "preObservationMismatchCount": 0,
+    "candidateMatchCount": 2334,
+    "candidateDropCount": 1101,
+    "candidateMatchRate": 0.7906504273414612,
+    "nonNoOpTotal": 2952,
+    "nonNoOpCandidateMatchCount": 2334,
+    "nonNoOpCandidateMatchRate": 0.7906504273414612,
+    "noTeacherCommandSteps": 2383,
+    "runtimeApplyAttemptedCount": 2334,
+    "runtimeApplyAcceptedCount": 2334,
+    "runtimeApplyRejectedCount": 0,
+    "runtimeApplyAcceptRate": 1.0,
+    "totalMismatches": 618,
+    "noMatchingCandidateCount": 618,
+    "directionMismatchCount": 447,
+    "firstRuntimeRejectStep": -1,
+    "firstRuntimeRejectActionSummary": "",
+    "postStateMatchCount": 1230,
+    "postStateMismatchCount": 483,
+    "postStateComparisonMode": "partial",
+    "candidateCountMin": 10,
+    "candidateCountMean": 36.139892578125,
+    "candidateCountMax": 70,
+    "candidateOverflowCount": 0,
+    "terminalMatchCount": 1713,
+    "terminalMismatchCount": 0,
+    "demoRecordingReady": true,
+    "returnCommandsTotal": 134,
+    "returnCommandsMatched": 72,
+    "returnCommandsDropped": 62,
+    "returnMatchRate": 0.5373134613037109,
+    "returnDirectionMismatchCount": 62,
+    "returnDirectionMismatchRate": 0.46268656849861147,
+    "oppositeDirectionCount": 62,
+    "yAxisFlipSuspectedCount": 62,
+    "xAxisFlipSuspectedCount": 0,
+    "teacherTargetOutsideMapCount": 0,
+    "unityTargetOutsideMapCount": 0,
+    "targetCellHasBaseTeacherSideCount": 0,
+    "targetCellHasBaseUnitySideCount": 62,
+    "mismatchByActionType": [
+        {
+            "key": "return",
+            "value": 62
+        },
+        {
+            "key": "move",
+            "value": 222
+        },
+        {
+            "key": "harvest",
+            "value": 51
+        },
+        {
+            "key": "produce",
+            "value": 283
+        }
+    ],
+    "mismatchByDirection": [
+        {
+            "key": "South",
+            "value": 356
+        },
+        {
+            "key": "North",
+            "value": 116
+        },
+        {
+            "key": "East",
+            "value": 116
+        },
+        {
+            "key": "West",
+            "value": 30
+        }
+    ],
+    "returnMismatchByTeacherDir": [
+        {
+            "key": "South",
+            "value": 62
+        }
+    ],
+    "returnMismatchByCandidateDir": [
+        {
+            "key": "North",
+            "value": 62
+        }
+    ],
+    "first10ReturnMismatches": [
+        "ep=0,step=30,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=80,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=130,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=221,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=271,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=321,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=431,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=1,step=30,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=1,step=80,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)",
+        "ep=1,step=130,actor=(2,1),teacher_dir=South,candidate_dir=North,nearest=direction_mismatch (actor=(2, 1), type=Return, teacher_dir=South, cand_dir=North)"
+    ],
+    "dropReasonHistogram": [
+        {
+            "key": "post_state_desync",
+            "value": 483
+        },
+        {
+            "key": "no_matching_candidate",
+            "value": 618
+        }
+    ],
+    "matchByActionType": [],
+    "dropByActionType": [],
+    "rejectedActionTypeHistogram": [],
+    "runtimeRejectReasonHistogram": [],
+    "notes": [
+        "Stage7B-6J: Return direction mismatch audit. Runtime apply enabled.",
+        "ML-Agents training/PPO/imitation/.demo were not started by this runner.",
+        "post_state_comparison_mode=partial: unit count, resource node count, player resources, terminal checked.",
+        "no_teacher_command_steps classified separately, not counted in candidateDropCount.",
+        "Stage6B3 baseline/checkpoint assets were not modified by this runner."
+    ]
+}

@@ -28,6 +28,14 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string StartedAtTicksKey6I = "RTS.MLAgents.Stage7B.RuntimeApply6I.StartedAtTicks";
         private const string TriggeredKey6I = "RTS.MLAgents.Stage7B.RuntimeApply6I.Triggered";
 
+    // ── Stage7B-6J ────────────────────────────────────────────────────────
+    private const string MenuPath6J = "RTS/Week7/Stage7B/Run Return Direction Mismatch Audit 6J";
+    private const string MenuPath6JImmediate = "RTS/Week7/Stage7B/Run Return Direction Mismatch Audit 6J (Immediate In Play Mode)";
+    private const string ReportPath6J = "python/stage7b_teacher_replay/stage7b_6j_return_direction_audit_report.json";
+    private const string PendingKey6J = "RTS.MLAgents.Stage7B.ReturnDirAudit6J.Pending";
+    private const string StartedAtTicksKey6J = "RTS.MLAgents.Stage7B.ReturnDirAudit6J.StartedAtTicks";
+    private const string TriggeredKey6J = "RTS.MLAgents.Stage7B.ReturnDirAudit6J.Triggered";
+
         static Stage7BUnityReplaySyncMenu()
         {
             EditorApplication.update -= PollExecution;
@@ -106,6 +114,73 @@ namespace RTS.MLAgents.Stage7B.Editor
             EditorApplication.isPlaying = true;
         }
 
+        // ── 6J Entry Point ────────────────────────────────────────────────────
+        [MenuItem(MenuPath6J)]
+        public static void Run6J()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B] Stage7B-6J menu must be started from Edit Mode.");
+                return;
+            }
+
+            if (EditorSceneManager.GetActiveScene().isDirty)
+            {
+                Debug.LogWarning("[Stage7B] Active scene is dirty; proceeding by reopening Week7 scene for 6J automation.");
+            }
+
+            if (EditorSceneManager.OpenScene(ScenePath) == default)
+            {
+                Debug.LogError("[Stage7B] Failed to open Week7 scene.");
+                return;
+            }
+
+            string report6J = GetAbsoluteProjectPath(ReportPath6J);
+            if (File.Exists(report6J))
+            {
+                File.Delete(report6J);
+            }
+
+            SessionState.SetBool(PendingKey6J, true);
+            SessionState.SetBool(TriggeredKey6J, false);
+            SessionState.SetString(StartedAtTicksKey6J, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B] Entering Play Mode for Stage7B-6J return direction mismatch audit.");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem(MenuPath6JImmediate)]
+        public static void Run6JImmediateInPlayMode()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[Stage7B] Stage7B-6J immediate menu requires Play Mode.");
+                return;
+            }
+
+            Stage7BTeacherTrajectoryReplayRunner runner = UnityEngine.Object.FindFirstObjectByType<Stage7BTeacherTrajectoryReplayRunner>();
+            if (runner == null)
+            {
+                var go = new GameObject("Stage7BTeacherReplayRunner");
+                runner = go.AddComponent<Stage7BTeacherTrajectoryReplayRunner>();
+            }
+
+            runner.RunStage7B6JReturnDirectionAudit();
+            Debug.Log("[Stage7B] Stage7B-6J immediate run invoked in Play Mode.");
+        }
+
+        [MenuItem("RTS/Week7/Stage7B/Open Week7 Scene")]
+        public static void OpenWeek7Scene()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogError("[Stage7B] Open Week7 Scene menu must be called from Edit Mode.");
+                return;
+            }
+
+            EditorSceneManager.OpenScene(ScenePath);
+            Debug.Log("[Stage7B] Week7 scene opened.");
+        }
+
         private static void PollExecution()
         {
             // ── 6H poll ──────────────────────────────────────────────────────
@@ -173,6 +248,39 @@ namespace RTS.MLAgents.Stage7B.Editor
                     }
                 }
             }
+
+            // ── 6J poll ──────────────────────────────────────────────────────
+            if (SessionState.GetBool(PendingKey6J, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey6J))
+                {
+                    Debug.LogError("[Stage7B] Stage7B-6J timed out.");
+                    EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey6J, false))
+                    {
+                        Stage7BTeacherTrajectoryReplayRunner runner = UnityEngine.Object.FindFirstObjectByType<Stage7BTeacherTrajectoryReplayRunner>();
+                        if (runner == null)
+                        {
+                            var go = new GameObject("Stage7BTeacherReplayRunner");
+                            runner = go.AddComponent<Stage7BTeacherTrajectoryReplayRunner>();
+                        }
+
+                        runner.RunStage7B6JReturnDirectionAudit();
+                        SessionState.SetBool(TriggeredKey6J, true);
+                        return;
+                    }
+
+                    string report6J = GetAbsoluteProjectPath(ReportPath6J);
+                    if (File.Exists(report6J))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-6J report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
+                }
+            }
         }
 
         private static void OnPlayModeChanged(PlayModeStateChange state)
@@ -194,6 +302,13 @@ namespace RTS.MLAgents.Stage7B.Editor
                 SessionState.SetBool(PendingKey6I, false);
                 SessionState.SetBool(TriggeredKey6I, false);
                 Validate6IReport();
+            }
+
+            if (SessionState.GetBool(PendingKey6J, false))
+            {
+                SessionState.SetBool(PendingKey6J, false);
+                SessionState.SetBool(TriggeredKey6J, false);
+                Validate6JReport();
             }
         }
 
@@ -240,6 +355,28 @@ namespace RTS.MLAgents.Stage7B.Editor
                 + ", runtimeApplyAttemptedCount=" + applyAttempted
                 + ", runtimeApplyAcceptedCount=" + applyAccepted
                 + ", runtimeApplyRejectedCount=" + applyRejected);
+        }
+
+        private static void Validate6JReport()
+        {
+            string report = GetAbsoluteProjectPath(ReportPath6J);
+            if (!File.Exists(report))
+            {
+                Debug.LogError("[Stage7B] Stage7B-6J report was not created: " + report);
+                return;
+            }
+
+            string json = File.ReadAllText(report);
+            TryReadString(json, "status", out string status);
+            TryReadInt(json, "stateSyncSuccessCount", out int syncOk);
+            TryReadInt(json, "returnCommandsTotal", out int returnTotal);
+            TryReadInt(json, "returnCommandsMatched", out int returnMatched);
+            TryReadInt(json, "returnDirectionMismatchCount", out int dirMismatch);
+            Debug.Log("[Stage7B] Stage7B-6J finished: status=" + status
+                + ", stateSyncSuccessCount=" + syncOk
+                + ", returnCommandsTotal=" + returnTotal
+                + ", returnCommandsMatched=" + returnMatched
+                + ", returnDirectionMismatchCount=" + dirMismatch);
         }
 
         private static bool HasTimedOut(string ticksKey)

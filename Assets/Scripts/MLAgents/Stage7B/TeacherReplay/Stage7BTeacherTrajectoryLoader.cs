@@ -139,43 +139,46 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             }
 
             Array.Sort(jsonlFiles, StringComparer.OrdinalIgnoreCase);
-            string path = jsonlFiles[0];
 
             try
             {
-                string[] lines = File.ReadAllLines(path);
-                for (int i = 0; i < lines.Length; i++)
+                for (int f = 0; f < jsonlFiles.Length; f++)
                 {
-                    string line = lines[i];
-                    if (string.IsNullOrWhiteSpace(line))
+                    string path = jsonlFiles[f];
+                    string[] lines = File.ReadAllLines(path);
+                    for (int i = 0; i < lines.Length; i++)
                     {
-                        continue;
+                        string line = lines[i];
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            continue;
+                        }
+
+                        Stage7BTeacherReplayJsonlRow row = JsonUtility.FromJson<Stage7BTeacherReplayJsonlRow>(line);
+                        if (row == null)
+                        {
+                            diagnostics = "failed to parse jsonl row " + i + " in file " + Path.GetFileName(path);
+                            return false;
+                        }
+
+                        var step = new Stage7BTeacherTrajectoryStep
+                        {
+                            episodeId = row.episode_id,
+                            stepId = row.step_id,
+                            done = row.done_t,
+                            terminated = row.terminated_t,
+                            truncated = row.truncated_t,
+                            initial_state_json = row.initial_state_json,
+                            runtime_state_t_json = row.runtime_state_t_json,
+                            runtime_state_tp1_json = row.runtime_state_tp1_json,
+                            teacher_commands_list = row.teacher_commands,
+                        };
+
+                        steps.Add(step);
                     }
-
-                    Stage7BTeacherReplayJsonlRow row = JsonUtility.FromJson<Stage7BTeacherReplayJsonlRow>(line);
-                    if (row == null)
-                    {
-                        diagnostics = "failed to parse jsonl row " + i;
-                        return false;
-                    }
-
-                    var step = new Stage7BTeacherTrajectoryStep
-                    {
-                        episodeId = row.episode_id,
-                        stepId = row.step_id,
-                        done = row.done_t,
-                        terminated = row.terminated_t,
-                        truncated = row.truncated_t,
-                        initial_state_json = row.initial_state_json,
-                        runtime_state_t_json = row.runtime_state_t_json,
-                        runtime_state_tp1_json = row.runtime_state_tp1_json,
-                        teacher_commands_list = row.teacher_commands,
-                    };
-
-                    steps.Add(step);
                 }
 
-                diagnostics = path;
+                diagnostics = "loaded_files=" + jsonlFiles.Length + ", steps=" + steps.Count;
                 return true;
             }
             catch (Exception ex)

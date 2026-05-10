@@ -46,6 +46,11 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int runtimeApplyRejectedCount;
         public float runtimeApplyAcceptRate;
 
+        // Stage7B-6J mismatch audit metrics
+        public int totalMismatches;
+        public int noMatchingCandidateCount;
+        public int directionMismatchCount;
+
         public int firstRuntimeRejectStep;
         public string firstRuntimeRejectActionSummary;
 
@@ -62,6 +67,27 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         public int terminalMismatchCount;
 
         public bool demoRecordingReady;
+
+        // Stage7B-6J: Return direction audit fields
+        public int returnCommandsTotal;
+        public int returnCommandsMatched;
+        public int returnCommandsDropped;
+        public float returnMatchRate;
+        public int returnDirectionMismatchCount;
+        public float returnDirectionMismatchRate;
+        public int oppositeDirectionCount;
+        public int yAxisFlipSuspectedCount;
+        public int xAxisFlipSuspectedCount;
+        public int teacherTargetOutsideMapCount;
+        public int unityTargetOutsideMapCount;
+        public int targetCellHasBaseTeacherSideCount;
+        public int targetCellHasBaseUnitySideCount;
+
+        public List<Stage7BTeacherReplayMetricEntry> mismatchByActionType = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<Stage7BTeacherReplayMetricEntry> mismatchByDirection = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<Stage7BTeacherReplayMetricEntry> returnMismatchByTeacherDir = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<Stage7BTeacherReplayMetricEntry> returnMismatchByCandidateDir = new List<Stage7BTeacherReplayMetricEntry>();
+        public List<string> first10ReturnMismatches = new List<string>();
 
         public List<Stage7BTeacherReplayMetricEntry> dropReasonHistogram = new List<Stage7BTeacherReplayMetricEntry>();
         public List<Stage7BTeacherReplayMetricEntry> matchByActionType = new List<Stage7BTeacherReplayMetricEntry>();
@@ -86,6 +112,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 firstRuntimeRejectStep = -1,
                 firstRuntimeRejectActionSummary = null,
                 postStateComparisonMode = "not_applicable",
+                returnMatchRate = -1f,
+                returnDirectionMismatchRate = -1f,
             };
         }
 
@@ -148,6 +176,12 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             {
                 runtimeApplyAcceptRate = -1f;
             }
+        }
+
+        public void RecomputeReturnStats()
+        {
+            returnMatchRate = returnCommandsTotal > 0 ? (float)returnCommandsMatched / returnCommandsTotal : -1f;
+            returnDirectionMismatchRate = returnCommandsTotal > 0 ? (float)returnDirectionMismatchCount / returnCommandsTotal : -1f;
         }
 
         private static string ToSnakeCase(Stage7BTeacherReplayDropReason reason)
