@@ -51,6 +51,15 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const double TimeoutSeconds7 = 300d;  // pre-processing up to 4096 steps + recording frames
         private const string DemoTempDirectory = "Library/Stage7B_DemoRecordingTemp";
 
+        // Stage7B-7A Move/Harvest/Produce mismatch audit
+        private const string MenuPath7A = "RTS/Week7/Stage7B/Run MHP Mismatch Audit 7A";
+        private const string MenuPath7AImmediate = "RTS/Week7/Stage7B/Run MHP Mismatch Audit 7A (Immediate In Play Mode)";
+        private const string ReportPath7A = "python/stage7b_teacher_replay/stage7b_7a_mhp_mismatch_audit_report.json";
+        private const string PendingKey7A = "RTS.MLAgents.Stage7B.MhpMismatchAudit7A.Pending";
+        private const string StartedAtTicksKey7A = "RTS.MLAgents.Stage7B.MhpMismatchAudit7A.StartedAtTicks";
+        private const string TriggeredKey7A = "RTS.MLAgents.Stage7B.MhpMismatchAudit7A.Triggered";
+        private const double TimeoutSeconds7A = 300d;
+
         static Stage7BUnityReplaySyncMenu()
         {
             EditorApplication.update -= PollExecution;
@@ -240,6 +249,57 @@ namespace RTS.MLAgents.Stage7B.Editor
             orchestrator.ConfigureStartupContext(startedFromEditMode: false, enteredPlayMode: false, playModeReady: true);
             orchestrator.RunStage7B7DemoRecordingSmoke();
             Debug.Log("[Stage7B] Stage7B-7 immediate demo recording smoke invoked in Play Mode.");
+        }
+
+        [MenuItem(MenuPath7A)]
+        public static void Run7A()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B] Stage7B-7A menu must be started from Edit Mode.");
+                return;
+            }
+
+            if (EditorSceneManager.GetActiveScene().isDirty)
+            {
+                Debug.LogWarning("[Stage7B] Active scene is dirty; reopening Week7 scene for Stage7B-7A automation.");
+            }
+
+            if (EditorSceneManager.OpenScene(ScenePath) == default)
+            {
+                Debug.LogError("[Stage7B] Failed to open Week7 scene.");
+                return;
+            }
+
+            string report7A = GetAbsoluteProjectPath(ReportPath7A);
+            if (File.Exists(report7A)) File.Delete(report7A);
+
+            SessionState.SetBool(PendingKey7A, true);
+            SessionState.SetBool(TriggeredKey7A, false);
+            SessionState.SetString(StartedAtTicksKey7A, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B] Entering Play Mode for Stage7B-7A M/H/P mismatch audit.");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem(MenuPath7AImmediate)]
+        public static void Run7AImmediateInPlayMode()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[Stage7B] Stage7B-7A immediate menu requires Play Mode.");
+                return;
+            }
+
+            Stage7B7AMhpMismatchAuditRunner runner =
+                UnityEngine.Object.FindFirstObjectByType<Stage7B7AMhpMismatchAuditRunner>();
+            if (runner == null)
+            {
+                var go = new GameObject("Stage7B7A_MhpMismatchAuditRunner");
+                runner = go.AddComponent<Stage7B7AMhpMismatchAuditRunner>();
+            }
+
+            runner.RunStage7B7AMhpMismatchAudit();
+            Debug.Log("[Stage7B] Stage7B-7A immediate M/H/P mismatch audit invoked in Play Mode.");
         }
 
         /// <summary>
@@ -438,6 +498,45 @@ namespace RTS.MLAgents.Stage7B.Editor
                     }
                 }
             }
+
+            // Stage7B-7A poll (M/H/P mismatch audit)
+            if (SessionState.GetBool(PendingKey7A, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey7A, TimeoutSeconds7A))
+                {
+                    Debug.LogError("[Stage7B] Stage7B-7A M/H/P mismatch audit timed out.");
+                    EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey7A, false))
+                    {
+                        if (!AreRuntimeServicesReady())
+                        {
+                            return;
+                        }
+
+                        Stage7B7AMhpMismatchAuditRunner runner =
+                            UnityEngine.Object.FindFirstObjectByType<Stage7B7AMhpMismatchAuditRunner>();
+                        if (runner == null)
+                        {
+                            var go = new GameObject("Stage7B7A_MhpMismatchAuditRunner");
+                            runner = go.AddComponent<Stage7B7AMhpMismatchAuditRunner>();
+                        }
+
+                        runner.RunStage7B7AMhpMismatchAudit();
+                        SessionState.SetBool(TriggeredKey7A, true);
+                        return;
+                    }
+
+                    string report7A = GetAbsoluteProjectPath(ReportPath7A);
+                    if (File.Exists(report7A))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-7A report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
+                }
+            }
         }
 
         private static bool AreRuntimeServicesReady()
@@ -487,6 +586,13 @@ namespace RTS.MLAgents.Stage7B.Editor
                 SessionState.SetBool(PendingKey7, false);
                 SessionState.SetBool(TriggeredKey7, false);
                 Validate7Report();
+            }
+
+            if (SessionState.GetBool(PendingKey7A, false))
+            {
+                SessionState.SetBool(PendingKey7A, false);
+                SessionState.SetBool(TriggeredKey7A, false);
+                Validate7AReport();
             }
         }
 
@@ -612,6 +718,30 @@ namespace RTS.MLAgents.Stage7B.Editor
                 Debug.Log("[Stage7B] Stage7B-7 GO. IMPORTANT: Run Stage7B-7A Move/Harvest/Produce mismatch audit before large dataset export.");
             else
                 Debug.LogWarning("[Stage7B] Stage7B-7 NO-GO. Check smoke report for details.");
+        }
+
+        private static void Validate7AReport()
+        {
+            string report = GetAbsoluteProjectPath(ReportPath7A);
+            if (!File.Exists(report))
+            {
+                Debug.LogError("[Stage7B] Stage7B-7A report was not created: " + report);
+                return;
+            }
+
+            string json = File.ReadAllText(report);
+            TryReadString(json, "status", out string status);
+            TryReadString(json, "decision", out string decision);
+            TryReadInt(json, "state_sync_failed_count", out int syncFailed);
+            TryReadInt(json, "runtime_apply_rejected_count", out int applyRejected);
+            TryReadInt(json, "mhp_y_axis_flip_count", out int yFlip);
+            TryReadInt(json, "mhp_x_axis_flip_count", out int xFlip);
+            Debug.Log("[Stage7B] Stage7B-7A finished: status=" + status
+                + ", decision=" + decision
+                + ", state_sync_failed_count=" + syncFailed
+                + ", runtime_apply_rejected_count=" + applyRejected
+                + ", y_axis_flip_count=" + yFlip
+                + ", x_axis_flip_count=" + xFlip);
         }
 
         private static bool TryCopyLatestTempDemoToExpected(out string copiedPath, out long copiedSize, out string diagnostics)
