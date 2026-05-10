@@ -89,6 +89,7 @@ namespace RTS.MLAgents.Stage7B
             ScriptedOpponentPacing = EnsureSceneComponent<Week7ScriptedOpponentPacing>("Stage7B_ScriptedOpponentPacing");
             EnsureSceneComponent<Stage7BHeuristicDryRunLogger>("Stage7B_HeuristicDryRunLogger");
             EnsureSceneComponent<Stage7BRuntimeContractDumper>("Stage7B_RuntimeContractDumper");
+            EnsureSceneComponent<Stage7BTrainingFlowDiagnostics>("Stage7B_TrainingFlowDiagnostics");
         }
 
         private void EnsureMlAgentObject()

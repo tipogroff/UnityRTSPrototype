@@ -4,6 +4,7 @@ using RTS.ML;
 using RTS.MLAgents.Stage7B.CandidateActions;
 using RTS.MLAgents.Stage7B.Diagnostics;
 using RTS.MLAgents.Stage7B.TeacherReplay;
+using Stopwatch = System.Diagnostics.Stopwatch;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
@@ -46,10 +47,49 @@ namespace RTS.MLAgents.Stage7B
         private bool _loggedDecisionSourceGuard;
         private bool _decisionRequesterWatchdogFallbackActive;
         private int _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester;
+        private static bool _applicationIsQuitting;
+        private int _onEnableCount;
+        private int _initializeCount;
+        private int _onEpisodeBeginCount;
+        private int _heuristicCallCount;
+        private int _manualRequestDecisionCount;
+        private int _manualRequestActionCount;
+        private int _lastObservationLength;
+        private int _lastObservationNanCount;
+        private int _lastActionCandidateIndex = -1;
+        private bool _lastActionAccepted;
+        private int _terminalCount;
+        private int _firstCollectObservationsFrame = -1;
+        private int _firstOnActionReceivedFrame = -1;
+        private float _firstCollectObservationsTime = -1f;
+        private float _firstOnActionReceivedTime = -1f;
+        private double _firstResetDurationMs = -1d;
+        private double _firstObservationDurationMs = -1d;
+        private double _firstWriteMaskDurationMs = -1d;
+        private double _firstOnActionReceivedDurationMs = -1d;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
         public string CurrentDecisionSource => _currentDecisionSource;
+        public int OnEnableCount => _onEnableCount;
+        public int InitializeCount => _initializeCount;
+        public int OnEpisodeBeginCount => _onEpisodeBeginCount;
+        public int HeuristicCallCount => _heuristicCallCount;
+        public int ManualRequestDecisionCount => _manualRequestDecisionCount;
+        public int ManualRequestActionCount => _manualRequestActionCount;
+        public int LastObservationLength => _lastObservationLength;
+        public int LastObservationNanCount => _lastObservationNanCount;
+        public int LastActionCandidateIndex => _lastActionCandidateIndex;
+        public bool LastActionAccepted => _lastActionAccepted;
+        public int TerminalCount => _terminalCount;
+        public float FirstCollectObservationsTime => _firstCollectObservationsTime;
+        public float FirstOnActionReceivedTime => _firstOnActionReceivedTime;
+        public int FirstCollectObservationsFrame => _firstCollectObservationsFrame;
+        public int FirstOnActionReceivedFrame => _firstOnActionReceivedFrame;
+        public double FirstResetDurationMs => _firstResetDurationMs;
+        public double FirstObservationDurationMs => _firstObservationDurationMs;
+        public double FirstWriteMaskDurationMs => _firstWriteMaskDurationMs;
+        public double FirstOnActionReceivedDurationMs => _firstOnActionReceivedDurationMs;
 
         /// <summary>
         /// Stage7B-7: Set by Stage7BTeacherReplayDemoOrchestrator to enable teacher-replay-demo
@@ -60,6 +100,7 @@ namespace RTS.MLAgents.Stage7B
 
         protected override void OnEnable()
         {
+            _onEnableCount++;
             ConfigureBehaviorParameters();
             ApplyDecisionSourcePolicy();
             base.OnEnable();
@@ -74,13 +115,21 @@ namespace RTS.MLAgents.Stage7B
 
         public override void Initialize()
         {
+            _initializeCount++;
             ResolveDependencies();
             ConfigureBehaviorParameters();
             ApplyDecisionSourcePolicy();
         }
 
+        private void OnApplicationQuit()
+        {
+            _applicationIsQuitting = true;
+        }
+
         public override void OnEpisodeBegin()
         {
+            _onEpisodeBeginCount++;
+            Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             _bootstrap?.StartNewEpisode();
             _observationBuilder = null;
@@ -92,6 +141,11 @@ namespace RTS.MLAgents.Stage7B
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
+            timer.Stop();
+            if (_firstResetDurationMs < 0d)
+            {
+                _firstResetDurationMs = timer.Elapsed.TotalMilliseconds;
+            }
         }
 
         private void FixedUpdate()
@@ -112,12 +166,14 @@ namespace RTS.MLAgents.Stage7B
 
             if (_bootstrap.MatchManager.Phase == MatchPhase.Running)
             {
+                _manualRequestDecisionCount++;
                 RequestDecision();
             }
         }
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             float[] observation = _observationBuilder != null
                 ? _observationBuilder.BuildObservation(_playerPerspective, ObservationMode.UnityMvpTransfer)
@@ -125,11 +181,25 @@ namespace RTS.MLAgents.Stage7B
 
             ValidateObservation(observation);
             Trace.RecordObservation(observation);
+            _lastObservationLength = observation != null ? observation.Length : 0;
+            _lastObservationNanCount = Trace.ObservationNanCount;
             sensor.AddObservation(observation);
+            timer.Stop();
+            if (_firstCollectObservationsTime < 0f)
+            {
+                _firstCollectObservationsTime = Time.realtimeSinceStartup;
+                _firstCollectObservationsFrame = Time.frameCount;
+            }
+
+            if (_firstObservationDurationMs < 0d)
+            {
+                _firstObservationDurationMs = timer.Elapsed.TotalMilliseconds;
+            }
         }
 
         public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
         {
+            Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             BuildCandidates();
             _maskAdapter.WriteDiscreteActionMask(actionMask, _currentCandidates);
@@ -137,10 +207,16 @@ namespace RTS.MLAgents.Stage7B
                 _currentCandidates != null ? _currentCandidates.CandidateCount : 0,
                 _maskAdapter.LastMaskedEmptySlots,
                 _currentCandidates != null ? _currentCandidates.OverflowCount : 0);
+            timer.Stop();
+            if (_firstWriteMaskDurationMs < 0d)
+            {
+                _firstWriteMaskDurationMs = timer.Elapsed.TotalMilliseconds;
+            }
         }
 
         public override void OnActionReceived(ActionBuffers actions)
         {
+            Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             ApplyDecisionSourcePolicy();
             _bootstrap?.EnsureReadyForDecision();
@@ -152,6 +228,7 @@ namespace RTS.MLAgents.Stage7B
                 : default;
 
             int selectedIndex = actions.DiscreteActions.Length > 0 ? actions.DiscreteActions[0] : 0;
+            _lastActionCandidateIndex = selectedIndex;
             _episodeDecisionCount++;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             _bootstrap?.ScriptedOpponentPacing?.RecordStudentActionAttempt();
@@ -182,8 +259,20 @@ namespace RTS.MLAgents.Stage7B
                     + ",type=" + selectedAction.ActionType
                     + ",dir=" + selectedAction.Direction;
                 replayOrchestrator.NotifyActionApplied(demoAccepted, selectedIndex, demoSummary);
+                _lastActionAccepted = demoAccepted;
 
                 _currentCandidates = null;
+                timer.Stop();
+                if (_firstOnActionReceivedTime < 0f)
+                {
+                    _firstOnActionReceivedTime = Time.realtimeSinceStartup;
+                    _firstOnActionReceivedFrame = Time.frameCount;
+                }
+
+                if (_firstOnActionReceivedDurationMs < 0d)
+                {
+                    _firstOnActionReceivedDurationMs = timer.Elapsed.TotalMilliseconds;
+                }
                 return;
             }
             Trace.RecordCandidateFallback(
@@ -203,6 +292,7 @@ namespace RTS.MLAgents.Stage7B
                     _playerPerspective,
                     _currentCandidates?.SourceMask,
                     "stage7b-candidate-action-index");
+                _lastActionAccepted = accepted;
 
                 Trace.RecordApplyResult(
                     accepted ? 1 : 0,
@@ -256,6 +346,7 @@ namespace RTS.MLAgents.Stage7B
                     }
 
                     Trace.RecordTerminal(terminalReason);
+                    _terminalCount++;
                     _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport(terminalReason);
                     EndEpisode();
                 }
@@ -263,15 +354,28 @@ namespace RTS.MLAgents.Stage7B
             else if (!stillRunning)
             {
                 Trace.RecordTerminal("runtime-ended");
+                _terminalCount++;
                 _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport("runtime-ended");
                 EndEpisode();
             }
 
             _currentCandidates = null;
+            timer.Stop();
+            if (_firstOnActionReceivedTime < 0f)
+            {
+                _firstOnActionReceivedTime = Time.realtimeSinceStartup;
+                _firstOnActionReceivedFrame = Time.frameCount;
+            }
+
+            if (_firstOnActionReceivedDurationMs < 0d)
+            {
+                _firstOnActionReceivedDurationMs = timer.Elapsed.TotalMilliseconds;
+            }
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
+            _heuristicCallCount++;
             ResolveDependencies();
             BuildCandidates();
             ActionSegment<int> discrete = actionsOut.DiscreteActions;
@@ -299,13 +403,17 @@ namespace RTS.MLAgents.Stage7B
 
         private void ResolveDependencies()
         {
+            if (_applicationIsQuitting
+                || !Application.isPlaying
+                || !isActiveAndEnabled
+                || !gameObject.activeInHierarchy)
+            {
+                return;
+            }
+
             if (_bootstrap == null && _autoResolveBootstrap)
             {
-                _bootstrap = FindFirstObjectByType<MlAgentsTrainingBootstrap>();
-                if (_bootstrap == null)
-                {
-                    _bootstrap = new GameObject("Stage7B_MLAgentsTrainingBootstrap").AddComponent<MlAgentsTrainingBootstrap>();
-                }
+                _bootstrap = FindFirstObjectByType<MlAgentsTrainingBootstrap>(FindObjectsInactive.Exclude);
             }
 
             GridManager grid = _bootstrap != null ? _bootstrap.GridManager : GridManager.Instance;
