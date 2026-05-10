@@ -1,0 +1,105 @@
+{
+  "generated_at_utc": "2026-05-10T02:20:00Z",
+  "stage": "Stage7B-6E",
+  "scope": {
+    "searched_roots": [
+      "python/week5_teacher_legacy032",
+      "python/week5_teacher_reference",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts"
+    ],
+    "constraints": [
+      "No ML-Agents training",
+      "No PPO run",
+      "No imitation learning",
+      "No .demo recording",
+      "No Stage6B3 baseline/checkpoint edits"
+    ]
+  },
+  "active_python_wrapper": {
+    "gym_microrts_module": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/__init__.py",
+    "vec_env_py": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+    "micro_rts_grid_mode_vec_env_present": true,
+    "imports_jni_gridnet_vec_client": true
+  },
+  "python_files_found": [
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/global_agent_env.py",
+    "python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py",
+    "python/week5_teacher_legacy032/scripts/legacy032_policy_action.py",
+    "python/week5_teacher_legacy032/scripts/probe_legacy032_runtime_state_api_stage7b.py"
+  ],
+  "java_source_files_found": [],
+  "java_source_found_for_jni_bridge": false,
+  "jar_files_found": [
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Coac.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Droplet.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/GRojoA3N.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Izanagi.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/MixedBot.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/RojoBot.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/TiamatBot.jar",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/UMSBot.jar"
+  ],
+  "class_files_found_on_disk": [],
+  "microrts_jar_class_presence": {
+    "tests.JNIGridnetVecClient": [
+      "tests/JNIGridnetVecClient.class",
+      "tests/JNIGridnetVecClient$Responses.class"
+    ],
+    "tests.JNIGridnetClient": [
+      "tests/JNIGridnetClient.class",
+      "tests/JNIGridnetClient$Response.class"
+    ],
+    "tests.JNIGridnetClientSelfPlay": [
+      "tests/JNIGridnetClientSelfPlay.class"
+    ],
+    "rts.GameState": [
+      "rts/GameState.class"
+    ],
+    "rts.PhysicalGameState": [
+      "rts/PhysicalGameState.class"
+    ],
+    "rts.units.Unit": [
+      "rts/units/Unit.class"
+    ],
+    "rts.Player": [
+      "rts/Player.class"
+    ]
+  },
+  "jni_bridge_locations": {
+    "source": [],
+    "binary": [
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar::tests/JNIGridnetVecClient.class",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar::tests/JNIGridnetClient.class",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar::tests/JNIGridnetClientSelfPlay.class"
+    ]
+  },
+  "python_java_loading": {
+    "jpype_start": "vec_env.py starts JVM and adds jars via jpype.addClassPath before jpype.startJVM",
+    "runtime_classpath": [
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Coac.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Droplet.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/GRojoA3N.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/Izanagi.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/MixedBot.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/RojoBot.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/TiamatBot.jar",
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/UMSBot.jar"
+    ],
+    "runtime_class_names": {
+      "vec_client": "tests.JNIGridnetVecClient",
+      "client0": "tests.JNIGridnetClient"
+    }
+  },
+  "source_availability_decision": {
+    "jni_source_available": false,
+    "core_rts_source_available": false,
+    "binary_only_with_signatures": true,
+    "notes": [
+      "javap signatures are available for required classes",
+      "installed package does not include src/ or lib/ directories"
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "generated_at_utc": "2026-05-10T02:22:00Z",
+  "stage": "Stage7B-6E",
+  "decision": "CONDITIONAL_GO",
+  "java_source_found": false,
+  "active_python_wrapper_found": true,
+  "build_path_found": true,
+  "game_state_access_likely": true,
+  "evidence": {
+    "jni_client_has_game_state_fields": [
+      "tests.JNIGridnetClient has fields: rts.GameState gs, rts.PhysicalGameState pgs",
+      "tests.JNIGridnetClientSelfPlay has fields: rts.GameState gs, rts.PhysicalGameState pgs"
+    ],
+    "rts_api_has_required_getters": [
+      "rts.GameState.getTime()",
+      "rts.GameState.getPlayers()/getPlayer(int)",
+      "rts.GameState.getUnits()",
+      "rts.GameState.getUnitActions()",
+      "rts.GameState.winner()/gameover()",
+      "rts.GameState.getPhysicalGameState()",
+      "rts.PhysicalGameState.getWidth()/getHeight()/getUnits()/getPlayers()",
+      "rts.units.Unit getters: getID/getType/getPlayer/getX/getY/getHitPoints/getResources",
+      "rts.Player getters: getID/getResources"
+    ]
+  },
+  "patch_scope": "java_bridge_only",
+  "estimated_risk": "medium",
+  "recommended_next_step": "fetch_original_gym_microrts_source",
+  "go_no_go_for_immediate_patch": {
+    "apply_now_without_source": "NO-GO",
+    "apply_after_source_checkout": "GO"
+  },
+  "exact_files_to_patch_if_go": {
+    "java_bridge": [
+      "microrts/src/tests/JNIGridnetClient.java",
+      "microrts/src/tests/JNIGridnetVecClient.java"
+    ],
+    "python_wrapper": [
+      "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py"
+    ],
+    "exporter": [
+      "python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py"
+    ]
+  },
+  "exact_methods_to_add": {
+    "jni_gridnet_client": [
+      "public String getRuntimeStateJSON()"
+    ],
+    "jni_gridnet_vec_client": [
+      "public String getRuntimeStateJSON(int envIdx)",
+      "public String[] getRuntimeStateBatchJSON()",
+      "public String getInitialStateJSON(int envIdx)"
+    ],
+    "python_vec_env": [
+      "def get_runtime_state_json(self, env_index=0)",
+      "def get_runtime_state_batch_json(self)",
+      "reset(): cache initial_state_json",
+      "step_wait(): runtime_state_t_json before gameStep",
+      "step_wait(): runtime_state_tp1_json after gameStep",
+      "infos[i] keys: initial_state_json/runtime_state_t_json/runtime_state_tp1_json"
+    ]
+  },
+  "java_serializer_design": {
+    "preferred_json_impl": "com.google.gson (present in microrts.jar)",
+    "fallback": "manual StringBuilder JSON",
+    "required_fields": [
+      "map_width",
+      "map_height",
+      "step",
+      "players",
+      "units",
+      "resource_nodes",
+      "building_queues",
+      "terminal"
+    ],
+    "state_source": "gs + pgs inside JNIGridnetClient"
+  },
+  "exporter_updates_after_bridge_patch": {
+    "write_fields": [
+      "initial_state_json",
+      "runtime_state_t_json",
+      "runtime_state_tp1_json"
+    ],
+    "manifest_flags_true": [
+      "contains_initial_state",
+      "contains_pre_state",
+      "contains_post_state"
+    ],
+    "replay_ready_condition": "true only when all required state fields present"
+  },
+  "validation_command_plan": [
+    "python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/probe_legacy032_runtime_state_api_stage7b.py",
+    "expect runtime_state_api_found=true or at least runtime API method visible",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py --episodes 1 --max-steps-per-episode 64",
+    "expect contains_initial_state=true",
+    "expect contains_pre_state=true",
+    "expect contains_post_state=true",
+    "expect replay_ready=true",
+    "rerun Stage7B-6B prep validation and expect state_sync attempt with non-null candidate stats"
+  ],
+  "rollback_plan": {
+    "python": [
+      "restore vec_env.py from git/backup copy",
+      "remove patch JAR classpath entry if added"
+    ],
+    "java": [
+      "restore original microrts.jar backup",
+      "or remove overlay patch JAR"
+    ],
+    "verification": [
+      "rerun probe and confirm runtime_state_api_found returns prior behavior",
+      "rerun smoke exporter to ensure no regressions"
+    ]
+  }
+}

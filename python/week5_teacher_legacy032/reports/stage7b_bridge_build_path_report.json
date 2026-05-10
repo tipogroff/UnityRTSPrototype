@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-05-10T02:21:00Z",
+  "stage": "Stage7B-6E",
+  "package_runtime_root": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts",
+  "active_wrapper": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+  "build_descriptors_found": [
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/build.sh",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/.classpath",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/.project",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/.drone.yml",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/.git"
+  ],
+  "build_script_summary": {
+    "build_sh_compile_command": "javac -d ./build -cp ./lib/* -sourcepath ./src $(find ./src/* | grep .java)",
+    "build_sh_packaging": "jar cvf microrts.jar *",
+    "declared_source_dir": "./src",
+    "declared_lib_dir": "./lib"
+  },
+  "required_build_inputs_present": {
+    "src_dir_present": false,
+    "lib_dir_present": false,
+    "git_submodule_target_present": false
+  },
+  "runtime_artifacts_used": {
+    "microrts_jar": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar",
+    "bot_jars_count": 8,
+    "python_env_imports_from": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts"
+  },
+  "java_toolchain_local": {
+    "javac": "17.0.18",
+    "jar": "17.0.18",
+    "java_runtime": "OpenJDK Temurin 17"
+  },
+  "rebuild_feasibility": {
+    "can_rebuild_directly_from_installed_package": false,
+    "reason": [
+      "installed package lacks src/ and lib/ expected by build.sh",
+      "JNI classes are present only as compiled classes inside microrts.jar"
+    ],
+    "can_rebuild_if_upstream_source_obtained": true,
+    "can_patch_via_decompile_then_recompile": true,
+    "decompile_patch_risk": "high"
+  },
+  "deployment_options_for_patched_classes": [
+    {
+      "option": "replace_microrts_jar_in_place",
+      "target": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/microrts.jar",
+      "risk": "medium"
+    },
+    {
+      "option": "add_patch_jar_before_microrts_jar_in_vec_env",
+      "target": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+      "risk": "medium",
+      "note": "requires deterministic classpath precedence before jpype.startJVM"
+    }
+  ],
+  "mirror_environment_note": {
+    "mirror_path": "_unity_batch_stage6b3_semantic_obs_fix/python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts",
+    "note": "mirror has duplicate wrapper paths; patch should target currently active legacy032 venv unless run environment is switched"
+  }
+}
