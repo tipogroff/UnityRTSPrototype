@@ -718,7 +718,9 @@ MonoBehaviour:
   MaxStep: 0
   _playerPerspective: 1
   _autoResolveBootstrap: 1
-  _requestDecisionInFixedUpdate: 1
+  _manualFixedUpdateDecisionRequests: 0
+  _allowConcurrentDecisionSourcesForDebug: 0
+  _enableDecisionRequesterWatchdogFallback: 1
   _stage7BMaxDecisionsPerEpisode: 256
   _logRejectedActions: 0
 --- !u!114 &477664551
@@ -1262,6 +1264,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1604562316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1604562318}
+  - component: {fileID: 1604562317}
+  m_Layer: 0
+  m_Name: Stage7B_DemoOrchestrator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1604562317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604562316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c12b94be4d6b543989e92e34f59aa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator
+  _studentAgent: {fileID: 0}
+  _replayReadySourceDir: python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z
+  _maxRecordedDecisions: 64
+  _maxEpisodes: 1
+  _playerPerspective: 1
+  _skipMismatchedCommands: 1
+  _skipNoTeacherCommandSteps: 1
+  _smokeReportJsonPath: python/stage7b_teacher_replay/stage7b_demo_recording_smoke_report.json
+  _smokeReportMdPath: python/stage7b_teacher_replay/stage7b_demo_recording_smoke_report.md
+  _traceJsonlPath: python/stage7b_teacher_replay/stage7b_demo_recording_trace.jsonl
+  _droppedCommandsJsonlPath: python/stage7b_teacher_replay/stage7b_demo_recording_dropped_commands.jsonl
+  _expectedDemoRelativePath: Assets/Demonstrations/stage7b_teacher_replay_smoke.demo
+--- !u!4 &1604562318
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604562316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1688997547
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1592,3 +1650,4 @@ SceneRoots:
   - {fileID: 467106700}
   - {fileID: 1422870929}
   - {fileID: 282681322}
+  - {fileID: 1604562318}

@@ -3,6 +3,7 @@ using RTS.Gameplay;
 using RTS.ML;
 using RTS.MLAgents.Stage7B.CandidateActions;
 using RTS.MLAgents.Stage7B.Diagnostics;
+using RTS.MLAgents.Stage7B.TeacherReplay;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
@@ -49,6 +50,13 @@ namespace RTS.MLAgents.Stage7B
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
         public string CurrentDecisionSource => _currentDecisionSource;
+
+        /// <summary>
+        /// Stage7B-7: Set by Stage7BTeacherReplayDemoOrchestrator to enable teacher-replay-demo
+        /// mode.  When non-null and active, Heuristic() returns the orchestrator's queued
+        /// candidate index and OnActionReceived() skips reward / episode-end evaluation.
+        /// </summary>
+        internal Stage7BTeacherReplayDemoOrchestrator TeacherReplayOrchestrator { get; set; }
 
         protected override void OnEnable()
         {
@@ -148,6 +156,36 @@ namespace RTS.MLAgents.Stage7B
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             _bootstrap?.ScriptedOpponentPacing?.RecordStudentActionAttempt();
             AgentAction selectedAction = _actionAdapter.Resolve(_currentCandidates, selectedIndex, out MlAgentsCandidateAction candidate);
+
+            // Stage7B-7: teacher-replay-demo mode — apply action, notify orchestrator, skip
+            // reward evaluation and episode-end so the recording loop is not interrupted.
+            Stage7BTeacherReplayDemoOrchestrator replayOrchestrator = TeacherReplayOrchestrator;
+            if (replayOrchestrator != null && replayOrchestrator.IsActive)
+            {
+                bool demoAccepted = false;
+                if (_actionApplier != null)
+                {
+                    _actionApplier.ResetDiagnostics();
+                    demoAccepted = _actionApplier.ApplyAction(
+                        selectedAction, _playerPerspective, _currentCandidates?.SourceMask,
+                        "stage7b-demo-replay");
+                }
+
+                if (_bootstrap != null
+                    && _bootstrap.MatchManager != null
+                    && _bootstrap.MatchManager.Phase == MatchPhase.Running)
+                {
+                    _bootstrap.MatchManager.StepMatch();
+                }
+
+                string demoSummary = "actor=" + selectedAction.ActorPosition
+                    + ",type=" + selectedAction.ActionType
+                    + ",dir=" + selectedAction.Direction;
+                replayOrchestrator.NotifyActionApplied(demoAccepted, selectedIndex, demoSummary);
+
+                _currentCandidates = null;
+                return;
+            }
             Trace.RecordCandidateFallback(
                 _actionAdapter.LastInvalidCandidateIndexSelected,
                 _actionAdapter.LastEmptyCandidateSelected,
@@ -239,6 +277,20 @@ namespace RTS.MLAgents.Stage7B
             ActionSegment<int> discrete = actionsOut.DiscreteActions;
             if (discrete.Length == 0)
             {
+                return;
+            }
+
+            // Stage7B-7: teacher-replay-demo mode — use orchestrator's matched candidate index.
+            Stage7BTeacherReplayDemoOrchestrator orchestrator = TeacherReplayOrchestrator;
+            if (orchestrator != null && orchestrator.IsActive)
+            {
+                if (orchestrator.TryConsumePendingCandidateIndex(out int replayIndex))
+                {
+                    discrete[0] = replayIndex;
+                    return;
+                }
+                // No pending index this tick — emit NoOp so we don't record unintended actions.
+                discrete[0] = MlAgentsCandidateActionList.NoOpCandidateIndex;
                 return;
             }
 

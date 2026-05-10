@@ -2,11 +2,11 @@
   "throttle_enabled": true,
   "bot_decision_interval_steps": 3,
   "bot_actions_attempted_before_or_baseline": null,
-  "bot_actions_attempted_after": 71,
-  "student_actions_attempted": 211,
-  "accepted_bot_commands": 1797,
-  "rejected_bot_commands": 0,
-  "terminal_reason": "EnemyBaseDestroyed",
+  "bot_actions_attempted_after": 86,
+  "student_actions_attempted": 256,
+  "accepted_bot_commands": 86,
+  "rejected_bot_commands": 86,
+  "terminal_reason": "stage7b_decision_limit",
   "duplicate_spawn_detected": false,
   "stage6b3_files_touched": []
 }

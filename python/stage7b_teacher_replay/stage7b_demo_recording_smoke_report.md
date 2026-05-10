@@ -1,0 +1,21 @@
+# Stage7B-7 Demo Recording Smoke Report
+
+- status: GO
+- generated_at_utc: 2026-05-10T19:51:50Z
+- demo_file_path: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\Assets\Demonstrations\stage7b_teacher_replay_smoke.demo
+- demo_file_exists: true
+- demo_file_size_bytes: 11083269
+- behavior_name: Stage7B_RTS_Student
+- observation_size: 15552
+- discrete_branch_count: 1
+- candidate_branch_size: 128
+- source_path: python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z
+- source_replay_ready: true
+- runtime_services_ready: true
+- runtime_services_wait_seconds: 0
+- runtime_apply_attempted_count: 64
+- runtime_apply_accepted_count: 64
+- runtime_apply_rejected_count: 0
+- runtime_apply_accept_rate: 1
+- recorded_decisions: 64
+- stage6b3_baseline_touched: false
