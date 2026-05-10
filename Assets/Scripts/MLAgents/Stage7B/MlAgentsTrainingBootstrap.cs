@@ -35,6 +35,7 @@ namespace RTS.MLAgents.Stage7B
         public MatchBootstrap MatchBootstrap { get; private set; }
         public HeuristicPolicyAdapter ScriptedOpponentAdapter { get; private set; }
         public StudentMlAgent StudentAgent { get; private set; }
+        public Week7ScriptedOpponentPacing ScriptedOpponentPacing { get; private set; }
         public bool StepScriptedOpponent => _stepScriptedOpponent;
         public Owner StudentPlayer => _studentPlayer;
         public Owner ScriptedOpponent => _scriptedOpponent;
@@ -64,6 +65,7 @@ namespace RTS.MLAgents.Stage7B
             MatchBootstrap.Setup();
             ConfigureScriptedOpponent();
             DuplicateSpawnDetected = DetectDuplicateSpawn();
+            ScriptedOpponentPacing?.ResetForEpisode(DuplicateSpawnDetected);
         }
 
         public void EnsureReadyForDecision()
@@ -84,6 +86,7 @@ namespace RTS.MLAgents.Stage7B
             MatchBootstrap = EnsureSceneComponent<MatchBootstrap>("MatchBootstrap");
             EnsureSceneComponent<VictoryResolver>("VictoryResolver");
             ScriptedOpponentAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("Stage7B_ScriptedOpponent");
+            ScriptedOpponentPacing = EnsureSceneComponent<Week7ScriptedOpponentPacing>("Stage7B_ScriptedOpponentPacing");
             EnsureSceneComponent<Stage7BHeuristicDryRunLogger>("Stage7B_HeuristicDryRunLogger");
             EnsureSceneComponent<Stage7BRuntimeContractDumper>("Stage7B_RuntimeContractDumper");
         }

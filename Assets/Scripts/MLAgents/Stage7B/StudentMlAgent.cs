@@ -146,6 +146,7 @@ namespace RTS.MLAgents.Stage7B
             int selectedIndex = actions.DiscreteActions.Length > 0 ? actions.DiscreteActions[0] : 0;
             _episodeDecisionCount++;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+            _bootstrap?.ScriptedOpponentPacing?.RecordStudentActionAttempt();
             AgentAction selectedAction = _actionAdapter.Resolve(_currentCandidates, selectedIndex, out MlAgentsCandidateAction candidate);
             Trace.RecordCandidateFallback(
                 _actionAdapter.LastInvalidCandidateIndexSelected,
@@ -182,7 +183,13 @@ namespace RTS.MLAgents.Stage7B
                 && _bootstrap.MatchManager != null
                 && _bootstrap.MatchManager.Phase == MatchPhase.Running)
             {
-                _bootstrap.ScriptedOpponentAdapter.ExecuteDecisionStep();
+                bool shouldRunScriptedOpponent = _bootstrap.ScriptedOpponentPacing == null
+                    || _bootstrap.ScriptedOpponentPacing.ShouldExecuteBotDecisionStep(Time.time);
+                if (shouldRunScriptedOpponent)
+                {
+                    (int acceptedTotal, int rejectedTotal) = _bootstrap.ScriptedOpponentAdapter.ExecuteDecisionStepWithCounts();
+                    _bootstrap.ScriptedOpponentPacing?.RecordBotDecisionOutcome(acceptedTotal, rejectedTotal);
+                }
             }
 
             bool stillRunning = _bootstrap != null
@@ -211,12 +218,14 @@ namespace RTS.MLAgents.Stage7B
                     }
 
                     Trace.RecordTerminal(terminalReason);
+                    _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport(terminalReason);
                     EndEpisode();
                 }
             }
             else if (!stillRunning)
             {
                 Trace.RecordTerminal("runtime-ended");
+                _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport("runtime-ended");
                 EndEpisode();
             }
 

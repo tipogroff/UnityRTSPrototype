@@ -1,7 +1,7 @@
 # Stage7B-6I Runtime Apply Validation Report
 
 - status: GO
-- generated_at_utc: 2026-05-10T17:27:21Z
+- generated_at_utc: 2026-05-10T18:30:26Z
 - source: python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z
 - post_state_comparison_mode: partial
 
