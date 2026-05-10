@@ -6,14 +6,22 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 {
     public sealed class Stage7BTeacherReplayActionResolver
     {
-        public const string ReturnDirectionMappingModeNone = "none";
-        public const string ReturnDirectionMappingModeInvertYForLegacy032Teacher = "invert_y_for_legacy032_teacher";
+        public const string CardinalDirectionMappingModeNone = "none";
+        public const string CardinalDirectionMappingModeInvertYForLegacy032Teacher = "invert_y_for_legacy032_teacher";
+        public const string ReturnDirectionMappingModeNone = CardinalDirectionMappingModeNone;
+        public const string ReturnDirectionMappingModeInvertYForLegacy032Teacher = CardinalDirectionMappingModeInvertYForLegacy032Teacher;
 
-        public string returnDirectionMappingMode = ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+        public string cardinalDirectionMappingMode = CardinalDirectionMappingModeInvertYForLegacy032Teacher;
+        public string returnDirectionMappingMode = CardinalDirectionMappingModeInvertYForLegacy032Teacher;
 
+        public int LastRawTeacherDir { get; private set; } = -1;
+        public int LastMappedUnityDir { get; private set; } = -1;
+        public string LastCardinalDirectionMappingMode { get; private set; } = CardinalDirectionMappingModeInvertYForLegacy032Teacher;
+        public bool LastCardinalDirectionMappingApplied { get; private set; }
+        public UnitActionType LastMappingAppliedActionType { get; private set; } = UnitActionType.NoOp;
         public int LastRawTeacherReturnDir { get; private set; } = -1;
         public int LastMappedUnityReturnDir { get; private set; } = -1;
-        public string LastReturnDirectionMappingMode { get; private set; } = ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+        public string LastReturnDirectionMappingMode { get; private set; } = CardinalDirectionMappingModeInvertYForLegacy032Teacher;
         public bool LastReturnDirectionMappingApplied { get; private set; }
 
         public bool TryResolveTeacherCommand(
@@ -24,7 +32,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         {
             action = AgentAction.CreateNoOp(ActionSourceType.Debug);
             dropReason = Stage7BTeacherReplayDropReason.Unknown;
-            ResetLastReturnMappingDiagnostics();
+            ResetLastDirectionMappingDiagnostics();
 
             if (command == null)
             {
@@ -73,7 +81,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     return true;
 
                 case UnitActionType.Move:
-                    if (!ActionContractMappings.TryDirectionFromIndex(command.move_dir, out Direction moveDir))
+                    if (!TryMapTeacherCardinalDirection(command.move_dir, UnitActionType.Move, out Direction moveDir))
                     {
                         dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
                         return false;
@@ -84,7 +92,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     return true;
 
                 case UnitActionType.Harvest:
-                    if (!ActionContractMappings.TryDirectionFromIndex(command.harvest_dir, out Direction harvestDir))
+                    if (!TryMapTeacherCardinalDirection(command.harvest_dir, UnitActionType.Harvest, out Direction harvestDir))
                     {
                         dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
                         return false;
@@ -101,28 +109,11 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     return true;
 
                 case UnitActionType.Return:
-                    LastRawTeacherReturnDir = command.return_dir;
-                    LastReturnDirectionMappingMode = GetEffectiveReturnDirectionMappingMode();
-
-                    if (command.return_dir < 0 || command.return_dir >= ActionContract.SIZE_DIRECTION)
+                    if (!TryMapTeacherCardinalDirection(command.return_dir, UnitActionType.Return, out Direction returnDir))
                     {
                         dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
                         return false;
                     }
-
-                    Direction returnDir;
-                    if (LastReturnDirectionMappingMode == ReturnDirectionMappingModeInvertYForLegacy032Teacher)
-                    {
-                        returnDir = ConvertLegacy032ReturnDirectionToUnity(command.return_dir);
-                        LastReturnDirectionMappingApplied = true;
-                    }
-                    else
-                    {
-                        returnDir = (Direction)command.return_dir;
-                        LastReturnDirectionMappingApplied = false;
-                    }
-
-                    LastMappedUnityReturnDir = (int)returnDir;
 
                     if (actor.Type != UnitType.Worker)
                     {
@@ -135,7 +126,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     return true;
 
                 case UnitActionType.Produce:
-                    if (!ActionContractMappings.TryDirectionFromIndex(command.produce_dir, out Direction produceDir))
+                    if (!TryMapTeacherCardinalDirection(command.produce_dir, UnitActionType.Produce, out Direction produceDir))
                     {
                         dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
                         return false;
@@ -195,9 +186,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             return new GridPosition(command.actor_x, command.actor_y);
         }
 
-        public static Direction ConvertLegacy032ReturnDirectionToUnity(int rawReturnDir)
+        public static Direction ConvertLegacy032DirectionToUnity(int rawDir)
         {
-            switch (rawReturnDir)
+            switch (rawDir)
             {
                 case 0: return Direction.South;
                 case 1: return Direction.East;
@@ -207,23 +198,87 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             }
         }
 
-        private string GetEffectiveReturnDirectionMappingMode()
+        public static Direction ConvertLegacy032ReturnDirectionToUnity(int rawReturnDir)
         {
-            if (returnDirectionMappingMode == ReturnDirectionMappingModeNone)
-            {
-                return ReturnDirectionMappingModeNone;
-            }
-
-            if (returnDirectionMappingMode == ReturnDirectionMappingModeInvertYForLegacy032Teacher)
-            {
-                return ReturnDirectionMappingModeInvertYForLegacy032Teacher;
-            }
-
-            return ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+            return ConvertLegacy032DirectionToUnity(rawReturnDir);
         }
 
-        private void ResetLastReturnMappingDiagnostics()
+        private bool TryMapTeacherCardinalDirection(int rawDir, UnitActionType actionType, out Direction direction)
         {
+            LastRawTeacherDir = rawDir;
+            LastMappedUnityDir = -1;
+            LastMappingAppliedActionType = actionType;
+            LastCardinalDirectionMappingMode = GetEffectiveCardinalDirectionMappingMode();
+            LastCardinalDirectionMappingApplied = false;
+
+            if (actionType == UnitActionType.Return)
+            {
+                LastRawTeacherReturnDir = rawDir;
+                LastMappedUnityReturnDir = -1;
+                LastReturnDirectionMappingMode = LastCardinalDirectionMappingMode;
+                LastReturnDirectionMappingApplied = false;
+            }
+
+            if (rawDir < 0 || rawDir >= ActionContract.SIZE_DIRECTION)
+            {
+                direction = Direction.North;
+                return false;
+            }
+
+            if (LastCardinalDirectionMappingMode == CardinalDirectionMappingModeInvertYForLegacy032Teacher)
+            {
+                direction = ConvertLegacy032DirectionToUnity(rawDir);
+                LastCardinalDirectionMappingApplied = true;
+            }
+            else
+            {
+                direction = (Direction)rawDir;
+            }
+
+            LastMappedUnityDir = (int)direction;
+
+            if (actionType == UnitActionType.Return)
+            {
+                LastMappedUnityReturnDir = LastMappedUnityDir;
+                LastReturnDirectionMappingApplied = LastCardinalDirectionMappingApplied;
+            }
+
+            return true;
+        }
+
+        private string GetEffectiveCardinalDirectionMappingMode()
+        {
+            if (cardinalDirectionMappingMode == CardinalDirectionMappingModeNone)
+            {
+                return CardinalDirectionMappingModeNone;
+            }
+
+            if (cardinalDirectionMappingMode == CardinalDirectionMappingModeInvertYForLegacy032Teacher)
+            {
+                return CardinalDirectionMappingModeInvertYForLegacy032Teacher;
+            }
+
+            // Backward compatibility for serialized runners from Stage7B-6K.
+            if (returnDirectionMappingMode == CardinalDirectionMappingModeNone)
+            {
+                return CardinalDirectionMappingModeNone;
+            }
+
+            return CardinalDirectionMappingModeInvertYForLegacy032Teacher;
+        }
+
+        private string GetEffectiveReturnDirectionMappingMode()
+        {
+            return GetEffectiveCardinalDirectionMappingMode();
+        }
+
+        private void ResetLastDirectionMappingDiagnostics()
+        {
+            LastRawTeacherDir = -1;
+            LastMappedUnityDir = -1;
+            LastCardinalDirectionMappingMode = GetEffectiveCardinalDirectionMappingMode();
+            LastCardinalDirectionMappingApplied = false;
+            LastMappingAppliedActionType = UnitActionType.NoOp;
             LastRawTeacherReturnDir = -1;
             LastMappedUnityReturnDir = -1;
             LastReturnDirectionMappingMode = GetEffectiveReturnDirectionMappingMode();
@@ -237,6 +292,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         {
             action = AgentAction.CreateNoOp(ActionSourceType.Debug);
             dropReason = Stage7BTeacherReplayDropReason.Unknown;
+            ResetLastDirectionMappingDiagnostics();
 
             if (perCellBranchesFlat == null || perCellBranchesFlat.Length != ActionContract.TotalCells * ActionContract.ActionBranchCount)
             {
@@ -283,28 +339,55 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             switch (actionType)
             {
                 case UnitActionType.Move:
+                    if (!TryMapTeacherCardinalDirection(
+                            perCellBranchesFlat[baseOffset + ActionContract.BRANCH_MOVE_DIR],
+                            UnitActionType.Move,
+                            out Direction moveDir))
+                    {
+                        dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
+                        return false;
+                    }
+
                     action = new AgentAction(
                         actorPos,
                         UnitActionType.Move,
-                        (Direction)perCellBranchesFlat[baseOffset + ActionContract.BRANCH_MOVE_DIR],
+                        moveDir,
                         sourceType: ActionSourceType.Debug);
                     dropReason = Stage7BTeacherReplayDropReason.None;
                     return true;
 
                 case UnitActionType.Harvest:
+                    if (!TryMapTeacherCardinalDirection(
+                            perCellBranchesFlat[baseOffset + ActionContract.BRANCH_HARVEST_DIR],
+                            UnitActionType.Harvest,
+                            out Direction harvestDir))
+                    {
+                        dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
+                        return false;
+                    }
+
                     action = new AgentAction(
                         actorPos,
                         UnitActionType.Harvest,
-                        (Direction)perCellBranchesFlat[baseOffset + ActionContract.BRANCH_HARVEST_DIR],
+                        harvestDir,
                         sourceType: ActionSourceType.Debug);
                     dropReason = Stage7BTeacherReplayDropReason.None;
                     return true;
 
                 case UnitActionType.Return:
+                    if (!TryMapTeacherCardinalDirection(
+                            perCellBranchesFlat[baseOffset + ActionContract.BRANCH_RETURN_DIR],
+                            UnitActionType.Return,
+                            out Direction returnDir))
+                    {
+                        dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
+                        return false;
+                    }
+
                     action = new AgentAction(
                         actorPos,
                         UnitActionType.Return,
-                        (Direction)perCellBranchesFlat[baseOffset + ActionContract.BRANCH_RETURN_DIR],
+                        returnDir,
                         sourceType: ActionSourceType.Debug);
                     dropReason = Stage7BTeacherReplayDropReason.None;
                     return true;
@@ -317,10 +400,19 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                         return false;
                     }
 
+                    if (!TryMapTeacherCardinalDirection(
+                            perCellBranchesFlat[baseOffset + ActionContract.BRANCH_PRODUCE_DIR],
+                            UnitActionType.Produce,
+                            out Direction produceDir))
+                    {
+                        dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
+                        return false;
+                    }
+
                     action = new AgentAction(
                         actorPos,
                         UnitActionType.Produce,
-                        (Direction)perCellBranchesFlat[baseOffset + ActionContract.BRANCH_PRODUCE_DIR],
+                        produceDir,
                         (ProducibleUnit)produceType,
                         sourceType: ActionSourceType.Debug);
                     dropReason = Stage7BTeacherReplayDropReason.None;

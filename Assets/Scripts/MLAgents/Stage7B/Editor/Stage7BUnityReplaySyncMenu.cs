@@ -60,6 +60,15 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string TriggeredKey7A = "RTS.MLAgents.Stage7B.MhpMismatchAudit7A.Triggered";
         private const double TimeoutSeconds7A = 300d;
 
+        // Stage7B-7B Move/Harvest/Produce direction mapping fix
+        private const string MenuPath7B = "RTS/Week7/Stage7B/Run MHP Direction Fix 7B";
+        private const string MenuPath7BImmediate = "RTS/Week7/Stage7B/Run MHP Direction Fix 7B (Immediate In Play Mode)";
+        private const string ReportPath7B = "python/stage7b_teacher_replay/stage7b_7b_mhp_direction_fix_report.json";
+        private const string PendingKey7B = "RTS.MLAgents.Stage7B.MhpDirectionFix7B.Pending";
+        private const string StartedAtTicksKey7B = "RTS.MLAgents.Stage7B.MhpDirectionFix7B.StartedAtTicks";
+        private const string TriggeredKey7B = "RTS.MLAgents.Stage7B.MhpDirectionFix7B.Triggered";
+        private const double TimeoutSeconds7B = 300d;
+
         static Stage7BUnityReplaySyncMenu()
         {
             EditorApplication.update -= PollExecution;
@@ -302,6 +311,57 @@ namespace RTS.MLAgents.Stage7B.Editor
             Debug.Log("[Stage7B] Stage7B-7A immediate M/H/P mismatch audit invoked in Play Mode.");
         }
 
+        [MenuItem(MenuPath7B)]
+        public static void Run7B()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B] Stage7B-7B menu must be started from Edit Mode.");
+                return;
+            }
+
+            if (EditorSceneManager.GetActiveScene().isDirty)
+            {
+                Debug.LogWarning("[Stage7B] Active scene is dirty; reopening Week7 scene for Stage7B-7B automation.");
+            }
+
+            if (EditorSceneManager.OpenScene(ScenePath) == default)
+            {
+                Debug.LogError("[Stage7B] Failed to open Week7 scene.");
+                return;
+            }
+
+            string report7B = GetAbsoluteProjectPath(ReportPath7B);
+            if (File.Exists(report7B)) File.Delete(report7B);
+
+            SessionState.SetBool(PendingKey7B, true);
+            SessionState.SetBool(TriggeredKey7B, false);
+            SessionState.SetString(StartedAtTicksKey7B, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B] Entering Play Mode for Stage7B-7B M/H/P direction fix validation.");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem(MenuPath7BImmediate)]
+        public static void Run7BImmediateInPlayMode()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("[Stage7B] Stage7B-7B immediate menu requires Play Mode.");
+                return;
+            }
+
+            Stage7B7BMhpDirectionFixRunner runner =
+                UnityEngine.Object.FindFirstObjectByType<Stage7B7BMhpDirectionFixRunner>();
+            if (runner == null)
+            {
+                var go = new GameObject("Stage7B7B_MhpDirectionFixRunner");
+                runner = go.AddComponent<Stage7B7BMhpDirectionFixRunner>();
+            }
+
+            runner.RunStage7B7BMhpDirectionFix();
+            Debug.Log("[Stage7B] Stage7B-7B immediate M/H/P direction fix validation invoked in Play Mode.");
+        }
+
         /// <summary>
         /// Adds and configures a DemonstrationRecorder on the StudentMlAgent GameObject if not present.
         /// Must be called in Play Mode (Edit Mode equivalent not needed — recorder requires runtime).
@@ -537,6 +597,45 @@ namespace RTS.MLAgents.Stage7B.Editor
                     }
                 }
             }
+
+            // Stage7B-7B poll (M/H/P direction mapping fix)
+            if (SessionState.GetBool(PendingKey7B, false))
+            {
+                if (HasTimedOut(StartedAtTicksKey7B, TimeoutSeconds7B))
+                {
+                    Debug.LogError("[Stage7B] Stage7B-7B M/H/P direction fix validation timed out.");
+                    EditorApplication.isPlaying = false;
+                }
+                else if (Application.isPlaying)
+                {
+                    if (!SessionState.GetBool(TriggeredKey7B, false))
+                    {
+                        if (!AreRuntimeServicesReady())
+                        {
+                            return;
+                        }
+
+                        Stage7B7BMhpDirectionFixRunner runner =
+                            UnityEngine.Object.FindFirstObjectByType<Stage7B7BMhpDirectionFixRunner>();
+                        if (runner == null)
+                        {
+                            var go = new GameObject("Stage7B7B_MhpDirectionFixRunner");
+                            runner = go.AddComponent<Stage7B7BMhpDirectionFixRunner>();
+                        }
+
+                        runner.RunStage7B7BMhpDirectionFix();
+                        SessionState.SetBool(TriggeredKey7B, true);
+                        return;
+                    }
+
+                    string report7B = GetAbsoluteProjectPath(ReportPath7B);
+                    if (File.Exists(report7B))
+                    {
+                        Debug.Log("[Stage7B] Stage7B-7B report detected. Exiting Play Mode.");
+                        EditorApplication.isPlaying = false;
+                    }
+                }
+            }
         }
 
         private static bool AreRuntimeServicesReady()
@@ -593,6 +692,13 @@ namespace RTS.MLAgents.Stage7B.Editor
                 SessionState.SetBool(PendingKey7A, false);
                 SessionState.SetBool(TriggeredKey7A, false);
                 Validate7AReport();
+            }
+
+            if (SessionState.GetBool(PendingKey7B, false))
+            {
+                SessionState.SetBool(PendingKey7B, false);
+                SessionState.SetBool(TriggeredKey7B, false);
+                Validate7BReport();
             }
         }
 
@@ -742,6 +848,30 @@ namespace RTS.MLAgents.Stage7B.Editor
                 + ", runtime_apply_rejected_count=" + applyRejected
                 + ", y_axis_flip_count=" + yFlip
                 + ", x_axis_flip_count=" + xFlip);
+        }
+
+        private static void Validate7BReport()
+        {
+            string report = GetAbsoluteProjectPath(ReportPath7B);
+            if (!File.Exists(report))
+            {
+                Debug.LogError("[Stage7B] Stage7B-7B report was not created: " + report);
+                return;
+            }
+
+            string json = File.ReadAllText(report);
+            TryReadString(json, "status", out string status);
+            TryReadString(json, "decision", out string decision);
+            TryReadInt(json, "state_sync_failed_count", out int syncFailed);
+            TryReadInt(json, "runtime_apply_rejected_count", out int applyRejected);
+            TryReadInt(json, "candidate_match_count_after_7b", out int matchCount);
+            TryReadInt(json, "return_direction_mismatch_count_after_7b", out int returnMismatch);
+            Debug.Log("[Stage7B] Stage7B-7B finished: status=" + status
+                + ", decision=" + decision
+                + ", candidate_match_count_after_7b=" + matchCount
+                + ", state_sync_failed_count=" + syncFailed
+                + ", runtime_apply_rejected_count=" + applyRejected
+                + ", return_direction_mismatch_count_after_7b=" + returnMismatch);
         }
 
         private static bool TryCopyLatestTempDemoToExpected(out string copiedPath, out long copiedSize, out string diagnostics)
