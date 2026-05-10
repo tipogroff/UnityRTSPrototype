@@ -192,30 +192,37 @@ def _build_teacher_commands(action_576x7: np.ndarray) -> Tuple[List[Dict[str, An
     return commands, diagnostics
 
 
-def _runtime_state_status() -> Dict[str, Any]:
+def _runtime_state_status(available: bool, sample_state: Dict[str, Any] | None = None) -> Dict[str, Any]:
     missing = [
         "map_width",
         "map_height",
-        "player_resources",
-        "unit_list(stable_id,type,owner,x,y,hp,carried,pending_action)",
-        "resource_nodes(x,y,remaining)",
-        "building_queues(producing_unit_type,progress,remaining)",
-        "match_phase",
-        "step_counter",
+        "players",
+        "units",
+        "resource_nodes",
+        "building_queues",
+        "terminal",
+        "step",
     ]
+    if available:
+        return {
+            "available": True,
+            "reason": "runtime state JSON bridge detected in vec_env/JNIGridnetVecClient",
+            "missing_fields": [],
+            "sample_state_preview": sample_state or {},
+        }
+
     return {
         "available": False,
         "reason": (
-            "gym_microrts==0.3.2 Python wrapper does not expose authoritative runtime state; "
-            "available payloads are observation tensor, action mask, and info.raw_rewards."
+            "gym_microrts wrapper did not provide authoritative runtime state fields in infos; "
+            "export remains honest and replay_ready stays false."
         ),
         "missing_fields": missing,
         "instrumentation_hint": {
             "where": "python/week5_teacher_reference/.venv_microrts032_reference/lib/site-packages/gym_microrts/envs/vec_env.py",
             "how": [
-                "Extend JNIGridnetVecClient bridge to return full pre/post game state snapshots each step.",
-                "Populate step infos with state JSON (units/resources/queues/terminal details).",
-                "Add reset payload hook for initial state JSON before first action.",
+                "Expose getRuntimeStateBatchJSON from JNI bridge.",
+                "Inject initial_state_json/runtime_state_t_json/runtime_state_tp1_json into step infos.",
             ],
         },
     }
@@ -278,6 +285,9 @@ def _validate_export(
                 "teacher_commands_t_json",
                 "nonoop_actor_count_t",
                 "teacher_action_type_histogram_t_json",
+                "initial_state_json",
+                "runtime_state_t_json",
+                "runtime_state_tp1_json",
             ]
             for key in required_keys:
                 if key not in npz:
@@ -474,7 +484,11 @@ def main() -> int:
     )
     policy.eval()
 
-    runtime_state_meta = _runtime_state_status()
+    runtime_state_available = False
+    runtime_state_sample_preview: Dict[str, Any] | None = None
+    contains_initial_state = False
+    contains_pre_state = False
+    contains_post_state = False
 
     episode_paths: List[Path] = []
     all_jsonl_rows: Dict[int, List[Dict[str, Any]]] = {}
@@ -514,6 +528,9 @@ def main() -> int:
             unsupported_action_count_t: List[int] = []
 
             info_t_json: List[str] = []
+            initial_state_json: List[str] = []
+            runtime_state_t_json: List[str] = []
+            runtime_state_tp1_json: List[str] = []
             rows_for_jsonl: List[Dict[str, Any]] = []
 
             for st in range(int(args.max_steps_per_episode)):
@@ -574,11 +591,42 @@ def main() -> int:
                         unsupported += int(action_hist[raw_type])
 
                 info_payload = infos[0] if isinstance(infos, (list, tuple)) and len(infos) > 0 else infos
+                if not isinstance(info_payload, dict):
+                    info_payload = {}
+
+                initial_state = info_payload.get("initial_state_json")
+                state_t = info_payload.get("runtime_state_t_json")
+                state_tp1 = info_payload.get("runtime_state_tp1_json")
+
+                has_initial = isinstance(initial_state, str) and len(initial_state) > 0
+                has_pre = isinstance(state_t, str) and len(state_t) > 0
+                has_post = isinstance(state_tp1, str) and len(state_tp1) > 0
+
+                contains_initial_state = bool(contains_initial_state or has_initial)
+                contains_pre_state = bool(contains_pre_state or has_pre)
+                contains_post_state = bool(contains_post_state or has_post)
+                runtime_state_available = bool(runtime_state_available or has_pre or has_post)
+
+                if runtime_state_sample_preview is None and has_post:
+                    try:
+                        parsed = json.loads(state_tp1)
+                        runtime_state_sample_preview = {
+                            "map_width": parsed.get("map_width"),
+                            "map_height": parsed.get("map_height"),
+                            "step": parsed.get("step"),
+                            "players_count": len(parsed.get("players", [])),
+                            "units_count": len(parsed.get("units", [])),
+                            "resource_nodes_count": len(parsed.get("resource_nodes", [])),
+                            "terminal": parsed.get("terminal", {}),
+                        }
+                    except Exception:
+                        runtime_state_sample_preview = {"parse_error": True}
+
                 info_row = {
                     "episode_id": int(ep),
                     "step_id": int(st),
                     "info": str(info_payload),
-                    "runtime_state_available": False,
+                    "runtime_state_available": bool(has_pre or has_post),
                 }
 
                 episode_id.append(int(ep))
@@ -601,6 +649,10 @@ def main() -> int:
                 source_valid_action_count_t.append(int(step_debug.get("source_valid_total", 0)))
                 unsupported_action_count_t.append(int(unsupported))
 
+                initial_state_json.append(initial_state if has_initial else "")
+                runtime_state_t_json.append(state_t if has_pre else "")
+                runtime_state_tp1_json.append(state_tp1 if has_post else "")
+
                 info_t_json.append(json.dumps(info_row, ensure_ascii=True))
                 rows_for_jsonl.append(
                     {
@@ -616,6 +668,9 @@ def main() -> int:
                         "teacher_action_type_histogram_t": action_hist,
                         "source_valid_action_count_t": int(step_debug.get("source_valid_total", 0)),
                         "unsupported_action_count_t": int(unsupported),
+                        "initial_state_json": initial_state if has_initial else "",
+                        "runtime_state_t_json": state_t if has_pre else "",
+                        "runtime_state_tp1_json": state_tp1 if has_post else "",
                     }
                 )
 
@@ -645,6 +700,9 @@ def main() -> int:
                 teacher_action_type_histogram_t_json=np.asarray(teacher_action_type_histogram_t_json, dtype=object),
                 source_valid_action_count_t=np.asarray(source_valid_action_count_t, dtype=np.int16),
                 unsupported_action_count_t=np.asarray(unsupported_action_count_t, dtype=np.int16),
+                initial_state_json=np.asarray(initial_state_json, dtype=object),
+                runtime_state_t_json=np.asarray(runtime_state_t_json, dtype=object),
+                runtime_state_tp1_json=np.asarray(runtime_state_tp1_json, dtype=object),
                 info_t_json=np.asarray(info_t_json, dtype=object),
             )
             episode_paths.append(ep_npz_path)
@@ -661,11 +719,12 @@ def main() -> int:
             except Exception:
                 pass
 
-    contains_initial_state = False
-    contains_pre_state = False
-    contains_post_state = False
     contains_teacher_commands = True
     contains_terminal_metadata = True
+    runtime_state_meta = _runtime_state_status(
+        available=bool(runtime_state_available and contains_initial_state and contains_pre_state and contains_post_state),
+        sample_state=runtime_state_sample_preview,
+    )
 
     replay_ready = bool(
         contains_initial_state

@@ -1,0 +1,42 @@
+{
+  "stage": "Stage7B-6F",
+  "date": "2026-05-10",
+  "build_scope": "unmodified source build in isolated checkout",
+  "build_success": true,
+  "build_tool": "javac + jar (PowerShell/cmd equivalent of build.sh pipeline)",
+  "build_command_used": "cmd /v:on /c python/week5_teacher_legacy032/reports/stage7b_6f_build_unmodified.bat",
+  "java_toolchain": {
+    "java_version": "openjdk 17.0.18",
+    "javac_version": "17.0.18",
+    "jar_version": "17.0.18"
+  },
+  "source_root": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts",
+  "build_output_root": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/build_stage7b_unmodified",
+  "produced_jar_path": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/build_stage7b_unmodified/microrts.jar",
+  "produced_classes_present": {
+    "tests/JNIGridnetClient.class": true,
+    "tests/JNIGridnetVecClient.class": true,
+    "tests/JNIGridnetClientSelfPlay.class": true,
+    "rts/GameState.class": true,
+    "rts/PhysicalGameState.class": true,
+    "rts/units/Unit.class": true,
+    "rts/Player.class": true
+  },
+  "build_logs": {
+    "stdout": "python/week5_teacher_legacy032/reports/stage7b_6f_build_stdout.log",
+    "stderr": "python/week5_teacher_legacy032/reports/stage7b_6f_build_stderr.log"
+  },
+  "warnings_summary": [
+    "javax.xml.bind.annotation.XmlAccessType warning on JDK17",
+    "deprecated Integer(int) constructor warnings in util/Sampler.java"
+  ],
+  "constraints_confirmation": {
+    "active_venv_modified": false,
+    "active_microrts_jar_replaced": false,
+    "active_vec_env_patched": false,
+    "ml_training_triggered": false,
+    "ppo_triggered": false,
+    "imitation_learning_triggered": false,
+    "demo_recording_triggered": false
+  }
+}

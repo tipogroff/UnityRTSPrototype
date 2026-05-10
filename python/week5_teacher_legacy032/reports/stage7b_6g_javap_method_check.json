@@ -1,0 +1,28 @@
+﻿{
+    "tests.JNIGridnetVecClient":  {
+                                      "runtime_exit_code":  0,
+                                      "runtime_public_method_count":  5,
+                                      "patched_exit_code":  0,
+                                      "patched_public_method_count":  8,
+                                      "missing_runtime_methods_in_patched":  [
+
+                                                                             ],
+                                      "new_methods_in_patched":  [
+                                                                     "public java.lang.String getRuntimeStateJSON(int);",
+                                                                     "public java.lang.String[] getRuntimeStateBatchJSON();",
+                                                                     "public java.lang.String getInitialStateJSON(int);"
+                                                                 ]
+                                  },
+    "tests.JNIGridnetClient":  {
+                                   "runtime_exit_code":  0,
+                                   "runtime_public_method_count":  7,
+                                   "patched_exit_code":  0,
+                                   "patched_public_method_count":  8,
+                                   "missing_runtime_methods_in_patched":  [
+
+                                                                          ],
+                                   "new_methods_in_patched":  [
+                                                                  "public java.lang.String getRuntimeStateJSON();"
+                                                              ]
+                               }
+}

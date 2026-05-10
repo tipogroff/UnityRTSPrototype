@@ -31,6 +31,9 @@ METHOD_CANDIDATES = [
     "getTrace",
     "getPlayers",
     "getResources",
+    "getRuntimeStateJSON",
+    "getRuntimeStateBatchJSON",
+    "getInitialStateJSON",
 ]
 
 

@@ -1,0 +1,25 @@
+warning: unknown enum constant XmlAccessType.FIELD
+  reason: class file for javax.xml.bind.annotation.XmlAccessType not found
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:45: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                best.add(new Integer(i));
+                         ^
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:49: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                    best.add(new Integer(i));
+                             ^
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:73: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                best.add(new Integer(i));
+                         ^
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:77: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                    best.add(new Integer(i));
+                             ^
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:101: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                best.add(new Integer(i));
+                         ^
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\util\Sampler.java:105: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+                    best.add(new Integer(i));
+                             ^
+Note: C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\week5_teacher_legacy032\third_party\gym_microrts_legacy032_source\gym_microrts\microrts\src\tests\TraceVisualizationTest.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+7 warnings

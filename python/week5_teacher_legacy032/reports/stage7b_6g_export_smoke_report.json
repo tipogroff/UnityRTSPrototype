@@ -1,0 +1,37 @@
+{
+  "stage": "Stage7B-6G",
+  "generated_at_utc": "2026-05-10T13:16:26Z",
+  "command": "python/week5_teacher_reference/.venv_microrts032_reference/Scripts/python.exe python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py --episodes 1 --max-steps-per-episode 64 --run-label stage7b6g_smoke",
+  "run_dir": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z",
+  "manifest_path": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z/replay_manifest.json",
+  "export_report_path": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6g_smoke_20260510T131624Z/stage7b_replay_ready_export_report.json",
+  "result": {
+    "episodes_exported": 1,
+    "steps_exported": 64,
+    "contains_initial_state": true,
+    "contains_pre_state": true,
+    "contains_post_state": true,
+    "contains_teacher_command_list": true,
+    "contains_terminal_metadata": true,
+    "replay_ready": true,
+    "validation_errors_count": 0,
+    "validation_warnings_count": 0
+  },
+  "runtime_state_preview": {
+    "available": true,
+    "map_width": 24,
+    "map_height": 24,
+    "step": 1,
+    "players_count": 2,
+    "units_count": 8,
+    "resource_nodes_count": 4,
+    "terminal_done": false
+  },
+  "constraints_confirmation": {
+    "ml_training_triggered": false,
+    "ppo_triggered": false,
+    "imitation_learning_triggered": false,
+    "demo_recording_triggered": false,
+    "stage6b3_baseline_checkpoint_modified": false
+  }
+}

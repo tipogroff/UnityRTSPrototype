@@ -1,0 +1,73 @@
+{
+  "stage": "Stage7B-6G",
+  "date": "2026-05-10",
+  "objective": "small bridge runtime-state JSON patch",
+  "constraints": {
+    "do_not_modify_stage6b3_baseline_checkpoint": true,
+    "do_not_run_ml_training_ppo_imitation_demo": true,
+    "do_not_fake_state_from_observation": true,
+    "java_patch_read_only_serializer_on_gs_pgs": true,
+    "active_venv_changes_applied_only_after_build_and_backup": true
+  },
+  "changed_files": [
+    "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/tests/JNIGridnetClient.java",
+    "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/tests/JNIGridnetVecClient.java",
+    "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py",
+    "python/week5_teacher_legacy032/scripts/probe_legacy032_runtime_state_api_stage7b.py",
+    "python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py"
+  ],
+  "artifacts": {
+    "isolated_patched_jar": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/build_stage7b_state_patch/microrts.jar",
+    "deployed_overlay_jar": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/stage7b_state_patch.jar",
+    "deployment_mode": "overlay_jar",
+    "wrapper_backup": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py.stage7b6g_backup"
+  },
+  "compatibility_check": {
+    "source": "python/week5_teacher_legacy032/reports/stage7b_6g_javap_method_check.json",
+    "jni_gridnet_client": {
+      "missing_runtime_methods_in_patched": [],
+      "new_methods_in_patched": [
+        "public java.lang.String getRuntimeStateJSON();"
+      ]
+    },
+    "jni_gridnet_vec_client": {
+      "missing_runtime_methods_in_patched": [],
+      "new_methods_in_patched": [
+        "public java.lang.String getRuntimeStateJSON(int);",
+        "public java.lang.String[] getRuntimeStateBatchJSON();",
+        "public java.lang.String getInitialStateJSON(int);"
+      ]
+    }
+  },
+  "runtime_probe": {
+    "report_path": "python/week5_teacher_legacy032/reports/stage7b_6g_runtime_state_probe_after_patch.json",
+    "runtime_state_api_found": true,
+    "json_parse_success": true,
+    "sample_counts": {
+      "players": 2,
+      "units": 8,
+      "resource_nodes": 4
+    },
+    "sample_terminal": {
+      "done": false,
+      "winner": null,
+      "reason": null
+    }
+  },
+  "export_smoke": {
+    "report_path": "python/week5_teacher_legacy032/reports/stage7b_6g_export_smoke_report.json",
+    "replay_ready": true,
+    "contains_initial_state": true,
+    "contains_pre_state": true,
+    "contains_post_state": true,
+    "validation_errors_count": 0
+  },
+  "rollback": {
+    "remove_overlay_jar": "python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/microrts/stage7b_state_patch.jar",
+    "restore_wrapper": "copy python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py.stage7b6g_backup python/week5_teacher_reference/.venv_microrts032_reference/Lib/site-packages/gym_microrts/envs/vec_env.py"
+  },
+  "stage6b3_untouched_confirmation": {
+    "status": true,
+    "basis": "Stage7B-6G edits and generated artifacts were limited to week5_teacher_legacy032 scripts/reports, legacy032 source checkout, and reference venv gym_microrts bridge wrapper/overlay jar."
+  }
+}

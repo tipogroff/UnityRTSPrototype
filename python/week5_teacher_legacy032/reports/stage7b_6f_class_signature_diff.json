@@ -1,0 +1,81 @@
+{
+  "stage": "Stage7B-6F",
+  "runtime_jar": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_reference\\.venv_microrts032_reference\\Lib\\site-packages\\gym_microrts\\microrts\\microrts.jar",
+  "built_jar": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\third_party\\gym_microrts_legacy032_source\\build_stage7b_unmodified\\microrts.jar",
+  "classes_checked": [
+    "tests.JNIGridnetClient",
+    "tests.JNIGridnetVecClient",
+    "tests.JNIGridnetClientSelfPlay",
+    "rts.GameState",
+    "rts.PhysicalGameState",
+    "rts.units.Unit",
+    "rts.Player"
+  ],
+  "results": [
+    {
+      "class": "tests.JNIGridnetClient",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "tests.JNIGridnetVecClient",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "tests.JNIGridnetClientSelfPlay",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "rts.GameState",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "rts.PhysicalGameState",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "rts.units.Unit",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    },
+    {
+      "class": "rts.Player",
+      "runtime_exit_code": 0,
+      "built_exit_code": 0,
+      "exact_signature_match": true,
+      "runtime_stderr": "",
+      "built_stderr": ""
+    }
+  ],
+  "semantic_checks": {
+    "jni_client_has_gs_field": true,
+    "jni_client_has_pgs_field": true,
+    "jni_vec_has_getMasks": true,
+    "jni_vec_has_gameStep": true,
+    "jni_vec_has_reset": true
+  },
+  "compatible": true,
+  "compatibility_summary": "All target class signatures match exactly via javap."
+}
