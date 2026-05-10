@@ -6,6 +6,16 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 {
     public sealed class Stage7BTeacherReplayActionResolver
     {
+        public const string ReturnDirectionMappingModeNone = "none";
+        public const string ReturnDirectionMappingModeInvertYForLegacy032Teacher = "invert_y_for_legacy032_teacher";
+
+        public string returnDirectionMappingMode = ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+
+        public int LastRawTeacherReturnDir { get; private set; } = -1;
+        public int LastMappedUnityReturnDir { get; private set; } = -1;
+        public string LastReturnDirectionMappingMode { get; private set; } = ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+        public bool LastReturnDirectionMappingApplied { get; private set; }
+
         public bool TryResolveTeacherCommand(
             Stage7BTeacherReplayTeacherCommand command,
             Owner playerPerspective,
@@ -14,6 +24,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         {
             action = AgentAction.CreateNoOp(ActionSourceType.Debug);
             dropReason = Stage7BTeacherReplayDropReason.Unknown;
+            ResetLastReturnMappingDiagnostics();
 
             if (command == null)
             {
@@ -90,11 +101,28 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     return true;
 
                 case UnitActionType.Return:
-                    if (!ActionContractMappings.TryDirectionFromIndex(command.return_dir, out Direction returnDir))
+                    LastRawTeacherReturnDir = command.return_dir;
+                    LastReturnDirectionMappingMode = GetEffectiveReturnDirectionMappingMode();
+
+                    if (command.return_dir < 0 || command.return_dir >= ActionContract.SIZE_DIRECTION)
                     {
                         dropReason = Stage7BTeacherReplayDropReason.DirectionMismatch;
                         return false;
                     }
+
+                    Direction returnDir;
+                    if (LastReturnDirectionMappingMode == ReturnDirectionMappingModeInvertYForLegacy032Teacher)
+                    {
+                        returnDir = ConvertLegacy032ReturnDirectionToUnity(command.return_dir);
+                        LastReturnDirectionMappingApplied = true;
+                    }
+                    else
+                    {
+                        returnDir = (Direction)command.return_dir;
+                        LastReturnDirectionMappingApplied = false;
+                    }
+
+                    LastMappedUnityReturnDir = (int)returnDir;
 
                     if (actor.Type != UnitType.Worker)
                     {
@@ -165,6 +193,41 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             }
 
             return new GridPosition(command.actor_x, command.actor_y);
+        }
+
+        public static Direction ConvertLegacy032ReturnDirectionToUnity(int rawReturnDir)
+        {
+            switch (rawReturnDir)
+            {
+                case 0: return Direction.South;
+                case 1: return Direction.East;
+                case 2: return Direction.North;
+                case 3: return Direction.West;
+                default: return Direction.North;
+            }
+        }
+
+        private string GetEffectiveReturnDirectionMappingMode()
+        {
+            if (returnDirectionMappingMode == ReturnDirectionMappingModeNone)
+            {
+                return ReturnDirectionMappingModeNone;
+            }
+
+            if (returnDirectionMappingMode == ReturnDirectionMappingModeInvertYForLegacy032Teacher)
+            {
+                return ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+            }
+
+            return ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+        }
+
+        private void ResetLastReturnMappingDiagnostics()
+        {
+            LastRawTeacherReturnDir = -1;
+            LastMappedUnityReturnDir = -1;
+            LastReturnDirectionMappingMode = GetEffectiveReturnDirectionMappingMode();
+            LastReturnDirectionMappingApplied = false;
         }
 
         public bool TryResolveSingleActorAction(

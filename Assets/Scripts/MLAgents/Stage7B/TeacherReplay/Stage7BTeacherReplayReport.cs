@@ -68,6 +68,24 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 
         public bool demoRecordingReady;
 
+        // Stage7B-6K: Return-only direction remap validation fields
+        public string returnDirectionMappingMode;
+        public int returnDirectionMappingAppliedCount;
+        public int candidateMatchCountBefore6J;
+        public int candidateMatchCountAfter6K;
+        public float candidateMatchRateBefore6J;
+        public float candidateMatchRateAfter6K;
+        public int returnCommandsMatchedBefore6J;
+        public int returnCommandsMatchedAfter6K;
+        public int returnCommandsDroppedBefore6J;
+        public int returnCommandsDroppedAfter6K;
+        public float returnMatchRateBefore6J;
+        public float returnMatchRateAfter6K;
+        public int returnDirectionMismatchCountBefore6J;
+        public int returnDirectionMismatchCountAfter6K;
+        public float returnDirectionMismatchRateBefore6J;
+        public float returnDirectionMismatchRateAfter6K;
+
         // Stage7B-6J: Return direction audit fields
         public int returnCommandsTotal;
         public int returnCommandsMatched;

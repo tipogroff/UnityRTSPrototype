@@ -37,6 +37,13 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         [SerializeField] private string _6jReturnMismatchesJsonlPath = "python/stage7b_teacher_replay/stage7b_6j_return_direction_mismatches.jsonl";
         [SerializeField] private string _6jRuntimeApplyTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_6j_runtime_apply_trace.jsonl";
 
+        // Stage7B-6K: Return-only legacy032->Unity direction remap validation output paths
+        [SerializeField] private string _6kReturnDirectionFixReportJsonPath = "python/stage7b_teacher_replay/stage7b_6k_return_direction_fix_report.json";
+        [SerializeField] private string _6kReturnDirectionFixReportMdPath = "python/stage7b_teacher_replay/stage7b_6k_return_direction_fix_report.md";
+        [SerializeField] private string _6kRuntimeApplyTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_6k_runtime_apply_trace.jsonl";
+        [SerializeField] private string _6kReturnMappingTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_6k_return_mapping_trace.jsonl";
+        [SerializeField] private string _6kRemainingMismatchesJsonlPath = "python/stage7b_teacher_replay/stage7b_6k_remaining_mismatches.jsonl";
+
         [SerializeField] private Owner _playerPerspective = Owner.Player1;
         [SerializeField] private bool _enableRuntimeApply;
         [SerializeField] private bool _runOnStart;
@@ -647,6 +654,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             notes.Add("Stage7B-6J: Return direction mismatch audit. Runtime apply enabled.");
             notes.Add("ML-Agents training/PPO/imitation/.demo were not started by this runner.");
             notes.Add("post_state_comparison_mode=partial: unit count, resource node count, player resources, terminal checked.");
+            notes.Add("Stage7B-6K: Return-only mapping mode is " + Stage7BTeacherReplayActionResolver.ReturnDirectionMappingModeInvertYForLegacy032Teacher + ".");
+
+            Initialize6KBeforeAfterMetrics(report);
 
             if (!_loader.TryLoadReplayManifest(sourceDir, out Stage7BTeacherReplayManifest manifest, out string manifestDiag))
             {
@@ -708,6 +718,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             var actionApplier = new ActionApplier(grid, registry, match, resources);
 
             var applyTraceLines = new List<string>(steps.Count * 2);
+            var returnMappingTraceLines = new List<string>(256);
+            var remainingMismatchLines = new List<string>(1024);
             var returnMismatches = new List<Stage7B6JReturnMismatchEntry>();
             var candidateCounts = new List<int>(steps.Count);
 
@@ -773,14 +785,32 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                         actor_y = command.actor_y,
                         action_type = command.action_type,
                     };
+                    Stage7B6KReturnMappingTraceEntry returnMappingTrace = null;
 
                     if (!resolver.TryResolveTeacherCommand(command, _playerPerspective, out AgentAction teacherAction, out Stage7BTeacherReplayDropReason resolveDrop))
                     {
+                        if (isReturn)
+                        {
+                            CopyReturnMappingDiagnostics(command, resolver, applyTrace);
+                            returnMappingTrace = Build6KReturnMappingTrace(step, commandIndex, command, resolver);
+                            returnMappingTrace.resolved = false;
+                            returnMappingTrace.drop_reason = ToSnakeCase(resolveDrop);
+                            returnMappingTraceLines.Add(JsonUtility.ToJson(returnMappingTrace));
+                        }
+
                         report.IncrementDrop(resolveDrop);
                         if (isReturn) report.returnCommandsDropped++;
                         applyTrace.action_summary = "resolve_failed:" + ToSnakeCase(resolveDrop);
                         applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
                         continue;
+                    }
+
+                    if (isReturn)
+                    {
+                        report.returnDirectionMappingAppliedCount += resolver.LastReturnDirectionMappingApplied ? 1 : 0;
+                        CopyReturnMappingDiagnostics(command, resolver, applyTrace);
+                        returnMappingTrace = Build6KReturnMappingTrace(step, commandIndex, command, resolver);
+                        returnMappingTrace.resolved = true;
                     }
 
                     applyTrace.action_summary = BuildActionSummary(teacherAction);
@@ -803,6 +833,15 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 
                         applyTrace.action_summary += " | match_failed:" + ToSnakeCase(matchDrop) + " nearest:" + nearestReason;
                         applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
+                        remainingMismatchLines.Add(JsonUtility.ToJson(DiagnoseMismatch(step.episodeId, step.stepId, commandIndex, command, teacherAction, candidates, matchDrop)));
+
+                        if (returnMappingTrace != null)
+                        {
+                            returnMappingTrace.candidate_match = false;
+                            returnMappingTrace.drop_reason = ToSnakeCase(matchDrop);
+                            returnMappingTrace.nearest_candidate_reason = nearestReason;
+                            returnMappingTraceLines.Add(JsonUtility.ToJson(returnMappingTrace));
+                        }
 
                         report.IncrementHistogram(report.mismatchByActionType, ActionTypeToString(command.action_type));
                         report.IncrementHistogram(report.mismatchByDirection, teacherAction.Direction.ToString());
@@ -895,12 +934,24 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     report.candidateMatchCount++;
                     if (command.action_type != 0) report.nonNoOpCandidateMatchCount++;
                     if (isReturn) report.returnCommandsMatched++;
+                    report.IncrementHistogram(report.matchByActionType, ActionTypeToString(command.action_type));
+
+                    if (returnMappingTrace != null)
+                    {
+                        returnMappingTrace.candidate_match = true;
+                        returnMappingTrace.candidate_action_index = candidateIndex;
+                    }
 
                     // Runtime apply always enabled in 6J
                     report.runtimeApplyAttemptedCount++;
                     applyTrace.runtime_apply_attempted = true;
                     bool applied = actionApplier.ApplyAction(teacherAction, _playerPerspective);
                     applyTrace.runtime_apply_accepted = applied;
+                    if (returnMappingTrace != null)
+                    {
+                        returnMappingTrace.runtime_apply_attempted = true;
+                        returnMappingTrace.runtime_apply_accepted = applied;
+                    }
 
                     if (applied)
                     {
@@ -917,6 +968,10 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                             rejectReason = actionApplier.RejectionReasonsLastStep[0];
 
                         applyTrace.reject_reason = rejectReason;
+                        if (returnMappingTrace != null)
+                        {
+                            returnMappingTrace.reject_reason = rejectReason;
+                        }
                         report.IncrementHistogram(report.runtimeRejectReasonHistogram, rejectReason);
                         report.IncrementHistogram(report.rejectedActionTypeHistogram, ActionTypeToString(command.action_type));
 
@@ -928,6 +983,10 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                     }
 
                     applyTraceLines.Add(JsonUtility.ToJson(applyTrace));
+                    if (returnMappingTrace != null)
+                    {
+                        returnMappingTraceLines.Add(JsonUtility.ToJson(returnMappingTrace));
+                    }
                 }
 
                 if (report.runtimeApplyAttemptedCount > 0 && stepHadApply)
@@ -956,6 +1015,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             FinalizeCandidateCountStats(report, candidateCounts);
             report.RecomputeRates(stateSyncReliable: report.stateSyncSuccessCount > 0);
             report.RecomputeReturnStats();
+            Finalize6KAfterMetrics(report);
 
             report.demoRecordingReady = report.stateSyncSuccessCount > 0
                                        && report.candidateMatchRate >= 0.5f
@@ -973,6 +1033,7 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             notes.Add("Stage6B3 baseline/checkpoint assets were not modified by this runner.");
 
             Write6JArtifacts(report, applyTraceLines, returnMismatches);
+            Write6KArtifacts(report, applyTraceLines, returnMappingTraceLines, remainingMismatchLines, returnMismatches);
         }
 
         private void Write6JArtifacts(
@@ -999,6 +1060,173 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             {
                 Debug.LogWarning("[Stage7B][TeacherReplay] Failed to write Stage7B-6J report: " + jsonPath);
             }
+        }
+
+        private void Write6KArtifacts(
+            Stage7BTeacherReplayReport report,
+            List<string> applyTraceLines,
+            List<string> returnMappingTraceLines,
+            List<string> remainingMismatchLines,
+            List<Stage7B6JReturnMismatchEntry> returnMismatches)
+        {
+            _loader.TrySaveText(_6kRuntimeApplyTraceJsonlPath, string.Join("\n", applyTraceLines), out _);
+            _loader.TrySaveText(_6kReturnMappingTraceJsonlPath, string.Join("\n", returnMappingTraceLines), out _);
+            _loader.TrySaveText(_6kRemainingMismatchesJsonlPath, string.Join("\n", remainingMismatchLines), out _);
+
+            string originalSummary = report.summary;
+            report.summary = "Stage7B-6K Return-only direction remap fix validation on the Stage7B-6J source.";
+
+            if (_loader.TrySaveRuntimeReport(_6kReturnDirectionFixReportJsonPath, report, out string jsonPath))
+            {
+                _loader.TrySaveText(_6kReturnDirectionFixReportMdPath, BuildMarkdown6K(report, returnMismatches), out _);
+                Debug.Log("[Stage7B][TeacherReplay] Stage7B-6K return direction fix report written: " + jsonPath);
+            }
+            else
+            {
+                Debug.LogWarning("[Stage7B][TeacherReplay] Failed to write Stage7B-6K report: " + jsonPath);
+            }
+
+            report.summary = originalSummary;
+        }
+
+        private static void Initialize6KBeforeAfterMetrics(Stage7BTeacherReplayReport report)
+        {
+            report.returnDirectionMappingMode = Stage7BTeacherReplayActionResolver.ReturnDirectionMappingModeInvertYForLegacy032Teacher;
+            report.candidateMatchCountBefore6J = 2334;
+            report.candidateMatchRateBefore6J = 0.7906504273f;
+            report.returnCommandsMatchedBefore6J = 72;
+            report.returnCommandsDroppedBefore6J = 62;
+            report.returnMatchRateBefore6J = 0.5373134613f;
+            report.returnDirectionMismatchCountBefore6J = 62;
+            report.returnDirectionMismatchRateBefore6J = 0.4626865685f;
+        }
+
+        private static void Finalize6KAfterMetrics(Stage7BTeacherReplayReport report)
+        {
+            report.candidateMatchCountAfter6K = report.candidateMatchCount;
+            report.candidateMatchRateAfter6K = report.candidateMatchRate;
+            report.returnCommandsMatchedAfter6K = report.returnCommandsMatched;
+            report.returnCommandsDroppedAfter6K = report.returnCommandsDropped;
+            report.returnMatchRateAfter6K = report.returnMatchRate;
+            report.returnDirectionMismatchCountAfter6K = report.returnDirectionMismatchCount;
+            report.returnDirectionMismatchRateAfter6K = report.returnDirectionMismatchRate;
+        }
+
+        private static void CopyReturnMappingDiagnostics(
+            Stage7BTeacherReplayTeacherCommand command,
+            Stage7BTeacherReplayActionResolver resolver,
+            Stage7BRuntimeApplyTraceEntry applyTrace)
+        {
+            applyTrace.raw_teacher_return_dir = command != null ? command.return_dir : -1;
+            applyTrace.mapped_unity_return_dir = resolver != null ? resolver.LastMappedUnityReturnDir : -1;
+            applyTrace.mapping_mode = resolver != null ? resolver.LastReturnDirectionMappingMode : string.Empty;
+            applyTrace.mapping_applied = resolver != null && resolver.LastReturnDirectionMappingApplied;
+        }
+
+        private static Stage7B6KReturnMappingTraceEntry Build6KReturnMappingTrace(
+            Stage7BTeacherTrajectoryStep step,
+            int commandIndex,
+            Stage7BTeacherReplayTeacherCommand command,
+            Stage7BTeacherReplayActionResolver resolver)
+        {
+            return new Stage7B6KReturnMappingTraceEntry
+            {
+                episode_id = step.episodeId,
+                step_id = step.stepId,
+                command_index = commandIndex,
+                actor_flat = command.actor_flat,
+                actor_x = command.actor_x,
+                actor_y = command.actor_y,
+                raw_teacher_return_dir = command.return_dir,
+                mapped_unity_return_dir = resolver != null ? resolver.LastMappedUnityReturnDir : -1,
+                mapping_mode = resolver != null ? resolver.LastReturnDirectionMappingMode : string.Empty,
+                mapping_applied = resolver != null && resolver.LastReturnDirectionMappingApplied,
+            };
+        }
+
+        private static string BuildMarkdown6K(Stage7BTeacherReplayReport report, List<Stage7B6JReturnMismatchEntry> returnMismatches)
+        {
+            var sb = new StringBuilder(4096);
+            sb.AppendLine("# Stage7B-6K Return Direction Fix Report");
+            sb.AppendLine();
+            sb.AppendLine("- status: " + report.status);
+            sb.AppendLine("- generated_at_utc: " + report.generatedAtUtc);
+            sb.AppendLine("- source: " + report.selectedSourcePath);
+            sb.AppendLine("- return_direction_mapping_mode: " + report.returnDirectionMappingMode);
+            sb.AppendLine("- return_direction_mapping_applied_count: " + report.returnDirectionMappingAppliedCount);
+            sb.AppendLine();
+            sb.AppendLine("## Before vs After");
+            sb.AppendLine();
+            sb.AppendLine("| metric | before_6j | after_6k |");
+            sb.AppendLine("|---|---:|---:|");
+            sb.AppendLine("| candidate_match_count | " + report.candidateMatchCountBefore6J + " | " + report.candidateMatchCountAfter6K + " |");
+            sb.AppendLine("| candidate_match_rate | " + ValueOrNull(report.candidateMatchRateBefore6J) + " | " + ValueOrNull(report.candidateMatchRateAfter6K) + " |");
+            sb.AppendLine("| return_commands_matched | " + report.returnCommandsMatchedBefore6J + " | " + report.returnCommandsMatchedAfter6K + " |");
+            sb.AppendLine("| return_commands_dropped | " + report.returnCommandsDroppedBefore6J + " | " + report.returnCommandsDroppedAfter6K + " |");
+            sb.AppendLine("| return_match_rate | " + ValueOrNull(report.returnMatchRateBefore6J) + " | " + ValueOrNull(report.returnMatchRateAfter6K) + " |");
+            sb.AppendLine("| return_direction_mismatch_count | " + report.returnDirectionMismatchCountBefore6J + " | " + report.returnDirectionMismatchCountAfter6K + " |");
+            sb.AppendLine("| return_direction_mismatch_rate | " + ValueOrNull(report.returnDirectionMismatchRateBefore6J) + " | " + ValueOrNull(report.returnDirectionMismatchRateAfter6K) + " |");
+            sb.AppendLine("| runtime_apply_accept_rate | 1 | " + ValueOrNull(report.runtimeApplyAcceptRate) + " |");
+            sb.AppendLine();
+            sb.AppendLine("## Required Metrics");
+            sb.AppendLine();
+            sb.AppendLine("- return_commands_total: " + report.returnCommandsTotal);
+            sb.AppendLine("- runtime_apply_attempted_count: " + report.runtimeApplyAttemptedCount);
+            sb.AppendLine("- runtime_apply_accepted_count: " + report.runtimeApplyAcceptedCount);
+            sb.AppendLine("- runtime_apply_rejected_count: " + report.runtimeApplyRejectedCount);
+            sb.AppendLine("- state_sync_success_count: " + report.stateSyncSuccessCount);
+            sb.AppendLine("- state_sync_failed_count: " + report.stateSyncFailedCount);
+            sb.AppendLine("- demo_recording_ready: " + report.demoRecordingReady.ToString().ToLowerInvariant());
+            sb.AppendLine();
+            sb.AppendLine("## Remaining Mismatch Breakdown");
+            sb.AppendLine();
+            if (report.mismatchByActionType.Count == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                for (int i = 0; i < report.mismatchByActionType.Count; i++)
+                    sb.AppendLine("- " + report.mismatchByActionType[i].key + ": " + report.mismatchByActionType[i].value);
+            }
+            sb.AppendLine();
+            sb.AppendLine("## First Remaining Return Mismatches");
+            sb.AppendLine();
+            int limit = System.Math.Min(returnMismatches == null ? 0 : returnMismatches.Count, 10);
+            if (limit == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                for (int i = 0; i < limit; i++)
+                {
+                    Stage7B6JReturnMismatchEntry m = returnMismatches[i];
+                    sb.AppendLine("- ep=" + m.episode_id + ", step=" + m.step_id
+                        + ", actor=(" + m.actor_x + "," + m.actor_y + ")"
+                        + ", teacher_dir=" + m.teacher_dir
+                        + ", candidate_dir=" + m.candidate_dir
+                        + ", nearest=" + m.nearest_candidate_reason);
+                }
+            }
+            sb.AppendLine();
+            sb.AppendLine("## Decision");
+            sb.AppendLine();
+            string decision = report.stateSyncFailedCount == 0
+                && report.runtimeApplyRejectedCount == 0
+                && report.candidateMatchRateAfter6K > report.candidateMatchRateBefore6J
+                && report.returnMatchRateAfter6K > report.returnMatchRateBefore6J
+                && (report.returnDirectionMismatchCountAfter6K == 0 || report.returnDirectionMismatchRateAfter6K < 0.05f)
+                ? "GO_TO_STAGE7B_7"
+                : "HOLD";
+            sb.AppendLine("**Decision: " + decision + "**");
+            sb.AppendLine();
+            sb.AppendLine("## Notes");
+            sb.AppendLine();
+            for (int i = 0; i < report.notes.Count; i++)
+                sb.AppendLine("- " + report.notes[i]);
+
+            return sb.ToString();
         }
 
         private static string ComputePatternHypothesis(Stage7BTeacherReplayReport report, List<Stage7B6JReturnMismatchEntry> returnMismatches)
@@ -1858,6 +2086,10 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             public bool runtime_apply_accepted;
             public string reject_reason;
             public string action_summary;
+            public int raw_teacher_return_dir = -1;
+            public int mapped_unity_return_dir = -1;
+            public string mapping_mode;
+            public bool mapping_applied;
         }
 
         [Serializable]
@@ -1899,6 +2131,29 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             public string generated_at_utc;
             public int total_mismatches;
             public Stage7BCandidateMismatchDiagnosisEntry[] mismatches;
+        }
+
+        [Serializable]
+        private sealed class Stage7B6KReturnMappingTraceEntry
+        {
+            public int episode_id;
+            public int step_id;
+            public int command_index;
+            public int actor_flat;
+            public int actor_x;
+            public int actor_y;
+            public int raw_teacher_return_dir;
+            public int mapped_unity_return_dir;
+            public string mapping_mode;
+            public bool mapping_applied;
+            public bool resolved;
+            public bool candidate_match;
+            public int candidate_action_index;
+            public bool runtime_apply_attempted;
+            public bool runtime_apply_accepted;
+            public string reject_reason;
+            public string drop_reason;
+            public string nearest_candidate_reason;
         }
 
         [Serializable]

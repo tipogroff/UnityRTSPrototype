@@ -1,7 +1,7 @@
 {
     "generatedAtUtc": "2026-05-10T18:56:38Z",
     "status": "GO",
-    "summary": "Stage7B-6J Return direction mismatch audit on larger replay-ready export.",
+    "summary": "Stage7B-6K Return-only direction remap fix validation on the Stage7B-6J source.",
     "selectedSourcePath": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
     "selectedSourceFormat": "legacy032_replay_ready_export",
     "episodesScanned": 8,
