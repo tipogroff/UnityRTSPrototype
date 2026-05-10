@@ -24,8 +24,8 @@ namespace RTS.MLAgents.Stage7B.TeacherConversion
             int nonNoOpCount = 0;
             for (int i = 0; i < ActionContract.TotalCells; i++)
             {
-                int actionType = perCellBranchesFlat[i * ActionContract.ActionBranchCount + 0];
-                if (actionType != ActionContract.ACTION_NOOP)
+                int cellActionType = perCellBranchesFlat[i * ActionContract.ActionBranchCount + 0];
+                if (cellActionType != ActionContract.ACTION_NOOP)
                 {
                     actorFlat = i;
                     nonNoOpCount++;

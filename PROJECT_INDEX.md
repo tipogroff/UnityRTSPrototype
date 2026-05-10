@@ -65,10 +65,10 @@
 
 | Pipeline | Путь | Статус |
 |---|---|---|
-| Week5 Teacher (main) | [python/week5_teacher/](python/week5_teacher/) | [HISTORICAL] |
+| Week5 Teacher | [python/week5_teacher/](python/week5_teacher/) | [HISTORICAL] |
 | Week5 Teacher GridNet | [python/week5_teacher_gridnet/](python/week5_teacher_gridnet/) | [HISTORICAL] |
 | Week5 Teacher Reference | [python/week5_teacher_reference/](python/week5_teacher_reference/) | [HISTORICAL] |
-| Week5 Teacher Legacy032 | [python/week5_teacher_legacy032/](python/week5_teacher_legacy032/) | **[ACTIVE lineage]** — Canonical training source |
+| Week5 Teacher Legacy032 (main) | [python/week5_teacher_legacy032/](python/week5_teacher_legacy032/) | **[ACTIVE lineage]** — Canonical training source |
 | Stage7B Teacher Conversion | [python/stage7b_teacher_conversion/](python/stage7b_teacher_conversion/) | [HISTORICAL] |
 
 ### Legacy032 ключевые файлы

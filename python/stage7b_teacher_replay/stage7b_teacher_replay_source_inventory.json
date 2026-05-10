@@ -1,0 +1,779 @@
+{
+  "generated_at_utc": "2026-05-10T01:15:49Z",
+  "root": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032",
+  "source_count": 15,
+  "sources": [
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_adapted_20260501T161820Z",
+      "group": "teacher_adapted",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 88165,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          88165,
+          576,
+          27
+        ],
+        "action_shape": [
+          88165,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_20260503T082111Z",
+      "group": "teacher_adapted",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 88165,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": null,
+        "observation_shape": [
+          88165,
+          576,
+          27
+        ],
+        "action_shape": [
+          88165,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_adapted/legacy032_3m_unity_v2_semantic_adapted_stage10d6_20260503T085218Z",
+      "group": "teacher_adapted",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 88165,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": null,
+        "observation_shape": [
+          88165,
+          576,
+          27
+        ],
+        "action_shape": [
+          88165,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports/legacy032_3m_source_valid_noopfix_unity_v2_adapted_20260506T225257Z",
+      "group": "teacher_exports",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "source_valid_action_mask",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 82680,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          82680,
+          576,
+          27
+        ],
+        "action_shape": [
+          82680,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports/legacy032_3m_source_valid_semantic_obs_fix_unity_v2_adapted_20260507T085438Z",
+      "group": "teacher_exports",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "source_valid_action_mask",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 82680,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          82680,
+          576,
+          27
+        ],
+        "action_shape": [
+          82680,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports/legacy032_3m_unity_v2_adapted_stage5p3_20260506T152734Z",
+      "group": "teacher_exports",
+      "format": "legacy032_unity_v2_adapted",
+      "npz_file": "adapted_dataset.npz",
+      "manifest_file": "adapted_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 37343,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          37343,
+          576,
+          27
+        ],
+        "action_shape": [
+          37343,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports_bc/day6_bc_ready_legacy032_3m_unity_v2_20260501T164317Z",
+      "group": "teacher_exports_bc",
+      "format": "legacy032_unity_v2_bc_ready",
+      "npz_file": "bc_debug.npz",
+      "manifest_file": "bc_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 512,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          512,
+          576,
+          27
+        ],
+        "action_shape": [
+          512,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_noopfix_bc_ready_20260506T225434Z",
+      "group": "teacher_exports_bc",
+      "format": "legacy032_unity_v2_bc_ready",
+      "npz_file": "bc_debug.npz",
+      "manifest_file": "bc_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "source_valid_action_mask",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 512,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          512,
+          576,
+          27
+        ],
+        "action_shape": [
+          512,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_source_valid_semantic_obs_fix_bc_ready_20260507T085607Z",
+      "group": "teacher_exports_bc",
+      "format": "legacy032_unity_v2_bc_ready",
+      "npz_file": "bc_debug.npz",
+      "manifest_file": "bc_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "source_valid_action_mask",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 512,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          512,
+          576,
+          27
+        ],
+        "action_shape": [
+          512,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_exports_bc/legacy032_3m_unity_v2_bc_ready_stage5p4_20260506T153632Z",
+      "group": "teacher_exports_bc",
+      "format": "legacy032_unity_v2_bc_ready",
+      "npz_file": "bc_debug.npz",
+      "manifest_file": "bc_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "actions",
+        "done_t",
+        "episode_id",
+        "observations",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 512,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          512,
+          576,
+          27
+        ],
+        "action_shape": [
+          512,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_source_valid_noopfix_deterministic_20260506T222854Z",
+      "group": "teacher_rollouts",
+      "format": "legacy032_teacher_rollout_raw",
+      "npz_file": "teacher_rollout_raw.npz",
+      "manifest_file": "teacher_rollout_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "done_t",
+        "episode_id",
+        "mask_source_valid_count_t",
+        "observation_t",
+        "per_cell_action_t",
+        "reward_t",
+        "selected_non_noop_count_t",
+        "source_valid_action_count_t",
+        "source_valid_action_mask_t",
+        "source_valid_non_noop_count_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 82680,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": "legacy032.teacher_rollout_raw.v2",
+        "teacher_lineage": "legacy032",
+        "step_mode": "training_compatible",
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          82680,
+          24,
+          24,
+          27
+        ],
+        "action_shape": [
+          82680,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+      "group": "teacher_rollouts",
+      "format": "legacy032_teacher_rollout_raw",
+      "npz_file": "teacher_rollout_raw.npz",
+      "manifest_file": "teacher_rollout_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "action_mask_t",
+        "done_t",
+        "episode_id",
+        "info_t_json",
+        "observation_t",
+        "per_cell_action_t",
+        "raw_action_t",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 88165,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "info_preview": "{\"raw\": \"{'raw_rewards': array([0., 0., 0., 0., 0., 0.])}\"}",
+        "observation_shape": [
+          88165,
+          24,
+          24,
+          27
+        ],
+        "action_shape": [
+          88165,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260506T144700Z",
+      "group": "teacher_rollouts",
+      "format": "legacy032_teacher_rollout_raw",
+      "npz_file": "teacher_rollout_raw.npz",
+      "manifest_file": "teacher_rollout_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "done_t",
+        "episode_id",
+        "mask_source_valid_count_t",
+        "observation_t",
+        "per_cell_action_t",
+        "reward_t",
+        "selected_non_noop_count_t",
+        "source_valid_action_count_t",
+        "source_valid_non_noop_count_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 16,
+      "steps_count": 37343,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": "legacy032.teacher_rollout_raw.v2",
+        "teacher_lineage": "legacy032",
+        "step_mode": "training_compatible",
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          37343,
+          24,
+          24,
+          27
+        ],
+        "action_shape": [
+          37343,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_smoke_20260501T101130Z",
+      "group": "teacher_rollouts",
+      "format": "legacy032_teacher_rollout_raw",
+      "npz_file": "teacher_rollout_raw.npz",
+      "manifest_file": "teacher_rollout_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "action_mask_t",
+        "done_t",
+        "episode_id",
+        "info_t_json",
+        "observation_t",
+        "per_cell_action_t",
+        "raw_action_t",
+        "reward_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 1,
+      "steps_count": 512,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": null,
+        "teacher_lineage": "legacy032",
+        "step_mode": null,
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "info_preview": "{\"raw\": \"{'raw_rewards': array([0., 0., 0., 0., 0., 0.])}\"}",
+        "observation_shape": [
+          512,
+          24,
+          24,
+          27
+        ],
+        "action_shape": [
+          512,
+          576,
+          7
+        ]
+      }
+    },
+    {
+      "path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_smoke_20260506T142730Z",
+      "group": "teacher_rollouts",
+      "format": "legacy032_teacher_rollout_raw",
+      "npz_file": "teacher_rollout_raw.npz",
+      "manifest_file": "teacher_rollout_manifest.json",
+      "npz_keys": [
+        "action_mask_available_t",
+        "done_t",
+        "episode_id",
+        "mask_source_valid_count_t",
+        "observation_t",
+        "per_cell_action_t",
+        "reward_t",
+        "selected_non_noop_count_t",
+        "source_valid_action_count_t",
+        "source_valid_non_noop_count_t",
+        "step_id",
+        "terminated_t",
+        "truncated_t"
+      ],
+      "episodes_count": 2,
+      "steps_count": 4349,
+      "has_full_state": false,
+      "has_raw_teacher_action": true,
+      "has_action_mask": true,
+      "has_reset_terminal_metadata": true,
+      "replay_ready": false,
+      "replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+      "metadata": {
+        "schema_version": "legacy032.teacher_rollout_raw.v2",
+        "teacher_lineage": "legacy032",
+        "step_mode": "training_compatible",
+        "branch_sizes": [
+          6,
+          4,
+          4,
+          4,
+          4,
+          7,
+          49
+        ],
+        "observation_shape": [
+          4349,
+          24,
+          24,
+          27
+        ],
+        "action_shape": [
+          4349,
+          576,
+          7
+        ]
+      }
+    }
+  ],
+  "selected_source_path": "C:/Projects/UnityRTSPrototype/UnityRTSPrototype/python/week5_teacher_legacy032/teacher_rollouts/legacy032_3m_unity_v2_rollout_export_20260501T125015Z",
+  "selected_source_format": "legacy032_teacher_rollout_raw",
+  "selected_source_replay_ready": false,
+  "selected_source_replay_ready_reason": "missing authoritative runtime state fields for Unity sync",
+  "replay_ready_source_count": 0,
+  "selection_note": "Selection prefers raw rollout sources with per-step teacher actions and larger step coverage; bc_ready is intentionally deprioritized for replay truth.",
+  "no_go_required": true,
+  "no_go_reason": "No source contains replay-ready authoritative runtime state + teacher action + reset metadata. New teacher rollout export with Unity replay fields is required."
+}
