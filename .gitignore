@@ -86,6 +86,9 @@ python/week6_student/reports/stage10r_noop_collapse_snapshot_step*.json
 python/week6_student/reports/stage10d15_*.json
 python/week6_student/reports/stage10d15_*.jsonl
 
+# Stage7B local ML-Agents environment (machine-local)
+python/stage7b_mlagents/.venv_mlagents/
+
 # TensorBoard training run event files (generated, DO NOT COMMIT)
 /runs/
 
