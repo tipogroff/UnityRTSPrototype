@@ -15,6 +15,13 @@ using UnityEditor;
 
 namespace RTS.MLAgents.Stage7B
 {
+    public enum Stage7BRuntimeMode
+    {
+        HeuristicDryRun = 0,
+        TeacherReplayDemoRecording = 1,
+        TrainerControlled = 2,
+    }
+
     [DisallowMultipleComponent]
     public sealed class MlAgentsTrainingBootstrap : MonoBehaviour
     {
@@ -27,6 +34,8 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private GameConfig _fallbackConfig;
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24;
         [SerializeField] private int _startResources = 60;
+        [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
+        [SerializeField] private bool _forceTrainerControlledMode;
 
         public GridManager GridManager { get; private set; }
         public UnitRegistry UnitRegistry { get; private set; }
@@ -40,6 +49,9 @@ namespace RTS.MLAgents.Stage7B
         public Owner StudentPlayer => _studentPlayer;
         public Owner ScriptedOpponent => _scriptedOpponent;
         public bool DuplicateSpawnDetected { get; private set; }
+        public Stage7BRuntimeMode RuntimeMode => _forceTrainerControlledMode
+            ? Stage7BRuntimeMode.TrainerControlled
+            : _stage7BRuntimeMode;
 
         private void Awake()
         {
@@ -53,6 +65,11 @@ namespace RTS.MLAgents.Stage7B
         private void Start()
         {
             StartNewEpisode();
+        }
+
+        private void OnDestroy()
+        {
+            CleanupAcademyFixedUpdateStepper();
         }
 
         public void StartNewEpisode()
@@ -105,6 +122,7 @@ namespace RTS.MLAgents.Stage7B
 
             if (!_autoConfigureMlAgents)
             {
+                ApplyRuntimeModeConfiguration();
                 return;
             }
 
@@ -112,7 +130,9 @@ namespace RTS.MLAgents.Stage7B
             if (behavior != null)
             {
                 behavior.BehaviorName = "Stage7B_RTS_Student";
-                behavior.BehaviorType = BehaviorType.HeuristicOnly;
+                behavior.BehaviorType = RuntimeMode == Stage7BRuntimeMode.TrainerControlled
+                    ? BehaviorType.Default
+                    : BehaviorType.HeuristicOnly;
                 behavior.TeamId = _studentPlayer == Owner.Player1 ? 0 : 1;
                 behavior.BrainParameters.VectorObservationSize = ObservationContract.TotalFloats;
                 behavior.BrainParameters.NumStackedVectorObservations = 1;
@@ -126,9 +146,11 @@ namespace RTS.MLAgents.Stage7B
                 requester.DecisionPeriod = 1;
                 requester.DecisionStep = 0;
                 requester.TakeActionsBetweenDecisions = false;
+                requester.enabled = RuntimeMode == Stage7BRuntimeMode.TrainerControlled;
             }
 
             StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
+            ApplyRuntimeModeConfiguration();
 
             if (Application.isPlaying && StudentAgent.isActiveAndEnabled)
             {
@@ -139,10 +161,75 @@ namespace RTS.MLAgents.Stage7B
 
         private static void EnsureAcademyAutomaticStepping()
         {
+            if (!Academy.IsInitialized)
+            {
+                return;
+            }
+
             Academy academy = Academy.Instance;
             if (academy != null && !academy.AutomaticSteppingEnabled)
             {
                 academy.AutomaticSteppingEnabled = true;
+            }
+        }
+
+        private static void CleanupAcademyFixedUpdateStepper()
+        {
+            GameObject stepper = GameObject.Find("AcademyFixedUpdateStepper");
+            if (stepper != null)
+            {
+                Destroy(stepper);
+            }
+        }
+
+        private void ApplyRuntimeModeConfiguration()
+        {
+            if (StudentAgent == null)
+            {
+                return;
+            }
+
+            BehaviorParameters behavior = StudentAgent.GetComponent<BehaviorParameters>();
+            DecisionRequester requester = StudentAgent.GetComponent<DecisionRequester>();
+            Stage7BRuntimeMode mode = RuntimeMode;
+
+            if (behavior != null)
+            {
+                behavior.BehaviorName = "Stage7B_RTS_Student";
+                behavior.BehaviorType = mode == Stage7BRuntimeMode.TrainerControlled
+                    ? BehaviorType.Default
+                    : BehaviorType.HeuristicOnly;
+            }
+
+            if (requester != null)
+            {
+                requester.DecisionPeriod = 1;
+                requester.DecisionStep = 0;
+                requester.TakeActionsBetweenDecisions = false;
+                requester.enabled = mode == Stage7BRuntimeMode.TrainerControlled;
+            }
+
+            if (mode == Stage7BRuntimeMode.TrainerControlled)
+            {
+                StudentAgent.ConfigureForTrainerControlledMode();
+                DisableTeacherReplayOrchestrators();
+            }
+        }
+
+        private static void DisableTeacherReplayOrchestrators()
+        {
+            TeacherReplay.Stage7BTeacherReplayDemoOrchestrator[] orchestrators =
+                FindObjectsByType<TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
+
+            for (int i = 0; i < orchestrators.Length; i++)
+            {
+                TeacherReplay.Stage7BTeacherReplayDemoOrchestrator orchestrator = orchestrators[i];
+                if (orchestrator != null && orchestrator.enabled)
+                {
+                    orchestrator.enabled = false;
+                }
             }
         }
 

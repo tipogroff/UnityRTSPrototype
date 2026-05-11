@@ -71,6 +71,9 @@ namespace RTS.MLAgents.Stage7B
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
         public string CurrentDecisionSource => _currentDecisionSource;
+        public bool ManualFixedUpdateDecisionRequestsEnabled => _manualFixedUpdateDecisionRequests;
+        public bool DecisionRequesterWatchdogFallbackEnabled => _enableDecisionRequesterWatchdogFallback;
+        public bool DecisionRequesterWatchdogFallbackActive => _decisionRequesterWatchdogFallbackActive;
         public int OnEnableCount => _onEnableCount;
         public int InitializeCount => _initializeCount;
         public int OnEpisodeBeginCount => _onEpisodeBeginCount;
@@ -118,6 +121,18 @@ namespace RTS.MLAgents.Stage7B
             _initializeCount++;
             ResolveDependencies();
             ConfigureBehaviorParameters();
+            ApplyDecisionSourcePolicy();
+        }
+
+        public void ConfigureForTrainerControlledMode()
+        {
+            _manualFixedUpdateDecisionRequests = false;
+            _allowConcurrentDecisionSourcesForDebug = false;
+            _enableDecisionRequesterWatchdogFallback = false;
+            _decisionRequesterWatchdogFallbackActive = false;
+            _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+            _loggedDecisionSourceGuard = false;
+            TeacherReplayOrchestrator = null;
             ApplyDecisionSourcePolicy();
         }
 

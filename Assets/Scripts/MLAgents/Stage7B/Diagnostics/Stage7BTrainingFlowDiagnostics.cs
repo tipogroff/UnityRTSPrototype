@@ -18,6 +18,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         [SerializeField] private float _writeIntervalSeconds = 1f;
 
         private float _nextWriteTime;
+        private bool _isShuttingDown;
 
         [Serializable]
         private sealed class Snapshot
@@ -37,6 +38,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public bool teacher_replay_orchestrator_enabled;
             public bool student_teacher_replay_orchestrator_is_null;
             public bool manual_loop_enabled;
+            public bool watchdog_manual_fallback_enabled;
             public bool demo_mode_active;
             public bool model_assigned;
             public string inference_device;
@@ -61,6 +63,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public int terminal_calls;
             public bool runtime_services_ready;
             public string[] missing_runtime_services;
+            public bool stage6b3_baseline_touched;
             public string match_state_after_reset;
             public bool duplicate_spawn_detected;
             public double first_reset_duration_ms;
@@ -94,12 +97,18 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private void OnDisable()
         {
+            if (_isShuttingDown || !Application.isPlaying)
+            {
+                return;
+            }
+
             WriteSnapshot();
         }
 
         private void OnApplicationQuit()
         {
-            WriteSnapshot();
+            // Avoid touching runtime singletons while Unity tears the scene down.
+            _isShuttingDown = true;
         }
 
         private void WriteSnapshot()
@@ -148,11 +157,13 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 teacher_replay_orchestrator_enabled = sceneOrchestrator != null && sceneOrchestrator.isActiveAndEnabled,
                 student_teacher_replay_orchestrator_is_null = true,
                 manual_loop_enabled = false,
+                watchdog_manual_fallback_enabled = false,
                 demo_mode_active = false,
                 model_assigned = false,
                 inference_device = "unknown",
                 runtime_services_ready = false,
                 missing_runtime_services = Array.Empty<string>(),
+                stage6b3_baseline_touched = false,
                 match_state_after_reset = "unknown",
                 duplicate_spawn_detected = false,
                 application_is_playing = Application.isPlaying,
@@ -164,7 +175,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 generated_utc = DateTime.UtcNow.ToString("o")
             };
 
-            Academy academy = Academy.Instance;
+            Academy academy = Academy.IsInitialized ? Academy.Instance : null;
             snapshot.trainer_connected = academy != null && academy.IsCommunicatorOn;
 
             if (agent != null)
@@ -213,6 +224,8 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
                 snapshot.manual_loop_enabled = !string.IsNullOrWhiteSpace(snapshot.current_decision_source)
                                               && snapshot.current_decision_source.IndexOf("manual_fixed_update", StringComparison.OrdinalIgnoreCase) >= 0;
+                snapshot.watchdog_manual_fallback_enabled = agent.DecisionRequesterWatchdogFallbackEnabled
+                                                            || agent.DecisionRequesterWatchdogFallbackActive;
 
                 snapshot.decision_requester_disabled_by_stage7b = requester != null
                     && !requester.enabled
@@ -311,7 +324,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private static long TryGetAcademyStepCount()
         {
-            Academy academy = Academy.Instance;
+            Academy academy = Academy.IsInitialized ? Academy.Instance : null;
             if (academy == null)
             {
                 return -1;

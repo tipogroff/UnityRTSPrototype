@@ -105,6 +105,9 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
         private bool _enteredPlayMode;
         private bool _playModeReady;
         private bool _cleanDemo7DMode;
+        private bool _capturedStudentRuntimeState;
+        private BehaviorType _capturedBehaviorType = BehaviorType.Default;
+        private bool _capturedDecisionRequesterEnabled = true;
 
         // ── public API for StudentMlAgent ────────────────────────────────────
 
@@ -495,6 +498,8 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
                 yield break;
             }
 
+            CaptureStudentRuntimeState();
+
             _studentAgent.TeacherReplayOrchestrator = this;
 
             // Ensure Heuristic mode so Demonstration Recorder captures actions
@@ -611,8 +616,10 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
             {
                 _studentAgent.TeacherReplayOrchestrator = null;
 
+                RestoreStudentRuntimeState();
+
                 DecisionRequester dr = _studentAgent.GetComponent<DecisionRequester>();
-                if (dr != null) dr.enabled = true;
+                if (dr != null && !_capturedStudentRuntimeState) dr.enabled = true;
 
                 DisableDemonstrationRecorderRecording(_studentAgent.gameObject);
                 // End the episode so the Demonstration Recorder flushes its buffer.
@@ -704,6 +711,48 @@ namespace RTS.MLAgents.Stage7B.TeacherReplay
 
             _isFinalizing = false;
             _finalizeCoroutine = null;
+        }
+
+        private void CaptureStudentRuntimeState()
+        {
+            _capturedStudentRuntimeState = false;
+            if (_studentAgent == null)
+            {
+                return;
+            }
+
+            BehaviorParameters bp = _studentAgent.GetComponent<BehaviorParameters>();
+            DecisionRequester dr = _studentAgent.GetComponent<DecisionRequester>();
+            if (bp == null && dr == null)
+            {
+                return;
+            }
+
+            _capturedBehaviorType = bp != null ? bp.BehaviorType : BehaviorType.Default;
+            _capturedDecisionRequesterEnabled = dr == null || dr.enabled;
+            _capturedStudentRuntimeState = true;
+        }
+
+        private void RestoreStudentRuntimeState()
+        {
+            if (!_capturedStudentRuntimeState || _studentAgent == null)
+            {
+                return;
+            }
+
+            BehaviorParameters bp = _studentAgent.GetComponent<BehaviorParameters>();
+            if (bp != null)
+            {
+                bp.BehaviorType = _capturedBehaviorType;
+            }
+
+            DecisionRequester dr = _studentAgent.GetComponent<DecisionRequester>();
+            if (dr != null)
+            {
+                dr.enabled = _capturedDecisionRequesterEnabled;
+            }
+
+            _capturedStudentRuntimeState = false;
         }
 
         private void FinalizeAndWriteReport(string status)

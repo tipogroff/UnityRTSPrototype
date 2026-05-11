@@ -1,0 +1,30 @@
+{
+  "status": "NO-GO",
+  "run_id": "Stage7B_ImitationSmoke_004",
+  "trainer_controlled_mode_prepared": true,
+  "behavior_type_runtime": "Default",
+  "decision_requester_enabled": true,
+  "teacher_replay_orchestrator_enabled": false,
+  "trainer_started": true,
+  "config_loaded": true,
+  "unity_connected": true,
+  "behavior_name_matched": true,
+  "training_steps_completed": 1500,
+  "demo_loaded_or_consumed": true,
+  "loss_nan_detected": false,
+  "reward_nan_detected": false,
+  "checkpoint_saved": true,
+  "checkpoint_paths": [
+    "results/Stage7B_ImitationSmoke_004/Stage7B_RTS_Student/Stage7B_RTS_Student-1600.pt"
+  ],
+  "tfevents_saved": true,
+  "results_dir": "results/Stage7B_ImitationSmoke_004",
+  "trainer_exit_code": 1,
+  "trainer_error_summary": "Learning was interrupted manually after smoke success threshold (steps > 0).",
+  "unity_console_errors": 1,
+  "unity_console_warnings": 0,
+  "stage6b3_baseline_touched": false,
+  "clean_demo_unchanged": true,
+  "no_long_training": true,
+  "no_ppo_full_stage": true
+}
