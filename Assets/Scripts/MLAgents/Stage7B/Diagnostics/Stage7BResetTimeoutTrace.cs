@@ -12,7 +12,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 {
     public static class Stage7BResetTimeoutTrace
     {
-        private const string TraceRelativePath = "python/stage7b_teacher_replay/stage7b_8b5_lifecycle_trace.jsonl";
+        private const string TraceRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl";
         private static bool _clearedForSession;
 
         public static void ResetSession()
@@ -112,6 +112,22 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             Append(sb, "observation_nan_count", effectiveObservationNanCount, true);
             Append(sb, "last_action_index", effectiveActionIndex, true);
             Append(sb, "candidate_count", effectiveCandidateCount, true);
+            Append(sb, "bootstrap_start_new_episode_count", bootstrap != null ? bootstrap.StartNewEpisodeInvocationCount : 0, true);
+            Append(sb, "bootstrap_start_new_episode_skipped_reentrant_count", bootstrap != null ? bootstrap.StartNewEpisodeSkippedReentrantCount : 0, true);
+            Append(sb, "bootstrap_start_new_episode_reason", bootstrap != null ? bootstrap.LastStartNewEpisodeReason : "none", true);
+            Append(sb, "bootstrap_start_new_episode_caller", bootstrap != null ? bootstrap.LastStartNewEpisodeCaller : "none", true);
+            Append(sb, "bootstrap_start_new_episode_path", bootstrap != null ? bootstrap.LastStartNewEpisodePath : "none", true);
+            Append(sb, "bootstrap_is_starting_episode", bootstrap != null && bootstrap.IsStartingEpisode, true);
+            Append(sb, "bootstrap_has_runtime_episode_started", bootstrap != null && bootstrap.HasRuntimeEpisodeStarted, true);
+            Append(sb, "on_episode_begin_start_new_episode_called", agent != null && agent.OnEpisodeBeginStartNewEpisodeCalled, true);
+            Append(sb, "on_episode_begin_start_new_episode_result", agent != null && agent.OnEpisodeBeginStartNewEpisodeResult, true);
+            Append(sb, "trainer_controlled_episode_reset_path", agent != null && agent.OnEpisodeBeginUsedTrainerControlledEpisodeResetPath, true);
+            Append(sb, "on_episode_begin_start_new_episode_path", agent != null ? agent.OnEpisodeBeginStartNewEpisodePath : "none", true);
+            Append(sb, "trainer_controlled_kick_decision_request_count", agent != null ? agent.TrainerControlledKickDecisionRequestCount : 0, true);
+            Append(sb, "first_write_mask_time", agent != null ? agent.FirstWriteMaskTime : -1f, true);
+            Append(sb, "first_write_mask_frame", agent != null ? agent.FirstWriteMaskFrame : -1, true);
+            Append(sb, "first_on_action_received_time", agent != null ? agent.FirstOnActionReceivedTime : -1f, true);
+            Append(sb, "first_on_action_received_frame", agent != null ? agent.FirstOnActionReceivedFrame : -1, true);
             Append(sb, "masked_slots", maskedSlots, false);
             sb.Append('}');
             return sb.ToString();

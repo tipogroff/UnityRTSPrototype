@@ -13,8 +13,8 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
     [DisallowMultipleComponent]
     public sealed class Stage7BTrainingFlowDiagnostics : MonoBehaviour
     {
-        [SerializeField] private string _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b1_training_flow_diagnostic.json";
-        [SerializeField] private string _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b1_training_flow_diagnostic.md";
+        [SerializeField] private string _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.json";
+        [SerializeField] private string _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.md";
         [SerializeField] private float _writeIntervalSeconds = 1f;
 
         private float _nextWriteTime;
@@ -55,8 +55,10 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public int request_decision_count;
             public int request_action_count;
             public float first_collect_observations_time;
+            public float first_write_mask_time;
             public float first_on_action_received_time;
             public int first_collect_observations_frame;
+            public int first_write_mask_frame;
             public int first_on_action_received_frame;
             public int last_observation_length;
             public int last_observation_nan_count;
@@ -73,6 +75,17 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public double first_observation_duration_ms;
             public double first_write_mask_duration_ms;
             public double first_on_action_received_duration_ms;
+            public int bootstrap_start_new_episode_count;
+            public int bootstrap_start_new_episode_skipped_reentrant_count;
+            public string bootstrap_start_new_episode_reason;
+            public string bootstrap_start_new_episode_caller;
+            public string bootstrap_start_new_episode_path;
+            public bool bootstrap_has_runtime_episode_started;
+            public bool on_episode_begin_start_new_episode_called;
+            public bool on_episode_begin_start_new_episode_result;
+            public bool trainer_controlled_episode_reset_path;
+            public string on_episode_begin_start_new_episode_path;
+            public int trainer_controlled_kick_decision_request_count;
             public bool application_is_playing;
             public float time_scale;
             public long academy_step_count;
@@ -181,7 +194,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 suspected_blocker = "unknown",
                 timeout_phase_classification = "unclassified",
                 last_lifecycle_event = ReadLastLifecycleEvent(),
-                lifecycle_trace_path = "python/stage7b_teacher_replay/stage7b_8b5_lifecycle_trace.jsonl",
+                lifecycle_trace_path = "python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl",
                 generated_utc = DateTime.UtcNow.ToString("o")
             };
 
@@ -220,8 +233,10 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 snapshot.request_decision_count = agent.ManualRequestDecisionCount;
                 snapshot.request_action_count = agent.ManualRequestActionCount;
                 snapshot.first_collect_observations_time = agent.FirstCollectObservationsTime;
+                snapshot.first_write_mask_time = agent.FirstWriteMaskTime;
                 snapshot.first_on_action_received_time = agent.FirstOnActionReceivedTime;
                 snapshot.first_collect_observations_frame = agent.FirstCollectObservationsFrame;
+                snapshot.first_write_mask_frame = agent.FirstWriteMaskFrame;
                 snapshot.first_on_action_received_frame = agent.FirstOnActionReceivedFrame;
                 snapshot.last_observation_length = agent.LastObservationLength;
                 snapshot.last_observation_nan_count = agent.LastObservationNanCount;
@@ -233,6 +248,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 snapshot.first_observation_duration_ms = agent.FirstObservationDurationMs;
                 snapshot.first_write_mask_duration_ms = agent.FirstWriteMaskDurationMs;
                 snapshot.first_on_action_received_duration_ms = agent.FirstOnActionReceivedDurationMs;
+                snapshot.on_episode_begin_start_new_episode_called = agent.OnEpisodeBeginStartNewEpisodeCalled;
+                snapshot.on_episode_begin_start_new_episode_result = agent.OnEpisodeBeginStartNewEpisodeResult;
+                snapshot.trainer_controlled_episode_reset_path = agent.OnEpisodeBeginUsedTrainerControlledEpisodeResetPath;
+                snapshot.on_episode_begin_start_new_episode_path = agent.OnEpisodeBeginStartNewEpisodePath;
+                snapshot.trainer_controlled_kick_decision_request_count = agent.TrainerControlledKickDecisionRequestCount;
                 snapshot.current_decision_source = agent.CurrentDecisionSource;
 
                 snapshot.manual_loop_enabled = !string.IsNullOrWhiteSpace(snapshot.current_decision_source)
@@ -264,6 +284,12 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 snapshot.match_state_after_reset = bootstrap.MatchManager != null
                     ? bootstrap.MatchManager.Phase.ToString()
                     : "missing";
+                snapshot.bootstrap_start_new_episode_count = bootstrap.StartNewEpisodeInvocationCount;
+                snapshot.bootstrap_start_new_episode_skipped_reentrant_count = bootstrap.StartNewEpisodeSkippedReentrantCount;
+                snapshot.bootstrap_start_new_episode_reason = bootstrap.LastStartNewEpisodeReason;
+                snapshot.bootstrap_start_new_episode_caller = bootstrap.LastStartNewEpisodeCaller;
+                snapshot.bootstrap_start_new_episode_path = bootstrap.LastStartNewEpisodePath;
+                snapshot.bootstrap_has_runtime_episode_started = bootstrap.HasRuntimeEpisodeStarted;
             }
 
             snapshot.runtime_services_ready = missing.Count == 0;
@@ -281,21 +307,23 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         private void NormalizeStage8B5OutputPaths()
         {
             if (!string.IsNullOrWhiteSpace(_diagnosticJsonRelativePath)
-                && _diagnosticJsonRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0)
+                && (_diagnosticJsonRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0
+                    || _diagnosticJsonRelativePath.IndexOf("stage7b_8b5_", StringComparison.OrdinalIgnoreCase) >= 0))
             {
-                _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b5_reset_timeout_diagnostic_report.json";
+                _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.json";
             }
 
             if (!string.IsNullOrWhiteSpace(_diagnosticMdRelativePath)
-                && _diagnosticMdRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0)
+                && (_diagnosticMdRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0
+                    || _diagnosticMdRelativePath.IndexOf("stage7b_8b5_", StringComparison.OrdinalIgnoreCase) >= 0))
             {
-                _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b5_reset_timeout_diagnostic_report.md";
+                _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.md";
             }
         }
 
         private static string ReadLastLifecycleEvent()
         {
-            string path = ResolveProjectPath("python/stage7b_teacher_replay/stage7b_8b5_lifecycle_trace.jsonl");
+            string path = ResolveProjectPath("python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl");
             if (!File.Exists(path))
             {
                 return "missing_trace";
@@ -463,7 +491,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         private static string BuildMarkdown(Snapshot s)
         {
             var sb = new StringBuilder(2048);
-            sb.AppendLine("# Stage7B-8B.5 Unity Reset Timeout Root-Cause Diagnostic");
+            sb.AppendLine("# Stage7B-8B.6 Episode Boundary Fix Diagnostic");
             sb.AppendLine();
             sb.AppendLine("status: " + s.status);
             sb.AppendLine("suspected_blocker: " + s.suspected_blocker);
@@ -486,6 +514,23 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             sb.AppendLine("- heuristic_count: " + s.heuristic_count);
             sb.AppendLine("- on_action_received_count: " + s.on_action_received_count);
             sb.AppendLine("- end_episode_count: " + s.end_episode_count);
+            sb.AppendLine("- first_write_mask_frame: " + s.first_write_mask_frame);
+            sb.AppendLine("- first_write_mask_time: " + s.first_write_mask_time);
+            sb.AppendLine("- first_on_action_received_frame: " + s.first_on_action_received_frame);
+            sb.AppendLine("- first_on_action_received_time: " + s.first_on_action_received_time);
+            sb.AppendLine();
+            sb.AppendLine("## StartNewEpisode Boundary");
+            sb.AppendLine("- bootstrap_start_new_episode_count: " + s.bootstrap_start_new_episode_count);
+            sb.AppendLine("- bootstrap_start_new_episode_skipped_reentrant_count: " + s.bootstrap_start_new_episode_skipped_reentrant_count);
+            sb.AppendLine("- bootstrap_start_new_episode_reason: " + s.bootstrap_start_new_episode_reason);
+            sb.AppendLine("- bootstrap_start_new_episode_caller: " + s.bootstrap_start_new_episode_caller);
+            sb.AppendLine("- bootstrap_start_new_episode_path: " + s.bootstrap_start_new_episode_path);
+            sb.AppendLine("- bootstrap_has_runtime_episode_started: " + s.bootstrap_has_runtime_episode_started.ToString().ToLowerInvariant());
+            sb.AppendLine("- on_episode_begin_start_new_episode_called: " + s.on_episode_begin_start_new_episode_called.ToString().ToLowerInvariant());
+            sb.AppendLine("- on_episode_begin_start_new_episode_result: " + s.on_episode_begin_start_new_episode_result.ToString().ToLowerInvariant());
+            sb.AppendLine("- trainer_controlled_episode_reset_path: " + s.trainer_controlled_episode_reset_path.ToString().ToLowerInvariant());
+            sb.AppendLine("- on_episode_begin_start_new_episode_path: " + s.on_episode_begin_start_new_episode_path);
+            sb.AppendLine("- trainer_controlled_kick_decision_request_count: " + s.trainer_controlled_kick_decision_request_count);
             sb.AppendLine();
             sb.AppendLine("## Timeout Classification");
             sb.AppendLine("- timeout_phase_classification: " + s.timeout_phase_classification);

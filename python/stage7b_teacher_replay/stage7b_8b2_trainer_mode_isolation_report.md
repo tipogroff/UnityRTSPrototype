@@ -33,4 +33,4 @@ scene_path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
 - stage6b3_baseline_touched: false
 - notes: TrainerControlled preflight only. Training was not started.
 
-generated_at_utc: 2026-05-11T08:46:11.7852773Z
+generated_at_utc: 2026-05-11T09:03:56.7105776Z

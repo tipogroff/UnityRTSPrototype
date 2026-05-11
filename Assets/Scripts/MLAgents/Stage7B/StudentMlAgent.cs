@@ -60,8 +60,10 @@ namespace RTS.MLAgents.Stage7B
         private bool _lastActionAccepted;
         private int _terminalCount;
         private int _firstCollectObservationsFrame = -1;
+        private int _firstWriteMaskFrame = -1;
         private int _firstOnActionReceivedFrame = -1;
         private float _firstCollectObservationsTime = -1f;
+        private float _firstWriteMaskTime = -1f;
         private float _firstOnActionReceivedTime = -1f;
         private double _firstResetDurationMs = -1d;
         private double _firstObservationDurationMs = -1d;
@@ -70,6 +72,12 @@ namespace RTS.MLAgents.Stage7B
         private int _awakeCount;
         private int _startCount;
         private int _endEpisodeCount;
+        private bool _onEpisodeBeginStartNewEpisodeCalled;
+        private bool _onEpisodeBeginStartNewEpisodeResult;
+        private bool _onEpisodeBeginUsedTrainerControlledEpisodeResetPath;
+        private string _onEpisodeBeginStartNewEpisodePath = "none";
+        private bool _pendingTrainerControlledKickDecision;
+        private int _trainerControlledKickDecisionRequestCount;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
@@ -92,13 +100,20 @@ namespace RTS.MLAgents.Stage7B
         public int TerminalCount => _terminalCount;
         public int EndEpisodeCount => _endEpisodeCount;
         public float FirstCollectObservationsTime => _firstCollectObservationsTime;
+        public float FirstWriteMaskTime => _firstWriteMaskTime;
         public float FirstOnActionReceivedTime => _firstOnActionReceivedTime;
         public int FirstCollectObservationsFrame => _firstCollectObservationsFrame;
+        public int FirstWriteMaskFrame => _firstWriteMaskFrame;
         public int FirstOnActionReceivedFrame => _firstOnActionReceivedFrame;
         public double FirstResetDurationMs => _firstResetDurationMs;
         public double FirstObservationDurationMs => _firstObservationDurationMs;
         public double FirstWriteMaskDurationMs => _firstWriteMaskDurationMs;
         public double FirstOnActionReceivedDurationMs => _firstOnActionReceivedDurationMs;
+        public bool OnEpisodeBeginStartNewEpisodeCalled => _onEpisodeBeginStartNewEpisodeCalled;
+        public bool OnEpisodeBeginStartNewEpisodeResult => _onEpisodeBeginStartNewEpisodeResult;
+        public bool OnEpisodeBeginUsedTrainerControlledEpisodeResetPath => _onEpisodeBeginUsedTrainerControlledEpisodeResetPath;
+        public string OnEpisodeBeginStartNewEpisodePath => _onEpisodeBeginStartNewEpisodePath;
+        public int TrainerControlledKickDecisionRequestCount => _trainerControlledKickDecisionRequestCount;
 
         /// <summary>
         /// Stage7B-7: Set by Stage7BTeacherReplayDemoOrchestrator to enable teacher-replay-demo
@@ -169,16 +184,32 @@ namespace RTS.MLAgents.Stage7B
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEpisodeBegin.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
-            _bootstrap?.StartNewEpisode();
             _observationBuilder = null;
             _candidateBuilder = null;
             _actionApplier = null;
+
+            _onEpisodeBeginStartNewEpisodeCalled = _bootstrap != null;
+            _onEpisodeBeginStartNewEpisodeResult = false;
+            _onEpisodeBeginUsedTrainerControlledEpisodeResetPath =
+                _bootstrap != null && _bootstrap.RuntimeMode == Stage7BRuntimeMode.TrainerControlled;
+            _onEpisodeBeginStartNewEpisodePath = "none";
+
+            if (_bootstrap != null)
+            {
+                _onEpisodeBeginStartNewEpisodeResult = _onEpisodeBeginUsedTrainerControlledEpisodeResetPath
+                    ? _bootstrap.StartNewEpisodeForAgentReset()
+                    : _bootstrap.StartNewEpisode("agent_on_episode_begin", "StudentMlAgent.OnEpisodeBegin");
+                _onEpisodeBeginStartNewEpisodePath = _bootstrap.LastStartNewEpisodePath;
+            }
+
             ResolveDependencies();
             _rewardCollector?.ResetEpisode();
             _episodeDecisionCount = 0;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
+            _pendingTrainerControlledKickDecision =
+                _onEpisodeBeginUsedTrainerControlledEpisodeResetPath && _onEpisodeBeginStartNewEpisodeResult;
             timer.Stop();
             if (_firstResetDurationMs < 0d)
             {
@@ -191,6 +222,11 @@ namespace RTS.MLAgents.Stage7B
         {
             ApplyDecisionSourcePolicy();
             UpdateDecisionRequesterWatchdog();
+
+            if (TryRequestTrainerControlledKickDecision())
+            {
+                return;
+            }
 
             if (!ShouldUseManualFixedUpdateDecisionRequests())
             {
@@ -209,6 +245,28 @@ namespace RTS.MLAgents.Stage7B
                 Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.manual", this, _bootstrap);
                 RequestDecision();
             }
+        }
+
+        private bool TryRequestTrainerControlledKickDecision()
+        {
+            if (!_pendingTrainerControlledKickDecision)
+            {
+                return false;
+            }
+
+            ResolveDependencies();
+            if (_bootstrap == null
+                || _bootstrap.MatchManager == null
+                || _bootstrap.MatchManager.Phase != MatchPhase.Running)
+            {
+                return false;
+            }
+
+            _pendingTrainerControlledKickDecision = false;
+            _trainerControlledKickDecisionRequestCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.trainer_controlled_kick", this, _bootstrap);
+            RequestDecision();
+            return true;
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -256,6 +314,12 @@ namespace RTS.MLAgents.Stage7B
                 _maskAdapter.LastMaskedEmptySlots,
                 _currentCandidates != null ? _currentCandidates.OverflowCount : 0);
             timer.Stop();
+            if (_firstWriteMaskTime < 0f)
+            {
+                _firstWriteMaskTime = Time.realtimeSinceStartup;
+                _firstWriteMaskFrame = Time.frameCount;
+            }
+
             if (_firstWriteMaskDurationMs < 0d)
             {
                 _firstWriteMaskDurationMs = timer.Elapsed.TotalMilliseconds;
