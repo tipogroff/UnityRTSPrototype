@@ -22,7 +22,7 @@ blocker_reason: none
 - observation_source: ObservationBuilder/runtime_state
 - observation_zero_padding_warning_detected: false
 - actual_collect_trace_path: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-- actual_collect_calls: 1
+- actual_collect_calls: 1078
 - actual_collect_all_expected_values: true
 - zero_fallback_used: false
 - defensive_pre_ready_observation_count: 0
@@ -32,25 +32,25 @@ blocker_reason: none
 
 ## Lifecycle
 - initialize_count: 3
-- on_episode_begin_count: 1
-- collect_observations_count: 3
-- write_discrete_action_mask_count: 1
-- on_action_received_count: 1
+- on_episode_begin_count: 2
+- collect_observations_count: 1080
+- write_discrete_action_mask_count: 1077
+- on_action_received_count: 1077
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 1
+- inference_kick_decision_request_count: 2
 - inference_runtime_ready_observed: true
 - inference_first_ready_frame: 2
 - inference_first_ready_fixed_tick: 1
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 11
+- candidate_action_index_last: 21
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 2
-- action_adapter_success_count: 1
-- runtime_apply_attempted: 1
-- runtime_apply_accepted: 1
+- candidate_builder_success_count: 2154
+- action_adapter_success_count: 1077
+- runtime_apply_attempted: 1077
+- runtime_apply_accepted: 1077
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -73,6 +73,6 @@ blocker_reason: none
 - report_md: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.md
 - lifecycle_trace_jsonl: python/stage7b_teacher_replay/stage7b_8c2_inference_lifecycle_trace.jsonl
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-- agent_inventory_json: python/stage7b_teacher_replay/stage7b_8c2_agent_inventory.json
+- agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-05-11T11:59:14.0199743Z
+generated_at_utc: 2026-05-11T15:37:03.3572164Z

@@ -1,0 +1,36 @@
+{
+  "generated_at_utc": "2026-05-11T14:42:42.274044+00:00",
+  "unity_console_errors": 0,
+  "unity_console_warnings": 4,
+  "padding_warning_detected": false,
+  "entries": [
+    {
+      "type": "Warning",
+      "message": "[BuildingRuntime] Нет свободной ячейки рядом с (23, 22) для спавна Light",
+      "file": "Assets/Scripts/Gameplay/Entities/BuildingRuntime.cs",
+      "line": 143,
+      "classification": "benign_gameplay_spawn_saturation"
+    },
+    {
+      "type": "Warning",
+      "message": "[BuildingRuntime] Нет свободной ячейки рядом с (2, 1) для спавна Ranged",
+      "file": "Assets/Scripts/Gameplay/Entities/BuildingRuntime.cs",
+      "line": 143,
+      "classification": "benign_gameplay_spawn_saturation"
+    },
+    {
+      "type": "Warning",
+      "message": "[BuildingRuntime] Нет свободной ячейки рядом с (23, 22) для спавна Light",
+      "file": "Assets/Scripts/Gameplay/Entities/BuildingRuntime.cs",
+      "line": 143,
+      "classification": "benign_gameplay_spawn_saturation"
+    },
+    {
+      "type": "Warning",
+      "message": "[BuildingRuntime] Нет свободной ячейки рядом с (0, 1) для спавна Heavy",
+      "file": "Assets/Scripts/Gameplay/Entities/BuildingRuntime.cs",
+      "line": 143,
+      "classification": "benign_gameplay_spawn_saturation"
+    }
+  ]
+}

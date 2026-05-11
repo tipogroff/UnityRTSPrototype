@@ -485,6 +485,7 @@ namespace RTS.MLAgents.Stage7B
             ScriptedOpponentAdapter.SetPlayerControlModes(
                 _studentPlayer == Owner.Player1 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic,
                 _studentPlayer == Owner.Player2 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic);
+            ScriptedOpponentPacing?.AttachAdapter(ScriptedOpponentAdapter, _scriptedOpponent);
         }
 
         private void CleanupRuntimeObjects()

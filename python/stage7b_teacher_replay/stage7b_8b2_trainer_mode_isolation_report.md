@@ -6,7 +6,7 @@ scene_path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
 
 ## Before
 - behavior_name_runtime: Stage7B_RTS_Student
-- behavior_type_runtime: Default
+- behavior_type_runtime: InferenceOnly
 - decision_requester_enabled: true
 - teacher_replay_orchestrator_enabled: false
 - manual_loop_enabled: false
@@ -33,4 +33,4 @@ scene_path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
 - stage6b3_baseline_touched: false
 - notes: TrainerControlled preflight only. Training was not started.
 
-generated_at_utc: 2026-05-11T09:03:56.7105776Z
+generated_at_utc: 2026-05-11T14:29:23.6576574Z

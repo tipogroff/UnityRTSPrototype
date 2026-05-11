@@ -1,10 +1,10 @@
 ﻿{
     "status": "GO",
-    "generated_at_utc": "2026-05-11T09:03:56.7105776Z",
+    "generated_at_utc": "2026-05-11T14:29:23.6576574Z",
     "scene_path": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
     "before": {
         "behavior_name_runtime": "Stage7B_RTS_Student",
-        "behavior_type_runtime": "Default",
+        "behavior_type_runtime": "InferenceOnly",
         "decision_requester_present": true,
         "decision_requester_enabled": true,
         "decision_period": 1,

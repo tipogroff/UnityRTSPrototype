@@ -51,8 +51,8 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string DecisionsTarget8DKey = "RTS.MLAgents.Stage7B.Inference8D.DecisionsTarget";
         private const double MinPlayDurationSecondsBeforeExit = 10d;
         private const double TimeoutSeconds = 300d;
-        private const double Timeout8DSeconds = 900d;
-        private const int DefaultDecisionsTarget8D = 50;
+        private const double Timeout8DSeconds = 1200d;
+        private const int DefaultDecisionsTarget8D = 1000;
 
         static Stage7BInferenceMode8CMenu()
         {

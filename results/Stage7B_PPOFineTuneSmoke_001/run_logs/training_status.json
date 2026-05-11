@@ -1,0 +1,38 @@
+{
+    "Stage7B_RTS_Student": {
+        "checkpoints": [
+            {
+                "steps": 1941,
+                "file_path": "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1941.onnx",
+                "reward": 5.234999988228083,
+                "creation_time": 1778510242.2978323,
+                "auxillary_file_paths": [
+                    "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1941.pt"
+                ]
+            },
+            {
+                "steps": 2005,
+                "file_path": "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2005.onnx",
+                "reward": 5.234999988228083,
+                "creation_time": 1778510242.476704,
+                "auxillary_file_paths": [
+                    "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2005.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2005,
+            "file_path": "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student.onnx",
+            "reward": 5.234999988228083,
+            "creation_time": 1778510242.476704,
+            "auxillary_file_paths": [
+                "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2005.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}

@@ -1,4 +1,4 @@
-﻿{
+{
   "throttle_enabled": true,
   "bot_decision_interval_steps": 3,
   "bot_actions_attempted_before_or_baseline": null,
