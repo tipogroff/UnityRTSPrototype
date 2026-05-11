@@ -2,7 +2,7 @@
 
 status: DIAGNOSED
 suspected_blocker: no_actions_after_observation_check_request_cycle
-trainer_connected: false
+trainer_connected: true
 behavior_name_runtime: Stage7B_RTS_Student
 behavior_type_runtime: Default
 decision_requester_enabled: true
@@ -13,7 +13,7 @@ student_teacher_replay_orchestrator_is_null: true
 ## Counters
 - on_enable_count: 2
 - initialize_count: 2
-- on_episode_begin_count: 10
+- on_episode_begin_count: 5
 - collect_observations_count: 2
 - write_mask_count: 0
 - heuristic_count: 0
@@ -25,4 +25,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-05-11T00:11:07.9979753Z
+generated_utc: 2026-05-11T08:23:19.9895091Z

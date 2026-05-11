@@ -5,12 +5,12 @@ trainer_controlled_mode_prepared: true
 scene_path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
 
 ## Before
-- behavior_name_runtime: My Behavior
+- behavior_name_runtime: Stage7B_RTS_Student
 - behavior_type_runtime: Default
 - decision_requester_enabled: true
-- teacher_replay_orchestrator_enabled: true
+- teacher_replay_orchestrator_enabled: false
 - manual_loop_enabled: false
-- watchdog_manual_fallback_enabled: true
+- watchdog_manual_fallback_enabled: false
 
 ## After
 - behavior_name_runtime: Stage7B_RTS_Student
@@ -33,4 +33,4 @@ scene_path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
 - stage6b3_baseline_touched: false
 - notes: TrainerControlled preflight only. Training was not started.
 
-generated_at_utc: 2026-05-10T23:28:53.1794265Z
+generated_at_utc: 2026-05-11T08:21:50.6357145Z

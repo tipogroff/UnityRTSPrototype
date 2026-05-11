@@ -1,0 +1,73 @@
+{
+  "status": "NO-GO",
+  "run_id": "Stage7B_ImitationSmoke_005",
+  "scene_path": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+  "command": "python/stage7b_mlagents/.venv_mlagents/Scripts/mlagents-learn.exe config/stage7b_imitation_smoke.yaml --run-id Stage7B_ImitationSmoke_005 --force",
+  "config_path": "config/stage7b_imitation_smoke.yaml",
+  "pre_run_diagnostics": {
+    "behavior_name_runtime": "Stage7B_RTS_Student",
+    "behavior_type_runtime": "Default",
+    "decision_requester_enabled": true,
+    "decision_period": 1,
+    "take_actions_between_decisions": false,
+    "manual_loop_enabled": false,
+    "watchdog_manual_fallback_enabled": false,
+    "teacher_replay_orchestrator_enabled": false,
+    "student_teacher_replay_orchestrator_is_null": true,
+    "demo_mode_active": false
+  },
+  "trainer_result": {
+    "trainer_started": true,
+    "config_loaded": true,
+    "unity_connected": true,
+    "behavior_name_matched": true,
+    "behavior_type_runtime": "Default",
+    "decision_requester_enabled": true,
+    "decision_period": 1,
+    "teacher_replay_orchestrator_enabled": false,
+    "student_teacher_replay_orchestrator_is_null": true,
+    "manual_loop_enabled": false,
+    "watchdog_manual_fallback_enabled": false,
+    "demo_mode_active": false,
+    "training_steps_completed": 10000,
+    "loss_nan_detected": false,
+    "reward_nan_detected": false,
+    "unity_time_out_exception": false,
+    "trainer_reset_env_timeout": false,
+    "trainer_exit_code": 1,
+    "trainer_error_summary": "Module onnx is not installed during final model export/save; not a manual stop.",
+    "manual_stop_after_smoke_criteria": false
+  },
+  "artifacts": {
+    "trainer_log": "python/stage7b_teacher_replay/stage7b_8b3_imitation_smoke_trainer.log",
+    "results_dir": "results/Stage7B_ImitationSmoke_005",
+    "tfevents_paths_found": [
+      "results/Stage7B_ImitationSmoke_005/Stage7B_RTS_Student/events.out.tfevents.1778487746.grozov.24376.0"
+    ],
+    "checkpoint_saved": false,
+    "checkpoint_paths_found": [],
+    "tfevents_saved": true,
+    "generated_files": [
+      "results/Stage7B_ImitationSmoke_005/configuration.yaml",
+      "results/Stage7B_ImitationSmoke_005/run_logs/timers.json",
+      "results/Stage7B_ImitationSmoke_005/run_logs/training_status.json",
+      "results/Stage7B_ImitationSmoke_005/Stage7B_RTS_Student/events.out.tfevents.1778487746.grozov.24376.0"
+    ]
+  },
+  "unity_console": {
+    "errors_before": 0,
+    "warnings_before": 0,
+    "errors_after": 0,
+    "warnings_after": 0,
+    "unity_console_errors": 0,
+    "unity_console_warnings": 0
+  },
+  "blocker": {
+    "type": "trainer_export_failure",
+    "detail": "torch.onnx.errors.OnnxExporterError: Module onnx is not installed!",
+    "phase": "after training, during final model save/export",
+    "classification": "not a manual stop"
+  },
+  "decision": "NO-GO",
+  "reason": "Trainer-controlled imitation smoke reached 10000 steps with no NaN and zero Unity Console errors, but the run did not finish cleanly: final checkpoint/export failed because the environment is missing the Python onnx package, so checkpoint_saved is false and trainer_exit_code=1 is not a valid manual-stop outcome."
+}
