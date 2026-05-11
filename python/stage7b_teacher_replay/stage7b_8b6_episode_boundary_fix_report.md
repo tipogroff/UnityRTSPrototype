@@ -2,7 +2,7 @@
 
 status: IN_PROGRESS
 suspected_blocker: unknown
-trainer_connected: true
+trainer_connected: false
 behavior_name_runtime: Stage7B_RTS_Student
 behavior_type_runtime: Default
 decision_requester_enabled: true
@@ -16,15 +16,15 @@ student_teacher_replay_orchestrator_is_null: true
 - start_count: 1
 - initialize_count: 2
 - on_episode_begin_count: 1
-- collect_observations_count: 2018
-- write_mask_count: 2017
+- collect_observations_count: 3
+- write_mask_count: 2
 - heuristic_count: 0
-- on_action_received_count: 2017
+- on_action_received_count: 2
 - end_episode_count: 0
 - first_write_mask_frame: 1
-- first_write_mask_time: 8,778007
+- first_write_mask_time: 14,30802
 - first_on_action_received_frame: 1
-- first_on_action_received_time: 9,54829
+- first_on_action_received_time: 14,34454
 
 ## StartNewEpisode Boundary
 - bootstrap_start_new_episode_count: 1
@@ -40,7 +40,7 @@ student_teacher_replay_orchestrator_is_null: true
 - trainer_controlled_kick_decision_request_count: 1
 
 ## Timeout Classification
-- timeout_phase_classification: after_on_action_received_or_later
+- timeout_phase_classification: before_communicator_after_on_action_received_or_later
 - last_lifecycle_event: StudentMlAgent.OnActionReceived.exit
 - lifecycle_trace_path: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
 
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-05-11T16:47:10.2424343Z
+generated_utc: 2026-05-11T19:20:27.2248518Z
