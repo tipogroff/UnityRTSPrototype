@@ -690,7 +690,6 @@ GameObject:
   m_Component:
   - component: {fileID: 477664554}
   - component: {fileID: 477664553}
-  - component: {fileID: 477664552}
   - component: {fileID: 477664551}
   - component: {fileID: 477664550}
   m_Layer: 0
@@ -721,11 +720,11 @@ MonoBehaviour:
   _manualFixedUpdateDecisionRequests: 0
   _allowConcurrentDecisionSourcesForDebug: 0
   _enableDecisionRequesterWatchdogFallback: 0
-  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-  _actionTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d1_action_trace.jsonl
-  _runtimeApplyTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d1_runtime_apply_trace.jsonl
-  _decisionSchedulerTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl
-  _stage7BMaxDecisionsPerEpisode: 1500
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_actual_collect_observations_trace.jsonl
+  _actionTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_action_trace.jsonl
+  _runtimeApplyTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_runtime_apply_trace.jsonl
+  _decisionSchedulerTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_decision_scheduler_trace.jsonl
+  _stage7BMaxDecisionsPerEpisode: 6000
   _logRejectedActions: 0
 --- !u!114 &477664551
 MonoBehaviour:
@@ -742,22 +741,6 @@ MonoBehaviour:
   DecisionPeriod: 1
   DecisionStep: 0
   TakeActionsBetweenDecisions: 0
---- !u!114 &477664552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 477664549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Agent
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
 --- !u!114 &477664553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,7 +765,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: 6d127165551f3de4d97e97652c4979c5, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 2
+  m_BehaviorType: 0
   m_BehaviorName: Stage7B_RTS_Student
   TeamId: 0
   m_UseChildSensors: 1
@@ -1252,10 +1235,11 @@ MonoBehaviour:
   _stepScriptedOpponent: 1
   _ensureWeek6StaticHarvestLayout: 1
   _fallbackConfig: {fileID: 0}
+  _stage7BMatchMaxSteps: 6000
   _scenarioPreset: 3
   _startResources: 60
-  _stage7BRuntimeMode: 3
-  _forceTrainerControlledMode: 0
+  _stage7BRuntimeMode: 2
+  _forceTrainerControlledMode: 1
 --- !u!4 &1539652542
 Transform:
   m_ObjectHideFlags: 0
@@ -1283,10 +1267,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e270efbe8f08e0c498b5d9c215b0f1b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.MLAgents.Stage7B.Diagnostics.Stage7BInferenceSmokeDiagnostics
-  _reportJsonRelativePath: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.json
-  _reportMdRelativePath: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.md
-  _traceJsonlRelativePath: python/stage7b_teacher_replay/stage7b_8c2_inference_lifecycle_trace.jsonl
-  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
+  _reportJsonRelativePath: python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json
+  _reportMdRelativePath: python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.md
+  _traceJsonlRelativePath: python/stage7b_teacher_replay/stage7b_8d1_inference_lifecycle_trace.jsonl
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
   _agentInventoryRelativePath: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
   _sourceTraceRelativePath: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
   _writeIntervalSeconds: 1

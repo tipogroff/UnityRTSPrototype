@@ -1,0 +1,7 @@
+﻿{
+    "run_id":  "Stage7B_PPOFineTuneSmoke_002",
+    "native_trainer_exit_code":  1,
+    "shell_wrapper_exit_code":  1,
+    "stderr_has_warnings":  true,
+    "logged_at_utc":  "2026-05-11T16:33:54.8872037Z"
+}

@@ -51,8 +51,9 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string DecisionsTarget8DKey = "RTS.MLAgents.Stage7B.Inference8D.DecisionsTarget";
         private const double MinPlayDurationSecondsBeforeExit = 10d;
         private const double TimeoutSeconds = 300d;
-        private const double Timeout8DSeconds = 1200d;
-        private const int DefaultDecisionsTarget8D = 1000;
+        private const double Timeout8DSeconds = 1800d;
+        private const int DefaultDecisionsTarget8D = 3000;
+        private const int FullHorizonDecisionsTarget8D = 6000;
 
         static Stage7BInferenceMode8CMenu()
         {
@@ -248,6 +249,36 @@ namespace RTS.MLAgents.Stage7B.Editor
             SessionState.SetInt(DecisionsTarget8DKey, DefaultDecisionsTarget8D);
             SessionState.SetString(StartedAtTicks8DKey, DateTime.UtcNow.Ticks.ToString());
             Debug.Log("[Stage7B][8D] Entering Play Mode for extended inference smoke run.");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("RTS/Week7/Stage7B/Run Full Horizon ONNX Inference Smoke 8D.2")]
+        public static void RunFullHorizonInferenceSmoke8D()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B][8D2] Run menu must be started from Edit Mode.");
+                return;
+            }
+
+            PrepareInferenceMode8C();
+            ConfigureForExtended8DArtifacts();
+            DeleteIfExists(Report8DJsonPath);
+            DeleteIfExists(Report8DMdPath);
+            DeleteIfExists(Trace8DJsonlPath);
+            DeleteIfExists(Collect8DTraceJsonlPath);
+            DeleteIfExists(Action8DTraceJsonlPath);
+            DeleteIfExists(RuntimeApply8DTraceJsonlPath);
+            DeleteIfExists(DecisionScheduler8DTraceJsonlPath);
+            DeleteIfExists(AgentInventory8DJsonPath);
+            DeleteIfExists(ConsoleExport8DJsonPath);
+
+            SessionState.SetBool(PendingRun8DKey, true);
+            SessionState.SetBool(TriggeredRun8DKey, false);
+            SessionState.SetBool(TimeoutHandled8DKey, false);
+            SessionState.SetInt(DecisionsTarget8DKey, FullHorizonDecisionsTarget8D);
+            SessionState.SetString(StartedAtTicks8DKey, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B][8D2] Entering Play Mode for full-horizon inference run.");
             EditorApplication.isPlaying = true;
         }
 

@@ -33,6 +33,7 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private bool _stepScriptedOpponent = true;
         [SerializeField] private bool _ensureWeek6StaticHarvestLayout = true;
         [SerializeField] private GameConfig _fallbackConfig;
+        [SerializeField] private int _stage7BMatchMaxSteps = 6000;
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24;
         [SerializeField] private int _startResources = 60;
         [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
@@ -72,6 +73,7 @@ namespace RTS.MLAgents.Stage7B
         private int _bootstrapFixedTick;
         private int _inferenceReadyAfterFixedTick;
         private bool _inferenceRuntimeReady;
+        private GameConfig _runtimeConfigOverride;
 
         private void Awake()
         {
@@ -266,7 +268,7 @@ namespace RTS.MLAgents.Stage7B
                 requester.enabled = ShouldEnableDecisionRequester(RuntimeMode, _hasRuntimeEpisodeStarted);
             }
 
-            StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
+            StudentAgent.MaxStep = ResolveConfiguredMatchMaxSteps();
             ApplyRuntimeModeConfiguration();
 
             if (Application.isPlaying && StudentAgent.isActiveAndEnabled)
@@ -458,7 +460,9 @@ namespace RTS.MLAgents.Stage7B
                 _fallbackConfig = LoadDefaultConfig();
             }
 
-            SetPrivateField(MatchBootstrap, "_config", _fallbackConfig);
+            GameConfig configuredGameConfig = ResolveConfiguredGameConfig();
+
+            SetPrivateField(MatchBootstrap, "_config", configuredGameConfig);
             SetPrivateField(MatchBootstrap, "_scenarioPreset", _scenarioPreset);
             SetPrivateField(
                 MatchBootstrap,
@@ -728,6 +732,45 @@ namespace RTS.MLAgents.Stage7B
 #else
             return null;
 #endif
+        }
+
+        private GameConfig ResolveConfiguredGameConfig()
+        {
+            if (_fallbackConfig == null)
+            {
+                return null;
+            }
+
+            int configuredMaxSteps = ResolveConfiguredMatchMaxSteps();
+            if (_fallbackConfig.maxEpisodeSteps == configuredMaxSteps)
+            {
+                _runtimeConfigOverride = null;
+                return _fallbackConfig;
+            }
+
+            if (_runtimeConfigOverride == null)
+            {
+                _runtimeConfigOverride = Instantiate(_fallbackConfig);
+                _runtimeConfigOverride.name = _fallbackConfig.name + "_Stage7B_RuntimeOverride";
+            }
+
+            _runtimeConfigOverride.maxEpisodeSteps = configuredMaxSteps;
+            return _runtimeConfigOverride;
+        }
+
+        private int ResolveConfiguredMatchMaxSteps()
+        {
+            if (_stage7BMatchMaxSteps > 0)
+            {
+                return _stage7BMatchMaxSteps;
+            }
+
+            if (_fallbackConfig != null && _fallbackConfig.maxEpisodeSteps > 0)
+            {
+                return _fallbackConfig.maxEpisodeSteps;
+            }
+
+            return GameConstants.MaxEpisodeSteps;
         }
     }
 }

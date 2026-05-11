@@ -1,0 +1,39 @@
+{
+  "stage": "Stage7B MatchManager Horizon Alignment",
+  "scope": "Stage7B-only",
+  "generated_at_utc": "2026-05-11T16:12:30Z",
+  "objective": {
+    "decision_cap_target": 6000,
+    "matchmanager_max_step_target": 6000
+  },
+  "result": {
+    "alignment_status": "GO",
+    "decision_cap_scene": 6000,
+    "matchmanager_max_steps_runtime": 6000,
+    "step_limit_reached_detected": false,
+    "episode_terminal_reason": "EnemyBaseDestroyed"
+  },
+  "implemented_change": {
+    "file": "Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs",
+    "summary": "Added Stage7B runtime-only max-step override (default 6000), aligned StudentAgent.MaxStep to the same resolved value, and injected a runtime GameConfig clone into MatchBootstrap to avoid mutating shared assets."
+  },
+  "validation_evidence": {
+    "unity_menu_run": "RTS/Week7/Stage7B/Run Extended ONNX Inference Smoke 8D.1",
+    "primary_report": "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json",
+    "primary_report_generated_at_utc": "2026-05-11T16:11:46.4475352Z",
+    "primary_report_match_max_steps": 6000,
+    "primary_report_match_end_reason": "None",
+    "primary_report_match_state_end": "Running",
+    "primary_report_decision_requester_enabled_runtime": true,
+    "primary_report_runtime_apply_attempted": 378,
+    "primary_report_runtime_apply_accepted": 378,
+    "primary_report_runtime_apply_rejected": 0,
+    "primary_report_unity_console_errors": 0,
+    "scene_decision_cap_field": "_stage7BMaxDecisionsPerEpisode: 6000"
+  },
+  "notes": [
+    "Global GameConstants.MaxEpisodeSteps was not changed.",
+    "Shared asset Assets/ML/GameConfig_MVP.asset was not edited; Stage7B override is runtime-local.",
+    "The 8D.1 report still has final_decision=NO_GO for an unrelated observation-contract blocker (code C)."
+  ]
+}

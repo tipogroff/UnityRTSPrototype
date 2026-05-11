@@ -1,0 +1,89 @@
+{
+  "stage": "Stage7B Episode Duration Tuning v3",
+  "scope": "Stage7B-only",
+  "generated_at_utc": "2026-05-11T15:53:45.0989180Z",
+  "change_summary": {
+    "stage7b_max_decisions_per_episode": {
+      "old": 1500,
+      "new": 6000
+    },
+    "extended_smoke_decisions_target": {
+      "old": 1000,
+      "new": 3000
+    },
+    "smoke_timeout_seconds": {
+      "old": 1200,
+      "new": 1800
+    },
+    "mlagents_max_step_limit_effective": false,
+    "mlagents_max_step_field": 0,
+    "scene_match_max_steps": 2000
+  },
+  "changed_files": [
+    {
+      "path": "Assets/Scripts/MLAgents/Stage7B/Editor/Stage7BInferenceMode8CMenu.cs",
+      "old_value": "Timeout8DSeconds=1200, DefaultDecisionsTarget8D=1000, no full-horizon 6000 run mode",
+      "new_value": "Timeout8DSeconds=1800, DefaultDecisionsTarget8D=3000, FullHorizonDecisionsTarget8D=6000, added Run Full Horizon ONNX Inference Smoke 8D.2",
+      "scope": "Stage7B-only"
+    },
+    {
+      "path": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+      "old_value": "_stage7BMaxDecisionsPerEpisode=1500",
+      "new_value": "_stage7BMaxDecisionsPerEpisode=6000",
+      "scope": "Stage7B-only"
+    },
+    {
+      "path": "Assets/Scripts/MLAgents/Stage7B/Diagnostics/Stage7BInferenceSmokeDiagnostics.cs",
+      "old_value": "No base-count or end-state fields in the smoke report snapshot",
+      "new_value": "Added match_state_end, match_step, match_max_steps, match_end_reason, player1_unit_count, player2_unit_count, player1_base_count, player2_base_count, player1_base_alive, player2_base_alive",
+      "scope": "Stage7B-only"
+    }
+  ],
+  "validation": {
+    "decisions_completed": 2542,
+    "on_action_received_count": 2542,
+    "actual_collect_calls": 2544,
+    "episode_terminal_reached": false,
+    "episode_terminal_reason": "none",
+    "run_end_reason": "manual_stop_after_2000_plus_band",
+    "match_state_end": "Running",
+    "match_step": 542,
+    "match_end_reason": "None",
+    "reset_count": 3,
+    "base_state": {
+      "player1": {
+        "count": 1,
+        "alive": true
+      },
+      "player2": {
+        "count": 1,
+        "alive": true
+      }
+    },
+    "action_counts": {
+      "noop": 109,
+      "move": 2269,
+      "harvest": 41,
+      "return": 5,
+      "produce": 109,
+      "attack": 9
+    },
+    "scripted_pacing": {
+      "decision_requester_enabled_runtime": true,
+      "inference_kick_decision_request_count": 3,
+      "manual_loop_enabled": false,
+      "watchdog_manual_fallback_enabled": false,
+      "demo_mode_active": false,
+      "runtime_apply_attempted": 2542,
+      "runtime_apply_accepted": 2542,
+      "runtime_apply_rejected": 0,
+      "candidate_builder_success_count": 5084,
+      "candidate_action_index_last": 33,
+      "no_heuristic_fallback": true
+    },
+    "unity_console": {
+      "errors": 0,
+      "warnings": 0
+    }
+  }
+}

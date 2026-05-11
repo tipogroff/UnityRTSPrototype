@@ -128,6 +128,16 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public bool demo_mode_active;
             public bool duplicate_spawn_detected;
             public string match_state;
+            public string match_state_end;
+            public int match_step;
+            public int match_max_steps;
+            public string match_end_reason;
+            public int player1_unit_count;
+            public int player2_unit_count;
+            public int player1_base_count;
+            public int player2_base_count;
+            public bool player1_base_alive;
+            public bool player2_base_alive;
             public bool episode_terminal_reached;
             public string episode_terminal_reason;
 
@@ -346,9 +356,18 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             bool watchdogEnabled = agent != null
                 && (agent.DecisionRequesterWatchdogFallbackEnabled || agent.DecisionRequesterWatchdogFallbackActive);
             bool demoModeActive = agent != null && agent.TeacherReplayOrchestrator != null && agent.TeacherReplayOrchestrator.IsActive;
+            MatchStateSnapshot? matchSnapshot = bootstrap != null && bootstrap.MatchManager != null
+                ? bootstrap.MatchManager.GetMatchState()
+                : (MatchStateSnapshot?)null;
             string matchState = bootstrap != null && bootstrap.MatchManager != null
                 ? bootstrap.MatchManager.Phase.ToString()
                 : "missing";
+            string matchStateEnd = matchSnapshot.HasValue ? matchSnapshot.Value.Phase.ToString() : matchState;
+            string matchEndReason = matchSnapshot.HasValue ? matchSnapshot.Value.EndReason.ToString() : "missing";
+            int player1UnitCount = matchSnapshot.HasValue ? matchSnapshot.Value.Player1UnitCount : -1;
+            int player2UnitCount = matchSnapshot.HasValue ? matchSnapshot.Value.Player2UnitCount : -1;
+            int player1BaseCount = matchSnapshot.HasValue ? matchSnapshot.Value.Player1BaseCount : -1;
+            int player2BaseCount = matchSnapshot.HasValue ? matchSnapshot.Value.Player2BaseCount : -1;
             bool episodeTerminal = agent != null && agent.TerminalCount > 0;
             string terminalReason = agent != null ? agent.Trace.TerminalReason : "none";
             bool modelAssigned = behavior != null && behavior.Model != null;
@@ -522,6 +541,16 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 demo_mode_active = demoModeActive,
                 duplicate_spawn_detected = bootstrap != null && bootstrap.DuplicateSpawnDetected,
                 match_state = matchState,
+                match_state_end = matchStateEnd,
+                match_step = matchSnapshot.HasValue ? matchSnapshot.Value.Step : -1,
+                match_max_steps = matchSnapshot.HasValue ? matchSnapshot.Value.MaxSteps : -1,
+                match_end_reason = matchEndReason,
+                player1_unit_count = player1UnitCount,
+                player2_unit_count = player2UnitCount,
+                player1_base_count = player1BaseCount,
+                player2_base_count = player2BaseCount,
+                player1_base_alive = player1BaseCount > 0,
+                player2_base_alive = player2BaseCount > 0,
                 episode_terminal_reached = episodeTerminal,
                 episode_terminal_reason = terminalReason,
 
