@@ -20,6 +20,7 @@ namespace RTS.MLAgents.Stage7B
         HeuristicDryRun = 0,
         TeacherReplayDemoRecording = 1,
         TrainerControlled = 2,
+        InferenceOnly = 3,
     }
 
     [DisallowMultipleComponent]
@@ -67,6 +68,10 @@ namespace RTS.MLAgents.Stage7B
         private string _lastStartNewEpisodeReason = "none";
         private string _lastStartNewEpisodeCaller = "none";
         private string _lastStartNewEpisodePath = "none";
+        private bool _deferredStudentEnableForInference;
+        private int _bootstrapFixedTick;
+        private int _inferenceReadyAfterFixedTick;
+        private bool _inferenceRuntimeReady;
 
         private void Awake()
         {
@@ -77,6 +82,16 @@ namespace RTS.MLAgents.Stage7B
             ConfigureMatchBootstrap();
             EnsureAcademyAutomaticStepping();
             EnsureMlAgentObject();
+
+            if (RuntimeMode == Stage7BRuntimeMode.InferenceOnly
+                && Application.isPlaying
+                && StudentAgent != null
+                && StudentAgent.enabled)
+            {
+                StudentAgent.enabled = false;
+                _deferredStudentEnableForInference = true;
+            }
+
             Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.exit", StudentAgent, this);
         }
 
@@ -91,7 +106,24 @@ namespace RTS.MLAgents.Stage7B
             {
                 StartNewEpisode("bootstrap_start", nameof(MlAgentsTrainingBootstrap) + "." + nameof(Start));
             }
+
+            ApplyRuntimeModeConfiguration();
+
+            if (_deferredStudentEnableForInference
+                && StudentAgent != null
+                && !StudentAgent.enabled)
+            {
+                StudentAgent.enabled = true;
+                _deferredStudentEnableForInference = false;
+            }
+
             Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Start.exit", StudentAgent, this);
+        }
+
+        private void FixedUpdate()
+        {
+            _bootstrapFixedTick++;
+            UpdateInferenceRuntimeReadyState();
         }
 
         private void OnDestroy()
@@ -140,6 +172,7 @@ namespace RTS.MLAgents.Stage7B
                 DuplicateSpawnDetected = DetectDuplicateSpawn();
                 ScriptedOpponentPacing?.ResetForEpisode(DuplicateSpawnDetected);
                 _hasRuntimeEpisodeStarted = true;
+                ArmInferenceRuntimeReadyGateAfterEpisodeStart();
                 Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.exit", StudentAgent, this);
                 return true;
             }
@@ -202,6 +235,8 @@ namespace RTS.MLAgents.Stage7B
                 StudentAgent = host.AddComponent<StudentMlAgent>();
             }
 
+            RemoveUnexpectedAgentComponents(StudentAgent.gameObject);
+
             StudentAgent.Configure(this, _studentPlayer);
 
             if (!_autoConfigureMlAgents)
@@ -214,9 +249,7 @@ namespace RTS.MLAgents.Stage7B
             if (behavior != null)
             {
                 behavior.BehaviorName = "Stage7B_RTS_Student";
-                behavior.BehaviorType = RuntimeMode == Stage7BRuntimeMode.TrainerControlled
-                    ? BehaviorType.Default
-                    : BehaviorType.HeuristicOnly;
+                behavior.BehaviorType = ResolveBehaviorType(RuntimeMode);
                 behavior.TeamId = _studentPlayer == Owner.Player1 ? 0 : 1;
                 behavior.BrainParameters.VectorObservationSize = ObservationContract.TotalFloats;
                 behavior.BrainParameters.NumStackedVectorObservations = 1;
@@ -230,7 +263,7 @@ namespace RTS.MLAgents.Stage7B
                 requester.DecisionPeriod = 1;
                 requester.DecisionStep = 0;
                 requester.TakeActionsBetweenDecisions = false;
-                requester.enabled = RuntimeMode == Stage7BRuntimeMode.TrainerControlled;
+                requester.enabled = ShouldEnableDecisionRequester(RuntimeMode, _hasRuntimeEpisodeStarted);
             }
 
             StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
@@ -280,9 +313,7 @@ namespace RTS.MLAgents.Stage7B
             if (behavior != null)
             {
                 behavior.BehaviorName = "Stage7B_RTS_Student";
-                behavior.BehaviorType = mode == Stage7BRuntimeMode.TrainerControlled
-                    ? BehaviorType.Default
-                    : BehaviorType.HeuristicOnly;
+                behavior.BehaviorType = ResolveBehaviorType(mode);
             }
 
             if (requester != null)
@@ -290,14 +321,88 @@ namespace RTS.MLAgents.Stage7B
                 requester.DecisionPeriod = 1;
                 requester.DecisionStep = 0;
                 requester.TakeActionsBetweenDecisions = false;
-                requester.enabled = mode == Stage7BRuntimeMode.TrainerControlled;
+                requester.enabled = ShouldEnableDecisionRequester(mode, _hasRuntimeEpisodeStarted);
             }
 
-            if (mode == Stage7BRuntimeMode.TrainerControlled)
+            if (mode == Stage7BRuntimeMode.TrainerControlled || mode == Stage7BRuntimeMode.InferenceOnly)
             {
                 StudentAgent.ConfigureForTrainerControlledMode();
                 DisableTeacherReplayOrchestrators();
             }
+        }
+
+        private static BehaviorType ResolveBehaviorType(Stage7BRuntimeMode mode)
+        {
+            return mode switch
+            {
+                Stage7BRuntimeMode.TrainerControlled => BehaviorType.Default,
+                Stage7BRuntimeMode.InferenceOnly => BehaviorType.InferenceOnly,
+                _ => BehaviorType.HeuristicOnly,
+            };
+        }
+
+        private static bool ShouldEnableDecisionRequester(Stage7BRuntimeMode mode, bool runtimeEpisodeStarted)
+        {
+            if (mode == Stage7BRuntimeMode.TrainerControlled)
+            {
+                return true;
+            }
+
+            if (mode == Stage7BRuntimeMode.InferenceOnly)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public bool InferenceRuntimeReady => RuntimeMode != Stage7BRuntimeMode.InferenceOnly || _inferenceRuntimeReady;
+
+        public int BootstrapFixedTick => _bootstrapFixedTick;
+
+        private void ArmInferenceRuntimeReadyGateAfterEpisodeStart()
+        {
+            if (RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                _inferenceRuntimeReady = _hasRuntimeEpisodeStarted
+                    && MatchManager != null
+                    && MatchManager.Phase == MatchPhase.Running;
+                _inferenceReadyAfterFixedTick = _bootstrapFixedTick;
+                return;
+            }
+
+            // Hold first inference decision until at least the next fixed tick after runtime setup.
+            _inferenceRuntimeReady = false;
+            _inferenceReadyAfterFixedTick = _bootstrapFixedTick + 1;
+        }
+
+        private void UpdateInferenceRuntimeReadyState()
+        {
+            if (RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return;
+            }
+
+            if (_inferenceRuntimeReady)
+            {
+                return;
+            }
+
+            bool runtimeStable = _hasRuntimeEpisodeStarted
+                && !_isStartingEpisode
+                && MatchManager != null
+                && MatchManager.Phase == MatchPhase.Running;
+            if (!runtimeStable)
+            {
+                return;
+            }
+
+            if (_bootstrapFixedTick < _inferenceReadyAfterFixedTick)
+            {
+                return;
+            }
+
+            _inferenceRuntimeReady = true;
         }
 
         private static void DisableTeacherReplayOrchestrators()
@@ -313,6 +418,35 @@ namespace RTS.MLAgents.Stage7B
                 if (orchestrator != null && orchestrator.enabled)
                 {
                     orchestrator.enabled = false;
+                }
+            }
+        }
+
+        private static void RemoveUnexpectedAgentComponents(GameObject host)
+        {
+            if (host == null)
+            {
+                return;
+            }
+
+            Agent[] agents = host.GetComponents<Agent>();
+            for (int i = 0; i < agents.Length; i++)
+            {
+                Agent agent = agents[i];
+                if (agent == null || agent is StudentMlAgent)
+                {
+                    continue;
+                }
+
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    DestroyImmediate(agent);
+                }
+                else
+#endif
+                {
+                    Destroy(agent);
                 }
             }
         }

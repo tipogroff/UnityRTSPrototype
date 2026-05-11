@@ -14,7 +14,7 @@
   "observation_nan_count": 0,
   "observation_min": 0,
   "observation_max": 1,
-  "collect_observations_calls": 2,
+  "collect_observations_calls": 3,
   "write_mask_calls": 1,
   "on_action_received_calls": 1,
   "candidate_count_min": 12,
@@ -32,7 +32,7 @@
   "rejected_commands": 0,
   "reject_reason_histogram": {
   },
-  "reward_sum": 0.02,
+  "reward_sum": 0,
   "terminal_reason": "none",
   "reset_count": 1,
   "duplicate_spawn_detected": false,

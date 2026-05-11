@@ -4,6 +4,10 @@ using RTS.ML;
 using RTS.MLAgents.Stage7B.CandidateActions;
 using RTS.MLAgents.Stage7B.Diagnostics;
 using RTS.MLAgents.Stage7B.TeacherReplay;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Stopwatch = System.Diagnostics.Stopwatch;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -31,6 +35,7 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private bool _manualFixedUpdateDecisionRequests;
         [SerializeField] private bool _allowConcurrentDecisionSourcesForDebug;
         [SerializeField] private bool _enableDecisionRequesterWatchdogFallback = true;
+        [SerializeField] private string _actualCollectTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl";
         [SerializeField] private int _stage7BMaxDecisionsPerEpisode = 256;
         [SerializeField] private bool _logRejectedActions;
 
@@ -78,6 +83,34 @@ namespace RTS.MLAgents.Stage7B
         private string _onEpisodeBeginStartNewEpisodePath = "none";
         private bool _pendingTrainerControlledKickDecision;
         private int _trainerControlledKickDecisionRequestCount;
+        private int _candidateBuildCallCount;
+        private int _candidateBuilderSuccessCount;
+        private int _actionAdapterResolveCount;
+        private int _actionAdapterSuccessCount;
+        private bool _lastCandidateIndexInRange;
+        private int _runtimeApplyAttemptedCount;
+        private int _runtimeApplyAcceptedCount;
+        private int _runtimeApplyRejectedCount;
+        private int _observationBuilderUsedCount;
+        private int _observationFallbackCount;
+        private int _selectedNoOpActionCount;
+        private int _selectedMoveActionCount;
+        private int _selectedHarvestActionCount;
+        private int _selectedReturnActionCount;
+        private int _selectedProduceActionCount;
+        private int _selectedAttackActionCount;
+        private int _inferenceKickDecisionRequestCount;
+        private bool _inferenceDecisionRequesterActivated;
+        private int _actualCollectCallIndex;
+        private readonly Dictionary<string, int> _runtimeRejectReasonHistogram = new Dictionary<string, int>();
+        private bool _inferenceRuntimeReadyObserved;
+        private int _firstInferenceReadyFrame = -1;
+        private int _firstInferenceReadyFixedTick = -1;
+        private bool _collectObservedSinceLastEnable;
+        private bool _collectObservedSinceLastStart;
+        private bool _collectObservedSinceLastEpisodeBegin;
+        private int _defensivePreReadyObservationCount;
+        private bool _defensivePreReadyObservationUsedAfterRuntimeReady;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
@@ -114,6 +147,30 @@ namespace RTS.MLAgents.Stage7B
         public bool OnEpisodeBeginUsedTrainerControlledEpisodeResetPath => _onEpisodeBeginUsedTrainerControlledEpisodeResetPath;
         public string OnEpisodeBeginStartNewEpisodePath => _onEpisodeBeginStartNewEpisodePath;
         public int TrainerControlledKickDecisionRequestCount => _trainerControlledKickDecisionRequestCount;
+        public int CandidateBuildCallCount => _candidateBuildCallCount;
+        public int CandidateBuilderSuccessCount => _candidateBuilderSuccessCount;
+        public int ActionAdapterResolveCount => _actionAdapterResolveCount;
+        public int ActionAdapterSuccessCount => _actionAdapterSuccessCount;
+        public bool LastCandidateIndexInRange => _lastCandidateIndexInRange;
+        public int RuntimeApplyAttemptedCount => _runtimeApplyAttemptedCount;
+        public int RuntimeApplyAcceptedCount => _runtimeApplyAcceptedCount;
+        public int RuntimeApplyRejectedCount => _runtimeApplyRejectedCount;
+        public int ObservationBuilderUsedCount => _observationBuilderUsedCount;
+        public int ObservationFallbackCount => _observationFallbackCount;
+        public int SelectedNoOpActionCount => _selectedNoOpActionCount;
+        public int SelectedMoveActionCount => _selectedMoveActionCount;
+        public int SelectedHarvestActionCount => _selectedHarvestActionCount;
+        public int SelectedReturnActionCount => _selectedReturnActionCount;
+        public int SelectedProduceActionCount => _selectedProduceActionCount;
+        public int SelectedAttackActionCount => _selectedAttackActionCount;
+        public int InferenceKickDecisionRequestCount => _inferenceKickDecisionRequestCount;
+        public bool InferenceDecisionRequesterActivated => _inferenceDecisionRequesterActivated;
+        public IReadOnlyDictionary<string, int> RuntimeRejectReasonHistogram => _runtimeRejectReasonHistogram;
+        public int DefensivePreReadyObservationCount => _defensivePreReadyObservationCount;
+        public bool DefensivePreReadyObservationUsedAfterRuntimeReady => _defensivePreReadyObservationUsedAfterRuntimeReady;
+        public bool InferenceRuntimeReadyObserved => _inferenceRuntimeReadyObserved;
+        public int FirstInferenceReadyFrame => _firstInferenceReadyFrame;
+        public int FirstInferenceReadyFixedTick => _firstInferenceReadyFixedTick;
 
         /// <summary>
         /// Stage7B-7: Set by Stage7BTeacherReplayDemoOrchestrator to enable teacher-replay-demo
@@ -131,6 +188,7 @@ namespace RTS.MLAgents.Stage7B
         protected override void OnEnable()
         {
             _onEnableCount++;
+            _collectObservedSinceLastEnable = false;
             ConfigureBehaviorParameters();
             ApplyDecisionSourcePolicy();
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEnable.enter", this, _bootstrap);
@@ -141,6 +199,9 @@ namespace RTS.MLAgents.Stage7B
         private void Start()
         {
             _startCount++;
+            _actualCollectCallIndex = 0;
+            _collectObservedSinceLastStart = false;
+            ClearActualCollectTraceFile();
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.Start", this, _bootstrap);
         }
 
@@ -167,6 +228,12 @@ namespace RTS.MLAgents.Stage7B
             _allowConcurrentDecisionSourcesForDebug = false;
             _enableDecisionRequesterWatchdogFallback = false;
             _decisionRequesterWatchdogFallbackActive = false;
+            _inferenceDecisionRequesterActivated = false;
+            _inferenceRuntimeReadyObserved = false;
+            _firstInferenceReadyFrame = -1;
+            _firstInferenceReadyFixedTick = -1;
+            _defensivePreReadyObservationCount = 0;
+            _defensivePreReadyObservationUsedAfterRuntimeReady = false;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             _loggedDecisionSourceGuard = false;
             TeacherReplayOrchestrator = null;
@@ -206,6 +273,8 @@ namespace RTS.MLAgents.Stage7B
             _rewardCollector?.ResetEpisode();
             _episodeDecisionCount = 0;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+            _inferenceDecisionRequesterActivated = false;
+            _collectObservedSinceLastEpisodeBegin = false;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
             _pendingTrainerControlledKickDecision =
@@ -222,6 +291,11 @@ namespace RTS.MLAgents.Stage7B
         {
             ApplyDecisionSourcePolicy();
             UpdateDecisionRequesterWatchdog();
+
+            if (TryActivateInferenceDecisionKick())
+            {
+                return;
+            }
 
             if (TryRequestTrainerControlledKickDecision())
             {
@@ -274,15 +348,60 @@ namespace RTS.MLAgents.Stage7B
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.CollectObservations.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
+
+            _actualCollectCallIndex++;
+            bool observationBuilderCalled = _observationBuilder != null;
+            bool runtimeServicesReady = AreInferenceRuntimeServicesReady();
+            string earlyExitReason = ResolveCollectEarlyExitReason(runtimeServicesReady, observationBuilderCalled);
+            bool firstCallAfterEnable = !_collectObservedSinceLastEnable;
+            bool firstCallAfterStart = !_collectObservedSinceLastStart;
+            bool firstCallAfterEpisodeBegin = !_collectObservedSinceLastEpisodeBegin;
+            bool defensivePreReadyObservation = !runtimeServicesReady;
+
             float[] observation = _observationBuilder != null
                 ? _observationBuilder.BuildObservation(_playerPerspective, ObservationMode.UnityMvpTransfer)
                 : new float[ObservationContract.TotalFloats];
+
+            if (_observationBuilder != null)
+            {
+                _observationBuilderUsedCount++;
+            }
+            else
+            {
+                _observationFallbackCount++;
+            }
 
             ValidateObservation(observation);
             Trace.RecordObservation(observation);
             _lastObservationLength = observation != null ? observation.Length : 0;
             _lastObservationNanCount = Trace.ObservationNanCount;
             sensor.AddObservation(observation);
+
+            if (defensivePreReadyObservation)
+            {
+                _defensivePreReadyObservationCount++;
+                if (_inferenceRuntimeReadyObserved)
+                {
+                    _defensivePreReadyObservationUsedAfterRuntimeReady = true;
+                }
+            }
+
+            _collectObservedSinceLastEnable = true;
+            _collectObservedSinceLastStart = true;
+            _collectObservedSinceLastEpisodeBegin = true;
+
+            AppendActualCollectObservationTrace(
+                _actualCollectCallIndex,
+                runtimeServicesReady,
+                observationBuilderCalled,
+                _lastObservationLength,
+                _observationBuilder == null,
+                earlyExitReason,
+                defensivePreReadyObservation,
+                firstCallAfterEnable,
+                firstCallAfterStart,
+                firstCallAfterEpisodeBegin);
+
             timer.Stop();
             if (_firstCollectObservationsTime < 0f)
             {
@@ -348,10 +467,17 @@ namespace RTS.MLAgents.Stage7B
 
             int selectedIndex = actions.DiscreteActions.Length > 0 ? actions.DiscreteActions[0] : 0;
             _lastActionCandidateIndex = selectedIndex;
+            _lastCandidateIndexInRange = selectedIndex >= 0 && selectedIndex < MlAgentsCandidateActionList.BranchSize;
             _episodeDecisionCount++;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             _bootstrap?.ScriptedOpponentPacing?.RecordStudentActionAttempt();
             AgentAction selectedAction = _actionAdapter.Resolve(_currentCandidates, selectedIndex, out MlAgentsCandidateAction candidate);
+            _actionAdapterResolveCount++;
+            if (!_actionAdapter.LastFallbackToNoOp)
+            {
+                _actionAdapterSuccessCount++;
+            }
+            RecordSelectedActionType(selectedAction.ActionType);
 
             // Stage7B-7: teacher-replay-demo mode — apply action, notify orchestrator, skip
             // reward evaluation and episode-end so the recording loop is not interrupted.
@@ -361,10 +487,20 @@ namespace RTS.MLAgents.Stage7B
                 bool demoAccepted = false;
                 if (_actionApplier != null)
                 {
+                    _runtimeApplyAttemptedCount++;
                     _actionApplier.ResetDiagnostics();
                     demoAccepted = _actionApplier.ApplyAction(
                         selectedAction, _playerPerspective, _currentCandidates?.SourceMask,
                         "stage7b-demo-replay");
+                    if (demoAccepted)
+                    {
+                        _runtimeApplyAcceptedCount++;
+                    }
+                    else
+                    {
+                        _runtimeApplyRejectedCount++;
+                    }
+                    RecordRuntimeRejectReasons(_actionApplier.RejectionReasonsLastStep);
                 }
 
                 if (_bootstrap != null
@@ -410,6 +546,7 @@ namespace RTS.MLAgents.Stage7B
             bool accepted = false;
             if (_actionApplier != null)
             {
+                _runtimeApplyAttemptedCount++;
                 _actionApplier.ResetDiagnostics();
                 accepted = _actionApplier.ApplyAction(
                     selectedAction,
@@ -417,6 +554,16 @@ namespace RTS.MLAgents.Stage7B
                     _currentCandidates?.SourceMask,
                     "stage7b-candidate-action-index");
                 _lastActionAccepted = accepted;
+
+                if (accepted)
+                {
+                    _runtimeApplyAcceptedCount++;
+                }
+                else
+                {
+                    _runtimeApplyRejectedCount++;
+                }
+                RecordRuntimeRejectReasons(_actionApplier.RejectionReasonsLastStep);
 
                 Trace.RecordApplyResult(
                     accepted ? 1 : 0,
@@ -595,6 +742,18 @@ namespace RTS.MLAgents.Stage7B
             DecisionRequester requester = GetComponent<DecisionRequester>();
             bool hasRequester = requester != null;
 
+            if (ShouldSuppressDecisionRequesterForInference())
+            {
+                if (hasRequester && requester.enabled)
+                {
+                    requester.enabled = false;
+                }
+
+                _currentDecisionSource = DecisionSourceNone;
+                Trace.RecordDecisionSource(_currentDecisionSource);
+                return;
+            }
+
             if (_decisionRequesterWatchdogFallbackActive)
             {
                 if (hasRequester && requester.enabled)
@@ -651,6 +810,268 @@ namespace RTS.MLAgents.Stage7B
             Trace.RecordDecisionSource(_currentDecisionSource);
         }
 
+        private bool TryActivateInferenceDecisionKick()
+        {
+            if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return false;
+            }
+
+            DecisionRequester requester = GetComponent<DecisionRequester>();
+            if (requester == null)
+            {
+                return false;
+            }
+
+            ResolveDependencies();
+            bool ready = AreInferenceRuntimeServicesReady();
+            if (!ready)
+            {
+                if (requester.enabled)
+                {
+                    requester.enabled = false;
+                }
+
+                return false;
+            }
+
+            if (!requester.enabled)
+            {
+                requester.enabled = true;
+            }
+
+            if (_inferenceDecisionRequesterActivated)
+            {
+                return false;
+            }
+
+            _inferenceDecisionRequesterActivated = true;
+            _inferenceKickDecisionRequestCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.inference_kick", this, _bootstrap);
+            RequestDecision();
+            return true;
+        }
+
+        private bool ShouldSuppressDecisionRequesterForInference()
+        {
+            if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return false;
+            }
+
+            return !_bootstrap.HasRuntimeEpisodeStarted
+                   || _bootstrap.MatchManager == null
+                   || _bootstrap.MatchManager.Phase != MatchPhase.Running
+                   || _observationBuilder == null
+                   || _candidateBuilder == null
+                   || _actionApplier == null;
+        }
+
+        private bool AreInferenceRuntimeServicesReady()
+        {
+            if (_bootstrap == null)
+            {
+                return false;
+            }
+
+            if (_bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return _bootstrap.MatchManager != null && _bootstrap.MatchManager.Phase == MatchPhase.Running;
+            }
+
+            bool ready = _bootstrap.HasRuntimeEpisodeStarted
+                   && _bootstrap.InferenceRuntimeReady
+                   && _bootstrap.MatchManager != null
+                   && _bootstrap.MatchManager.Phase == MatchPhase.Running
+                   && _observationBuilder != null
+                   && _candidateBuilder != null
+                   && _actionApplier != null;
+
+            if (ready && !_inferenceRuntimeReadyObserved)
+            {
+                _inferenceRuntimeReadyObserved = true;
+                _firstInferenceReadyFrame = Time.frameCount;
+                _firstInferenceReadyFixedTick = _bootstrap.BootstrapFixedTick;
+            }
+
+            return ready;
+        }
+
+        private string ResolveCollectEarlyExitReason(bool runtimeServicesReady, bool observationBuilderCalled)
+        {
+            if (runtimeServicesReady)
+            {
+                return "none";
+            }
+
+            if (_bootstrap == null)
+            {
+                return "bootstrap_missing";
+            }
+
+            if (!_bootstrap.HasRuntimeEpisodeStarted)
+            {
+                return "runtime_episode_not_started";
+            }
+
+            if (_bootstrap.MatchManager == null)
+            {
+                return "match_manager_missing";
+            }
+
+            if (_bootstrap.MatchManager.Phase != MatchPhase.Running)
+            {
+                return "match_not_running";
+            }
+
+            if (!observationBuilderCalled)
+            {
+                return "observation_builder_missing";
+            }
+
+            return "runtime_services_not_ready";
+        }
+
+        private void AppendActualCollectObservationTrace(
+            int callIndex,
+            bool runtimeServicesReady,
+            bool observationBuilderCalled,
+            int valuesAddedToSensor,
+            bool zeroFallbackUsed,
+            string earlyExitReason,
+            bool defensivePreReadyObservation,
+            bool firstCallAfterEnable,
+            bool firstCallAfterStart,
+            bool firstCallAfterEpisodeBegin)
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            try
+            {
+                string path = ResolveProjectPath(_actualCollectTraceRelativePath);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+
+                BehaviorParameters behavior = GetComponent<BehaviorParameters>();
+                string behaviorName = behavior != null ? behavior.BehaviorName : "missing";
+                string behaviorType = behavior != null ? behavior.BehaviorType.ToString() : "missing";
+                string matchState = _bootstrap != null && _bootstrap.MatchManager != null
+                    ? _bootstrap.MatchManager.Phase.ToString()
+                    : "missing";
+                Academy academy = Academy.IsInitialized ? Academy.Instance : null;
+
+                var sb = new StringBuilder(512);
+                sb.Append('{');
+                sb.Append("\"timestamp_utc\":\"").Append(DateTime.UtcNow.ToString("o")).Append("\",");
+                sb.Append("\"call_index\":").Append(callIndex).Append(',');
+                sb.Append("\"frame\":").Append(Time.frameCount).Append(',');
+                sb.Append("\"fixed_time\":").Append(Time.fixedTime.ToString("R", System.Globalization.CultureInfo.InvariantCulture)).Append(',');
+                sb.Append("\"academy_step\":").Append(academy != null ? academy.StepCount : -1L).Append(',');
+                sb.Append("\"bootstrap_fixed_tick\":").Append(_bootstrap != null ? _bootstrap.BootstrapFixedTick : -1).Append(',');
+                sb.Append("\"match_state\":\"").Append(matchState).Append("\",");
+                sb.Append("\"runtime_services_ready\":").Append(runtimeServicesReady ? "true" : "false").Append(',');
+                sb.Append("\"inference_runtime_ready_observed\":").Append(_inferenceRuntimeReadyObserved ? "true" : "false").Append(',');
+                sb.Append("\"observation_builder_called\":").Append(observationBuilderCalled ? "true" : "false").Append(',');
+                sb.Append("\"values_added_to_sensor\":").Append(valuesAddedToSensor).Append(',');
+                sb.Append("\"expected_values\":").Append(ObservationContract.TotalFloats).Append(',');
+                sb.Append("\"zero_fallback_used\":").Append(zeroFallbackUsed ? "true" : "false").Append(',');
+                sb.Append("\"defensive_pre_ready_observation\":").Append(defensivePreReadyObservation ? "true" : "false").Append(',');
+                sb.Append("\"first_call_after_enable\":").Append(firstCallAfterEnable ? "true" : "false").Append(',');
+                sb.Append("\"first_call_after_start\":").Append(firstCallAfterStart ? "true" : "false").Append(',');
+                sb.Append("\"first_call_after_on_episode_begin\":").Append(firstCallAfterEpisodeBegin ? "true" : "false").Append(',');
+                sb.Append("\"early_exit_reason\":\"").Append(EscapeJson(earlyExitReason)).Append("\",");
+                sb.Append("\"agent_gameobject_path\":\"").Append(EscapeJson(GetTransformPath(transform))).Append("\",");
+                sb.Append("\"agent_instance_id\":").Append(GetInstanceID()).Append(',');
+                sb.Append("\"behavior_name\":\"").Append(EscapeJson(behaviorName)).Append("\",");
+                sb.Append("\"behavior_type\":\"").Append(EscapeJson(behaviorType)).Append("\"");
+                sb.Append('}');
+
+                File.AppendAllText(path, sb.ToString() + Environment.NewLine, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Stage7B][8C.2] Failed to append actual collect trace: " + ex.Message);
+            }
+        }
+
+        private void ClearActualCollectTraceFile()
+        {
+            try
+            {
+                string path = ResolveProjectPath(_actualCollectTraceRelativePath);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+
+                string directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                File.WriteAllText(path, string.Empty, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Stage7B][8C.2] Failed to clear actual collect trace: " + ex.Message);
+            }
+        }
+
+        private static string ResolveProjectPath(string relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return string.Empty;
+            }
+
+            string normalized = relativePath.Replace('\\', '/');
+            if (Path.IsPathRooted(normalized))
+            {
+                return normalized;
+            }
+
+            string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Application.dataPath;
+            return Path.Combine(projectRoot, normalized.Replace('/', Path.DirectorySeparatorChar));
+        }
+
+        private static string GetTransformPath(Transform value)
+        {
+            if (value == null)
+            {
+                return "missing";
+            }
+
+            string path = value.name;
+            Transform current = value.parent;
+            while (current != null)
+            {
+                path = current.name + "/" + path;
+                current = current.parent;
+            }
+
+            return path;
+        }
+
+        private static string EscapeJson(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            return value
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n");
+        }
+
         private bool ShouldUseManualFixedUpdateDecisionRequests()
         {
             return _currentDecisionSource == DecisionSourceManualFixedUpdate
@@ -687,12 +1108,63 @@ namespace RTS.MLAgents.Stage7B
 
         private void BuildCandidates()
         {
+            _candidateBuildCallCount++;
             if (_candidateBuilder == null)
             {
                 return;
             }
 
             _currentCandidates = _candidateBuilder.Build(_playerPerspective);
+            if (_currentCandidates != null && _currentCandidates.CandidateCount > 0)
+            {
+                _candidateBuilderSuccessCount++;
+            }
+        }
+
+        private void RecordSelectedActionType(UnitActionType actionType)
+        {
+            switch (actionType)
+            {
+                case UnitActionType.NoOp:
+                    _selectedNoOpActionCount++;
+                    break;
+                case UnitActionType.Move:
+                    _selectedMoveActionCount++;
+                    break;
+                case UnitActionType.Harvest:
+                    _selectedHarvestActionCount++;
+                    break;
+                case UnitActionType.Return:
+                    _selectedReturnActionCount++;
+                    break;
+                case UnitActionType.Produce:
+                    _selectedProduceActionCount++;
+                    break;
+                case UnitActionType.Attack:
+                    _selectedAttackActionCount++;
+                    break;
+            }
+        }
+
+        private void RecordRuntimeRejectReasons(IReadOnlyList<string> reasons)
+        {
+            if (reasons == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < reasons.Count; i++)
+            {
+                string reason = string.IsNullOrWhiteSpace(reasons[i]) ? "unknown" : reasons[i];
+                if (_runtimeRejectReasonHistogram.TryGetValue(reason, out int count))
+                {
+                    _runtimeRejectReasonHistogram[reason] = count + 1;
+                }
+                else
+                {
+                    _runtimeRejectReasonHistogram.Add(reason, 1);
+                }
+            }
         }
 
         private int SelectHeuristicCandidateIndex()
