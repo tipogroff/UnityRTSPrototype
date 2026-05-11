@@ -34,7 +34,7 @@
   },
   "reward_sum": 0,
   "terminal_reason": "none",
-  "reset_count": 6,
+  "reset_count": 9,
   "duplicate_spawn_detected": false,
   "stage6b3_files_touched": false
 }

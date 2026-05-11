@@ -43,12 +43,15 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public bool model_assigned;
             public string inference_device;
             public int on_enable_count;
+            public int awake_count;
+            public int start_count;
             public int initialize_count;
             public int on_episode_begin_count;
             public int collect_observations_count;
             public int write_mask_count;
             public int heuristic_count;
             public int on_action_received_count;
+            public int end_episode_count;
             public int request_decision_count;
             public int request_action_count;
             public float first_collect_observations_time;
@@ -76,6 +79,9 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public string current_decision_source;
             public bool decision_requester_disabled_by_stage7b;
             public string suspected_blocker;
+            public string timeout_phase_classification;
+            public string last_lifecycle_event;
+            public string lifecycle_trace_path;
             public string generated_utc;
         }
 
@@ -138,6 +144,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private Snapshot BuildSnapshot()
         {
+            NormalizeStage8B5OutputPaths();
             StudentMlAgent agent = FindFirstObjectByType<StudentMlAgent>();
             MlAgentsTrainingBootstrap bootstrap = FindFirstObjectByType<MlAgentsTrainingBootstrap>();
             Stage7BTeacherReplayDemoOrchestrator sceneOrchestrator = FindAnyOrchestratorInScene();
@@ -172,6 +179,9 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 current_decision_source = "unknown",
                 decision_requester_disabled_by_stage7b = false,
                 suspected_blocker = "unknown",
+                timeout_phase_classification = "unclassified",
+                last_lifecycle_event = ReadLastLifecycleEvent(),
+                lifecycle_trace_path = "python/stage7b_teacher_replay/stage7b_8b5_lifecycle_trace.jsonl",
                 generated_utc = DateTime.UtcNow.ToString("o")
             };
 
@@ -197,13 +207,16 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                 snapshot.student_teacher_replay_orchestrator_is_null = attachedOrchestrator == null;
                 snapshot.demo_mode_active = attachedOrchestrator != null && attachedOrchestrator.IsActive;
 
+                snapshot.awake_count = agent.AwakeCount;
                 snapshot.on_enable_count = agent.OnEnableCount;
+                snapshot.start_count = agent.StartCount;
                 snapshot.initialize_count = agent.InitializeCount;
                 snapshot.on_episode_begin_count = agent.OnEpisodeBeginCount;
                 snapshot.collect_observations_count = agent.Trace.CollectObservationsCalls;
                 snapshot.write_mask_count = agent.Trace.WriteMaskCalls;
                 snapshot.heuristic_count = agent.HeuristicCallCount;
                 snapshot.on_action_received_count = agent.Trace.OnActionReceivedCalls;
+                snapshot.end_episode_count = agent.EndEpisodeCount;
                 snapshot.request_decision_count = agent.ManualRequestDecisionCount;
                 snapshot.request_action_count = agent.ManualRequestActionCount;
                 snapshot.first_collect_observations_time = agent.FirstCollectObservationsTime;
@@ -259,9 +272,99 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
                                                   && snapshot.on_action_received_count == 0
                                                   && snapshot.collect_observations_count == 0
                                                   && snapshot.application_is_playing;
+            snapshot.timeout_phase_classification = ClassifyTimeoutPhase(snapshot);
             snapshot.suspected_blocker = DetermineSuspectedBlocker(snapshot);
             snapshot.status = snapshot.suspected_blocker == "unknown" ? "IN_PROGRESS" : "DIAGNOSED";
             return snapshot;
+        }
+
+        private void NormalizeStage8B5OutputPaths()
+        {
+            if (!string.IsNullOrWhiteSpace(_diagnosticJsonRelativePath)
+                && _diagnosticJsonRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b5_reset_timeout_diagnostic_report.json";
+            }
+
+            if (!string.IsNullOrWhiteSpace(_diagnosticMdRelativePath)
+                && _diagnosticMdRelativePath.IndexOf("stage7b_8b1_", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b5_reset_timeout_diagnostic_report.md";
+            }
+        }
+
+        private static string ReadLastLifecycleEvent()
+        {
+            string path = ResolveProjectPath("python/stage7b_teacher_replay/stage7b_8b5_lifecycle_trace.jsonl");
+            if (!File.Exists(path))
+            {
+                return "missing_trace";
+            }
+
+            try
+            {
+                string[] lines = File.ReadAllLines(path, Encoding.UTF8);
+                for (int i = lines.Length - 1; i >= 0; i--)
+                {
+                    string line = lines[i];
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    const string token = "\"phase\":\"";
+                    int tokenIndex = line.IndexOf(token, StringComparison.Ordinal);
+                    if (tokenIndex < 0)
+                    {
+                        return line;
+                    }
+
+                    int start = tokenIndex + token.Length;
+                    int end = line.IndexOf('"', start);
+                    return end > start ? line.Substring(start, end - start) : line;
+                }
+            }
+            catch
+            {
+                return "trace_read_failed";
+            }
+
+            return "empty_trace";
+        }
+
+        private static string ClassifyTimeoutPhase(Snapshot s)
+        {
+            if (s.on_episode_begin_count == 0)
+            {
+                return s.trainer_connected
+                    ? "after_unity_connect_before_on_episode_begin"
+                    : "before_unity_connect_before_on_episode_begin";
+            }
+
+            if (s.collect_observations_count == 0)
+            {
+                return s.trainer_connected
+                    ? "after_on_episode_begin_before_collect_observations"
+                    : "before_communicator_after_on_episode_begin_before_collect_observations";
+            }
+
+            if (s.write_mask_count == 0)
+            {
+                return s.trainer_connected
+                    ? "after_collect_observations_before_write_discrete_action_mask"
+                    : "before_communicator_after_collect_observations_before_write_discrete_action_mask";
+            }
+
+            if (s.on_action_received_count == 0)
+            {
+                return s.trainer_connected
+                    ? "after_write_discrete_action_mask_before_on_action_received"
+                    : "before_communicator_after_write_discrete_action_mask_before_on_action_received";
+            }
+
+            return s.trainer_connected
+                ? "after_on_action_received_or_later"
+                : "before_communicator_after_on_action_received_or_later";
         }
 
         private static string DetermineSuspectedBlocker(Snapshot s)
@@ -360,7 +463,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         private static string BuildMarkdown(Snapshot s)
         {
             var sb = new StringBuilder(2048);
-            sb.AppendLine("# Stage7B-8B.1 Training Flow Diagnostic");
+            sb.AppendLine("# Stage7B-8B.5 Unity Reset Timeout Root-Cause Diagnostic");
             sb.AppendLine();
             sb.AppendLine("status: " + s.status);
             sb.AppendLine("suspected_blocker: " + s.suspected_blocker);
@@ -374,12 +477,20 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             sb.AppendLine();
             sb.AppendLine("## Counters");
             sb.AppendLine("- on_enable_count: " + s.on_enable_count);
+            sb.AppendLine("- awake_count: " + s.awake_count);
+            sb.AppendLine("- start_count: " + s.start_count);
             sb.AppendLine("- initialize_count: " + s.initialize_count);
             sb.AppendLine("- on_episode_begin_count: " + s.on_episode_begin_count);
             sb.AppendLine("- collect_observations_count: " + s.collect_observations_count);
             sb.AppendLine("- write_mask_count: " + s.write_mask_count);
             sb.AppendLine("- heuristic_count: " + s.heuristic_count);
             sb.AppendLine("- on_action_received_count: " + s.on_action_received_count);
+            sb.AppendLine("- end_episode_count: " + s.end_episode_count);
+            sb.AppendLine();
+            sb.AppendLine("## Timeout Classification");
+            sb.AppendLine("- timeout_phase_classification: " + s.timeout_phase_classification);
+            sb.AppendLine("- last_lifecycle_event: " + s.last_lifecycle_event);
+            sb.AppendLine("- lifecycle_trace_path: " + s.lifecycle_trace_path);
             sb.AppendLine();
             sb.AppendLine("## Runtime Services");
             sb.AppendLine("- runtime_services_ready: " + s.runtime_services_ready.ToString().ToLowerInvariant());

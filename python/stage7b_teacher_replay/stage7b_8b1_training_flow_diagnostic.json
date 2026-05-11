@@ -1,6 +1,6 @@
 ﻿{
     "status": "DIAGNOSED",
-    "trainer_connected": true,
+    "trainer_connected": false,
     "trainer_timeout_reproduced": false,
     "unity_console_errors": 0,
     "unity_console_warnings": 0,
@@ -27,7 +27,7 @@
     "on_action_received_count": 0,
     "request_decision_count": 0,
     "request_action_count": 0,
-    "first_collect_observations_time": 21.982200622558595,
+    "first_collect_observations_time": 8.895685195922852,
     "first_on_action_received_time": -1.0,
     "first_collect_observations_frame": 0,
     "first_on_action_received_frame": -1,
@@ -42,15 +42,15 @@
     "stage6b3_baseline_touched": false,
     "match_state_after_reset": "Running",
     "duplicate_spawn_detected": false,
-    "first_reset_duration_ms": 1.401,
-    "first_observation_duration_ms": 3.6422000000000005,
+    "first_reset_duration_ms": 1.4601000000000002,
+    "first_observation_duration_ms": 3.6098000000000005,
     "first_write_mask_duration_ms": -1.0,
     "first_on_action_received_duration_ms": -1.0,
     "application_is_playing": true,
-    "time_scale": 20.0,
-    "academy_step_count": 9801,
+    "time_scale": 1.0,
+    "academy_step_count": 8060,
     "current_decision_source": "decision_requester",
     "decision_requester_disabled_by_stage7b": false,
     "suspected_blocker": "no_actions_after_observation_check_request_cycle",
-    "generated_utc": "2026-05-11T08:23:19.9895091Z"
+    "generated_utc": "2026-05-11T08:42:55.6800895Z"
 }

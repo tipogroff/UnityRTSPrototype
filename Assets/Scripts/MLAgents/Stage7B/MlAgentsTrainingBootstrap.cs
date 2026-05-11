@@ -55,16 +55,21 @@ namespace RTS.MLAgents.Stage7B
 
         private void Awake()
         {
+            Stage7BResetTimeoutTrace.ResetSession();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.enter", StudentAgent, this);
             ResolveRuntimeObjects();
             EnsureWeek6StaticHarvestLayout();
             ConfigureMatchBootstrap();
             EnsureAcademyAutomaticStepping();
             EnsureMlAgentObject();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.exit", StudentAgent, this);
         }
 
         private void Start()
         {
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Start.enter", StudentAgent, this);
             StartNewEpisode();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Start.exit", StudentAgent, this);
         }
 
         private void OnDestroy()
@@ -74,24 +79,33 @@ namespace RTS.MLAgents.Stage7B
 
         public void StartNewEpisode()
         {
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.enter", StudentAgent, this);
             ResolveRuntimeObjects();
             EnsureWeek6StaticHarvestLayout();
             ConfigureMatchBootstrap();
             EnsureAcademyAutomaticStepping();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.CleanupRuntimeObjects.enter", StudentAgent, this);
             CleanupRuntimeObjects();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.CleanupRuntimeObjects.exit", StudentAgent, this);
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchBootstrap.Setup.enter", StudentAgent, this);
             MatchBootstrap.Setup();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchBootstrap.Setup.exit", StudentAgent, this);
             ConfigureScriptedOpponent();
             DuplicateSpawnDetected = DetectDuplicateSpawn();
             ScriptedOpponentPacing?.ResetForEpisode(DuplicateSpawnDetected);
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.exit", StudentAgent, this);
         }
 
         public void EnsureReadyForDecision()
         {
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.enter", StudentAgent, this);
             ResolveRuntimeObjects();
             if (MatchManager == null || MatchManager.Phase != MatchPhase.Running)
             {
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.recover", StudentAgent, this);
                 StartNewEpisode();
             }
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.exit", StudentAgent, this);
         }
 
         private void ResolveRuntimeObjects()
@@ -289,6 +303,7 @@ namespace RTS.MLAgents.Stage7B
             GridManager?.InitGrid(GameConstants.MapWidth, GameConstants.MapHeight);
             ResourceManager?.Clear();
             MatchManager?.ResetMatch();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchManager.ResetMatch", StudentAgent, this);
         }
 
         private void EnsureWeek6StaticHarvestLayout()

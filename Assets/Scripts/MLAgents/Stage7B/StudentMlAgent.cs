@@ -67,6 +67,9 @@ namespace RTS.MLAgents.Stage7B
         private double _firstObservationDurationMs = -1d;
         private double _firstWriteMaskDurationMs = -1d;
         private double _firstOnActionReceivedDurationMs = -1d;
+        private int _awakeCount;
+        private int _startCount;
+        private int _endEpisodeCount;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
         public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
@@ -75,6 +78,8 @@ namespace RTS.MLAgents.Stage7B
         public bool DecisionRequesterWatchdogFallbackEnabled => _enableDecisionRequesterWatchdogFallback;
         public bool DecisionRequesterWatchdogFallbackActive => _decisionRequesterWatchdogFallbackActive;
         public int OnEnableCount => _onEnableCount;
+        public int AwakeCount => _awakeCount;
+        public int StartCount => _startCount;
         public int InitializeCount => _initializeCount;
         public int OnEpisodeBeginCount => _onEpisodeBeginCount;
         public int HeuristicCallCount => _heuristicCallCount;
@@ -85,6 +90,7 @@ namespace RTS.MLAgents.Stage7B
         public int LastActionCandidateIndex => _lastActionCandidateIndex;
         public bool LastActionAccepted => _lastActionAccepted;
         public int TerminalCount => _terminalCount;
+        public int EndEpisodeCount => _endEpisodeCount;
         public float FirstCollectObservationsTime => _firstCollectObservationsTime;
         public float FirstOnActionReceivedTime => _firstOnActionReceivedTime;
         public int FirstCollectObservationsFrame => _firstCollectObservationsFrame;
@@ -101,12 +107,26 @@ namespace RTS.MLAgents.Stage7B
         /// </summary>
         internal Stage7BTeacherReplayDemoOrchestrator TeacherReplayOrchestrator { get; set; }
 
+        private void Awake()
+        {
+            _awakeCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Awake", this, _bootstrap);
+        }
+
         protected override void OnEnable()
         {
             _onEnableCount++;
             ConfigureBehaviorParameters();
             ApplyDecisionSourcePolicy();
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEnable.enter", this, _bootstrap);
             base.OnEnable();
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEnable.exit", this, _bootstrap);
+        }
+
+        private void Start()
+        {
+            _startCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Start", this, _bootstrap);
         }
 
         public void Configure(MlAgentsTrainingBootstrap bootstrap, Owner playerPerspective)
@@ -119,9 +139,11 @@ namespace RTS.MLAgents.Stage7B
         public override void Initialize()
         {
             _initializeCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Initialize.enter", this, _bootstrap);
             ResolveDependencies();
             ConfigureBehaviorParameters();
             ApplyDecisionSourcePolicy();
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Initialize.exit", this, _bootstrap);
         }
 
         public void ConfigureForTrainerControlledMode()
@@ -144,6 +166,7 @@ namespace RTS.MLAgents.Stage7B
         public override void OnEpisodeBegin()
         {
             _onEpisodeBeginCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEpisodeBegin.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             _bootstrap?.StartNewEpisode();
@@ -161,6 +184,7 @@ namespace RTS.MLAgents.Stage7B
             {
                 _firstResetDurationMs = timer.Elapsed.TotalMilliseconds;
             }
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnEpisodeBegin.exit", this, _bootstrap);
         }
 
         private void FixedUpdate()
@@ -182,12 +206,14 @@ namespace RTS.MLAgents.Stage7B
             if (_bootstrap.MatchManager.Phase == MatchPhase.Running)
             {
                 _manualRequestDecisionCount++;
+                Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.manual", this, _bootstrap);
                 RequestDecision();
             }
         }
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.CollectObservations.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             float[] observation = _observationBuilder != null
@@ -210,10 +236,17 @@ namespace RTS.MLAgents.Stage7B
             {
                 _firstObservationDurationMs = timer.Elapsed.TotalMilliseconds;
             }
+            Stage7BResetTimeoutTrace.Record(
+                "StudentMlAgent.CollectObservations.exit",
+                this,
+                _bootstrap,
+                observationLength: _lastObservationLength,
+                observationNanCount: _lastObservationNanCount);
         }
 
         public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
         {
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.WriteDiscreteActionMask.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             BuildCandidates();
@@ -227,10 +260,17 @@ namespace RTS.MLAgents.Stage7B
             {
                 _firstWriteMaskDurationMs = timer.Elapsed.TotalMilliseconds;
             }
+            Stage7BResetTimeoutTrace.Record(
+                "StudentMlAgent.WriteDiscreteActionMask.exit",
+                this,
+                _bootstrap,
+                candidateCount: _currentCandidates != null ? _currentCandidates.CandidateCount : -1,
+                maskedSlots: _maskAdapter.LastMaskedEmptySlots);
         }
 
         public override void OnActionReceived(ActionBuffers actions)
         {
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnActionReceived.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             ApplyDecisionSourcePolicy();
@@ -288,6 +328,11 @@ namespace RTS.MLAgents.Stage7B
                 {
                     _firstOnActionReceivedDurationMs = timer.Elapsed.TotalMilliseconds;
                 }
+                Stage7BResetTimeoutTrace.Record(
+                    "StudentMlAgent.OnActionReceived.exit.demo",
+                    this,
+                    _bootstrap,
+                    lastActionIndex: _lastActionCandidateIndex);
                 return;
             }
             Trace.RecordCandidateFallback(
@@ -363,6 +408,8 @@ namespace RTS.MLAgents.Stage7B
                     Trace.RecordTerminal(terminalReason);
                     _terminalCount++;
                     _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport(terminalReason);
+                    _endEpisodeCount++;
+                    Stage7BResetTimeoutTrace.Record("StudentMlAgent.EndEpisode", this, _bootstrap, terminalReason);
                     EndEpisode();
                 }
             }
@@ -371,6 +418,8 @@ namespace RTS.MLAgents.Stage7B
                 Trace.RecordTerminal("runtime-ended");
                 _terminalCount++;
                 _bootstrap?.ScriptedOpponentPacing?.FinalizeEpisodeAndWriteReport("runtime-ended");
+                _endEpisodeCount++;
+                Stage7BResetTimeoutTrace.Record("StudentMlAgent.EndEpisode", this, _bootstrap, "runtime-ended");
                 EndEpisode();
             }
 
@@ -386,11 +435,17 @@ namespace RTS.MLAgents.Stage7B
             {
                 _firstOnActionReceivedDurationMs = timer.Elapsed.TotalMilliseconds;
             }
+            Stage7BResetTimeoutTrace.Record(
+                "StudentMlAgent.OnActionReceived.exit",
+                this,
+                _bootstrap,
+                lastActionIndex: _lastActionCandidateIndex);
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
             _heuristicCallCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Heuristic.enter", this, _bootstrap);
             ResolveDependencies();
             BuildCandidates();
             ActionSegment<int> discrete = actionsOut.DiscreteActions;
@@ -406,14 +461,17 @@ namespace RTS.MLAgents.Stage7B
                 if (orchestrator.TryConsumePendingCandidateIndex(out int replayIndex))
                 {
                     discrete[0] = replayIndex;
+                    Stage7BResetTimeoutTrace.Record("StudentMlAgent.Heuristic.exit", this, _bootstrap, "demo_index");
                     return;
                 }
                 // No pending index this tick — emit NoOp so we don't record unintended actions.
                 discrete[0] = MlAgentsCandidateActionList.NoOpCandidateIndex;
+                Stage7BResetTimeoutTrace.Record("StudentMlAgent.Heuristic.exit", this, _bootstrap, "demo_noop");
                 return;
             }
 
             discrete[0] = SelectHeuristicCandidateIndex();
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.Heuristic.exit", this, _bootstrap);
         }
 
         private void ResolveDependencies()
