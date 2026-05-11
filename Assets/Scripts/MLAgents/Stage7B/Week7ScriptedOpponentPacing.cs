@@ -28,6 +28,11 @@ namespace RTS.MLAgents.Stage7B
         public bool ThrottleEnabled => _enableWeek7BotThrottle;
         public int BotDecisionIntervalSteps => Mathf.Max(1, _botDecisionIntervalSteps);
         public bool ThrottleAffectsOnlyOpponent => _throttleAffectsOnlyOpponent;
+        public int StudentActionsAttempted => _studentActionsAttempted;
+        public int BotActionsAttempted => _botActionsAttemptedAfter;
+        public int AcceptedBotCommands => _acceptedBotCommands;
+        public int RejectedBotCommands => _rejectedBotCommands;
+        public string TerminalReason => _terminalReason;
 
         public void ResetForEpisode(bool duplicateSpawnDetected)
         {

@@ -36,6 +36,9 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private bool _allowConcurrentDecisionSourcesForDebug;
         [SerializeField] private bool _enableDecisionRequesterWatchdogFallback = true;
         [SerializeField] private string _actualCollectTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl";
+        [SerializeField] private string _actionTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_action_trace.jsonl";
+        [SerializeField] private string _runtimeApplyTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_runtime_apply_trace.jsonl";
+        [SerializeField] private string _decisionSchedulerTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl";
         [SerializeField] private int _stage7BMaxDecisionsPerEpisode = 256;
         [SerializeField] private bool _logRejectedActions;
 
@@ -91,6 +94,8 @@ namespace RTS.MLAgents.Stage7B
         private int _runtimeApplyAttemptedCount;
         private int _runtimeApplyAcceptedCount;
         private int _runtimeApplyRejectedCount;
+        private int _requestDecisionCount;
+        private int _inferenceContinuousRequestDecisionCount;
         private int _observationBuilderUsedCount;
         private int _observationFallbackCount;
         private int _selectedNoOpActionCount;
@@ -102,7 +107,31 @@ namespace RTS.MLAgents.Stage7B
         private int _inferenceKickDecisionRequestCount;
         private bool _inferenceDecisionRequesterActivated;
         private int _actualCollectCallIndex;
+        private int _actionTraceCallIndex;
+        private int _decisionSchedulerTraceIndex;
+        private bool _pendingInferenceContinuousRequest;
+        private int _fixedUpdatesSinceLastOnActionReceived;
+        private int _lastContinuousRequestFixedTick = -1;
         private readonly Dictionary<string, int> _runtimeRejectReasonHistogram = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> _schedulerSkipReasonHistogram = new Dictionary<string, int>();
+        private readonly Dictionary<int, int> _candidateActionIndexHistogram = new Dictionary<int, int>();
+        private int _candidateActionIndexOutOfRangeCount;
+        private int _runtimeApplyAttemptedNoOpCount;
+        private int _runtimeApplyAttemptedMoveCount;
+        private int _runtimeApplyAttemptedHarvestCount;
+        private int _runtimeApplyAttemptedReturnCount;
+        private int _runtimeApplyAttemptedProduceCount;
+        private int _runtimeApplyAttemptedAttackCount;
+        private int _runtimeApplyAcceptedNoOpCount;
+        private int _runtimeApplyAcceptedMoveCount;
+        private int _runtimeApplyAcceptedHarvestCount;
+        private int _runtimeApplyAcceptedReturnCount;
+        private int _runtimeApplyAcceptedProduceCount;
+        private int _runtimeApplyAcceptedAttackCount;
+        private int _firstAcceptedCommandFrame = -1;
+        private int _lastAcceptedCommandFrame = -1;
+        private long _firstAcceptedCommandAcademyStep = -1;
+        private long _lastAcceptedCommandAcademyStep = -1;
         private bool _inferenceRuntimeReadyObserved;
         private int _firstInferenceReadyFrame = -1;
         private int _firstInferenceReadyFixedTick = -1;
@@ -155,6 +184,9 @@ namespace RTS.MLAgents.Stage7B
         public int RuntimeApplyAttemptedCount => _runtimeApplyAttemptedCount;
         public int RuntimeApplyAcceptedCount => _runtimeApplyAcceptedCount;
         public int RuntimeApplyRejectedCount => _runtimeApplyRejectedCount;
+        public int RequestDecisionCount => _requestDecisionCount;
+        public int InferenceContinuousRequestDecisionCount => _inferenceContinuousRequestDecisionCount;
+        public bool PendingInferenceContinuousRequest => _pendingInferenceContinuousRequest;
         public int ObservationBuilderUsedCount => _observationBuilderUsedCount;
         public int ObservationFallbackCount => _observationFallbackCount;
         public int SelectedNoOpActionCount => _selectedNoOpActionCount;
@@ -166,6 +198,27 @@ namespace RTS.MLAgents.Stage7B
         public int InferenceKickDecisionRequestCount => _inferenceKickDecisionRequestCount;
         public bool InferenceDecisionRequesterActivated => _inferenceDecisionRequesterActivated;
         public IReadOnlyDictionary<string, int> RuntimeRejectReasonHistogram => _runtimeRejectReasonHistogram;
+        public IReadOnlyDictionary<string, int> SchedulerSkipReasonHistogram => _schedulerSkipReasonHistogram;
+        public IReadOnlyDictionary<int, int> CandidateActionIndexHistogram => _candidateActionIndexHistogram;
+        public int CandidateActionIndexOutOfRangeCount => _candidateActionIndexOutOfRangeCount;
+        public int CandidateBuilderFailureCount => Mathf.Max(0, _candidateBuildCallCount - _candidateBuilderSuccessCount);
+        public int ActionAdapterFailureCount => Mathf.Max(0, _actionAdapterResolveCount - _actionAdapterSuccessCount);
+        public int RuntimeApplyAttemptedNoOpCount => _runtimeApplyAttemptedNoOpCount;
+        public int RuntimeApplyAttemptedMoveCount => _runtimeApplyAttemptedMoveCount;
+        public int RuntimeApplyAttemptedHarvestCount => _runtimeApplyAttemptedHarvestCount;
+        public int RuntimeApplyAttemptedReturnCount => _runtimeApplyAttemptedReturnCount;
+        public int RuntimeApplyAttemptedProduceCount => _runtimeApplyAttemptedProduceCount;
+        public int RuntimeApplyAttemptedAttackCount => _runtimeApplyAttemptedAttackCount;
+        public int RuntimeApplyAcceptedNoOpCount => _runtimeApplyAcceptedNoOpCount;
+        public int RuntimeApplyAcceptedMoveCount => _runtimeApplyAcceptedMoveCount;
+        public int RuntimeApplyAcceptedHarvestCount => _runtimeApplyAcceptedHarvestCount;
+        public int RuntimeApplyAcceptedReturnCount => _runtimeApplyAcceptedReturnCount;
+        public int RuntimeApplyAcceptedProduceCount => _runtimeApplyAcceptedProduceCount;
+        public int RuntimeApplyAcceptedAttackCount => _runtimeApplyAcceptedAttackCount;
+        public int FirstAcceptedCommandFrame => _firstAcceptedCommandFrame;
+        public int LastAcceptedCommandFrame => _lastAcceptedCommandFrame;
+        public long FirstAcceptedCommandAcademyStep => _firstAcceptedCommandAcademyStep;
+        public long LastAcceptedCommandAcademyStep => _lastAcceptedCommandAcademyStep;
         public int DefensivePreReadyObservationCount => _defensivePreReadyObservationCount;
         public bool DefensivePreReadyObservationUsedAfterRuntimeReady => _defensivePreReadyObservationUsedAfterRuntimeReady;
         public bool InferenceRuntimeReadyObserved => _inferenceRuntimeReadyObserved;
@@ -200,8 +253,17 @@ namespace RTS.MLAgents.Stage7B
         {
             _startCount++;
             _actualCollectCallIndex = 0;
+            _actionTraceCallIndex = 0;
+            _decisionSchedulerTraceIndex = 0;
             _collectObservedSinceLastStart = false;
+            _pendingInferenceContinuousRequest = false;
+            _fixedUpdatesSinceLastOnActionReceived = 0;
+            _lastContinuousRequestFixedTick = -1;
+            _schedulerSkipReasonHistogram.Clear();
             ClearActualCollectTraceFile();
+            ClearTraceFile(_actionTraceRelativePath);
+            ClearTraceFile(_runtimeApplyTraceRelativePath);
+            ClearTraceFile(_decisionSchedulerTraceRelativePath);
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.Start", this, _bootstrap);
         }
 
@@ -274,6 +336,9 @@ namespace RTS.MLAgents.Stage7B
             _episodeDecisionCount = 0;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
             _inferenceDecisionRequesterActivated = false;
+            _pendingInferenceContinuousRequest = false;
+            _fixedUpdatesSinceLastOnActionReceived = 0;
+            _lastContinuousRequestFixedTick = -1;
             _collectObservedSinceLastEpisodeBegin = false;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
@@ -291,6 +356,7 @@ namespace RTS.MLAgents.Stage7B
         {
             ApplyDecisionSourcePolicy();
             UpdateDecisionRequesterWatchdog();
+            _fixedUpdatesSinceLastOnActionReceived++;
 
             if (TryActivateInferenceDecisionKick())
             {
@@ -298,6 +364,11 @@ namespace RTS.MLAgents.Stage7B
             }
 
             if (TryRequestTrainerControlledKickDecision())
+            {
+                return;
+            }
+
+            if (TryRequestInferenceContinuousDecision())
             {
                 return;
             }
@@ -317,7 +388,7 @@ namespace RTS.MLAgents.Stage7B
             {
                 _manualRequestDecisionCount++;
                 Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.manual", this, _bootstrap);
-                RequestDecision();
+                RequestDecisionWithTracking("manual_fixedupdate", false);
             }
         }
 
@@ -339,7 +410,7 @@ namespace RTS.MLAgents.Stage7B
             _pendingTrainerControlledKickDecision = false;
             _trainerControlledKickDecisionRequestCount++;
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.trainer_controlled_kick", this, _bootstrap);
-            RequestDecision();
+            RequestDecisionWithTracking("trainer_controlled_kick", false);
             return true;
         }
 
@@ -468,8 +539,22 @@ namespace RTS.MLAgents.Stage7B
             int selectedIndex = actions.DiscreteActions.Length > 0 ? actions.DiscreteActions[0] : 0;
             _lastActionCandidateIndex = selectedIndex;
             _lastCandidateIndexInRange = selectedIndex >= 0 && selectedIndex < MlAgentsCandidateActionList.BranchSize;
+            if (!_lastCandidateIndexInRange)
+            {
+                _candidateActionIndexOutOfRangeCount++;
+            }
+            if (_candidateActionIndexHistogram.TryGetValue(selectedIndex, out int actionIndexCount))
+            {
+                _candidateActionIndexHistogram[selectedIndex] = actionIndexCount + 1;
+            }
+            else
+            {
+                _candidateActionIndexHistogram[selectedIndex] = 1;
+            }
+
             _episodeDecisionCount++;
             _fixedUpdatesWithoutDecisionWhileUsingDecisionRequester = 0;
+            _fixedUpdatesSinceLastOnActionReceived = 0;
             _bootstrap?.ScriptedOpponentPacing?.RecordStudentActionAttempt();
             AgentAction selectedAction = _actionAdapter.Resolve(_currentCandidates, selectedIndex, out MlAgentsCandidateAction candidate);
             _actionAdapterResolveCount++;
@@ -515,6 +600,7 @@ namespace RTS.MLAgents.Stage7B
                     + ",dir=" + selectedAction.Direction;
                 replayOrchestrator.NotifyActionApplied(demoAccepted, selectedIndex, demoSummary);
                 _lastActionAccepted = demoAccepted;
+                UpdateInferenceContinuousScheduleAfterAction(demoAccepted);
 
                 _currentCandidates = null;
                 timer.Stop();
@@ -533,6 +619,13 @@ namespace RTS.MLAgents.Stage7B
                     this,
                     _bootstrap,
                     lastActionIndex: _lastActionCandidateIndex);
+                AppendDecisionSchedulerTrace(
+                    "on_action_received_exit_demo",
+                    "none",
+                    demoAccepted,
+                    requestedDecisionNow: false,
+                    scheduledNextDecision: _pendingInferenceContinuousRequest,
+                    decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
                 return;
             }
             Trace.RecordCandidateFallback(
@@ -547,6 +640,7 @@ namespace RTS.MLAgents.Stage7B
             if (_actionApplier != null)
             {
                 _runtimeApplyAttemptedCount++;
+                RecordRuntimeAttemptedActionType(selectedAction.ActionType);
                 _actionApplier.ResetDiagnostics();
                 accepted = _actionApplier.ApplyAction(
                     selectedAction,
@@ -558,6 +652,8 @@ namespace RTS.MLAgents.Stage7B
                 if (accepted)
                 {
                     _runtimeApplyAcceptedCount++;
+                    RecordRuntimeAcceptedActionType(selectedAction.ActionType);
+                    RecordAcceptedCommandPosition();
                 }
                 else
                 {
@@ -574,7 +670,30 @@ namespace RTS.MLAgents.Stage7B
                 {
                     Debug.LogWarning("[Stage7B] Rejected candidate action: " + _actionApplier.RejectionReasonsLastStep[0]);
                 }
+
+                AppendRuntimeApplyTrace(
+                    _runtimeApplyAttemptedCount,
+                    selectedIndex,
+                    selectedAction.ActionType,
+                    accepted,
+                    _actionApplier.RejectionReasonsLastStep,
+                    candidate.IsEmpty,
+                    candidate.IsNoOp);
             }
+
+            AppendActionTrace(
+                _episodeDecisionCount,
+                selectedIndex,
+                _lastCandidateIndexInRange,
+                selectedAction.ActionType,
+                candidate.IsEmpty,
+                candidate.IsNoOp,
+                _actionAdapter.LastFallbackToNoOp,
+                _currentCandidates != null ? _currentCandidates.CandidateCount : 0,
+                _actionApplier != null,
+                accepted);
+
+            UpdateInferenceContinuousScheduleAfterAction(accepted);
 
             if (_bootstrap != null
                 && _bootstrap.StepScriptedOpponent
@@ -651,6 +770,13 @@ namespace RTS.MLAgents.Stage7B
                 this,
                 _bootstrap,
                 lastActionIndex: _lastActionCandidateIndex);
+            AppendDecisionSchedulerTrace(
+                "on_action_received_exit",
+                "none",
+                accepted,
+                requestedDecisionNow: false,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -794,9 +920,16 @@ namespace RTS.MLAgents.Stage7B
             }
             else if (hasRequester)
             {
-                if (!requester.enabled)
+                bool requesterShouldBeEnabled = _bootstrap == null
+                    || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly
+                    || AreInferenceRuntimeServicesReady();
+                if (requesterShouldBeEnabled && !requester.enabled)
                 {
                     requester.enabled = true;
+                }
+                else if (!requesterShouldBeEnabled && requester.enabled)
+                {
+                    requester.enabled = false;
                 }
 
                 _currentDecisionSource = DecisionSourceDecisionRequester;
@@ -817,27 +950,11 @@ namespace RTS.MLAgents.Stage7B
                 return false;
             }
 
-            DecisionRequester requester = GetComponent<DecisionRequester>();
-            if (requester == null)
-            {
-                return false;
-            }
-
             ResolveDependencies();
             bool ready = AreInferenceRuntimeServicesReady();
             if (!ready)
             {
-                if (requester.enabled)
-                {
-                    requester.enabled = false;
-                }
-
                 return false;
-            }
-
-            if (!requester.enabled)
-            {
-                requester.enabled = true;
             }
 
             if (_inferenceDecisionRequesterActivated)
@@ -848,8 +965,217 @@ namespace RTS.MLAgents.Stage7B
             _inferenceDecisionRequesterActivated = true;
             _inferenceKickDecisionRequestCount++;
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.inference_kick", this, _bootstrap);
-            RequestDecision();
+            RequestDecisionWithTracking("inference_kick", false);
+            AppendDecisionSchedulerTrace(
+                "inference_kick_consumed",
+                "none",
+                accepted: true,
+                requestedDecisionNow: true,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
             return true;
+        }
+
+        private bool TryRequestInferenceContinuousDecision()
+        {
+            if (!_pendingInferenceContinuousRequest)
+            {
+                return false;
+            }
+
+            if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                RecordSchedulerSkip("not_inference_mode", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (_bootstrap.MatchManager == null || _bootstrap.MatchManager.Phase != MatchPhase.Running)
+            {
+                RecordSchedulerSkip("match_not_running", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (!isActiveAndEnabled || !gameObject.activeInHierarchy)
+            {
+                RecordSchedulerSkip("agent_inactive", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (_terminalCount > 0)
+            {
+                RecordSchedulerSkip("terminal_already_reached", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (TeacherReplayOrchestrator != null && TeacherReplayOrchestrator.IsActive)
+            {
+                RecordSchedulerSkip("teacher_replay_active", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (_manualFixedUpdateDecisionRequests || _decisionRequesterWatchdogFallbackActive)
+            {
+                RecordSchedulerSkip("manual_or_watchdog_path_active", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            ResolveDependencies();
+            if (!AreInferenceRuntimeServicesReady())
+            {
+                RecordSchedulerSkip("runtime_not_ready", false);
+                return false;
+            }
+
+            if (_fixedUpdatesSinceLastOnActionReceived < 2)
+            {
+                RecordSchedulerSkip("waiting_next_fixedupdate", false);
+                return false;
+            }
+
+            int fixedTick = _bootstrap != null ? _bootstrap.BootstrapFixedTick : -1;
+            if (fixedTick >= 0 && fixedTick == _lastContinuousRequestFixedTick)
+            {
+                RecordSchedulerSkip("already_requested_this_fixedtick", false);
+                return false;
+            }
+
+            _pendingInferenceContinuousRequest = false;
+            _lastContinuousRequestFixedTick = fixedTick;
+            _inferenceContinuousRequestDecisionCount++;
+            Stage7BResetTimeoutTrace.Record("StudentMlAgent.RequestDecision.inference_continuous", this, _bootstrap);
+            RequestDecisionWithTracking("inference_continuous", true);
+            AppendDecisionSchedulerTrace(
+                "inference_continuous_request",
+                "none",
+                accepted: true,
+                requestedDecisionNow: true,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+            return true;
+        }
+
+        private void UpdateInferenceContinuousScheduleAfterAction(bool accepted)
+        {
+            if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                _pendingInferenceContinuousRequest = false;
+                return;
+            }
+
+            bool canSchedule = _bootstrap.MatchManager != null
+                && _bootstrap.MatchManager.Phase == MatchPhase.Running
+                && _terminalCount == 0
+                && !(TeacherReplayOrchestrator != null && TeacherReplayOrchestrator.IsActive)
+                && !_manualFixedUpdateDecisionRequests
+                && !_decisionRequesterWatchdogFallbackActive;
+
+            _pendingInferenceContinuousRequest = canSchedule;
+            AppendDecisionSchedulerTrace(
+                "post_action_schedule_update",
+                canSchedule ? "none" : "post_action_not_schedulable",
+                accepted,
+                requestedDecisionNow: false,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+        }
+
+        private bool ShouldDecisionRequesterDriveInference()
+        {
+            if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void RequestDecisionWithTracking(string reason, bool schedulerRequest)
+        {
+            _requestDecisionCount++;
+            AppendDecisionSchedulerTrace(
+                "request_decision_called",
+                string.IsNullOrWhiteSpace(reason) ? "none" : reason,
+                accepted: _lastActionAccepted,
+                requestedDecisionNow: true,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+            RequestDecision();
+        }
+
+        private void RecordSchedulerSkip(string reason, bool accepted)
+        {
+            string key = string.IsNullOrWhiteSpace(reason) ? "unknown" : reason;
+            if (_schedulerSkipReasonHistogram.TryGetValue(key, out int count))
+            {
+                _schedulerSkipReasonHistogram[key] = count + 1;
+            }
+            else
+            {
+                _schedulerSkipReasonHistogram[key] = 1;
+            }
+
+            AppendDecisionSchedulerTrace(
+                "scheduler_skip",
+                key,
+                accepted,
+                requestedDecisionNow: false,
+                scheduledNextDecision: _pendingInferenceContinuousRequest,
+                decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+        }
+
+        private void AppendDecisionSchedulerTrace(
+            string eventName,
+            string skipReason,
+            bool accepted,
+            bool requestedDecisionNow,
+            bool scheduledNextDecision,
+            bool decisionRequesterExpectedToDrive)
+        {
+            AppendJsonTraceLine(_decisionSchedulerTraceRelativePath, () =>
+            {
+                _decisionSchedulerTraceIndex++;
+                Academy academy = Academy.IsInitialized ? Academy.Instance : null;
+                DecisionRequester requester = GetComponent<DecisionRequester>();
+                string matchState = _bootstrap != null && _bootstrap.MatchManager != null
+                    ? _bootstrap.MatchManager.Phase.ToString()
+                    : "missing";
+
+                var sb = new StringBuilder(768);
+                sb.Append('{');
+                sb.Append("\"timestamp_utc\":\"").Append(DateTime.UtcNow.ToString("o")).Append("\",");
+                sb.Append("\"trace_index\":").Append(_decisionSchedulerTraceIndex).Append(',');
+                sb.Append("\"event\":\"").Append(EscapeJson(eventName)).Append("\",");
+                sb.Append("\"skip_reason\":\"").Append(EscapeJson(skipReason)).Append("\",");
+                sb.Append("\"on_action_received_index\":").Append(Trace != null ? Trace.OnActionReceivedCalls : 0).Append(',');
+                sb.Append("\"frame\":").Append(Time.frameCount).Append(',');
+                sb.Append("\"fixed_time\":").Append(Time.fixedTime.ToString("R", System.Globalization.CultureInfo.InvariantCulture)).Append(',');
+                sb.Append("\"bootstrap_fixed_tick\":").Append(_bootstrap != null ? _bootstrap.BootstrapFixedTick : -1).Append(',');
+                sb.Append("\"academy_step\":").Append(academy != null ? academy.StepCount : -1L).Append(',');
+                sb.Append("\"decision_requester_enabled\":").Append(requester != null && requester.enabled ? "true" : "false").Append(',');
+                sb.Append("\"decision_requester_expected_to_drive\":").Append(decisionRequesterExpectedToDrive ? "true" : "false").Append(',');
+                sb.Append("\"inference_runtime_ready\":").Append(AreInferenceRuntimeServicesReady() ? "true" : "false").Append(',');
+                sb.Append("\"inference_kick_consumed\":").Append(_inferenceDecisionRequesterActivated ? "true" : "false").Append(',');
+                sb.Append("\"pending_next_request\":").Append(_pendingInferenceContinuousRequest ? "true" : "false").Append(',');
+                sb.Append("\"requested_decision_now\":").Append(requestedDecisionNow ? "true" : "false").Append(',');
+                sb.Append("\"scheduled_next_request\":").Append(scheduledNextDecision ? "true" : "false").Append(',');
+                sb.Append("\"agent_is_active_and_enabled\":").Append(isActiveAndEnabled ? "true" : "false").Append(',');
+                sb.Append("\"agent_gameobject_active\":").Append(gameObject.activeInHierarchy ? "true" : "false").Append(',');
+                sb.Append("\"match_state\":\"").Append(EscapeJson(matchState)).Append("\",");
+                sb.Append("\"action_accepted\":").Append(accepted ? "true" : "false").Append(',');
+                sb.Append("\"end_episode_count\":").Append(_endEpisodeCount).Append(',');
+                sb.Append("\"terminal_count\":").Append(_terminalCount).Append(',');
+                sb.Append("\"on_episode_begin_count\":").Append(_onEpisodeBeginCount).Append(',');
+                sb.Append("\"request_decision_count\":").Append(_requestDecisionCount).Append(',');
+                sb.Append("\"inference_continuous_request_count\":").Append(_inferenceContinuousRequestDecisionCount);
+                sb.Append('}');
+                return sb.ToString();
+            }, "decision scheduler trace");
         }
 
         private bool ShouldSuppressDecisionRequesterForInference()
@@ -1023,6 +1349,152 @@ namespace RTS.MLAgents.Stage7B
             }
         }
 
+        private void AppendActionTrace(
+            int decisionIndex,
+            int selectedIndex,
+            bool selectedIndexInRange,
+            UnitActionType actionType,
+            bool candidateIsEmpty,
+            bool candidateIsNoOp,
+            bool actionAdapterFallbackToNoOp,
+            int candidateCount,
+            bool runtimeApplyAttempted,
+            bool runtimeApplyAccepted)
+        {
+            AppendJsonTraceLine(_actionTraceRelativePath, () =>
+            {
+                _actionTraceCallIndex++;
+                Academy academy = Academy.IsInitialized ? Academy.Instance : null;
+                string matchState = _bootstrap != null && _bootstrap.MatchManager != null
+                    ? _bootstrap.MatchManager.Phase.ToString()
+                    : "missing";
+                int matchStep = _bootstrap != null && _bootstrap.MatchManager != null
+                    ? _bootstrap.MatchManager.Step
+                    : -1;
+
+                var sb = new StringBuilder(640);
+                sb.Append('{');
+                sb.Append("\"timestamp_utc\":\"").Append(DateTime.UtcNow.ToString("o")).Append("\",");
+                sb.Append("\"trace_index\":").Append(_actionTraceCallIndex).Append(',');
+                sb.Append("\"decision_index\":").Append(decisionIndex).Append(',');
+                sb.Append("\"frame\":").Append(Time.frameCount).Append(',');
+                sb.Append("\"academy_step\":").Append(academy != null ? academy.StepCount : -1L).Append(',');
+                sb.Append("\"match_step\":").Append(matchStep).Append(',');
+                sb.Append("\"match_state\":\"").Append(EscapeJson(matchState)).Append("\",");
+                sb.Append("\"candidate_count\":").Append(candidateCount).Append(',');
+                sb.Append("\"selected_index\":").Append(selectedIndex).Append(',');
+                sb.Append("\"selected_index_in_range\":").Append(selectedIndexInRange ? "true" : "false").Append(',');
+                sb.Append("\"candidate_is_empty\":").Append(candidateIsEmpty ? "true" : "false").Append(',');
+                sb.Append("\"candidate_is_noop\":").Append(candidateIsNoOp ? "true" : "false").Append(',');
+                sb.Append("\"action_adapter_fallback_to_noop\":").Append(actionAdapterFallbackToNoOp ? "true" : "false").Append(',');
+                sb.Append("\"selected_action_type\":\"").Append(actionType).Append("\",");
+                sb.Append("\"runtime_apply_attempted\":").Append(runtimeApplyAttempted ? "true" : "false").Append(',');
+                sb.Append("\"runtime_apply_accepted\":").Append(runtimeApplyAccepted ? "true" : "false");
+                sb.Append('}');
+                return sb.ToString();
+            }, "action trace");
+        }
+
+        private void AppendRuntimeApplyTrace(
+            int applyAttemptIndex,
+            int selectedIndex,
+            UnitActionType actionType,
+            bool accepted,
+            IReadOnlyList<string> rejectReasons,
+            bool candidateIsEmpty,
+            bool candidateIsNoOp)
+        {
+            AppendJsonTraceLine(_runtimeApplyTraceRelativePath, () =>
+            {
+                Academy academy = Academy.IsInitialized ? Academy.Instance : null;
+                string primaryRejectReason = rejectReasons != null && rejectReasons.Count > 0
+                    ? rejectReasons[0]
+                    : "none";
+                string matchState = _bootstrap != null && _bootstrap.MatchManager != null
+                    ? _bootstrap.MatchManager.Phase.ToString()
+                    : "missing";
+
+                var sb = new StringBuilder(512);
+                sb.Append('{');
+                sb.Append("\"timestamp_utc\":\"").Append(DateTime.UtcNow.ToString("o")).Append("\",");
+                sb.Append("\"apply_attempt_index\":").Append(applyAttemptIndex).Append(',');
+                sb.Append("\"frame\":").Append(Time.frameCount).Append(',');
+                sb.Append("\"academy_step\":").Append(academy != null ? academy.StepCount : -1L).Append(',');
+                sb.Append("\"match_state\":\"").Append(EscapeJson(matchState)).Append("\",");
+                sb.Append("\"selected_index\":").Append(selectedIndex).Append(',');
+                sb.Append("\"action_type\":\"").Append(actionType).Append("\",");
+                sb.Append("\"candidate_is_empty\":").Append(candidateIsEmpty ? "true" : "false").Append(',');
+                sb.Append("\"candidate_is_noop\":").Append(candidateIsNoOp ? "true" : "false").Append(',');
+                sb.Append("\"accepted\":").Append(accepted ? "true" : "false").Append(',');
+                sb.Append("\"rejected\":").Append(accepted ? "false" : "true").Append(',');
+                sb.Append("\"primary_reject_reason\":\"").Append(EscapeJson(primaryRejectReason)).Append("\"");
+                sb.Append('}');
+                return sb.ToString();
+            }, "runtime apply trace");
+        }
+
+        private void AppendJsonTraceLine(string relativePath, Func<string> buildLine, string traceName)
+        {
+            if (!Application.isPlaying || string.IsNullOrWhiteSpace(relativePath) || buildLine == null)
+            {
+                return;
+            }
+
+            try
+            {
+                string path = ResolveProjectPath(relativePath);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+
+                string directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                string line = buildLine();
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    File.AppendAllText(path, line + Environment.NewLine, Encoding.UTF8);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Stage7B] Failed to append " + traceName + ": " + ex.Message);
+            }
+        }
+
+        private void ClearTraceFile(string relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return;
+            }
+
+            try
+            {
+                string path = ResolveProjectPath(relativePath);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    return;
+                }
+
+                string directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                File.WriteAllText(path, string.Empty, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Stage7B] Failed to clear trace file: " + ex.Message);
+            }
+        }
+
         private static string ResolveProjectPath(string relativePath)
         {
             if (string.IsNullOrWhiteSpace(relativePath))
@@ -1144,6 +1616,71 @@ namespace RTS.MLAgents.Stage7B
                     _selectedAttackActionCount++;
                     break;
             }
+        }
+
+        private void RecordRuntimeAttemptedActionType(UnitActionType actionType)
+        {
+            switch (actionType)
+            {
+                case UnitActionType.NoOp:
+                    _runtimeApplyAttemptedNoOpCount++;
+                    break;
+                case UnitActionType.Move:
+                    _runtimeApplyAttemptedMoveCount++;
+                    break;
+                case UnitActionType.Harvest:
+                    _runtimeApplyAttemptedHarvestCount++;
+                    break;
+                case UnitActionType.Return:
+                    _runtimeApplyAttemptedReturnCount++;
+                    break;
+                case UnitActionType.Produce:
+                    _runtimeApplyAttemptedProduceCount++;
+                    break;
+                case UnitActionType.Attack:
+                    _runtimeApplyAttemptedAttackCount++;
+                    break;
+            }
+        }
+
+        private void RecordRuntimeAcceptedActionType(UnitActionType actionType)
+        {
+            switch (actionType)
+            {
+                case UnitActionType.NoOp:
+                    _runtimeApplyAcceptedNoOpCount++;
+                    break;
+                case UnitActionType.Move:
+                    _runtimeApplyAcceptedMoveCount++;
+                    break;
+                case UnitActionType.Harvest:
+                    _runtimeApplyAcceptedHarvestCount++;
+                    break;
+                case UnitActionType.Return:
+                    _runtimeApplyAcceptedReturnCount++;
+                    break;
+                case UnitActionType.Produce:
+                    _runtimeApplyAcceptedProduceCount++;
+                    break;
+                case UnitActionType.Attack:
+                    _runtimeApplyAcceptedAttackCount++;
+                    break;
+            }
+        }
+
+        private void RecordAcceptedCommandPosition()
+        {
+            Academy academy = Academy.IsInitialized ? Academy.Instance : null;
+            long academyStep = academy != null ? academy.StepCount : -1L;
+
+            if (_firstAcceptedCommandFrame < 0)
+            {
+                _firstAcceptedCommandFrame = Time.frameCount;
+                _firstAcceptedCommandAcademyStep = academyStep;
+            }
+
+            _lastAcceptedCommandFrame = Time.frameCount;
+            _lastAcceptedCommandAcademyStep = academyStep;
         }
 
         private void RecordRuntimeRejectReasons(IReadOnlyList<string> reasons)

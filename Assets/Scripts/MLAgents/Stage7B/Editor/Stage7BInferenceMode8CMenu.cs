@@ -18,6 +18,7 @@ namespace RTS.MLAgents.Stage7B.Editor
     {
         private const string PrepareMenuPath = "RTS/Week7/Stage7B/Prepare ONNX Inference Mode 8C";
         private const string RunMenuPath = "RTS/Week7/Stage7B/Run Unity Inference Smoke 8C";
+        private const string RunExtended8DMenuPath = "RTS/Week7/Stage7B/Run Extended ONNX Inference Smoke 8D.1";
         private const string OpenSceneMenuPath = "RTS/Week7/Stage7B/Open Week7 Scene 8C";
 
         private const string ScenePath = "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity";
@@ -30,12 +31,28 @@ namespace RTS.MLAgents.Stage7B.Editor
         private const string CollectTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl";
         private const string AgentInventoryJsonPath = "python/stage7b_teacher_replay/stage7b_8c2_agent_inventory.json";
         private const string SourceTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl";
+        private const string Report8DJsonPath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json";
+        private const string Report8DMdPath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.md";
+        private const string Trace8DJsonlPath = "python/stage7b_teacher_replay/stage7b_8d1_inference_lifecycle_trace.jsonl";
+        private const string Collect8DTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl";
+        private const string Action8DTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8d1_action_trace.jsonl";
+        private const string RuntimeApply8DTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8d1_runtime_apply_trace.jsonl";
+        private const string DecisionScheduler8DTraceJsonlPath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl";
+        private const string AgentInventory8DJsonPath = "python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json";
+        private const string ConsoleExport8DJsonPath = "python/stage7b_teacher_replay/stage7b_8d1_unity_console_export.json";
         private const string PendingRunKey = "RTS.MLAgents.Stage7B.Inference8C.Pending";
         private const string TriggeredRunKey = "RTS.MLAgents.Stage7B.Inference8C.Triggered";
         private const string StartedAtTicksKey = "RTS.MLAgents.Stage7B.Inference8C.StartedAtTicks";
         private const string TimeoutHandledKey = "RTS.MLAgents.Stage7B.Inference8C.TimeoutHandled";
+        private const string PendingRun8DKey = "RTS.MLAgents.Stage7B.Inference8D.Pending";
+        private const string TriggeredRun8DKey = "RTS.MLAgents.Stage7B.Inference8D.Triggered";
+        private const string StartedAtTicks8DKey = "RTS.MLAgents.Stage7B.Inference8D.StartedAtTicks";
+        private const string TimeoutHandled8DKey = "RTS.MLAgents.Stage7B.Inference8D.TimeoutHandled";
+        private const string DecisionsTarget8DKey = "RTS.MLAgents.Stage7B.Inference8D.DecisionsTarget";
         private const double MinPlayDurationSecondsBeforeExit = 10d;
         private const double TimeoutSeconds = 300d;
+        private const double Timeout8DSeconds = 900d;
+        private const int DefaultDecisionsTarget8D = 50;
 
         static Stage7BInferenceMode8CMenu()
         {
@@ -204,6 +221,36 @@ namespace RTS.MLAgents.Stage7B.Editor
             EditorApplication.isPlaying = true;
         }
 
+        [MenuItem(RunExtended8DMenuPath)]
+        public static void RunExtendedInferenceSmoke8D()
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogWarning("[Stage7B][8D] Run menu must be started from Edit Mode.");
+                return;
+            }
+
+            PrepareInferenceMode8C();
+            ConfigureForExtended8DArtifacts();
+            DeleteIfExists(Report8DJsonPath);
+            DeleteIfExists(Report8DMdPath);
+            DeleteIfExists(Trace8DJsonlPath);
+            DeleteIfExists(Collect8DTraceJsonlPath);
+            DeleteIfExists(Action8DTraceJsonlPath);
+            DeleteIfExists(RuntimeApply8DTraceJsonlPath);
+            DeleteIfExists(DecisionScheduler8DTraceJsonlPath);
+            DeleteIfExists(AgentInventory8DJsonPath);
+            DeleteIfExists(ConsoleExport8DJsonPath);
+
+            SessionState.SetBool(PendingRun8DKey, true);
+            SessionState.SetBool(TriggeredRun8DKey, false);
+            SessionState.SetBool(TimeoutHandled8DKey, false);
+            SessionState.SetInt(DecisionsTarget8DKey, DefaultDecisionsTarget8D);
+            SessionState.SetString(StartedAtTicks8DKey, DateTime.UtcNow.Ticks.ToString());
+            Debug.Log("[Stage7B][8D] Entering Play Mode for extended inference smoke run.");
+            EditorApplication.isPlaying = true;
+        }
+
         [MenuItem(OpenSceneMenuPath)]
         public static void OpenScene8C()
         {
@@ -219,6 +266,12 @@ namespace RTS.MLAgents.Stage7B.Editor
 
         private static void PollExecution()
         {
+            if (SessionState.GetBool(PendingRun8DKey, false))
+            {
+                PollExecution8D();
+                return;
+            }
+
             if (!SessionState.GetBool(PendingRunKey, false))
             {
                 return;
@@ -258,6 +311,68 @@ namespace RTS.MLAgents.Stage7B.Editor
             }
         }
 
+        private static void PollExecution8D()
+        {
+            if (!SessionState.GetBool(PendingRun8DKey, false))
+            {
+                return;
+            }
+
+            if (HasTimedOut(StartedAtTicks8DKey, Timeout8DSeconds))
+            {
+                HandleTimeoutOnce8D();
+                return;
+            }
+
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            if (!SessionState.GetBool(TriggeredRun8DKey, false))
+            {
+                SessionState.SetBool(TriggeredRun8DKey, true);
+                return;
+            }
+
+            StudentMlAgent student = UnityEngine.Object.FindFirstObjectByType<StudentMlAgent>(FindObjectsInactive.Exclude);
+            if (student == null)
+            {
+                return;
+            }
+
+            int decisionsTarget = Math.Max(1, SessionState.GetInt(DecisionsTarget8DKey, DefaultDecisionsTarget8D));
+            int decisionsCompleted = student.Trace != null ? student.Trace.OnActionReceivedCalls : 0;
+            bool terminalReached = student.TerminalCount > 0;
+            bool reachedTarget = decisionsCompleted >= decisionsTarget;
+
+            if (!reachedTarget && !terminalReached)
+            {
+                return;
+            }
+
+            Stage7BInferenceSmokeDiagnostics diagnostics = UnityEngine.Object.FindFirstObjectByType<Stage7BInferenceSmokeDiagnostics>();
+            diagnostics?.ForceWriteSnapshot();
+
+            string reportFullPath = GetAbsoluteProjectPath(Report8DJsonPath);
+            if (!File.Exists(reportFullPath))
+            {
+                return;
+            }
+
+            if (!HasReachedMinimumRunDuration(StartedAtTicks8DKey, 5d))
+            {
+                return;
+            }
+
+            Debug.Log("[Stage7B][8D] Extended inference report detected (target/terminal reached). Exiting Play Mode.");
+            SessionState.SetBool(PendingRun8DKey, false);
+            SessionState.SetBool(TriggeredRun8DKey, false);
+            SessionState.SetBool(TimeoutHandled8DKey, false);
+            SessionState.SetString(StartedAtTicks8DKey, string.Empty);
+            EditorApplication.isPlaying = false;
+        }
+
         private static void HandleTimeoutOnce()
         {
             if (SessionState.GetBool(TimeoutHandledKey, false))
@@ -283,16 +398,46 @@ namespace RTS.MLAgents.Stage7B.Editor
             }
         }
 
+        private static void HandleTimeoutOnce8D()
+        {
+            if (SessionState.GetBool(TimeoutHandled8DKey, false))
+            {
+                return;
+            }
+
+            SessionState.SetBool(TimeoutHandled8DKey, true);
+            SessionState.SetBool(PendingRun8DKey, false);
+            SessionState.SetBool(TriggeredRun8DKey, false);
+            SessionState.SetString(StartedAtTicks8DKey, string.Empty);
+
+            Stage7BInferenceSmokeDiagnostics diagnostics = UnityEngine.Object.FindFirstObjectByType<Stage7BInferenceSmokeDiagnostics>();
+            if (diagnostics != null)
+            {
+                diagnostics.ForceWriteSnapshot();
+            }
+
+            Debug.LogError("[Stage7B][8D] Extended inference smoke timed out.");
+            if (Application.isPlaying)
+            {
+                EditorApplication.isPlaying = false;
+            }
+        }
+
         private static bool HasReachedMinimumRunDuration()
         {
-            string ticksString = SessionState.GetString(StartedAtTicksKey, string.Empty);
+            return HasReachedMinimumRunDuration(StartedAtTicksKey, MinPlayDurationSecondsBeforeExit);
+        }
+
+        private static bool HasReachedMinimumRunDuration(string startedAtKey, double minSeconds)
+        {
+            string ticksString = SessionState.GetString(startedAtKey, string.Empty);
             if (!long.TryParse(ticksString, out long ticks) || ticks <= 0)
             {
                 return false;
             }
 
             DateTime started = new DateTime(ticks, DateTimeKind.Utc);
-            return (DateTime.UtcNow - started).TotalSeconds >= MinPlayDurationSecondsBeforeExit;
+            return (DateTime.UtcNow - started).TotalSeconds >= minSeconds;
         }
 
         private static Stage7BInferenceSmokeDiagnostics EnsureDiagnosticsComponent(
@@ -407,14 +552,64 @@ namespace RTS.MLAgents.Stage7B.Editor
 
         private static bool HasTimedOut()
         {
-            string ticksString = SessionState.GetString(StartedAtTicksKey, string.Empty);
+            return HasTimedOut(StartedAtTicksKey, TimeoutSeconds);
+        }
+
+        private static bool HasTimedOut(string startedAtKey, double timeoutSeconds)
+        {
+            string ticksString = SessionState.GetString(startedAtKey, string.Empty);
             if (!long.TryParse(ticksString, out long ticks) || ticks <= 0)
             {
                 return false;
             }
 
             DateTime started = new DateTime(ticks, DateTimeKind.Utc);
-            return (DateTime.UtcNow - started).TotalSeconds > TimeoutSeconds;
+            return (DateTime.UtcNow - started).TotalSeconds > timeoutSeconds;
+        }
+
+        private static void ConfigureForExtended8DArtifacts()
+        {
+            StudentMlAgent student = UnityEngine.Object.FindFirstObjectByType<StudentMlAgent>(FindObjectsInactive.Include);
+            MlAgentsTrainingBootstrap bootstrap = UnityEngine.Object.FindFirstObjectByType<MlAgentsTrainingBootstrap>(FindObjectsInactive.Include);
+            Stage7BInferenceSmokeDiagnostics diagnostics = EnsureDiagnosticsComponent(bootstrap, student);
+
+            if (student != null)
+            {
+                SerializedObject studentSerialized = new SerializedObject(student);
+                studentSerialized.FindProperty("_actualCollectTraceRelativePath")?.SetValue(Collect8DTraceJsonlPath);
+                studentSerialized.FindProperty("_actionTraceRelativePath")?.SetValue(Action8DTraceJsonlPath);
+                studentSerialized.FindProperty("_runtimeApplyTraceRelativePath")?.SetValue(RuntimeApply8DTraceJsonlPath);
+                studentSerialized.FindProperty("_decisionSchedulerTraceRelativePath")?.SetValue(DecisionScheduler8DTraceJsonlPath);
+                studentSerialized.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(student);
+            }
+
+            if (diagnostics != null)
+            {
+                SerializedObject diagnosticsSerialized = new SerializedObject(diagnostics);
+                diagnosticsSerialized.FindProperty("_reportJsonRelativePath")?.SetValue(Report8DJsonPath);
+                diagnosticsSerialized.FindProperty("_reportMdRelativePath")?.SetValue(Report8DMdPath);
+                diagnosticsSerialized.FindProperty("_traceJsonlRelativePath")?.SetValue(Trace8DJsonlPath);
+                diagnosticsSerialized.FindProperty("_sourceTraceRelativePath")?.SetValue(SourceTraceJsonlPath);
+                diagnosticsSerialized.FindProperty("_actualCollectTraceRelativePath")?.SetValue(Collect8DTraceJsonlPath);
+                diagnosticsSerialized.FindProperty("_agentInventoryRelativePath")?.SetValue(AgentInventory8DJsonPath);
+                diagnosticsSerialized.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(diagnostics);
+            }
+
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            EditorSceneManager.SaveOpenScenes();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        private static void DeleteIfExists(string relativePath)
+        {
+            string fullPath = GetAbsoluteProjectPath(relativePath);
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
         }
 
         private static string GetAbsoluteProjectPath(string relativePath)

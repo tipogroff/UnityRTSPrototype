@@ -1,9 +1,9 @@
 ﻿# Stage7B-8C.2 Unity Inference Smoke Report
 
-final_decision: GO
-ready_for_stage7b_8d_or_9: true
-blocker_code: none
-blocker_reason: none
+final_decision: NO_GO
+ready_for_stage7b_8d_or_9: false
+blocker_code: C
+blocker_reason: CollectObservations did not provide full real observation without padding
 
 ## Model
 - onnx_source_path: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
@@ -21,36 +21,36 @@ blocker_reason: none
 - observation_nan_count: 0
 - observation_source: ObservationBuilder/runtime_state
 - observation_zero_padding_warning_detected: false
-- actual_collect_trace_path: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-- actual_collect_calls: 1
+- actual_collect_trace_path: python/stage7b_teacher_replay/stage7b_8d_actual_collect_observations_trace.jsonl
+- actual_collect_calls: 156
 - actual_collect_all_expected_values: true
 - zero_fallback_used: false
-- defensive_pre_ready_observation_count: 0
-- defensive_pre_ready_observation_used_after_runtime_ready: false
+- defensive_pre_ready_observation_count: 1
+- defensive_pre_ready_observation_used_after_runtime_ready: true
 - warning_padding_first_frame: -1
 - warning_padding_first_academy_step: -1
 
 ## Lifecycle
 - initialize_count: 3
-- on_episode_begin_count: 1
-- collect_observations_count: 3
-- write_discrete_action_mask_count: 1
-- on_action_received_count: 1
+- on_episode_begin_count: 2
+- collect_observations_count: 158
+- write_discrete_action_mask_count: 155
+- on_action_received_count: 155
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 1
+- inference_kick_decision_request_count: 2
 - inference_runtime_ready_observed: true
 - inference_first_ready_frame: 2
 - inference_first_ready_fixed_tick: 1
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 11
+- candidate_action_index_last: 9
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 2
-- action_adapter_success_count: 1
-- runtime_apply_attempted: 1
-- runtime_apply_accepted: 1
+- candidate_builder_success_count: 310
+- action_adapter_success_count: 155
+- runtime_apply_attempted: 155
+- runtime_apply_accepted: 155
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -69,10 +69,10 @@ blocker_reason: none
 - timeout_spam_detected: false
 
 ## Artifacts
-- report_json: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.json
-- report_md: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.md
-- lifecycle_trace_jsonl: python/stage7b_teacher_replay/stage7b_8c2_inference_lifecycle_trace.jsonl
-- actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-- agent_inventory_json: python/stage7b_teacher_replay/stage7b_8c2_agent_inventory.json
+- report_json: python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.json
+- report_md: python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.md
+- lifecycle_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d_inference_lifecycle_trace.jsonl
+- actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d_actual_collect_observations_trace.jsonl
+- agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d_agent_inventory.json
 
-generated_at_utc: 2026-05-11T11:59:14.0199743Z
+generated_at_utc: 2026-05-11T14:23:42.9376316Z

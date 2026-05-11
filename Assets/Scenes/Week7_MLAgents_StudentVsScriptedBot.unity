@@ -721,7 +721,9 @@ MonoBehaviour:
   _manualFixedUpdateDecisionRequests: 0
   _allowConcurrentDecisionSourcesForDebug: 0
   _enableDecisionRequesterWatchdogFallback: 0
-  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8c1_actual_collect_observations_trace.jsonl
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d_actual_collect_observations_trace.jsonl
+  _actionTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d_action_trace.jsonl
+  _runtimeApplyTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d_runtime_apply_trace.jsonl
   _stage7BMaxDecisionsPerEpisode: 256
   _logRejectedActions: 0
 --- !u!114 &477664551
@@ -1280,11 +1282,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e270efbe8f08e0c498b5d9c215b0f1b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.MLAgents.Stage7B.Diagnostics.Stage7BInferenceSmokeDiagnostics
-  _reportJsonRelativePath: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.json
-  _reportMdRelativePath: python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.md
-  _traceJsonlRelativePath: python/stage7b_teacher_replay/stage7b_8c2_inference_lifecycle_trace.jsonl
-  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl
-  _agentInventoryRelativePath: python/stage7b_teacher_replay/stage7b_8c2_agent_inventory.json
+  _reportJsonRelativePath: python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.json
+  _reportMdRelativePath: python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.md
+  _traceJsonlRelativePath: python/stage7b_teacher_replay/stage7b_8d_inference_lifecycle_trace.jsonl
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d_actual_collect_observations_trace.jsonl
+  _agentInventoryRelativePath: python/stage7b_teacher_replay/stage7b_8d_agent_inventory.json
   _sourceTraceRelativePath: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
   _writeIntervalSeconds: 1
   _onnxSourcePath: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
