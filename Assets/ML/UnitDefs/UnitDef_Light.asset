@@ -21,4 +21,4 @@ MonoBehaviour:
   productionCost: 3
   isBuilding: 0
   productionTime: 6
-  prefab: {fileID: 368027460665054474, guid: 42c6a8e049ccd9042b847a32585697b0, type: 3}
+  prefab: {fileID: 1101000000001, guid: c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3, type: 3}

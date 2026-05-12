@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using RTS.Core;
+using RTS.Presentation;
 
 namespace RTS.Gameplay
 {
@@ -82,6 +83,12 @@ namespace RTS.Gameplay
                 unit = go.AddComponent<UnitRuntime>();
 
             unit.Init(definition, owner, pos);
+
+            // Visual-only post-init notification for lifecycle races on runtime-spawned units.
+            var bridge = go.GetComponent<VisualEventBridge>()
+                         ?? go.GetComponentInParent<VisualEventBridge>(true)
+                         ?? go.GetComponentInChildren<VisualEventBridge>(true);
+            bridge?.NotifyRuntimeInitialized();
 
             if (!_gridManager.TryPlaceUnit(unit, pos))
             {

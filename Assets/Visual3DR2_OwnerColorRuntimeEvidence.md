@@ -1,0 +1,337 @@
+﻿# Visual-3D-R2 Owner Color Runtime Evidence
+
+- Captured UTC: 2026-05-12T02:35:44.3848985Z
+- Scene: Week7_MLAgents_StudentVsScriptedBot
+- Scene path: Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity
+- Total UnitRuntime instances: 9
+- Active UnitRuntime instances: 9
+- Player1 correct: 1
+- Player2 correct: 1
+- Mismatches: 0
+- Missing TeamMarker_Ring: 0
+- Missing UnitVisualAnimator: 0
+- Missing VisualEventBridge: 0
+- Duplicate TeamMarker_Ring count: 0
+
+## StaticAuthoredLayout/Player2_Worker_(22, 22)
+- UnitRuntime.Type: Worker
+- UnitRuntime.Owner: Player2
+- Owner-color validation target: True
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: True
+- TeamMarker_Ring path: StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/TeamMarker_Ring
+- TeamMarker_Ring activeSelf: True
+- TeamMarker_Ring activeInHierarchy: True
+- TeamMarker_Ring renderer present: True
+- TeamMarker_Ring renderer.sharedMaterial.name: Player2_Red
+- TeamMarker_Ring renderer.sharedMaterial asset path: Assets/Art/Materials/Player2_Red.mat
+- TeamMarker_Ring renderer.sharedMaterial guid: 8c3b99924bcffe1498d75cd1f3882723
+- UnitVisualAnimator present: True
+- UnitVisualAnimator activeAndEnabled: True
+- VisualEventBridge present: True
+- VisualEventBridge activeAndEnabled: True
+- VisualEventBridge resolved UnitRuntime: True (Player2_Worker_(22, 22))
+- VisualEventBridge resolved UnitVisualAnimator: True (Player2_Worker_(22, 22))
+- VisualEventBridge owner sync attempt count: 1
+- VisualEventBridge owner sync ever succeeded: True
+- VisualEventBridge last synced owner: Player2
+- VisualEventBridge last owner sync material name: Player2_Red
+- UnitVisualAnimator.materialRenderers length: 1
+- UnitVisualAnimator.materialRenderers paths: StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/TeamMarker_Ring
+- player1Material assigned: True
+- player2Material assigned: True
+- neutralMaterial assigned: True
+- expected material by Owner: Player2_Red (8c3b99924bcffe1498d75cd1f3882723)
+- actual material: Player2_Red (8c3b99924bcffe1498d75cd1f3882723)
+- current owner material name: Player2_Red
+- match / mismatch: match
+- duplicate TeamMarker_Ring paths: 
+
+## GridManager/Player2_Barracks_(23, 22)
+- UnitRuntime.Type: Barracks
+- UnitRuntime.Owner: Player2
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Player2_Red (8c3b99924bcffe1498d75cd1f3882723)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Neutral_Resource_(22, 23)
+- UnitRuntime.Type: Resource
+- UnitRuntime.Owner: Neutral
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Neutral_Resource (130f33fad9309b441b25b24afb4b7166)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Player2_Base_(21, 21)
+- UnitRuntime.Type: Base
+- UnitRuntime.Owner: Player2
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Player2_Red (8c3b99924bcffe1498d75cd1f3882723)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Neutral_Resource_(0, 0)
+- UnitRuntime.Type: Resource
+- UnitRuntime.Owner: Neutral
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Neutral_Resource (130f33fad9309b441b25b24afb4b7166)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Player1_Worker_(1, 1)
+- UnitRuntime.Type: Worker
+- UnitRuntime.Owner: Player1
+- Owner-color validation target: True
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: True
+- TeamMarker_Ring path: StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/TeamMarker_Ring
+- TeamMarker_Ring activeSelf: True
+- TeamMarker_Ring activeInHierarchy: True
+- TeamMarker_Ring renderer present: True
+- TeamMarker_Ring renderer.sharedMaterial.name: Player1_Blue
+- TeamMarker_Ring renderer.sharedMaterial asset path: Assets/Art/Materials/Player1_Blue.mat
+- TeamMarker_Ring renderer.sharedMaterial guid: 046d8d71a2ff43a4284957952132f14a
+- UnitVisualAnimator present: True
+- UnitVisualAnimator activeAndEnabled: True
+- VisualEventBridge present: True
+- VisualEventBridge activeAndEnabled: True
+- VisualEventBridge resolved UnitRuntime: True (Player1_Worker_(1, 1))
+- VisualEventBridge resolved UnitVisualAnimator: True (Player1_Worker_(1, 1))
+- VisualEventBridge owner sync attempt count: 1
+- VisualEventBridge owner sync ever succeeded: True
+- VisualEventBridge last synced owner: Player1
+- VisualEventBridge last owner sync material name: Player1_Blue
+- UnitVisualAnimator.materialRenderers length: 1
+- UnitVisualAnimator.materialRenderers paths: StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/TeamMarker_Ring
+- player1Material assigned: True
+- player2Material assigned: True
+- neutralMaterial assigned: True
+- expected material by Owner: Player1_Blue (046d8d71a2ff43a4284957952132f14a)
+- actual material: Player1_Blue (046d8d71a2ff43a4284957952132f14a)
+- current owner material name: Player1_Blue
+- match / mismatch: match
+- duplicate TeamMarker_Ring paths: 
+
+## StaticAuthoredLayout/Neutral_Resource_(1, 0)
+- UnitRuntime.Type: Resource
+- UnitRuntime.Owner: Neutral
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Neutral_Resource (130f33fad9309b441b25b24afb4b7166)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Player1_Base_(2, 2)
+- UnitRuntime.Type: Base
+- UnitRuntime.Owner: Player1
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Player1_Blue (046d8d71a2ff43a4284957952132f14a)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
+## StaticAuthoredLayout/Neutral_Resource_(23, 23)
+- UnitRuntime.Type: Resource
+- UnitRuntime.Owner: Neutral
+- Owner-color validation target: False
+- UnitRuntime.Model is null: False
+- VisualRoot present: True
+- TeamMarker_Ring present: False
+- TeamMarker_Ring path: 
+- TeamMarker_Ring activeSelf: False
+- TeamMarker_Ring activeInHierarchy: False
+- TeamMarker_Ring renderer present: False
+- TeamMarker_Ring renderer.sharedMaterial.name: 
+- TeamMarker_Ring renderer.sharedMaterial asset path: 
+- TeamMarker_Ring renderer.sharedMaterial guid: 
+- UnitVisualAnimator present: False
+- UnitVisualAnimator activeAndEnabled: False
+- VisualEventBridge present: False
+- VisualEventBridge activeAndEnabled: False
+- VisualEventBridge resolved UnitRuntime: False ()
+- VisualEventBridge resolved UnitVisualAnimator: False ()
+- VisualEventBridge owner sync attempt count: 0
+- VisualEventBridge owner sync ever succeeded: False
+- VisualEventBridge last synced owner: 
+- VisualEventBridge last owner sync material name: 
+- UnitVisualAnimator.materialRenderers length: 0
+- UnitVisualAnimator.materialRenderers paths: 
+- player1Material assigned: False
+- player2Material assigned: False
+- neutralMaterial assigned: False
+- expected material by Owner: Neutral_Resource (130f33fad9309b441b25b24afb4b7166)
+- actual material:  ()
+- current owner material name: 
+- match / mismatch: mismatch
+- duplicate TeamMarker_Ring paths: 
+- notes: No TeamMarker_Ring found. UnitVisualAnimator missing. VisualEventBridge missing.
+
