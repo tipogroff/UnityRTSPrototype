@@ -92,12 +92,13 @@ Harvest visual fallback note:
 Implementation:
 
 - `CombatResolver.HandleDeath` now calls `OnVisualDeath()` before deactivation/destroy.
-- Existing `VisualEventBridge` death fallback retained.
+- Existing `VisualEventBridge` death fallback retained as runtime event marker.
 
 Current run limitation:
 
-- In this live validation, no Death event occurred in trace.
-- Lifecycle remains immediate (no destroy delay added), by design.
+- Previously: Death event existed in gameplay but animation on gameplay object was not visible because object lifetime ended immediately.
+- After Visual-3E-D-R repair pass: Death event is traced as `DeathRuntime`, and visual playback is offloaded to a temporary visual-only clone.
+- Gameplay lifecycle remains immediate (no destroy delay added), by design.
 
 ## 7) Manual Validator (Task 7)
 
@@ -119,8 +120,9 @@ Latest validation snapshot:
 
 - Play Mode: true
 - Wiring: Worker/Light/Heavy/Ranged all OK
-- Manual trigger test: executed on 43 active units
-- Trace check: Move=true, Attack=true, Harvest=true, Death=false
+- Manual trigger test: executed on 17 active units
+- Trace check: Move=true, Attack=true, Harvest=true, DeathRuntime=true, DeathVisualCloneSpawned=true, DeathVisualPlaybackStarted=true, DeathVisualCloneDestroyed=true
+- Death clone structure check: clone has no `UnitRuntime`, no `VisualEventBridge`, no colliders, no rigidbody, no gameplay MonoBehaviours
 
 ## 8) Live Gameplay Validation (Task 8)
 
@@ -132,7 +134,51 @@ Evidence from trace:
 - Walk observed (MoveStart/MoveEnd logged).
 - Harvest observed (Harvest trigger logged).
 - Attack observed (Attack trigger logged; manual and runtime hook path active).
-- Death not observed in this run (documented limitation/deferred evidence).
+- Death runtime observed (`DeathRuntime`).
+- Visual death clone lifecycle observed (`DeathVisualCloneSpawned` -> `DeathVisualPlaybackStarted` -> `DeathVisualCloneDestroyed`).
+
+## Death Visual Playback Closure
+
+Problem clarification:
+
+- Gameplay death event was always present.
+- Visual death animation on gameplay object was often not visible because gameplay object is unregistered/removed immediately during `CombatResolver.HandleDeath`.
+
+Repair-pass implementation (Visual-3E-D-R):
+
+- Added presentation-only clone spawner:
+  - `Assets/Scripts/Presentation/VisualDeathPlaybackSpawner.cs`
+- `CombatResolver.HandleDeath` now triggers visual-only spawn before the existing remove/unregister/destroy path:
+  - no delay added to gameplay object destruction;
+  - no occupancy cleanup change;
+  - no command/AI/training semantics change.
+
+Clone behavior:
+
+- clone is instantiated at death position/rotation/scale;
+- all gameplay MonoBehaviours are stripped;
+- colliders/rigidbodies/joints/character controller are removed;
+- clone is not registered in GridManager/UnitRegistry;
+- clone has no `UnitRuntime`;
+- death playback started via `Animator.Play("Death", 0, 0f)` on clone;
+- clone lifetime timer destroys clone after `deathPlaybackSeconds` (default `2.0f`).
+
+Trace additions:
+
+- `DeathRuntime`
+- `DeathVisualCloneSpawned`
+- `DeathVisualPlaybackStarted`
+- `DeathVisualCloneDestroyed`
+
+Live evidence (current run):
+
+- `Assets/Visual3ED_RuntimeAnimationTrace.jsonl` contains all four death events above.
+- `Assets/Visual3ED_RuntimeAnimationValidation.md` confirms death runtime + clone lifecycle + clone structure constraints.
+
+Gameplay deletion semantics confirmation:
+
+- `CombatResolver.HandleDeath` still executes occupancy removal, `UnitRegistry.Unregister`, player-state counters, and immediate deactivate/destroy exactly as before.
+- Visual playback occurs on clone only.
 
 ## 9) Screenshots (Task 9)
 
@@ -160,6 +206,7 @@ Mitigation applied:
 
 - `Assets/Scripts/Presentation/VisualEventBridge.cs`
 - `Assets/Scripts/Presentation/Visual3EDRuntimeAnimationTrace.cs`
+- `Assets/Scripts/Presentation/VisualDeathPlaybackSpawner.cs`
 - `Assets/Scripts/Presentation/UnitVisualAnimator.cs`
 - `Assets/Scripts/Gameplay/Match/MatchManager.cs`
 - `Assets/Scripts/Gameplay/Combat/CombatResolver.cs`

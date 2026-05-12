@@ -169,6 +169,7 @@ namespace RTS.Gameplay
             Debug.Log($"[CombatResolver] {deadUnit.Owner}.{deadUnit.Type} уничтожен игроком {killerOwner} на клетке {deadUnit.GridPos}");
 
             TryGetVisualBridge(deadUnit)?.OnVisualDeath();
+            VisualDeathPlaybackSpawner.TrySpawn(deadUnit, out _, out _);
 
             if (_gridManager != null &&
                 _gridManager.TryGetOccupant(deadUnit.GridPos, out var occupant) &&

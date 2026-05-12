@@ -1,6 +1,6 @@
 ﻿# Visual-3E-D Runtime Animation Validation
 
-- Generated UTC: 2026-05-12T17:10:36.4922530Z
+- Generated UTC: 2026-05-12T18:26:47.4869474Z
 - Play Mode: True
 
 ## Animator Wiring
@@ -11,16 +11,31 @@
 
 ## Manual Trigger Test
 - Executed: True
-- Units touched: 43
-- Move pulses: 43
-- Attack triggers: 43
-- Harvest triggers: 43
+- Units touched: 17
+- Move pulses: 17
+- Attack triggers: 17
+- Harvest triggers: 17
 
 ## Trace Check
 - Trace file: Assets/Visual3ED_RuntimeAnimationTrace.jsonl
-- Lines: 363
+- Lines: 2171
 - Move observed: True
 - Attack observed: True
 - Harvest observed: True
-- Death observed: False
-- Note: Death not observed in trace.
+- DeathRuntime observed: True
+- DeathVisualCloneSpawned observed: True
+- DeathVisualPlaybackStarted observed: True
+- DeathVisualCloneDestroyed observed: True
+
+## Death Clone Structure
+- Preview spawned: True
+- Clone id: -5251830
+- Clone name: Player1_Base_(2, 2)_DeathGhost
+- Clone active: True
+- Has UnitRuntime: False
+- Has VisualEventBridge: False
+- Has collider: False
+- Has rigidbody: False
+- Has gameplay MonoBehaviours: False
+- Note: Preview clone spawned for structural validation: Spawned visual death clone for Player1.Base at (2, 2).
+- Note: Spawned visual death clone for Player1.Base at (2, 2).

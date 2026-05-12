@@ -44,6 +44,7 @@ public static class Visual3EDRuntimeAnimationValidator
         ValidateAnimatorWiring(report);
         RunManualTriggerTest(report);
         RunTraceCheck(report);
+        RunDeathCloneCheck(report);
 
         WriteValidationArtifacts(report);
         AssetDatabase.Refresh();
@@ -207,15 +208,67 @@ public static class Visual3EDRuntimeAnimationValidator
             if (line.IndexOf("\"visual_event\":\"MoveStart\"", StringComparison.Ordinal) >= 0) trace.hasMove = true;
             if (line.IndexOf("\"visual_event\":\"Attack\"", StringComparison.Ordinal) >= 0) trace.hasAttack = true;
             if (line.IndexOf("\"visual_event\":\"Harvest\"", StringComparison.Ordinal) >= 0) trace.hasHarvest = true;
-            if (line.IndexOf("\"visual_event\":\"Death\"", StringComparison.Ordinal) >= 0) trace.hasDeath = true;
+            if (line.IndexOf("\"visual_event\":\"DeathRuntime\"", StringComparison.Ordinal) >= 0) trace.hasDeathRuntime = true;
+            if (line.IndexOf("\"visual_event\":\"DeathVisualCloneSpawned\"", StringComparison.Ordinal) >= 0) trace.hasDeathVisualCloneSpawned = true;
+            if (line.IndexOf("\"visual_event\":\"DeathVisualPlaybackStarted\"", StringComparison.Ordinal) >= 0) trace.hasDeathVisualPlaybackStarted = true;
+            if (line.IndexOf("\"visual_event\":\"DeathVisualCloneDestroyed\"", StringComparison.Ordinal) >= 0) trace.hasDeathVisualCloneDestroyed = true;
         }
 
         if (!trace.hasMove) trace.notes.Add("MoveStart not observed in trace.");
         if (!trace.hasAttack) trace.notes.Add("Attack not observed in trace.");
         if (!trace.hasHarvest) trace.notes.Add("Harvest not observed in trace.");
-        if (!trace.hasDeath) trace.notes.Add("Death not observed in trace.");
+        if (!trace.hasDeathRuntime) trace.notes.Add("DeathRuntime not observed in trace.");
+        if (!trace.hasDeathVisualCloneSpawned) trace.notes.Add("DeathVisualCloneSpawned not observed in trace.");
+        if (!trace.hasDeathVisualPlaybackStarted) trace.notes.Add("DeathVisualPlaybackStarted not observed in trace.");
+        if (!trace.hasDeathVisualCloneDestroyed) trace.notes.Add("DeathVisualCloneDestroyed not observed in trace.");
 
         report.traceCheck = trace;
+    }
+
+    private static void RunDeathCloneCheck(ValidationReport report)
+    {
+        var result = new DeathCloneResult();
+
+        if (!EditorApplication.isPlaying)
+        {
+            result.notes.Add("Skipped: Editor is not in Play Mode.");
+            report.deathClone = result;
+            return;
+        }
+
+        var clone = VisualDeathPlaybackSpawner.LastSpawnedClone;
+        if (clone == null)
+        {
+            var candidate = UnityEngine.Object.FindObjectsByType<UnitRuntime>(FindObjectsSortMode.None)
+                .FirstOrDefault(unit => unit != null && unit.isActiveAndEnabled);
+
+            if (candidate != null)
+            {
+                VisualDeathPlaybackSpawner.TrySpawn(candidate, out clone, out var spawnDiagnostic, 0.5f);
+                result.notes.Add("Preview clone spawned for structural validation: " + spawnDiagnostic);
+            }
+        }
+
+        if (clone == null)
+        {
+            result.notes.Add("No visual death clone available for inspection.");
+            report.deathClone = result;
+            return;
+        }
+
+        result.previewSpawned = true;
+        result.cloneId = clone.GetInstanceID().ToString();
+        result.hasUnitRuntime = clone.GetComponentInChildren<UnitRuntime>(true) != null;
+        result.hasVisualEventBridge = clone.GetComponentInChildren<VisualEventBridge>(true) != null;
+        result.hasCollider = clone.GetComponentsInChildren<Collider>(true).Any(c => c != null);
+        result.hasRigidbody = clone.GetComponentsInChildren<Rigidbody>(true).Any(r => r != null);
+        result.hasGameplayMonoBehaviours = clone.GetComponentsInChildren<MonoBehaviour>(true)
+            .Any(component => component != null && component.GetType().Name != nameof(VisualDeathPlaybackGhost));
+        result.activeSelf = clone.activeSelf;
+        result.name = clone.name;
+        result.notes.Add(VisualDeathPlaybackSpawner.LastSpawnDiagnostic);
+
+        report.deathClone = result;
     }
 
     private static void WriteValidationArtifacts(ValidationReport report)
@@ -259,8 +312,27 @@ public static class Visual3EDRuntimeAnimationValidator
         sb.AppendLine("- Move observed: " + report.traceCheck.hasMove);
         sb.AppendLine("- Attack observed: " + report.traceCheck.hasAttack);
         sb.AppendLine("- Harvest observed: " + report.traceCheck.hasHarvest);
-        sb.AppendLine("- Death observed: " + report.traceCheck.hasDeath);
+        sb.AppendLine("- DeathRuntime observed: " + report.traceCheck.hasDeathRuntime);
+        sb.AppendLine("- DeathVisualCloneSpawned observed: " + report.traceCheck.hasDeathVisualCloneSpawned);
+        sb.AppendLine("- DeathVisualPlaybackStarted observed: " + report.traceCheck.hasDeathVisualPlaybackStarted);
+        sb.AppendLine("- DeathVisualCloneDestroyed observed: " + report.traceCheck.hasDeathVisualCloneDestroyed);
         foreach (var note in report.traceCheck.notes)
+        {
+            sb.AppendLine("- Note: " + note);
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("## Death Clone Structure");
+        sb.AppendLine("- Preview spawned: " + report.deathClone.previewSpawned);
+        sb.AppendLine("- Clone id: " + report.deathClone.cloneId);
+        sb.AppendLine("- Clone name: " + report.deathClone.name);
+        sb.AppendLine("- Clone active: " + report.deathClone.activeSelf);
+        sb.AppendLine("- Has UnitRuntime: " + report.deathClone.hasUnitRuntime);
+        sb.AppendLine("- Has VisualEventBridge: " + report.deathClone.hasVisualEventBridge);
+        sb.AppendLine("- Has collider: " + report.deathClone.hasCollider);
+        sb.AppendLine("- Has rigidbody: " + report.deathClone.hasRigidbody);
+        sb.AppendLine("- Has gameplay MonoBehaviours: " + report.deathClone.hasGameplayMonoBehaviours);
+        foreach (var note in report.deathClone.notes)
         {
             sb.AppendLine("- Note: " + note);
         }
@@ -276,6 +348,7 @@ public static class Visual3EDRuntimeAnimationValidator
         public List<WiringEntry> wiring = new List<WiringEntry>();
         public ManualTriggerResult manualTrigger = new ManualTriggerResult();
         public TraceCheckResult traceCheck = new TraceCheckResult();
+        public DeathCloneResult deathClone = new DeathCloneResult();
     }
 
     [Serializable]
@@ -305,7 +378,25 @@ public static class Visual3EDRuntimeAnimationValidator
         public bool hasMove;
         public bool hasAttack;
         public bool hasHarvest;
-        public bool hasDeath;
+        public bool hasDeathRuntime;
+        public bool hasDeathVisualCloneSpawned;
+        public bool hasDeathVisualPlaybackStarted;
+        public bool hasDeathVisualCloneDestroyed;
+        public List<string> notes = new List<string>();
+    }
+
+    [Serializable]
+    private sealed class DeathCloneResult
+    {
+        public bool previewSpawned;
+        public string cloneId = string.Empty;
+        public string name = string.Empty;
+        public bool activeSelf;
+        public bool hasUnitRuntime;
+        public bool hasVisualEventBridge;
+        public bool hasCollider;
+        public bool hasRigidbody;
+        public bool hasGameplayMonoBehaviours;
         public List<string> notes = new List<string>();
     }
 }

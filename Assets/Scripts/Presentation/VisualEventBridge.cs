@@ -97,8 +97,7 @@ namespace RTS.Presentation
                 {
                     _deathPlayed = true;
                     unitVisualAnimator.SetMoving(false);
-                    unitVisualAnimator.PlayDeath();
-                    TraceEvent("Death", "Death trigger", "VisualEventBridge.Update", true, "Unit marked not alive in runtime state.");
+                    TraceEvent("DeathRuntime", "Death trigger", "VisualEventBridge.Update", true, "Unit marked not alive in runtime state.");
                 }
 
                 return;
@@ -393,8 +392,9 @@ namespace RTS.Presentation
 
         public void OnVisualDeath()
         {
-            unitVisualAnimator?.PlayDeath();
-            TraceEvent("Death", "Death trigger", "VisualEventBridge.OnVisualDeath", true, "Applied runtime death visual notification.");
+            _deathPlayed = true;
+            unitVisualAnimator?.SetMoving(false);
+            TraceEvent("DeathRuntime", "Death trigger", "VisualEventBridge.OnVisualDeath", true, "Runtime death reached gameplay destruction path.");
         }
 
         private void TraceEvent(string visualEvent, string animatorParameter, string source, bool success, string diagnostic)

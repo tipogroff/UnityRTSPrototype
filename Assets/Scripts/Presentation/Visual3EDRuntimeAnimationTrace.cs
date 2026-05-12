@@ -42,7 +42,33 @@ namespace RTS.Presentation
             string animatorParameter,
             string source,
             bool success,
-            string diagnostic)
+            string diagnostic,
+            string cloneId = "")
+        {
+            Record(
+                unit != null ? unit.GetInstanceID().ToString() : "0",
+                unit != null ? unit.Type.ToString() : "Unknown",
+                unit != null ? unit.Owner.ToString() : "Unknown",
+                unit != null ? unit.GridPos : GridPosition.Zero,
+                visualEvent,
+                animatorParameter,
+                source,
+                success,
+                diagnostic,
+                cloneId);
+        }
+
+        public static void Record(
+            string unitInstanceId,
+            string unitType,
+            string owner,
+            GridPosition gridPosition,
+            string visualEvent,
+            string animatorParameter,
+            string source,
+            bool success,
+            string diagnostic,
+            string cloneId = "")
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
@@ -51,21 +77,18 @@ namespace RTS.Presentation
 
                 int frame = Time.frameCount;
                 int step = MatchManager.Instance != null ? MatchManager.Instance.Step : -1;
-                string unitId = unit != null ? unit.GetInstanceID().ToString() : "0";
-                string unitType = unit != null ? unit.Type.ToString() : "Unknown";
-                string owner = unit != null ? unit.Owner.ToString() : "Unknown";
-                GridPosition pos = unit != null ? unit.GridPos : GridPosition.Zero;
 
                 string line =
                     "{" +
                     "\"frame\":" + frame + "," +
                     "\"step\":" + step + "," +
-                    "\"unit_instance_id\":\"" + Escape(unitId) + "\"," +
+                    "\"unit_instance_id\":\"" + Escape(unitInstanceId) + "\"," +
                     "\"unit_type\":\"" + Escape(unitType) + "\"," +
                     "\"owner\":\"" + Escape(owner) + "\"," +
-                    "\"grid_position\":{\"x\":" + pos.X + ",\"y\":" + pos.Y + "}," +
+                    "\"grid_position\":{\"x\":" + gridPosition.X + ",\"y\":" + gridPosition.Y + "}," +
                     "\"visual_event\":\"" + Escape(visualEvent) + "\"," +
                     "\"animator_parameter_changed\":\"" + Escape(animatorParameter) + "\"," +
+                    "\"clone_id\":\"" + Escape(cloneId) + "\"," +
                     "\"source\":\"" + Escape(source) + "\"," +
                     "\"success\":" + (success ? "true" : "false") + "," +
                     "\"diagnostic\":\"" + Escape(diagnostic ?? string.Empty) + "\"" +

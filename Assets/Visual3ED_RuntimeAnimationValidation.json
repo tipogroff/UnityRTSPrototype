@@ -1,5 +1,5 @@
 ﻿{
-    "generatedUtc": "2026-05-12T17:10:36.4922530Z",
+    "generatedUtc": "2026-05-12T18:26:47.4869474Z",
     "inPlayMode": true,
     "wiring": [
         {
@@ -29,20 +29,36 @@
     ],
     "manualTrigger": {
         "executed": true,
-        "unitsTouched": 43,
-        "pulsedMove": 43,
-        "triggeredAttack": 43,
-        "triggeredHarvest": 43,
+        "unitsTouched": 17,
+        "pulsedMove": 17,
+        "triggeredAttack": 17,
+        "triggeredHarvest": 17,
         "notes": []
     },
     "traceCheck": {
-        "lineCount": 363,
+        "lineCount": 2171,
         "hasMove": true,
         "hasAttack": true,
         "hasHarvest": true,
-        "hasDeath": false,
+        "hasDeathRuntime": true,
+        "hasDeathVisualCloneSpawned": true,
+        "hasDeathVisualPlaybackStarted": true,
+        "hasDeathVisualCloneDestroyed": true,
+        "notes": []
+    },
+    "deathClone": {
+        "previewSpawned": true,
+        "cloneId": "-5251830",
+        "name": "Player1_Base_(2, 2)_DeathGhost",
+        "activeSelf": true,
+        "hasUnitRuntime": false,
+        "hasVisualEventBridge": false,
+        "hasCollider": false,
+        "hasRigidbody": false,
+        "hasGameplayMonoBehaviours": false,
         "notes": [
-            "Death not observed in trace."
+            "Preview clone spawned for structural validation: Spawned visual death clone for Player1.Base at (2, 2).",
+            "Spawned visual death clone for Player1.Base at (2, 2)."
         ]
     }
 }
