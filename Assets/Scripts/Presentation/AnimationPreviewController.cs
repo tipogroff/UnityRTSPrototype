@@ -12,6 +12,7 @@ namespace RTS.Presentation
 
         [SerializeField] private Animator animator;
         [SerializeField] private bool autoCycle = true;
+        [SerializeField] private bool allowKeyboardInput = true;
         [SerializeField] private float idleSeconds = 2f;
         [SerializeField] private float walkSeconds = 2f;
         [SerializeField] private float attackSeconds = 1.25f;
@@ -96,6 +97,11 @@ namespace RTS.Presentation
 
         private void HandleKeyboard()
         {
+            if (!allowKeyboardInput)
+            {
+                return;
+            }
+
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 ResetToIdle();
@@ -183,6 +189,32 @@ namespace RTS.Presentation
             animator.ResetTrigger(AttackHash);
             animator.ResetTrigger(DeathHash);
             animator.ResetTrigger(HarvestHash);
+        }
+
+        public Animator AnimatorComponent => animator;
+
+        public string CurrentPhaseName => _phase.ToString();
+
+        public void SetAutoCycle(bool value)
+        {
+            autoCycle = value;
+            _timer = 0f;
+        }
+
+        public void SetKeyboardInput(bool value)
+        {
+            allowKeyboardInput = value;
+        }
+
+        public void RebindAnimator()
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            animator.Rebind();
+            animator.Update(0f);
         }
     }
 }
