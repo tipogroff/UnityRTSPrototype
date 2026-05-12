@@ -1,0 +1,98 @@
+﻿# Visual-3F Smooth Movement Validation
+
+- Generated UTC: 2026-05-12T20:50:10.0553965Z
+- Play Mode: True
+
+## Prefab Wiring
+- Worker => OK (`Assets/Prefabs/Worker.prefab`)
+  - Interpolator: True
+  - visualRoot assigned: True
+  - Root collider: True
+  - Root localPosition: (0,000, 0,000, 0,000) expected (0,000, 1,000, 0,000)
+  - Root localScale: (1,000, 1,000, 1,000) expected (0,600, 0,800, 0,600)
+  - Marker localPosition: (0,000, 0,020, 0,000) expected (0,000, 0,020, 0,000)
+  - Marker localScale: (0,720, 0,020, 0,720) expected (0,720, 0,020, 0,720)
+- Light => OK (`Assets/Prefabs/Light.prefab`)
+  - Interpolator: True
+  - visualRoot assigned: True
+  - Root collider: True
+  - Root localPosition: (0,000, 0,000, 0,000) expected (0,000, 1,000, 0,000)
+  - Root localScale: (1,000, 1,000, 1,000) expected (0,800, 0,800, 0,800)
+  - Marker localPosition: (0,000, 0,020, 0,000) expected (0,000, 0,020, 0,000)
+  - Marker localScale: (0,720, 0,020, 0,720) expected (0,720, 0,020, 0,720)
+- Heavy => OK (`Assets/Prefabs/Heavy.prefab`)
+  - Interpolator: True
+  - visualRoot assigned: True
+  - Root collider: True
+  - Root localPosition: (0,000, 0,000, 0,000) expected (0,000, 1,000, 0,000)
+  - Root localScale: (1,000, 1,000, 1,000) expected (0,800, 0,800, 0,800)
+  - Marker localPosition: (0,000, 0,020, 0,000) expected (0,000, 0,020, 0,000)
+  - Marker localScale: (0,720, 0,020, 0,720) expected (0,720, 0,020, 0,720)
+- Ranged => OK (`Assets/Prefabs/Ranged.prefab`)
+  - Interpolator: True
+  - visualRoot assigned: True
+  - Root collider: True
+  - Root localPosition: (0,000, 0,000, 0,000) expected (0,000, 1,000, 0,000)
+  - Root localScale: (1,000, 1,000, 1,000) expected (0,500, 1,200, 0,500)
+  - Marker localPosition: (0,000, 0,020, 0,000) expected (0,000, 0,020, 0,000)
+  - Marker localScale: (0,720, 0,020, 0,720) expected (0,720, 0,020, 0,720)
+
+## Play Mode
+- Executed: True
+- Interpolators observed: 58
+- Interpolators moving: 0
+- Stuck offset count: 0
+- Animator mismatch count: 34
+- Owner color mismatch count: 0
+- Marker offset mismatch count: 9
+- Note: Animator IsMoving is true after interpolation completion on Player1_Worker_(1, 1).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(21, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Light_(2, 3).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(22, 22).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Heavy_(0, 3).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(1, 2).
+- Note: TeamMarker_Ring is not anchored as expected on Player2_Light_(23, 21).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Light_(23, 21).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 2).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 2).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Light_(0, 4).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Ranged_(0, 3).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Ranged_(0, 3).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Light_(0, 4).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 2).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Light_(0, 2).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 1).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).
+- Note: Animator IsMoving is true after interpolation completion on Player1_Ranged_(2, 3).
+
+## Trace
+- Lines: 1759
+- Started: True
+- Updated: False
+- Completed: True
+- Snapped: True
+- Interrupted: False

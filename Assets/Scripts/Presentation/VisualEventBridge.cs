@@ -12,13 +12,12 @@ namespace RTS.Presentation
     {
         [SerializeField] private UnitRuntime unitRuntime;
         [SerializeField] private UnitVisualAnimator unitVisualAnimator;
-        [SerializeField] private float movementLatchSeconds = 0.15f;
+        [SerializeField] private VisualGridMovementInterpolator visualGridMovementInterpolator;
         [SerializeField] private bool forceInitialSyncUntilSuccess = true;
         [SerializeField] private bool enableRuntimeTrace;
 
-        private GridPosition _lastGridPos;
-        private bool _hadValidGridPos;
-        private float _movingUntil;
+        private Vector3 _lastObservedRootWorldPosition;
+        private bool _hasObservedRootWorldPosition;
         private bool _deathPlayed;
         private bool _ownerVisualSynced;
         private Owner _lastSyncedOwner = (Owner)(-1);
@@ -70,13 +69,12 @@ namespace RTS.Presentation
 
             unitVisualAnimator.SetCarrying(unitRuntime.CarriedResources > 0);
 
-            if (unitRuntime.Model != null)
-            {
-                _lastGridPos = unitRuntime.GridPos;
-                _hadValidGridPos = true;
-            }
+            visualGridMovementInterpolator?.SnapToCurrent();
+            _lastObservedRootWorldPosition = unitRuntime.transform.position;
+            _hasObservedRootWorldPosition = true;
 
             unitVisualAnimator.PlaySpawn();
+            unitVisualAnimator.SetMoving(false);
             TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.Start", true, "Default idle state initialized.");
             _idleLogged = true;
         }
@@ -103,45 +101,45 @@ namespace RTS.Presentation
                 return;
             }
 
-            var isMoving = false;
-            if (unitRuntime.Model != null)
-            {
-                var currentPos = unitRuntime.GridPos;
-                if (_hadValidGridPos && currentPos != _lastGridPos)
-                {
-                    _movingUntil = Time.time + movementLatchSeconds;
-                    _lastGridPos = currentPos;
-                }
-                else if (!_hadValidGridPos)
-                {
-                    _lastGridPos = currentPos;
-                    _hadValidGridPos = true;
-                }
-
-                isMoving = Time.time <= _movingUntil;
-            }
-
-            unitVisualAnimator.SetMoving(isMoving);
             unitVisualAnimator.SetCarrying(unitRuntime.CarriedResources > 0);
 
-            if (isMoving && !_wasMoving)
+            if (visualGridMovementInterpolator == null)
             {
-                TraceEvent("MoveStart", "IsMoving=true", "VisualEventBridge.Update", true, "Movement latch activated by grid position change.");
+                unitVisualAnimator.SetMoving(false);
+                return;
+            }
+
+            var currentRootWorldPosition = unitRuntime.transform.position;
+            if (!_hasObservedRootWorldPosition)
+            {
+                _lastObservedRootWorldPosition = currentRootWorldPosition;
+                _hasObservedRootWorldPosition = true;
+                visualGridMovementInterpolator.SnapToCurrent();
+            }
+            else if ((currentRootWorldPosition - _lastObservedRootWorldPosition).sqrMagnitude > 0.000001f)
+            {
+                var previousRootWorldPosition = _lastObservedRootWorldPosition;
+                _lastObservedRootWorldPosition = currentRootWorldPosition;
+                visualGridMovementInterpolator.NotifyRootTeleported(previousRootWorldPosition, currentRootWorldPosition);
+            }
+
+            var interpolating = visualGridMovementInterpolator.IsInterpolating;
+            unitVisualAnimator.SetMoving(interpolating);
+
+            if (interpolating && !_wasMoving)
+            {
                 _idleLogged = false;
             }
-            else if (!isMoving && _wasMoving)
+            else if (!interpolating && _wasMoving)
             {
-                TraceEvent("MoveEnd", "IsMoving=false", "VisualEventBridge.Update", true, "Movement latch expired; returning to idle.");
-                TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.Update", true, "Returned to idle after movement.");
                 _idleLogged = true;
             }
-            else if (!isMoving && !_idleLogged)
+            else if (!interpolating && !_idleLogged)
             {
-                TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.Update", true, "Idle state observed.");
                 _idleLogged = true;
             }
 
-            _wasMoving = isMoving;
+            _wasMoving = interpolating;
         }
 
         private void LateUpdate()
@@ -170,6 +168,12 @@ namespace RTS.Presentation
             ResolveReferences();
             _ownerVisualSynced = false;
             TrySyncOwner("NotifyRuntimeInitialized");
+            visualGridMovementInterpolator?.SnapToCurrent();
+            if (unitRuntime != null)
+            {
+                _lastObservedRootWorldPosition = unitRuntime.transform.position;
+                _hasObservedRootWorldPosition = true;
+            }
             if (unitRuntime != null)
             {
                 TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.NotifyRuntimeInitialized", true, "Runtime initialized notification from UnitFactory.");
@@ -185,7 +189,6 @@ namespace RTS.Presentation
         public void PulseMoving(float seconds = 0.2f)
         {
             var pulse = Mathf.Max(0.01f, seconds);
-            _movingUntil = Mathf.Max(_movingUntil, Time.time + pulse);
             unitVisualAnimator?.SetMoving(true);
 
             if (!_wasMoving)
@@ -331,6 +334,16 @@ namespace RTS.Presentation
             if (unitVisualAnimator == null)
             {
                 unitVisualAnimator = GetComponentInChildren<UnitVisualAnimator>(true);
+            }
+
+            if (visualGridMovementInterpolator == null)
+            {
+                visualGridMovementInterpolator = GetComponent<VisualGridMovementInterpolator>();
+            }
+
+            if (visualGridMovementInterpolator == null)
+            {
+                visualGridMovementInterpolator = GetComponentInChildren<VisualGridMovementInterpolator>(true);
             }
         }
 

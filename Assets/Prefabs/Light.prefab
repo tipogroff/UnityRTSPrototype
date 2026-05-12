@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1101000000005}
   - component: {fileID: 1101000000006}
   - component: {fileID: 1101000000007}
+  - component: {fileID: 1101000000999}
   m_Layer: 0
   m_Name: Light
   m_TagString: Untagged
@@ -156,6 +157,24 @@ MonoBehaviour:
   unitVisualAnimator: {fileID: 1101000000006}
   movementLatchSeconds: 0.15
   forceInitialSyncUntilSuccess: 1
+--- !u!114 &1101000000999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a0c1b2d4e56789abcedf0123456789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visualRoot: {fileID: 1101000000009}
+  moveDuration: 0.3
+  useScaledTime: 1
+  enableInterpolation: 1
+  teleportDistanceThreshold: 0.05
+  traceEnabled: 1
 --- !u!1 &1101000000008
 GameObject:
   m_ObjectHideFlags: 0

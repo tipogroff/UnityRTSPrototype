@@ -103,6 +103,12 @@ python/week5_teacher_legacy032/teacher_models/
 # Large raw action trace logs (generated, DO NOT COMMIT)
 python/week6_student/reports/stage10d26/*_trace.jsonl
 
+# Stage7B trace artifacts (generated, can be large)
+python/stage7b_teacher_replay/*.jsonl
+
+# Unity runtime trace exports (generated, can be large)
+Assets/*Runtime*Trace*.jsonl
+
 # Documentation archives and generated reports
 docs/
 
