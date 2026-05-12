@@ -38,6 +38,21 @@ namespace RTS.Presentation
         private bool _warnedRendererListMissing;
         private bool _warnedDuplicateMarker;
         private bool _warnedInactiveAuthoritativeMarker;
+        private bool _parameterCacheBuilt;
+        private bool _hasIsMoving;
+        private bool _hasIsCarrying;
+        private bool _hasAttack;
+        private bool _hasHarvest;
+        private bool _hasDeath;
+        private bool _hasSpawn;
+        private bool _hasHit;
+        private static bool _warnedMissingIsMoving;
+        private static bool _warnedMissingIsCarrying;
+        private static bool _warnedMissingAttack;
+        private static bool _warnedMissingHarvest;
+        private static bool _warnedMissingDeath;
+        private static bool _warnedMissingSpawn;
+        private static bool _warnedMissingHit;
 
         private void Awake()
         {
@@ -75,7 +90,14 @@ namespace RTS.Presentation
                 return;
             }
 
-            a.SetBool(IsMovingHash, value);
+            EnsureParameterCache(a);
+            if (_hasIsMoving)
+            {
+                a.SetBool(IsMovingHash, value);
+                return;
+            }
+
+            WarnOnce(ref _warnedMissingIsMoving, "Animator parameter 'IsMoving' is missing.");
         }
 
         public void SetCarrying(bool value)
@@ -85,7 +107,14 @@ namespace RTS.Presentation
                 return;
             }
 
-            a.SetBool(IsCarryingHash, value);
+            EnsureParameterCache(a);
+            if (_hasIsCarrying)
+            {
+                a.SetBool(IsCarryingHash, value);
+                return;
+            }
+
+            WarnOnce(ref _warnedMissingIsCarrying, "Animator parameter 'IsCarrying' is missing.");
         }
 
         public void PlayAttack()
@@ -285,7 +314,116 @@ namespace RTS.Presentation
                 return;
             }
 
-            a.SetTrigger(triggerHash);
+            EnsureParameterCache(a);
+
+            if (triggerHash == AttackHash)
+            {
+                if (_hasAttack)
+                {
+                    a.SetTrigger(triggerHash);
+                    return;
+                }
+
+                WarnOnce(ref _warnedMissingAttack, "Animator trigger 'Attack' is missing.");
+                return;
+            }
+
+            if (triggerHash == HarvestHash)
+            {
+                if (_hasHarvest)
+                {
+                    a.SetTrigger(triggerHash);
+                    return;
+                }
+
+                WarnOnce(ref _warnedMissingHarvest, "Animator trigger 'Harvest' is missing.");
+                return;
+            }
+
+            if (triggerHash == DeathHash)
+            {
+                if (_hasDeath)
+                {
+                    a.SetTrigger(triggerHash);
+                    return;
+                }
+
+                WarnOnce(ref _warnedMissingDeath, "Animator trigger 'Death' is missing.");
+                return;
+            }
+
+            if (triggerHash == SpawnHash)
+            {
+                if (_hasSpawn)
+                {
+                    a.SetTrigger(triggerHash);
+                    return;
+                }
+
+                WarnOnce(ref _warnedMissingSpawn, "Animator trigger 'Spawn' is missing.");
+                return;
+            }
+
+            if (triggerHash == HitHash)
+            {
+                if (_hasHit)
+                {
+                    a.SetTrigger(triggerHash);
+                    return;
+                }
+
+                WarnOnce(ref _warnedMissingHit, "Animator trigger 'Hit' is missing.");
+            }
+        }
+
+        private void EnsureParameterCache(Animator targetAnimator)
+        {
+            if (_parameterCacheBuilt || targetAnimator == null)
+            {
+                return;
+            }
+
+            var parameters = targetAnimator.parameters;
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                if (parameter.type == AnimatorControllerParameterType.Bool)
+                {
+                    if (parameter.nameHash == IsMovingHash)
+                    {
+                        _hasIsMoving = true;
+                    }
+                    else if (parameter.nameHash == IsCarryingHash)
+                    {
+                        _hasIsCarrying = true;
+                    }
+                }
+                else if (parameter.type == AnimatorControllerParameterType.Trigger)
+                {
+                    if (parameter.nameHash == AttackHash)
+                    {
+                        _hasAttack = true;
+                    }
+                    else if (parameter.nameHash == HarvestHash)
+                    {
+                        _hasHarvest = true;
+                    }
+                    else if (parameter.nameHash == DeathHash)
+                    {
+                        _hasDeath = true;
+                    }
+                    else if (parameter.nameHash == SpawnHash)
+                    {
+                        _hasSpawn = true;
+                    }
+                    else if (parameter.nameHash == HitHash)
+                    {
+                        _hasHit = true;
+                    }
+                }
+            }
+
+            _parameterCacheBuilt = true;
         }
 
         private Material GetOwnerMaterial(Owner owner)

@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
+using RTS.Presentation;
 
 namespace RTS.Gameplay
 {
@@ -975,7 +976,13 @@ namespace RTS.Gameplay
                 return false;
             }
 
-            return worker.AddCarriedResources(harvested) > 0;
+            bool carriedAdded = worker.AddCarriedResources(harvested) > 0;
+            if (carriedAdded)
+            {
+                TryGetVisualBridge(worker)?.OnVisualHarvest();
+            }
+
+            return carriedAdded;
         }
 
         private bool TryExecuteDeposit(ResolvedCommand command)
@@ -1230,6 +1237,18 @@ namespace RTS.Gameplay
             }
 
             return _combatResolver.TryAttack(attacker, target);
+        }
+
+        private static VisualEventBridge TryGetVisualBridge(UnitRuntime unit)
+        {
+            if (unit == null)
+            {
+                return null;
+            }
+
+            return unit.GetComponent<VisualEventBridge>()
+                   ?? unit.GetComponentInParent<VisualEventBridge>(true)
+                   ?? unit.GetComponentInChildren<VisualEventBridge>(true);
         }
 
         private MatchResolution ResolveCompletion()

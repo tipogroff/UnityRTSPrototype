@@ -1,0 +1,48 @@
+﻿{
+    "generatedUtc": "2026-05-12T17:10:36.4922530Z",
+    "inPlayMode": true,
+    "wiring": [
+        {
+            "prefabPath": "Assets/Prefabs/Worker.prefab",
+            "ok": true,
+            "visualAnimatorReferenceAssigned": true,
+            "notes": []
+        },
+        {
+            "prefabPath": "Assets/Prefabs/Light.prefab",
+            "ok": true,
+            "visualAnimatorReferenceAssigned": true,
+            "notes": []
+        },
+        {
+            "prefabPath": "Assets/Prefabs/Heavy.prefab",
+            "ok": true,
+            "visualAnimatorReferenceAssigned": true,
+            "notes": []
+        },
+        {
+            "prefabPath": "Assets/Prefabs/Ranged.prefab",
+            "ok": true,
+            "visualAnimatorReferenceAssigned": true,
+            "notes": []
+        }
+    ],
+    "manualTrigger": {
+        "executed": true,
+        "unitsTouched": 43,
+        "pulsedMove": 43,
+        "triggeredAttack": 43,
+        "triggeredHarvest": 43,
+        "notes": []
+    },
+    "traceCheck": {
+        "lineCount": 363,
+        "hasMove": true,
+        "hasAttack": true,
+        "hasHarvest": true,
+        "hasDeath": false,
+        "notes": [
+            "Death not observed in trace."
+        ]
+    }
+}
