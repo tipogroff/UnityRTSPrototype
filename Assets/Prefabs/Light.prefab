@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1dae0954bf0f1e49a70e2a99a956f0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator: {fileID: 842644295369477230}
   materialRenderers:
   - {fileID: 1101000000013}
   player1Material: {fileID: 2100000, guid: 046d8d71a2ff43a4284957952132f14a, type: 2}
@@ -155,6 +155,7 @@ MonoBehaviour:
   unitRuntime: {fileID: 0}
   unitVisualAnimator: {fileID: 1101000000006}
   movementLatchSeconds: 0.15
+  forceInitialSyncUntilSuccess: 1
 --- !u!1 &1101000000008
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +185,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1101000000015}
+  - {fileID: 4879003248398150069}
   - {fileID: 1101000000011}
   m_Father: {fileID: 1101000000002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -286,9 +287,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1101000000009}
     m_Modifications:
-    - target: {fileID: 5520559536906679670, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
-      propertyPath: m_Name
-      value: Visual_Light_Viking_Male_Model
+    - target: {fileID: 925884775011223343, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4879002149814102971, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
       propertyPath: m_LocalScale.x
@@ -330,17 +331,47 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 925884775011223343, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 5520559536906679670, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
+      propertyPath: m_Name
+      value: Visual_Light_Viking_Male_Model
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5520559536906679670, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 842644295369477230}
   m_SourcePrefab: {fileID: 100100000, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
---- !u!4 &1101000000015 stripped
+--- !u!4 &4879003248398150069 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4879002149814102971, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
   m_PrefabInstance: {fileID: 1101000000014}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5520558436443584376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5520559536906679670, guid: b7f2e11f5fd64ffd9e47440edeb3afeb, type: 3}
+  m_PrefabInstance: {fileID: 1101000000014}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &842644295369477230
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5520558436443584376}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ea5965521b15de84585ab3a9ea102966, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

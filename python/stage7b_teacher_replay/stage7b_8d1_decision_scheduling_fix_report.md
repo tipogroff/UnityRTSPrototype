@@ -44,7 +44,7 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 3
+- candidate_action_index_last: 1
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
 - candidate_builder_success_count: 4
@@ -75,4 +75,4 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-05-12T02:52:37.7194246Z
+generated_at_utc: 2026-05-12T06:26:37.4996058Z
