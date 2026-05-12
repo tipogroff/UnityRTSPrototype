@@ -295,7 +295,7 @@ MonoBehaviour:
   visualRoot: {fileID: 512991085997171906}
   moveDuration: 0.3
   useScaledTime: 1
-  enableInterpolation: 1
+  enableInterpolation: 0
   teleportDistanceThreshold: 0.05
   traceEnabled: 1
 --- !u!1001 &5300000000000000001

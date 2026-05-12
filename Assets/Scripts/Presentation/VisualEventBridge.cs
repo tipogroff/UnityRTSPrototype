@@ -13,6 +13,8 @@ namespace RTS.Presentation
         [SerializeField] private UnitRuntime unitRuntime;
         [SerializeField] private UnitVisualAnimator unitVisualAnimator;
         [SerializeField] private VisualGridMovementInterpolator visualGridMovementInterpolator;
+        [SerializeField] private float movementLatchSeconds = 0.15f;
+        [SerializeField] private float maxMoveVisualSeconds = 1.5f;
         [SerializeField] private bool forceInitialSyncUntilSuccess = true;
         [SerializeField] private bool enableRuntimeTrace;
 
@@ -32,6 +34,15 @@ namespace RTS.Presentation
         private Owner _lastObservedOwner = Owner.Neutral;
         private bool _wasMoving;
         private bool _idleLogged;
+        private bool _movingPulseActive;
+        private float _movingPulseRemaining;
+        private float _movingTrueElapsed;
+
+        [SerializeField] private bool lastSetMovingValue;
+        [SerializeField] private int lastSetMovingFrame = -1;
+        [SerializeField] private int lastMoveStartFrame = -1;
+        [SerializeField] private int lastMoveEndFrame = -1;
+        [SerializeField] private bool animatorMovingMatchesInterpolator = true;
 
         public Owner LastSyncedOwner => _lastSyncedOwner;
         public bool HasSyncedSuccessfully => _ownerVisualSynced;
@@ -41,6 +52,11 @@ namespace RTS.Presentation
         public bool LastObservedModelNull => _lastObservedModelNull;
         public bool LastMaterialMatchedExpected => _lastMaterialMatchedExpected;
         public string LastMarkerMaterialName => _lastOwnerSyncMaterialName;
+        public bool LastSetMovingValue => lastSetMovingValue;
+        public int LastSetMovingFrame => lastSetMovingFrame;
+        public int LastMoveStartFrame => lastMoveStartFrame;
+        public int LastMoveEndFrame => lastMoveEndFrame;
+        public bool AnimatorMovingMatchesInterpolator => animatorMovingMatchesInterpolator;
 
         private void Awake()
         {
@@ -74,7 +90,7 @@ namespace RTS.Presentation
             _hasObservedRootWorldPosition = true;
 
             unitVisualAnimator.PlaySpawn();
-            unitVisualAnimator.SetMoving(false);
+            SetMovingState(false, "VisualEventBridge.Start", "Default idle state initialized.");
             TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.Start", true, "Default idle state initialized.");
             _idleLogged = true;
         }
@@ -94,7 +110,7 @@ namespace RTS.Presentation
                 if (!_deathPlayed)
                 {
                     _deathPlayed = true;
-                    unitVisualAnimator.SetMoving(false);
+                    SetMovingState(false, "VisualEventBridge.Update", "Unit not alive.");
                     TraceEvent("DeathRuntime", "Death trigger", "VisualEventBridge.Update", true, "Unit marked not alive in runtime state.");
                 }
 
@@ -105,7 +121,7 @@ namespace RTS.Presentation
 
             if (visualGridMovementInterpolator == null)
             {
-                unitVisualAnimator.SetMoving(false);
+                SetMovingState(false, "VisualEventBridge.Update", "Interpolator missing.");
                 return;
             }
 
@@ -124,7 +140,57 @@ namespace RTS.Presentation
             }
 
             var interpolating = visualGridMovementInterpolator.IsInterpolating;
-            unitVisualAnimator.SetMoving(interpolating);
+            if (interpolating)
+            {
+                _movingPulseActive = true;
+                _movingPulseRemaining = Mathf.Max(_movingPulseRemaining, movementLatchSeconds);
+                if (!_wasMoving)
+                {
+                    lastMoveStartFrame = Time.frameCount;
+                    TraceEvent("MoveStart", "IsMoving=true", "VisualEventBridge.Update", true, "Interpolation started.");
+                }
+            }
+            else
+            {
+                if (_wasMoving)
+                {
+                    _movingPulseActive = true;
+                    _movingPulseRemaining = Mathf.Max(_movingPulseRemaining, movementLatchSeconds);
+                    lastMoveEndFrame = Time.frameCount;
+                    TraceEvent("MoveEnd", "IsMoving=false", "VisualEventBridge.Update", true, "Interpolation completed or snapped.");
+                }
+
+                if (_movingPulseActive)
+                {
+                    _movingPulseRemaining -= Time.deltaTime;
+                    if (_movingPulseRemaining <= 0f)
+                    {
+                        _movingPulseRemaining = 0f;
+                        _movingPulseActive = false;
+                    }
+                }
+            }
+
+            bool desiredMoving = interpolating || _movingPulseActive;
+            if (desiredMoving)
+            {
+                _movingTrueElapsed += Time.deltaTime;
+                if (maxMoveVisualSeconds > 0f && _movingTrueElapsed > maxMoveVisualSeconds)
+                {
+                    desiredMoving = false;
+                    _movingPulseActive = false;
+                    _movingPulseRemaining = 0f;
+                    _movingTrueElapsed = 0f;
+                    TraceEvent("MoveTimeout", "IsMoving=false", "VisualEventBridge.Update", true, "Timeout safety forced IsMoving=false.");
+                }
+            }
+            else
+            {
+                _movingTrueElapsed = 0f;
+            }
+
+            SetMovingState(desiredMoving, "VisualEventBridge.Update", interpolating ? "Interpolation active." : "Interpolation idle.");
+            animatorMovingMatchesInterpolator = lastSetMovingValue == interpolating;
 
             if (interpolating && !_wasMoving)
             {
@@ -168,12 +234,16 @@ namespace RTS.Presentation
             ResolveReferences();
             _ownerVisualSynced = false;
             TrySyncOwner("NotifyRuntimeInitialized");
-            visualGridMovementInterpolator?.SnapToCurrent();
+            visualGridMovementInterpolator?.SnapToCurrent("Runtime initialized");
             if (unitRuntime != null)
             {
                 _lastObservedRootWorldPosition = unitRuntime.transform.position;
                 _hasObservedRootWorldPosition = true;
             }
+            _movingPulseActive = false;
+            _movingPulseRemaining = 0f;
+            _movingTrueElapsed = 0f;
+            SetMovingState(false, "VisualEventBridge.NotifyRuntimeInitialized", "Reset to idle after runtime init.");
             if (unitRuntime != null)
             {
                 TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.NotifyRuntimeInitialized", true, "Runtime initialized notification from UnitFactory.");
@@ -189,11 +259,12 @@ namespace RTS.Presentation
         public void PulseMoving(float seconds = 0.2f)
         {
             var pulse = Mathf.Max(0.01f, seconds);
-            unitVisualAnimator?.SetMoving(true);
+            _movingPulseActive = true;
+            _movingPulseRemaining = Mathf.Max(_movingPulseRemaining, pulse);
+            SetMovingState(true, "VisualEventBridge.PulseMoving", $"Manual pulse for {pulse:0.000}s.");
 
             if (!_wasMoving)
             {
-                _wasMoving = true;
                 _idleLogged = false;
                 TraceEvent("MoveStart", "IsMoving=true", "VisualEventBridge.PulseMoving", true, $"Manual pulse for {pulse:0.000}s.");
             }
@@ -406,8 +477,39 @@ namespace RTS.Presentation
         public void OnVisualDeath()
         {
             _deathPlayed = true;
-            unitVisualAnimator?.SetMoving(false);
+            _movingPulseActive = false;
+            _movingPulseRemaining = 0f;
+            _movingTrueElapsed = 0f;
+            SetMovingState(false, "VisualEventBridge.OnVisualDeath", "Death forces idle.");
             TraceEvent("DeathRuntime", "Death trigger", "VisualEventBridge.OnVisualDeath", true, "Runtime death reached gameplay destruction path.");
+        }
+
+        private void SetMovingState(bool value, string source, string diagnostic)
+        {
+            if (unitVisualAnimator == null)
+            {
+                return;
+            }
+
+            if (lastSetMovingFrame >= 0 && lastSetMovingValue == value)
+            {
+                return;
+            }
+
+            unitVisualAnimator.SetMoving(value);
+            lastSetMovingValue = value;
+            lastSetMovingFrame = Time.frameCount;
+
+            if (value)
+            {
+                lastMoveStartFrame = Time.frameCount;
+            }
+            else
+            {
+                lastMoveEndFrame = Time.frameCount;
+            }
+
+            TraceEvent(value ? "MoveStateSetTrue" : "MoveStateSetFalse", value ? "IsMoving=true" : "IsMoving=false", source, true, diagnostic);
         }
 
         private void TraceEvent(string visualEvent, string animatorParameter, string source, bool success, string diagnostic)

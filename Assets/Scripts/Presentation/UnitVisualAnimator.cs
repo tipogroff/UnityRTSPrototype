@@ -307,6 +307,61 @@ namespace RTS.Presentation
             return AreOwnerRenderersUsingMaterial(expectedMaterial);
         }
 
+        public Animator GetAnimatorReference()
+        {
+            return animator;
+        }
+
+        public string GetAnimatorReferencePath()
+        {
+            return animator != null ? GetHierarchyPath(animator.transform) : string.Empty;
+        }
+
+        public bool HasBoolParameter(string parameterName)
+        {
+            if (!TryGetAnimator(out var a))
+            {
+                return false;
+            }
+
+            EnsureParameterCache(a);
+            int hash = Animator.StringToHash(parameterName);
+            return (hash == IsMovingHash && _hasIsMoving) || (hash == IsCarryingHash && _hasIsCarrying);
+        }
+
+        public bool HasTriggerParameter(string parameterName)
+        {
+            if (!TryGetAnimator(out var a))
+            {
+                return false;
+            }
+
+            EnsureParameterCache(a);
+            int hash = Animator.StringToHash(parameterName);
+            return (hash == AttackHash && _hasAttack) ||
+                   (hash == HarvestHash && _hasHarvest) ||
+                   (hash == DeathHash && _hasDeath) ||
+                   (hash == SpawnHash && _hasSpawn) ||
+                   (hash == HitHash && _hasHit);
+        }
+
+        public bool TryGetBool(string parameterName, out bool value)
+        {
+            value = false;
+            if (!TryGetAnimator(out var a))
+            {
+                return false;
+            }
+
+            if (!HasBoolParameter(parameterName))
+            {
+                return false;
+            }
+
+            value = a.GetBool(parameterName);
+            return true;
+        }
+
         private void Trigger(int triggerHash)
         {
             if (!TryGetAnimator(out var a))

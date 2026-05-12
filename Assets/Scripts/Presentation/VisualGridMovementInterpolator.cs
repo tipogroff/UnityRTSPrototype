@@ -15,6 +15,10 @@ namespace RTS.Presentation
         [SerializeField] private AnimationCurve easing = AnimationCurve.Linear(0f, 0f, 1f, 1f);
         [SerializeField] private bool useScaledTime = true;
         [SerializeField] private bool enableInterpolation = true;
+        [SerializeField] private bool debugDisableSmoothMovement;
+        [SerializeField] private bool fallbackToTeleportOnError = true;
+        [SerializeField] private float maxOffsetMagnitude = 2.5f;
+        [SerializeField] private float hardSnapDistanceThreshold = 2.5f;
         [SerializeField] private float teleportDistanceThreshold = 0.05f;
         [SerializeField] private bool traceEnabled;
 
@@ -28,27 +32,50 @@ namespace RTS.Presentation
         private bool _baselineCached;
         private bool _isInterpolating;
         private float _elapsed;
+        private int _snapCount;
+        private int _excessiveSnapCount;
+        private int _lastSnapFrame = -1;
+        private string _lastSnapReason = string.Empty;
+        private int _lastInterpolationStartFrame = -1;
+        private int _lastInterpolationEndFrame = -1;
 
         public bool IsInterpolating => _isInterpolating;
         public Vector3 CurrentVisualOffset => _currentOffsetLocal;
+        public bool IsInterpolationEnabled => enableInterpolation && !debugDisableSmoothMovement;
+        public int SnapCount => _snapCount;
+        public int ExcessiveSnapCount => _excessiveSnapCount;
+        public int LastSnapFrame => _lastSnapFrame;
+        public string LastSnapReason => _lastSnapReason;
+        public int LastInterpolationStartFrame => _lastInterpolationStartFrame;
+        public int LastInterpolationEndFrame => _lastInterpolationEndFrame;
 
         private void Awake()
         {
             ResolveReferences();
             CacheBaselineIfNeeded();
-            SnapInternal(false, "Awake", "Baseline initialized.");
+            SnapInternal(true, "Awake", "Baseline initialized.");
         }
 
         private void OnEnable()
         {
             ResolveReferences();
             CacheBaselineIfNeeded();
-            SnapInternal(false, "OnEnable", "Baseline restored.");
+            SnapInternal(true, "OnEnable", "Baseline restored.");
+        }
+
+        private void OnDisable()
+        {
+            SnapInternal(true, "OnDisable", "Interpolator disabled.");
+        }
+
+        private void OnDestroy()
+        {
+            SnapInternal(true, "OnDestroy", "Interpolator destroyed.");
         }
 
         private void LateUpdate()
         {
-            if (!_isInterpolating || !enableInterpolation || visualRoot == null)
+            if (!_isInterpolating || !IsInterpolationEnabled || visualRoot == null)
             {
                 return;
             }
@@ -69,7 +96,15 @@ namespace RTS.Presentation
             float normalizedTime = Mathf.Clamp01(_elapsed / moveDuration);
             float easedTime = easing != null && easing.length > 0 ? easing.Evaluate(normalizedTime) : normalizedTime;
             _currentOffsetLocal = Vector3.LerpUnclamped(_startOffsetLocal, Vector3.zero, easedTime);
+
+            if (fallbackToTeleportOnError && IsOffsetAbnormal(_currentOffsetLocal))
+            {
+                SnapInternal(true, "LateUpdate", "Offset exceeded maxOffsetMagnitude during interpolation.");
+                return;
+            }
+
             visualRoot.localPosition = _baselineLocalPosition + _currentOffsetLocal;
+            TraceUpdated(_lastPreviousWorldPosition, _lastCurrentWorldPosition, _currentOffsetLocal, "VisualGridMovementInterpolator.LateUpdate", "Interpolation updated.");
 
             if (_elapsed >= moveDuration)
             {
@@ -82,7 +117,7 @@ namespace RTS.Presentation
             ResolveReferences();
             CacheBaselineIfNeeded();
 
-            if (!enableInterpolation || visualRoot == null)
+            if (!IsInterpolationEnabled || visualRoot == null)
             {
                 SnapInternal(false, "NotifyRootTeleported", "Interpolation disabled or visualRoot missing.");
                 return;
@@ -97,8 +132,20 @@ namespace RTS.Presentation
                 return;
             }
 
+            if (hardSnapDistanceThreshold > 0f && delta.magnitude >= hardSnapDistanceThreshold)
+            {
+                SnapInternal(true, "NotifyRootTeleported", "Teleport delta exceeded hardSnapDistanceThreshold.");
+                return;
+            }
+
             Vector3 startWorldPosition = _isInterpolating ? visualRoot.position : previousWorldPosition;
             Vector3 startOffsetLocal = WorldDeltaToLocalOffset(startWorldPosition - currentWorldPosition);
+
+            if (fallbackToTeleportOnError && IsOffsetAbnormal(startOffsetLocal))
+            {
+                SnapInternal(true, "NotifyRootTeleported", "Computed initial offset exceeded maxOffsetMagnitude.");
+                return;
+            }
 
             if (_isInterpolating)
             {
@@ -111,6 +158,7 @@ namespace RTS.Presentation
             _currentOffsetLocal = startOffsetLocal;
             _elapsed = 0f;
             _isInterpolating = true;
+            _lastInterpolationStartFrame = Time.frameCount;
             visualRoot.localPosition = _baselineLocalPosition + _startOffsetLocal;
 
             TraceStarted(previousWorldPosition, currentWorldPosition, _startOffsetLocal, "VisualGridMovementInterpolator.NotifyRootTeleported", "Interpolation started from teleported root state.");
@@ -121,12 +169,28 @@ namespace RTS.Presentation
             SnapInternal(true, "SnapToCurrent", "Explicit snap requested.");
         }
 
+        public void SnapToCurrent(string reason)
+        {
+            string resolvedReason = string.IsNullOrWhiteSpace(reason) ? "Explicit snap requested." : reason;
+            SnapInternal(true, "SnapToCurrent", resolvedReason);
+        }
+
+        public void SetInterpolationEnabled(bool value, string reason = "Runtime toggle")
+        {
+            enableInterpolation = value;
+            if (!IsInterpolationEnabled)
+            {
+                SnapInternal(true, "SetInterpolationEnabled", reason + " => disabled");
+            }
+        }
+
         private void CompleteInterpolation(string diagnostic)
         {
             _elapsed = moveDuration;
             _isInterpolating = false;
             _startOffsetLocal = Vector3.zero;
             _currentOffsetLocal = Vector3.zero;
+            _lastInterpolationEndFrame = Time.frameCount;
 
             if (visualRoot != null)
             {
@@ -141,10 +205,24 @@ namespace RTS.Presentation
             ResolveReferences();
             CacheBaselineIfNeeded();
 
+            bool wasInterpolatingBeforeSnap = _isInterpolating;
+            Vector3 visualOffsetBeforeSnap = _currentOffsetLocal;
+
             _elapsed = 0f;
             _isInterpolating = false;
             _startOffsetLocal = Vector3.zero;
             _currentOffsetLocal = Vector3.zero;
+            _lastInterpolationEndFrame = Time.frameCount;
+
+            int frame = Time.frameCount;
+            if (_lastSnapFrame >= 0 && frame == _lastSnapFrame)
+            {
+                _excessiveSnapCount++;
+            }
+
+            _snapCount++;
+            _lastSnapFrame = frame;
+            _lastSnapReason = diagnostic ?? string.Empty;
 
             if (visualRoot != null)
             {
@@ -156,7 +234,7 @@ namespace RTS.Presentation
                 Vector3 currentWorldPosition = visualRoot != null ? visualRoot.position : transform.position;
                 _lastPreviousWorldPosition = currentWorldPosition;
                 _lastCurrentWorldPosition = currentWorldPosition;
-                TraceSnapped(sourceMethod, currentWorldPosition, diagnostic);
+                TraceSnapped(sourceMethod, currentWorldPosition, _lastSnapReason, wasInterpolatingBeforeSnap, visualOffsetBeforeSnap);
             }
         }
 
@@ -216,6 +294,16 @@ namespace RTS.Presentation
             return _rootTransform.InverseTransformVector(worldDelta);
         }
 
+        private bool IsOffsetAbnormal(Vector3 offset)
+        {
+            if (maxOffsetMagnitude <= 0f)
+            {
+                return false;
+            }
+
+            return offset.sqrMagnitude > (maxOffsetMagnitude * maxOffsetMagnitude);
+        }
+
         private void TraceStarted(Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 initialOffset, string sourceMethod, string diagnostic)
         {
             if (!traceEnabled)
@@ -250,7 +338,24 @@ namespace RTS.Presentation
                 diagnostic);
         }
 
-        private void TraceSnapped(string sourceMethod, Vector3 currentWorldPosition, string diagnostic)
+        private void TraceUpdated(Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 currentOffset, string sourceMethod, string diagnostic)
+        {
+            if (!traceEnabled)
+            {
+                return;
+            }
+
+            Visual3EFSmoothMovementTrace.RecordUpdated(
+                _unitRuntime,
+                previousWorldPosition,
+                currentWorldPosition,
+                currentOffset,
+                moveDuration,
+                sourceMethod,
+                diagnostic);
+        }
+
+        private void TraceSnapped(string sourceMethod, Vector3 currentWorldPosition, string diagnostic, bool wasInterpolatingBeforeSnap, Vector3 visualOffsetBeforeSnap)
         {
             if (!traceEnabled)
             {
@@ -264,7 +369,9 @@ namespace RTS.Presentation
                 Vector3.zero,
                 0f,
                 sourceMethod,
-                diagnostic);
+                diagnostic,
+                wasInterpolatingBeforeSnap,
+                visualOffsetBeforeSnap);
         }
 
         private void TraceInterrupted(Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 initialOffset, string diagnostic)

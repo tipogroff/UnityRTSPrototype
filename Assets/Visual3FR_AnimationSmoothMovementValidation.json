@@ -1,0 +1,1791 @@
+﻿{
+    "generatedUtc": "2026-05-12T21:14:17.8495525Z",
+    "modeA": {
+        "generatedUtc": "2026-05-12T21:14:19.4343867Z",
+        "mode": "SmoothDisabled",
+        "unitCount": 9,
+        "units": [
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Player2_Barracks_(23, 22)",
+                "gameObjectPath": "GridManager/Player2_Barracks_(23, 22)",
+                "unitType": "Barracks",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "GridManager/Player2_Barracks_(23, 22)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(0, 0)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(0, 0)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(0, 0)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(1, 0)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(1, 0)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(1, 0)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(22, 23)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(22, 23)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(22, 23)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(23, 23)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(23, 23)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(23, 23)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Player1_Base_(2, 2)",
+                "gameObjectPath": "StaticAuthoredLayout/Player1_Base_(2, 2)",
+                "unitType": "Base",
+                "owner": "Player1",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player1_Base_(2, 2)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Player1_Worker_(1, 1)",
+                "gameObjectPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)",
+                "unitType": "Worker",
+                "owner": "Player1",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": true,
+                "animatorPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "animatorEnabled": true,
+                "animatorActiveInHierarchy": true,
+                "animatorControllerName": "RTS_Worker_Animator",
+                "animatorControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller",
+                "animatorAvatarNull": true,
+                "animatorCullingMode": "CullUpdateTransforms",
+                "animatorUpdateMode": "Normal",
+                "currentStateName": "CharacterArmature|Idle",
+                "currentStateHash": 2081823275,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.00479999789968133,
+                "normalizedTimeAdvanced": true,
+                "sampleBonePath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model/Visual/CharacterArmature/Bone/Body/Hips",
+                "sampleBoneWorldPosition": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": true,
+                "isMovingValue": false,
+                "hasAttackTrigger": true,
+                "hasHarvestTrigger": true,
+                "hasDeathTrigger": true,
+                "unitVisualAnimatorAnimatorPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "interpolatorPresent": true,
+                "interpolatorEnabled": true,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 5,
+                "interpolatorExcessiveSnapCount": 3,
+                "interpolatorLastSnapFrame": 1,
+                "interpolatorLastSnapReason": "Visual-3F-R mode A",
+                "teamMarkerExists": true,
+                "teamMarkerPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/TeamMarker_Ring",
+                "teamMarkerActive": true,
+                "teamMarkerAnchored": true,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": 1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": 1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Player2_Base_(21, 21)",
+                "gameObjectPath": "StaticAuthoredLayout/Player2_Base_(21, 21)",
+                "unitType": "Base",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player2_Base_(21, 21)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothDisabled",
+                "phase": "t0",
+                "unitName": "Player2_Worker_(22, 22)",
+                "gameObjectPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)",
+                "unitType": "Worker",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": true,
+                "animatorPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "animatorEnabled": true,
+                "animatorActiveInHierarchy": true,
+                "animatorControllerName": "RTS_Worker_Animator",
+                "animatorControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller",
+                "animatorAvatarNull": true,
+                "animatorCullingMode": "CullUpdateTransforms",
+                "animatorUpdateMode": "Normal",
+                "currentStateName": "CharacterArmature|Idle",
+                "currentStateHash": 2081823275,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.00479999789968133,
+                "normalizedTimeAdvanced": true,
+                "sampleBonePath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model/Visual/CharacterArmature/Bone/Body/Hips",
+                "sampleBoneWorldPosition": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": true,
+                "isMovingValue": false,
+                "hasAttackTrigger": true,
+                "hasHarvestTrigger": true,
+                "hasDeathTrigger": true,
+                "unitVisualAnimatorAnimatorPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "interpolatorPresent": true,
+                "interpolatorEnabled": true,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 5,
+                "interpolatorExcessiveSnapCount": 3,
+                "interpolatorLastSnapFrame": 1,
+                "interpolatorLastSnapReason": "Visual-3F-R mode A",
+                "teamMarkerExists": true,
+                "teamMarkerPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/TeamMarker_Ring",
+                "teamMarkerActive": true,
+                "teamMarkerAnchored": true,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": 1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": 1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            }
+        ],
+        "summary": {
+            "unitsWithAnimator": 2,
+            "unitsWithAdvancingAnimatorTime": 2,
+            "unitsWithAdvancingBoneDelta": 0,
+            "unitsWithOwnerMarkerIssues": 0,
+            "unitsWithInterpolator": 2,
+            "unitsInterpolating": 0,
+            "unitsWithExcessiveSnaps": 2,
+            "unitsWithBridgeMismatch": 0,
+            "idlePlaybackHealthy": true
+        }
+    },
+    "modeB": {
+        "generatedUtc": "2026-05-12T21:14:20.7257695Z",
+        "mode": "SmoothEnabled",
+        "unitCount": 9,
+        "units": [
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Player2_Barracks_(23, 22)",
+                "gameObjectPath": "GridManager/Player2_Barracks_(23, 22)",
+                "unitType": "Barracks",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "GridManager/Player2_Barracks_(23, 22)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(0, 0)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(0, 0)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(0, 0)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(1, 0)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(1, 0)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(1, 0)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(22, 23)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(22, 23)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(22, 23)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Neutral_Resource_(23, 23)",
+                "gameObjectPath": "StaticAuthoredLayout/Neutral_Resource_(23, 23)",
+                "unitType": "Resource",
+                "owner": "Neutral",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Neutral_Resource_(23, 23)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Player1_Base_(2, 2)",
+                "gameObjectPath": "StaticAuthoredLayout/Player1_Base_(2, 2)",
+                "unitType": "Base",
+                "owner": "Player1",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player1_Base_(2, 2)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Player1_Worker_(1, 1)",
+                "gameObjectPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)",
+                "unitType": "Worker",
+                "owner": "Player1",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": true,
+                "animatorPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "animatorEnabled": true,
+                "animatorActiveInHierarchy": true,
+                "animatorControllerName": "RTS_Worker_Animator",
+                "animatorControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller",
+                "animatorAvatarNull": true,
+                "animatorCullingMode": "CullUpdateTransforms",
+                "animatorUpdateMode": "Normal",
+                "currentStateName": "CharacterArmature|Idle",
+                "currentStateHash": 2081823275,
+                "currentStateNormalizedTime": 0.00479999789968133,
+                "normalizedTimeT0": 0.00479999789968133,
+                "normalizedTimeT1": 0.00479999789968133,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model/Visual/CharacterArmature/Bone/Body/Hips",
+                "sampleBoneWorldPosition": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 1.0021384954452515,
+                    "y": 0.3938772976398468,
+                    "z": 1.0161329507827759
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": true,
+                "isMovingValue": false,
+                "hasAttackTrigger": true,
+                "hasHarvestTrigger": true,
+                "hasDeathTrigger": true,
+                "unitVisualAnimatorAnimatorPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "interpolatorPresent": true,
+                "interpolatorEnabled": true,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 5,
+                "interpolatorExcessiveSnapCount": 3,
+                "interpolatorLastSnapFrame": 1,
+                "interpolatorLastSnapReason": "Visual-3F-R mode A",
+                "teamMarkerExists": true,
+                "teamMarkerPath": "StaticAuthoredLayout/Player1_Worker_(1, 1)/VisualRoot/TeamMarker_Ring",
+                "teamMarkerActive": true,
+                "teamMarkerAnchored": true,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": 1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": 1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": [
+                    "Animator state did not advance and sampled bone delta is near zero."
+                ]
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Player2_Base_(21, 21)",
+                "gameObjectPath": "StaticAuthoredLayout/Player2_Base_(21, 21)",
+                "unitType": "Base",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player2_Base_(21, 21)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": false,
+                "animatorPath": "",
+                "animatorEnabled": false,
+                "animatorActiveInHierarchy": false,
+                "animatorControllerName": "",
+                "animatorControllerPath": "",
+                "animatorAvatarNull": false,
+                "animatorCullingMode": "",
+                "animatorUpdateMode": "",
+                "currentStateName": "",
+                "currentStateHash": 0,
+                "currentStateNormalizedTime": 0.0,
+                "normalizedTimeT0": 0.0,
+                "normalizedTimeT1": 0.0,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "",
+                "sampleBoneWorldPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": false,
+                "isMovingValue": false,
+                "hasAttackTrigger": false,
+                "hasHarvestTrigger": false,
+                "hasDeathTrigger": false,
+                "unitVisualAnimatorAnimatorPath": "",
+                "interpolatorPresent": false,
+                "interpolatorEnabled": false,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 0,
+                "interpolatorExcessiveSnapCount": 0,
+                "interpolatorLastSnapFrame": -1,
+                "interpolatorLastSnapReason": "",
+                "teamMarkerExists": false,
+                "teamMarkerPath": "",
+                "teamMarkerActive": false,
+                "teamMarkerAnchored": false,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": -1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": -1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": []
+            },
+            {
+                "mode": "SmoothEnabled",
+                "phase": "t0",
+                "unitName": "Player2_Worker_(22, 22)",
+                "gameObjectPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)",
+                "unitType": "Worker",
+                "owner": "Player2",
+                "modelNull": false,
+                "visualRootPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot",
+                "visualRootLocalPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "visualRootLocalPositionT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "animatorExists": true,
+                "animatorPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "animatorEnabled": true,
+                "animatorActiveInHierarchy": true,
+                "animatorControllerName": "RTS_Worker_Animator",
+                "animatorControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller",
+                "animatorAvatarNull": true,
+                "animatorCullingMode": "CullUpdateTransforms",
+                "animatorUpdateMode": "Normal",
+                "currentStateName": "CharacterArmature|Idle",
+                "currentStateHash": 2081823275,
+                "currentStateNormalizedTime": 0.00479999789968133,
+                "normalizedTimeT0": 0.00479999789968133,
+                "normalizedTimeT1": 0.00479999789968133,
+                "normalizedTimeAdvanced": false,
+                "sampleBonePath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model/Visual/CharacterArmature/Bone/Body/Hips",
+                "sampleBoneWorldPosition": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneWorldPositionT0": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneWorldPositionT1": {
+                    "x": 22.002138137817384,
+                    "y": 0.3938772976398468,
+                    "z": 22.016132354736329
+                },
+                "sampleBoneDeltaMagnitude": 0.0,
+                "boneDeltaAdvanced": false,
+                "hasIsMovingParameter": true,
+                "isMovingValue": false,
+                "hasAttackTrigger": true,
+                "hasHarvestTrigger": true,
+                "hasDeathTrigger": true,
+                "unitVisualAnimatorAnimatorPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "interpolatorPresent": true,
+                "interpolatorEnabled": true,
+                "interpolatorIsInterpolating": false,
+                "interpolatorCurrentVisualOffset": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT0": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorCurrentVisualOffsetT1": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "interpolatorSnapCount": 5,
+                "interpolatorExcessiveSnapCount": 3,
+                "interpolatorLastSnapFrame": 1,
+                "interpolatorLastSnapReason": "Visual-3F-R mode A",
+                "teamMarkerExists": true,
+                "teamMarkerPath": "StaticAuthoredLayout/Player2_Worker_(22, 22)/VisualRoot/TeamMarker_Ring",
+                "teamMarkerActive": true,
+                "teamMarkerAnchored": true,
+                "bridgeLastSetMovingValue": false,
+                "bridgeLastSetMovingFrame": 1,
+                "bridgeLastMoveStartFrame": -1,
+                "bridgeLastMoveEndFrame": 1,
+                "bridgeAnimatorMovingMatchesInterpolator": true,
+                "notes": [
+                    "Animator state did not advance and sampled bone delta is near zero."
+                ]
+            }
+        ],
+        "summary": {
+            "unitsWithAnimator": 2,
+            "unitsWithAdvancingAnimatorTime": 0,
+            "unitsWithAdvancingBoneDelta": 0,
+            "unitsWithOwnerMarkerIssues": 0,
+            "unitsWithInterpolator": 2,
+            "unitsInterpolating": 0,
+            "unitsWithExcessiveSnaps": 2,
+            "unitsWithBridgeMismatch": 0,
+            "idlePlaybackHealthy": false
+        }
+    },
+    "trace": {
+        "lineCount": 7806,
+        "startedCount": 3616,
+        "completedCount": 3534,
+        "snappedCount": 520,
+        "repeatedSnapSameFrameCount": 464,
+        "notes": []
+    },
+    "summary": {
+        "modeAIdlePlaybackHealthy": true,
+        "modeBIdlePlaybackHealthy": false,
+        "modeAOwnerMarkerHealthy": true,
+        "modeBOwnerMarkerHealthy": true,
+        "modeBNoExcessiveSnaps": false,
+        "smoothMovementEnabledValidated": false,
+        "recommendedDefault": "Disabled",
+        "notes": [
+            "Smooth movement should remain disabled by default until snap/jerk regressions are eliminated."
+        ]
+    }
+}

@@ -59,7 +59,12 @@ namespace RTS.Presentation
 
         public static void RecordSnapped(UnitRuntime unit, Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 initialOffset, float duration, string source, string diagnostic)
         {
-            Record("VisualMoveInterpolationSnapped", unit, previousWorldPosition, currentWorldPosition, initialOffset, duration, source, diagnostic, ref _snappedCount);
+            RecordSnapped(unit, previousWorldPosition, currentWorldPosition, initialOffset, duration, source, diagnostic, false, Vector3.zero);
+        }
+
+        public static void RecordSnapped(UnitRuntime unit, Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 initialOffset, float duration, string source, string diagnostic, bool wasInterpolatingBeforeSnap, Vector3 visualOffsetBeforeSnap)
+        {
+            Record("VisualMoveInterpolationSnapped", unit, previousWorldPosition, currentWorldPosition, initialOffset, duration, source, diagnostic, ref _snappedCount, wasInterpolatingBeforeSnap, visualOffsetBeforeSnap);
         }
 
         public static void RecordInterrupted(UnitRuntime unit, Vector3 previousWorldPosition, Vector3 currentWorldPosition, Vector3 initialOffset, float duration, string source, string diagnostic)
@@ -76,7 +81,9 @@ namespace RTS.Presentation
             float duration,
             string source,
             string diagnostic,
-            ref int counter)
+            ref int counter,
+            bool wasInterpolatingBeforeSnap = false,
+            Vector3 visualOffsetBeforeSnap = default)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
@@ -99,6 +106,8 @@ namespace RTS.Presentation
                     "\"previous_world_position\":{" + Vector3Json(previousWorldPosition) + "}," +
                     "\"current_world_position\":{" + Vector3Json(currentWorldPosition) + "}," +
                     "\"initial_offset\":{" + Vector3Json(initialOffset) + "}," +
+                    "\"was_interpolating_before_snap\":" + (wasInterpolatingBeforeSnap ? "true" : "false") + "," +
+                    "\"visual_offset_before_snap\":{" + Vector3Json(visualOffsetBeforeSnap) + "}," +
                     "\"duration\":" + duration.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + "," +
                     "\"visual_event\":\"" + Escape(visualEvent) + "\"," +
                     "\"source\":\"" + Escape(source) + "\"," +

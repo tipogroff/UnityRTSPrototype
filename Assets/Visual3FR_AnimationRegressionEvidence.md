@@ -1,0 +1,141 @@
+﻿# Visual-3F-R Animation Regression Evidence
+
+- Generated UTC: 2026-05-12T21:12:12.4623646Z
+- Mode: CurrentPlayMode
+- Unit count: 9
+
+## Summary
+- Units with animator: 2
+- Units with advancing normalizedTime: 2
+- Units with advancing bone delta: 2
+- Idle playback healthy: True
+- Units with owner marker issues: 0
+- Units with bridge/interpolator moving mismatch: 0
+
+## Per Unit
+- GridManager/Player2_Barracks_(23, 22)
+  - UnitType/Owner: Barracks / Player2
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Neutral_Resource_(0, 0)
+  - UnitType/Owner: Resource / Neutral
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Neutral_Resource_(1, 0)
+  - UnitType/Owner: Resource / Neutral
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Neutral_Resource_(22, 23)
+  - UnitType/Owner: Resource / Neutral
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Neutral_Resource_(23, 23)
+  - UnitType/Owner: Resource / Neutral
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Player1_Base_(2, 2)
+  - UnitType/Owner: Base / Player1
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Player1_Worker_(1, 1)
+  - UnitType/Owner: Worker / Player1
+  - Animator: exists=True, enabled=True, activeInHierarchy=True
+  - Animator controller: RTS_Worker_Animator (Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller)
+  - State: CharacterArmature|Idle (hash=2081823275)
+  - normalizedTime t0->t1: 0,000 -> 0,086, advanced=True
+  - Bone delta magnitude: 0,023015 (advanced=True)
+  - IsMoving param exists/value: True / False
+  - Attack/Harvest/Death triggers exist: True / True / True
+  - Interpolator present/enabled/interpolating: True / True / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: True / True
+  - Last moving write: value=False, frame=1
+- StaticAuthoredLayout/Player2_Base_(21, 21)
+  - UnitType/Owner: Base / Player2
+  - Animator: exists=False, enabled=False, activeInHierarchy=False
+  - Animator controller:  ()
+  - State:  (hash=0)
+  - normalizedTime t0->t1: 0,000 -> 0,000, advanced=False
+  - Bone delta magnitude: 0,000000 (advanced=False)
+  - IsMoving param exists/value: False / False
+  - Attack/Harvest/Death triggers exist: False / False / False
+  - Interpolator present/enabled/interpolating: False / False / False
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, 0,000)
+  - Team marker active/anchored: False / False
+  - Last moving write: value=False, frame=-1
+- StaticAuthoredLayout/Player2_Worker_(22, 22)
+  - UnitType/Owner: Worker / Player2
+  - Animator: exists=True, enabled=True, activeInHierarchy=True
+  - Animator controller: RTS_Worker_Animator (Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller)
+  - State: CharacterArmature|Idle (hash=2081823275)
+  - normalizedTime t0->t1: 0,000 -> 0,086, advanced=True
+  - Bone delta magnitude: 0,346612 (advanced=True)
+  - IsMoving param exists/value: True / False
+  - Attack/Harvest/Death triggers exist: True / True / True
+  - Interpolator present/enabled/interpolating: True / True / True
+  - Offset t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, -1,066)
+  - VisualRoot localPosition t0->t1: (0,000, 0,000, 0,000) -> (0,000, 0,000, -1,066)
+  - Team marker active/anchored: True / True
+  - Last moving write: value=False, frame=1
