@@ -11,23 +11,23 @@ teacher_replay_orchestrator_enabled: false
 student_teacher_replay_orchestrator_is_null: true
 
 ## Counters
-- on_enable_count: 2
+- on_enable_count: 3
 - awake_count: 1
 - start_count: 1
-- initialize_count: 2
-- on_episode_begin_count: 1
-- collect_observations_count: 904
-- write_mask_count: 903
+- initialize_count: 3
+- on_episode_begin_count: 3
+- collect_observations_count: 3
+- write_mask_count: 2
 - heuristic_count: 0
-- on_action_received_count: 903
+- on_action_received_count: 2
 - end_episode_count: 0
 - first_write_mask_frame: 1
-- first_write_mask_time: 15,95433
+- first_write_mask_time: 17,63628
 - first_on_action_received_frame: 1
-- first_on_action_received_time: 15,98318
+- first_on_action_received_time: 17,66693
 
 ## StartNewEpisode Boundary
-- bootstrap_start_new_episode_count: 1
+- bootstrap_start_new_episode_count: 3
 - bootstrap_start_new_episode_skipped_reentrant_count: 0
 - bootstrap_start_new_episode_reason: mlagents_on_episode_begin
 - bootstrap_start_new_episode_caller: StudentMlAgent.OnEpisodeBegin
@@ -37,7 +37,7 @@ student_teacher_replay_orchestrator_is_null: true
 - on_episode_begin_start_new_episode_result: true
 - trainer_controlled_episode_reset_path: true
 - on_episode_begin_start_new_episode_path: trainer_controlled_guarded_full_reset
-- trainer_controlled_kick_decision_request_count: 1
+- trainer_controlled_kick_decision_request_count: 3
 
 ## Timeout Classification
 - timeout_phase_classification: before_communicator_after_on_action_received_or_later
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-05-11T23:47:42.5517106Z
+generated_utc: 2026-05-12T01:31:53.6122883Z

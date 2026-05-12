@@ -504,6 +504,10 @@ PrefabInstance:
       value: Player1_Worker_(1, 1)
       objectReference: {fileID: 0}
     - target: {fileID: 6483269704763304164, guid: 42c6a8e049ccd9042b847a32585697b0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6483269704763304164, guid: 42c6a8e049ccd9042b847a32585697b0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
       objectReference: {fileID: 0}
