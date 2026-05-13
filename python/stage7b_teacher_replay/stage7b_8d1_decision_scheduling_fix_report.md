@@ -33,9 +33,9 @@ blocker_reason: Behavior configuration mismatch for inference mode
 ## Lifecycle
 - initialize_count: 2
 - on_episode_begin_count: 1
-- collect_observations_count: 733
-- write_discrete_action_mask_count: 732
-- on_action_received_count: 732
+- collect_observations_count: 3958
+- write_discrete_action_mask_count: 3957
+- on_action_received_count: 3957
 - heuristic_call_count: 0
 - inference_kick_decision_request_count: 0
 - inference_runtime_ready_observed: false
@@ -44,13 +44,13 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 12
+- candidate_action_index_last: 81
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 1464
-- action_adapter_success_count: 732
-- runtime_apply_attempted: 732
-- runtime_apply_accepted: 732
+- candidate_builder_success_count: 7914
+- action_adapter_success_count: 3957
+- runtime_apply_attempted: 3957
+- runtime_apply_accepted: 3957
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -62,7 +62,7 @@ blocker_reason: Behavior configuration mismatch for inference mode
 
 ## Console
 - unity_console_errors: 0
-- unity_console_warnings: 2
+- unity_console_warnings: 6
 - warning_fewer_observations_0_detected: false
 - warning_heuristic_not_implemented_detected: false
 - timeout_error_log_count: 0
@@ -75,4 +75,4 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-05-12T22:45:17.2952890Z
+generated_at_utc: 2026-05-13T02:00:00.6679485Z
