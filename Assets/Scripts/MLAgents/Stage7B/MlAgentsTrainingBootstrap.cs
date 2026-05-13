@@ -39,6 +39,9 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
         [SerializeField] private bool _forceTrainerControlledMode;
 
+        [Header("Demo/Interactive Mode")]
+        [SerializeField] private bool _autoStartEpisodeOnStart = true;
+
         public GridManager GridManager { get; private set; }
         public UnitRegistry UnitRegistry { get; private set; }
         public ResourceManager ResourceManager { get; private set; }
@@ -104,7 +107,7 @@ namespace RTS.MLAgents.Stage7B
             {
                 PrepareRuntimeForTrainerControlledStart();
             }
-            else
+            else if (_autoStartEpisodeOnStart)
             {
                 StartNewEpisode("bootstrap_start", nameof(MlAgentsTrainingBootstrap) + "." + nameof(Start));
             }

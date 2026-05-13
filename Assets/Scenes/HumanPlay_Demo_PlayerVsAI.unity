@@ -388,7 +388,7 @@ MonoBehaviour:
   _fallbackAiMode: 1
   _loadMenuSceneOnReturn: 0
   _menuSceneName: Bootstrap
-  _initialMode: 1
+    _initialMode: 2
   _autoStartOnEnable: 0
   _logDiagnostics: 1
 --- !u!1001 &281969203
@@ -1598,7 +1598,7 @@ MonoBehaviour:
   _studentPlayer: 1
   _scriptedOpponent: 2
   _autoConfigureMlAgents: 1
-  _stepScriptedOpponent: 1
+  _stepScriptedOpponent: 0
   _ensureWeek6StaticHarvestLayout: 1
   _fallbackConfig: {fileID: 0}
   _stage7BMatchMaxSteps: 6000
@@ -1606,6 +1606,7 @@ MonoBehaviour:
   _startResources: 60
   _stage7BRuntimeMode: 3
   _forceTrainerControlledMode: 0
+    _autoStartEpisodeOnStart: 0
 --- !u!4 &1539652542
 Transform:
   m_ObjectHideFlags: 0

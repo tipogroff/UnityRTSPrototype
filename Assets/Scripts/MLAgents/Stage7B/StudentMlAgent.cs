@@ -4,6 +4,7 @@ using RTS.ML;
 using RTS.MLAgents.Stage7B.CandidateActions;
 using RTS.MLAgents.Stage7B.Diagnostics;
 using RTS.MLAgents.Stage7B.TeacherReplay;
+using RTS.Presentation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -705,8 +706,11 @@ namespace RTS.MLAgents.Stage7B
                     || _bootstrap.ScriptedOpponentPacing.ShouldExecuteBotDecisionStep(Time.time);
                 if (shouldRunScriptedOpponent)
                 {
-                    (int acceptedTotal, int rejectedTotal) = _bootstrap.ScriptedOpponentAdapter.ExecuteDecisionStepWithCounts();
-                    _bootstrap.ScriptedOpponentPacing?.RecordBotDecisionOutcome(acceptedTotal, rejectedTotal);
+                    using (HumanPlayCommandSourceDiagnostics.PushSource("Stage7B.ScriptedOpponentViaStudentMlAgent"))
+                    {
+                        (int acceptedTotal, int rejectedTotal) = _bootstrap.ScriptedOpponentAdapter.ExecuteDecisionStepWithCounts();
+                        _bootstrap.ScriptedOpponentPacing?.RecordBotDecisionOutcome(acceptedTotal, rejectedTotal);
+                    }
                 }
             }
 

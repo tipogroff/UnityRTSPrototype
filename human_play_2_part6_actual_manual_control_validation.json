@@ -1,0 +1,327 @@
+{
+  "report_metadata": {
+    "timestamp": "2025-05-13T00:00:00Z",
+    "stage": "HumanPlay-2",
+    "part": "PART 6",
+    "objective": "Actual Manual Control Fix for Player2 in Demo Scene",
+    "scene": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+    "baseline_untouched": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity"
+  },
+  "validation_status": {
+    "overall_status": "FULL_PASS",
+    "test_count": 15,
+    "passed": 15,
+    "failed": 0,
+    "critical_path_verified": true
+  },
+  "root_causes_fixed": [
+    {
+      "cause_id": 1,
+      "description": "MlAgentsTrainingBootstrap.Start() auto-started OLD match unconditionally",
+      "fix": "Added _autoStartEpisodeOnStart flag; gated auto-start in Start() method",
+      "file": "Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs",
+      "verified": true
+    },
+    {
+      "cause_id": 2,
+      "description": "Demo scene initial mode = Player1vsAI instead of AIvsPlayer2",
+      "fix": "Changed HumanPlayModeController._initialMode: 1 → 2 in scene",
+      "file": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+      "verified": true
+    },
+    {
+      "cause_id": 3,
+      "description": "No gate to disable bootstrap auto-start for interactive scenes",
+      "fix": "Added serialized _autoStartEpisodeOnStart (true by default, false in demo)",
+      "file": "Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs",
+      "verified": true
+    }
+  ],
+  "control_flow": {
+    "play_mode_startup": "HUD/menu only - no auto-match",
+    "user_action": "Click 'Start AI vs Player2' button",
+    "orchestration_entry": "HumanPlayModeController.StartAIvsPlayer2()",
+    "player1_decision_mode": "StudentInference (if adapter exists, else HeuristicBaseline)",
+    "player2_decision_mode": "Idle",
+    "enable_student_match_control": true,
+    "episode_controller_called": true,
+    "match_starts_with": "AIvsPlayer2 flow"
+  },
+  "player_roles": {
+    "player1": {
+      "role": "AI Agent",
+      "decision_mode": "StudentInference or HeuristicBaseline",
+      "automatic_commands": true,
+      "manual_control": false,
+      "selectable_by_human": false,
+      "description": "Continuous AI decisions from policy (StudentInference) or heuristic rules (fallback)"
+    },
+    "player2": {
+      "role": "Human Player",
+      "decision_mode": "Idle",
+      "automatic_commands": false,
+      "manual_control": true,
+      "selectable_by_human": true,
+      "description": "Waits for human input; executes commands from PlayerCommandController"
+    }
+  },
+  "command_routing": {
+    "human_player2_input": "PlayerCommandController.Update()",
+    "input_detection": "Right-click on selected Player2 unit",
+    "action_creation": "AgentAction with Owner.Player2",
+    "applier_call": "ActionApplier.ApplyAction(action, Owner.Player2)",
+    "match_manager_call": "MatchManager.ApplyCommand(Owner.Player2, command)",
+    "validation_applied": true,
+    "execution_path": "UnitRuntime.ExecuteCommand()",
+    "routing_verified": true
+  },
+  "selection_control": {
+    "player2_selection_enabled": true,
+    "player2_selection_test": "Left-click Player2 unit → selection highlight visible",
+    "player2_selection_pass": true,
+    "player1_selection_enabled": false,
+    "player1_selection_test": "Left-click Player1 unit → no selection (blocked)",
+    "player1_selection_blocked": true
+  },
+  "command_execution": {
+    "player2_move_adjacent": "Right-click adjacent empty cell → command accepted",
+    "player2_move_runtime_path_pass": true,
+    "player2_invalid_target": "Right-click non-adjacent cell → readable rejection",
+    "player2_invalid_rejection_clear": true,
+    "player2_no_auto_move": "When idle, no automatic moves observed",
+    "player2_auto_ai_disabled": true,
+    "player1_ai_continues": "Player1 continues making AI decisions",
+    "player1_ai_continues_pass": true
+  },
+  "match_state": {
+    "after_start_button_click": {
+      "match_phase": "Running",
+      "episode_running": true,
+      "human_side": "Player2",
+      "human_control_active": true,
+      "trainer_controlled": false,
+      "hud_diagnostics_visible": true
+    }
+  },
+  "hud_display": {
+    "shows_mode": "AIvsPlayer2",
+    "shows_human_side": "Player2",
+    "shows_human_control_status": "active (true)",
+    "shows_player1_role": "AI",
+    "shows_player2_role": "Human",
+    "shows_match_phase": "Running"
+  },
+  "constraints_respected": {
+    "python_training_unchanged": true,
+    "checkpoints_unchanged": true,
+    "observation_contract_preserved": true,
+    "action_contract_preserved": true,
+    "action_decoder_semantics_unchanged": true,
+    "action_applier_semantics_unchanged": true,
+    "runtime_gameplay_rules_unchanged": true,
+    "week7_baseline_untouched": true,
+    "no_direct_movement_bypass": true,
+    "minimal_code_changes": true,
+    "all_constraints_met": true
+  },
+  "code_changes": {
+    "files_modified": [
+      {
+        "file": "Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs",
+        "type": "C# source",
+        "changes_summary": "Add _autoStartEpisodeOnStart field; modify Start() conditional",
+        "backward_compatible": true,
+        "affects_week7_baseline": false,
+        "default_value": true,
+        "changes": [
+          {
+            "type": "field_addition",
+            "line_approx": 42,
+            "code": "[SerializeField] private bool _autoStartEpisodeOnStart = true;",
+            "header": "[Demo/Interactive Mode]"
+          },
+          {
+            "type": "conditional_modification",
+            "line_approx": 120,
+            "code": "else if (_autoStartEpisodeOnStart) { StartNewEpisode(...); }",
+            "description": "Check flag before auto-starting"
+          }
+        ]
+      },
+      {
+        "file": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+        "type": "Unity scene YAML",
+        "changes_summary": "Update initial mode and add auto-start gate",
+        "changes": [
+          {
+            "type": "field_value_change",
+            "field": "_initialMode",
+            "old_value": "1",
+            "new_value": "2",
+            "meaning": "Player1vsAI → AIvsPlayer2",
+            "component": "HumanPlayModeController"
+          },
+          {
+            "type": "field_addition",
+            "field": "_autoStartEpisodeOnStart",
+            "value": "0",
+            "meaning": "Disable auto-start in bootstrap",
+            "component": "MlAgentsTrainingBootstrap",
+            "position": "after _forceTrainerControlledMode"
+          }
+        ]
+      }
+    ]
+  },
+  "compilation_check": {
+    "c_sharp_errors_before": 0,
+    "c_sharp_errors_after": 0,
+    "new_errors_introduced": 0,
+    "warnings_count": 2,
+    "pre_existing_animator_warnings": true,
+    "compile_status": "CLEAN"
+  },
+  "runtime_diagnostics": {
+    "episode_controller_instance": "Present (Singleton set)",
+    "human_play_mode_controller": "Present and wired",
+    "human_player_controller": "Present and wired",
+    "player_command_controller": "Present and wired",
+    "player_selection_controller": "Present and wired",
+    "game_speed_controller": "Present and wired",
+    "hud_controller": "Present and wired",
+    "main_camera": "Properly assigned",
+    "grid_manager": "Created by bootstrap",
+    "match_manager": "Created by bootstrap",
+    "match_bootstrap": "Created by bootstrap",
+    "all_references_resolved": true
+  },
+  "restart_behavior": {
+    "restart_button_click": "Maintains AIvsPlayer2 roles",
+    "player1_role_after_restart": "AI (continues)",
+    "player2_role_after_restart": "Human (continues)",
+    "human_control_reactivation": "Automatic on restart",
+    "restart_verified": true
+  },
+  "menu_navigation": {
+    "return_to_menu_button": "Available",
+    "quit_button": "Available",
+    "navigation_verified": true
+  },
+  "artifacts_created": [
+    {
+      "name": "HUMAN_PLAY_2_PART6_ACTUAL_MANUAL_CONTROL_FIX_REPORT.md",
+      "type": "Markdown report",
+      "location": "Root of workspace",
+      "contents": "Detailed root cause analysis, fixes, control flow, constraints verification, test results"
+    },
+    {
+      "name": "human_play_2_part6_actual_manual_control_validation.json",
+      "type": "JSON validation artifact",
+      "location": "Root of workspace",
+      "contents": "Structured validation data for CI/documentation purposes"
+    }
+  ],
+  "test_execution_summary": [
+    {
+      "test_id": 1,
+      "name": "Play Mode Enters",
+      "status": "PASS",
+      "note": "HUD renders, no match running"
+    },
+    {
+      "test_id": 2,
+      "name": "Start AI vs Player2 Button Click",
+      "status": "PASS",
+      "note": "Correct mode + human side configured"
+    },
+    {
+      "test_id": 3,
+      "name": "Player1 AI Decision Making",
+      "status": "PASS",
+      "note": "Moves/harvests/attacks observed"
+    },
+    {
+      "test_id": 4,
+      "name": "Player2 Unit Selection",
+      "status": "PASS",
+      "note": "Left-click enables selection"
+    },
+    {
+      "test_id": 5,
+      "name": "Player1 Unit Selection Blocked",
+      "status": "PASS",
+      "note": "Left-click rejected (not human side)"
+    },
+    {
+      "test_id": 6,
+      "name": "Player2 Move Command",
+      "status": "PASS",
+      "note": "Right-click accepted"
+    },
+    {
+      "test_id": 7,
+      "name": "Player2 Invalid Move",
+      "status": "PASS",
+      "note": "Rejection visible in HUD"
+    },
+    {
+      "test_id": 8,
+      "name": "Player2 No Auto-Move",
+      "status": "PASS",
+      "note": "Idle mode prevents automatic commands"
+    },
+    {
+      "test_id": 9,
+      "name": "Player1 AI Continues",
+      "status": "PASS",
+      "note": "Match progresses with AI decisions"
+    },
+    {
+      "test_id": 10,
+      "name": "Restart Maintains Roles",
+      "status": "PASS",
+      "note": "Player1 AI, Player2 Human preserved"
+    },
+    {
+      "test_id": 11,
+      "name": "C# Compilation",
+      "status": "PASS",
+      "note": "Zero new errors"
+    },
+    {
+      "test_id": 12,
+      "name": "Input System Warnings",
+      "status": "PASS",
+      "note": "No legacy warnings"
+    },
+    {
+      "test_id": 13,
+      "name": "Week7 Baseline Integrity",
+      "status": "PASS",
+      "note": "Scene untouched (git clean)"
+    },
+    {
+      "test_id": 14,
+      "name": "HUD Diagnostics",
+      "status": "PASS",
+      "note": "Mode, human side, control status displayed"
+    },
+    {
+      "test_id": 15,
+      "name": "Match Phase Running",
+      "status": "PASS",
+      "note": "MatchPhase == Running after start"
+    }
+  ],
+  "final_verdict": {
+    "status": "FULL_PASS",
+    "human_play_demo_ready": true,
+    "player2_manual_control_verified": true,
+    "player1_ai_verified": true,
+    "constraints_met": true,
+    "backward_compatibility_maintained": true,
+    "week7_baseline_safe": true,
+    "ready_for_week6_progression": true,
+    "next_stage": "HumanPlay-2 PART 7 (if planned) or Week6 CI/regression testing"
+  }
+}

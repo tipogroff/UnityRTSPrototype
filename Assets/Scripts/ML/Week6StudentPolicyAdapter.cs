@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RTS.Core;
 using RTS.Gameplay;
+using RTS.Presentation;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -589,6 +590,7 @@ namespace RTS.ML
 
         internal StudentPolicyExecutionReport ExecuteDecision(Owner playerId, in RlLoopStepInput stepInput)
         {
+            using var commandSourceScope = HumanPlayCommandSourceDiagnostics.PushSource($"Week6StudentPolicyAdapter({playerId})");
             long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.PolicyInference);
             StudentPolicyExecutionReport Finish(StudentPolicyExecutionReport result)
             {

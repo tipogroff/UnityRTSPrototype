@@ -33,6 +33,7 @@ namespace RTS.Presentation
         [SerializeField] private float _resolveIntervalSeconds = 1f;
         [SerializeField] private float _snapshotIntervalSeconds = 0.25f;
 
+        private const float CommandDiagnosticsWindowSeconds = 5f;
         private float _nextResolveTime;
         private float _nextSnapshotTime;
         private string _hudStatus = "HUD initialized.";
@@ -42,6 +43,7 @@ namespace RTS.Presentation
         private int _player1AliveUnits = -1;
         private int _player2AliveUnits = -1;
         private bool _hasCachedCounts;
+        private MatchManager _subscribedMatchManager;
 
         private void Awake()
         {
@@ -137,6 +139,7 @@ namespace RTS.Presentation
             string hasHuman = _humanPlayModeController != null ? _humanPlayModeController.HasHumanSide.ToString() : "n/a";
             string humanSide = _humanPlayModeController != null ? _humanPlayModeController.HumanSide.ToString() : "n/a";
             string diagnostics = _humanPlayModeController != null ? _humanPlayModeController.LastDiagnostics : "Controller missing";
+            HumanPlayCommandDiagnosticsSnapshot commandSnapshot = HumanPlayCommandSourceDiagnostics.GetSnapshot(CommandDiagnosticsWindowSeconds);
 
             bool trainerControlled = IsTrainerControlled();
             bool humanControlActive = _humanPlayerController != null && _humanPlayerController.IsHumanControlActive;
@@ -146,6 +149,12 @@ namespace RTS.Presentation
             GUILayout.Label("Human side: " + humanSide);
             GUILayout.Label("Human control active: " + humanControlActive);
             GUILayout.Label("TrainerControlled runtime: " + trainerControlled);
+            GUILayout.Label("Enable student match control: " + commandSnapshot.EnableStudentMatchControl);
+            GUILayout.Label("P1 decision mode: " + commandSnapshot.Player1DecisionMode);
+            GUILayout.Label("P2 decision mode: " + commandSnapshot.Player2DecisionMode);
+            GUILayout.Label($"Player2 automatic cmds last {CommandDiagnosticsWindowSeconds:0}s: {commandSnapshot.Player2AutomaticCommandCount}");
+            GUILayout.Label($"Player2 human cmds last {CommandDiagnosticsWindowSeconds:0}s: {commandSnapshot.Player2HumanCommandCount}");
+            GUILayout.Label("Last Player2 command source: " + commandSnapshot.LastPlayer2CommandSource);
             GUILayout.Label("Mode diagnostics: " + diagnostics);
 
             if (trainerControlled)
@@ -578,6 +587,13 @@ namespace RTS.Presentation
 
         private void SubscribeEvents()
         {
+            if (_subscribedMatchManager != null && _subscribedMatchManager != _matchManager)
+            {
+                _subscribedMatchManager.OnCommandAccepted -= HandleCommandAccepted;
+                _subscribedMatchManager.OnCommandRejectedDetailed -= HandleCommandRejectedDetailed;
+                _subscribedMatchManager = null;
+            }
+
             if (_playerCommandController != null)
             {
                 _playerCommandController.OnCommandStatusChanged -= HandleCommandStatusChanged;
@@ -589,10 +605,26 @@ namespace RTS.Presentation
                 _playerSelectionController.OnSelectionChanged -= HandleSelectionChanged;
                 _playerSelectionController.OnSelectionChanged += HandleSelectionChanged;
             }
+
+            if (_matchManager != null)
+            {
+                _matchManager.OnCommandAccepted -= HandleCommandAccepted;
+                _matchManager.OnCommandAccepted += HandleCommandAccepted;
+                _matchManager.OnCommandRejectedDetailed -= HandleCommandRejectedDetailed;
+                _matchManager.OnCommandRejectedDetailed += HandleCommandRejectedDetailed;
+                _subscribedMatchManager = _matchManager;
+            }
         }
 
         private void UnsubscribeEvents()
         {
+            if (_subscribedMatchManager != null)
+            {
+                _subscribedMatchManager.OnCommandAccepted -= HandleCommandAccepted;
+                _subscribedMatchManager.OnCommandRejectedDetailed -= HandleCommandRejectedDetailed;
+                _subscribedMatchManager = null;
+            }
+
             if (_playerCommandController != null)
             {
                 _playerCommandController.OnCommandStatusChanged -= HandleCommandStatusChanged;
@@ -615,6 +647,16 @@ namespace RTS.Presentation
             _hudStatus = unit == null
                 ? "Selection cleared."
                 : $"Selected: {unit.Owner} {unit.Type} at {unit.GridPos}";
+        }
+
+        private void HandleCommandAccepted(MatchCommand command)
+        {
+            HumanPlayCommandSourceDiagnostics.RecordCommand(command, accepted: true, rejectionReason: string.Empty);
+        }
+
+        private void HandleCommandRejectedDetailed(MatchCommand command, string reason, MatchCommandRejectionDiagnostics diagnostics)
+        {
+            HumanPlayCommandSourceDiagnostics.RecordCommand(command, accepted: false, rejectionReason: reason);
         }
 
         private void InvokeSafe(System.Action action, string successMessage, string missingMessage)

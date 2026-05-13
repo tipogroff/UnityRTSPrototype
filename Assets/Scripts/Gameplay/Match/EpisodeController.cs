@@ -101,6 +101,9 @@ namespace RTS.Gameplay
                 _decisionTickAccumulatorSeconds = 0f;
             }
         }
+        public bool EnableWeek6StudentMatchControl => _enableWeek6StudentMatchControl;
+        public Week6PlayerControlMode Player1DecisionMode => _player1DecisionMode;
+        public Week6PlayerControlMode Player2DecisionMode => _player2DecisionMode;
         public RewardEpisodeSummary CurrentRewardEpisodeSummary =>
             _runtimeRewardCollector != null ? _runtimeRewardCollector.CurrentEpisodeSummary : default;
 

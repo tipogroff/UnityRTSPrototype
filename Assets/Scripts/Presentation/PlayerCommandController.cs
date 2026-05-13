@@ -737,7 +737,11 @@ namespace RTS.Presentation
             }
 
             _actionApplier.ResetDiagnostics();
-            bool accepted = _actionApplier.ApplyAction(action, _humanSide);
+            bool accepted;
+            using (HumanPlayCommandSourceDiagnostics.PushSource("Human/PlayerCommandController"))
+            {
+                accepted = _actionApplier.ApplyAction(action, _humanSide);
+            }
 
             if (accepted)
             {

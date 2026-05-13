@@ -75,6 +75,7 @@ namespace RTS.Presentation
 
         public void StartAIvsPlayer2()
         {
+            EmitDiagnostic("StartAIvsPlayer2 invoked.");
             StartHumanVsAi(Owner.Player2, HumanPlayMode.AIvsPlayer2);
         }
 
@@ -93,6 +94,7 @@ namespace RTS.Presentation
                 player1Mode: Week6PlayerControlMode.Idle,
                 player2Mode: Week6PlayerControlMode.Idle);
 
+            HumanPlayCommandSourceDiagnostics.ResetHistory();
             _episodeController.StartNewEpisode();
             SetState(HumanPlayMode.AIvsAI, false, Owner.Neutral, "AI vs AI started.");
         }
@@ -103,6 +105,7 @@ namespace RTS.Presentation
 
             if (_episodeController != null)
             {
+                HumanPlayCommandSourceDiagnostics.ResetHistory();
                 _episodeController.ResetEpisode();
                 SetState(_state.Mode, _state.HasHumanSide, _state.HumanSide, "Match restarted.");
                 return;
@@ -158,6 +161,9 @@ namespace RTS.Presentation
             }
 
             Week6PlayerControlMode aiMode = ResolveAiControlMode();
+            Week6PlayerControlMode p1ModeBefore = _episodeController.Player1DecisionMode;
+            Week6PlayerControlMode p2ModeBefore = _episodeController.Player2DecisionMode;
+            MatchPhase phaseBefore = _episodeController.GetMatchState().Phase;
             Week6PlayerControlMode p1Mode = humanSide == Owner.Player1 ? Week6PlayerControlMode.Idle : aiMode;
             Week6PlayerControlMode p2Mode = humanSide == Owner.Player2 ? Week6PlayerControlMode.Idle : aiMode;
 
@@ -166,7 +172,26 @@ namespace RTS.Presentation
                 player1Mode: p1Mode,
                 player2Mode: p2Mode);
 
+            HumanPlayCommandSourceDiagnostics.ResetHistory();
+            if (_logDiagnostics)
+            {
+                Debug.Log(
+                    $"[HumanPlayModeController] StartHumanVsAi invoked mode={mode} humanSide={humanSide} resolvedAiMode={aiMode} "
+                    + $"p1ModeBefore={p1ModeBefore} p2ModeBefore={p2ModeBefore} "
+                    + $"p1ModeAfterConfigure={_episodeController.Player1DecisionMode} p2ModeAfterConfigure={_episodeController.Player2DecisionMode} "
+                    + $"enableStudentMatchControl={_episodeController.EnableWeek6StudentMatchControl} "
+                    + $"episodeControllerId={_episodeController.GetInstanceID()} matchPhaseBeforeStart={phaseBefore}");
+            }
+
             _episodeController.StartNewEpisode();
+            if (_logDiagnostics)
+            {
+                MatchPhase phaseAfter = _episodeController.GetMatchState().Phase;
+                Debug.Log(
+                    $"[HumanPlayModeController] StartHumanVsAi started mode={mode} humanSide={humanSide} "
+                    + $"p1Mode={_episodeController.Player1DecisionMode} p2Mode={_episodeController.Player2DecisionMode} "
+                    + $"matchPhaseAfterStart={phaseAfter}");
+            }
             SetState(mode, true, humanSide, $"{mode} started. AI side mode: {aiMode}.");
         }
 
