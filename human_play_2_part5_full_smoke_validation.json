@@ -1,0 +1,54 @@
+{
+  "report": "HUMAN_PLAY_2_PART5_FULL_SMOKE_REPORT.md",
+  "date": "2025-01-30",
+  "scene": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+  "baseline": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+  "baseline_dirty": false,
+  "play_mode_errors": 0,
+  "play_mode_warnings_new": 0,
+  "play_mode_warnings_preexisting": 2,
+  "fixes_applied": [
+    {
+      "id": "fix_01",
+      "title": "Add EpisodeController to demo scene",
+      "file": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+      "description": "Added EpisodeController MonoBehaviour as root GameObject 'EpisodeController'. Set _autoStartOnPlay=false to avoid double-start with MlAgentsTrainingBootstrap. All runtime references resolved via singleton/FindFirstObjectByType at runtime.",
+      "root_cause": "HumanPlayModeController.StartHumanVsAi() requires EpisodeController.Instance != null. MlAgentsTrainingBootstrap does not create EpisodeController. Scene lacked this component.",
+      "scope": "demo_scene_wiring"
+    }
+  ],
+  "smoke_checklist": [
+    {"id": 1, "item": "Scene loads without errors", "status": "PASS"},
+    {"id": 2, "item": "HUD visible (OnGUI renders)", "status": "PASS"},
+    {"id": 3, "item": "HUD shows Start Player1 vs AI button", "status": "PASS"},
+    {"id": 4, "item": "EpisodeController.Instance non-null at runtime", "status": "PASS"},
+    {"id": 5, "item": "MlAgentsTrainingBootstrap active", "status": "PASS"},
+    {"id": 6, "item": "Runtime services created (GridManager, UnitRegistry, etc.)", "status": "PASS"},
+    {"id": 7, "item": "StaticAuthoredLayout units present (8 children)", "status": "PASS"},
+    {"id": 8, "item": "Stage7B_DemoOrchestrator disabled", "status": "PASS"},
+    {"id": 9, "item": "PresentationControls has all 6 components", "status": "PASS"},
+    {"id": 10, "item": "No C# compile errors", "status": "PASS"},
+    {"id": 11, "item": "Pre-existing animator warnings only", "status": "PASS", "note": "IsCarrying + Spawn trigger warnings pre-existing"},
+    {"id": 12, "item": "No NewInputSystem legacy warnings", "status": "PASS"},
+    {"id": 13, "item": "_preferredAiMode = StudentInference (2)", "status": "PASS"},
+    {"id": 14, "item": "_fallbackAiMode = HeuristicBaseline (1)", "status": "PASS"},
+    {"id": 15, "item": "HumanPlayerController wired to mode+selection+command", "status": "PASS"},
+    {"id": 16, "item": "HumanPlayHudController wired to all controllers", "status": "PASS"},
+    {"id": 17, "item": "PlayerSelectionController._selectionCamera wired", "status": "PASS"},
+    {"id": 18, "item": "PlayerCommandController._commandCamera wired", "status": "PASS"},
+    {"id": 19, "item": "GameSpeedController._trainingBootstrap wired", "status": "PASS"},
+    {"id": 20, "item": "Week7 baseline scene isDirty=false", "status": "PASS"}
+  ],
+  "total": 20,
+  "passed": 20,
+  "failed": 0,
+  "not_tested": 0,
+  "constraints_respected": {
+    "no_python_training_checkpoint": true,
+    "no_observation_action_contract_changes": true,
+    "no_actiondecoder_applier_semantic_changes": true,
+    "no_runtime_gameplay_rule_changes": true,
+    "week7_baseline_untouched": true,
+    "human_commands_via_playercommandcontroller_chain": true
+  }
+}

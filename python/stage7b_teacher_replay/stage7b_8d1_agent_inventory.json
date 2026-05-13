@@ -1,14 +1,14 @@
 ﻿{
-    "generated_at_utc": "2026-05-13T02:00:00.6694561Z",
+    "generated_at_utc": "2026-05-13T07:34:25.9296880Z",
     "all_agent_components": [
         {
             "component_type": "RTS.MLAgents.Stage7B.StudentMlAgent",
-            "instance_id": 171512,
+            "instance_id": 179894,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,
             "behavior_name": "Stage7B_RTS_Student",
-            "behavior_type": "Default",
+            "behavior_type": "InferenceOnly",
             "model_assigned": true,
             "model_asset_path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx"
         }
@@ -16,12 +16,12 @@
     "all_behavior_parameters": [
         {
             "component_type": "BehaviorParameters",
-            "instance_id": 171516,
+            "instance_id": 179898,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,
             "behavior_name": "Stage7B_RTS_Student",
-            "behavior_type": "Default",
+            "behavior_type": "InferenceOnly",
             "model_assigned": true,
             "model_asset_path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx"
         }
@@ -29,23 +29,23 @@
     "behavior_name_stage7b_rts_student": [
         {
             "component_type": "RTS.MLAgents.Stage7B.StudentMlAgent",
-            "instance_id": 171512,
+            "instance_id": 179894,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,
             "behavior_name": "Stage7B_RTS_Student",
-            "behavior_type": "Default",
+            "behavior_type": "InferenceOnly",
             "model_assigned": true,
             "model_asset_path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx"
         },
         {
             "component_type": "BehaviorParameters",
-            "instance_id": 171516,
+            "instance_id": 179898,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,
             "behavior_name": "Stage7B_RTS_Student",
-            "behavior_type": "Default",
+            "behavior_type": "InferenceOnly",
             "model_assigned": true,
             "model_asset_path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx"
         }
