@@ -43,6 +43,8 @@ namespace RTS.Presentation
         [SerializeField] private int lastMoveStartFrame = -1;
         [SerializeField] private int lastMoveEndFrame = -1;
         [SerializeField] private bool animatorMovingMatchesInterpolator = true;
+        [SerializeField] private string lastAnimationEvent = "None";
+        [SerializeField] private int setMovingApplyCount;
 
         public Owner LastSyncedOwner => _lastSyncedOwner;
         public bool HasSyncedSuccessfully => _ownerVisualSynced;
@@ -57,6 +59,8 @@ namespace RTS.Presentation
         public int LastMoveStartFrame => lastMoveStartFrame;
         public int LastMoveEndFrame => lastMoveEndFrame;
         public bool AnimatorMovingMatchesInterpolator => animatorMovingMatchesInterpolator;
+        public string LastAnimationEvent => lastAnimationEvent;
+        public int SetMovingApplyCount => setMovingApplyCount;
 
         private void Awake()
         {
@@ -499,6 +503,7 @@ namespace RTS.Presentation
             unitVisualAnimator.SetMoving(value);
             lastSetMovingValue = value;
             lastSetMovingFrame = Time.frameCount;
+            setMovingApplyCount++;
 
             if (value)
             {
@@ -514,6 +519,7 @@ namespace RTS.Presentation
 
         private void TraceEvent(string visualEvent, string animatorParameter, string source, bool success, string diagnostic)
         {
+            lastAnimationEvent = visualEvent;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!enableRuntimeTrace)
             {

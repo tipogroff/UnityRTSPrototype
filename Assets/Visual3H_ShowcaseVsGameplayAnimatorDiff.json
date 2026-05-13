@@ -1,0 +1,239 @@
+﻿{
+    "generatedAtUtc": "2026-05-12T22:39:12.5700882Z",
+    "showcaseScenePath": "Assets/Scenes/AnimationShowcase.unity",
+    "gameplayScenePath": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+    "roles": [
+        {
+            "role": "Worker",
+            "showcasePrefabPath": "Assets/Art/Prefabs/Visuals/Characters/AnimationPreview/AnimPreview_Worker_Casual_Male.prefab",
+            "gameplayPrefabPath": "Assets/Prefabs/Worker.prefab",
+            "showcase": {
+                "exists": true,
+                "gameObjectPath": "AnimPreview_Worker_Casual_Male/Visual",
+                "controllerName": "Preview_Worker_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "",
+                "localScale": {
+                    "x": 0.4575965106487274,
+                    "y": 0.4575965106487274,
+                    "z": 0.4575965106487274
+                },
+                "lossyScale": {
+                    "x": 0.4575965106487274,
+                    "y": 0.4575965106487274,
+                    "z": 0.4575965106487274
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "gameplay": {
+                "exists": true,
+                "gameObjectPath": "Worker/VisualRoot/Visual_Worker_Casual_Male_Model",
+                "controllerName": "RTS_Worker_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "Worker/VisualRoot",
+                "localScale": {
+                    "x": 0.583299994468689,
+                    "y": 0.4375,
+                    "z": 0.583299994468689
+                },
+                "lossyScale": {
+                    "x": 0.3499799966812134,
+                    "y": 0.3499999940395355,
+                    "z": 0.3499799966812134
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "animatorPlacementParity": false,
+            "controllerAssignedInGameplay": true,
+            "gameplayCullingSafe": true,
+            "gameplayVisualActive": true,
+            "notes": []
+        },
+        {
+            "role": "Light",
+            "showcasePrefabPath": "Assets/Art/Prefabs/Visuals/Characters/AnimationPreview/AnimPreview_Light_Viking_Male.prefab",
+            "gameplayPrefabPath": "Assets/Prefabs/Light.prefab",
+            "showcase": {
+                "exists": true,
+                "gameObjectPath": "AnimPreview_Light_Viking_Male/Visual",
+                "controllerName": "Preview_Light_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "",
+                "localScale": {
+                    "x": 0.3770485520362854,
+                    "y": 0.3770485520362854,
+                    "z": 0.3770485520362854
+                },
+                "lossyScale": {
+                    "x": 0.3770485520362854,
+                    "y": 0.3770485520362854,
+                    "z": 0.3770485520362854
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "gameplay": {
+                "exists": true,
+                "gameObjectPath": "Light/VisualRoot/Visual_Light_Viking_Male_Model",
+                "controllerName": "RTS_Light_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "Light/VisualRoot",
+                "localScale": {
+                    "x": 0.4375,
+                    "y": 0.4375,
+                    "z": 0.4375
+                },
+                "lossyScale": {
+                    "x": 0.3499999940395355,
+                    "y": 0.3499999940395355,
+                    "z": 0.3499999940395355
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "animatorPlacementParity": false,
+            "controllerAssignedInGameplay": true,
+            "gameplayCullingSafe": true,
+            "gameplayVisualActive": true,
+            "notes": []
+        },
+        {
+            "role": "Heavy",
+            "showcasePrefabPath": "Assets/Art/Prefabs/Visuals/Characters/AnimationPreview/AnimPreview_Heavy_Knight_Male.prefab",
+            "gameplayPrefabPath": "Assets/Prefabs/Heavy.prefab",
+            "showcase": {
+                "exists": true,
+                "gameObjectPath": "AnimPreview_Heavy_Knight_Male/Visual",
+                "controllerName": "Preview_Heavy_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "",
+                "localScale": {
+                    "x": 0.42839837074279787,
+                    "y": 0.42839837074279787,
+                    "z": 0.42839837074279787
+                },
+                "lossyScale": {
+                    "x": 0.42839837074279787,
+                    "y": 0.42839837074279787,
+                    "z": 0.42839837074279787
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "gameplay": {
+                "exists": true,
+                "gameObjectPath": "Heavy/VisualRoot/Visual_Heavy_Knight_Male_Model",
+                "controllerName": "RTS_Heavy_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "Heavy/VisualRoot",
+                "localScale": {
+                    "x": 0.4375,
+                    "y": 0.4375,
+                    "z": 0.4375
+                },
+                "lossyScale": {
+                    "x": 0.3499999940395355,
+                    "y": 0.3499999940395355,
+                    "z": 0.3499999940395355
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "animatorPlacementParity": false,
+            "controllerAssignedInGameplay": true,
+            "gameplayCullingSafe": true,
+            "gameplayVisualActive": true,
+            "notes": []
+        },
+        {
+            "role": "Ranged",
+            "showcasePrefabPath": "Assets/Art/Prefabs/Visuals/Characters/AnimationPreview/AnimPreview_Ranged_Wizard.prefab",
+            "gameplayPrefabPath": "Assets/Prefabs/Ranged.prefab",
+            "showcase": {
+                "exists": true,
+                "gameObjectPath": "AnimPreview_Ranged_Wizard/Visual",
+                "controllerName": "Preview_Ranged_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "",
+                "localScale": {
+                    "x": 0.3726206421852112,
+                    "y": 0.3726206421852112,
+                    "z": 0.3726206421852112
+                },
+                "lossyScale": {
+                    "x": 0.3726206421852112,
+                    "y": 0.3726206421852112,
+                    "z": 0.3726206421852112
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "gameplay": {
+                "exists": true,
+                "gameObjectPath": "Ranged/VisualRoot/Visual_Ranged_Wizard_Model",
+                "controllerName": "RTS_Ranged_Animator",
+                "cullingMode": 0,
+                "updateMode": 0,
+                "animatorEnabled": true,
+                "activeInHierarchy": true,
+                "avatarName": "",
+                "applyRootMotion": false,
+                "visualRootPath": "Ranged/VisualRoot",
+                "localScale": {
+                    "x": 0.699999988079071,
+                    "y": 0.29170000553131106,
+                    "z": 0.699999988079071
+                },
+                "lossyScale": {
+                    "x": 0.3499999940395355,
+                    "y": 0.3500400185585022,
+                    "z": 0.3499999940395355
+                },
+                "skinnedMeshRendererCount": 1,
+                "enabledSkinnedMeshRendererCount": 1
+            },
+            "animatorPlacementParity": false,
+            "controllerAssignedInGameplay": true,
+            "gameplayCullingSafe": true,
+            "gameplayVisualActive": true,
+            "notes": []
+        }
+    ]
+}

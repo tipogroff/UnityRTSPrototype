@@ -269,6 +269,21 @@ namespace RTS.Presentation
             return AreOwnerRenderersUsingMaterial(expectedMaterial);
         }
 
+        public Animator GetAnimatorComponent()
+        {
+            return TryGetAnimator(out var resolved) ? resolved : null;
+        }
+
+        public string GetAnimatorPath()
+        {
+            return TryGetAnimator(out var resolved) ? GetHierarchyPath(resolved.transform) : string.Empty;
+        }
+
+        public bool HasAnimatorReference()
+        {
+            return TryGetAnimator(out _);
+        }
+
         public bool ApplyOwnerVisualAndVerify(Owner owner, out string diagnostic)
         {
             diagnostic = string.Empty;

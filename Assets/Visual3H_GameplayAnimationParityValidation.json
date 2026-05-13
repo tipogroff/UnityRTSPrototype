@@ -1,0 +1,17 @@
+﻿{
+    "generatedAtUtc": "2026-05-12T22:39:12.6673704Z",
+    "showcaseSceneAnimationEvidencePass": true,
+    "week7RuntimeAnimationEvidencePass": true,
+    "animatorControllerAssignedPass": true,
+    "normalizedTimeAdvancesPass": true,
+    "boneDeltaObservedPass": true,
+    "cullingModeSafePass": true,
+    "noRepeatedResetLoopPass": true,
+    "smoothInterpolationNonInterferingPass": true,
+    "ownerMarkersStillCorrectPass": true,
+    "noTPoseObserved": true,
+    "noMagentaObserved": true,
+    "notes": [
+        "Owner marker closure is evaluated on Worker/Light/Heavy/Ranged runtime entries only; all target entries had valid UnitVisualAnimator animator paths."
+    ]
+}
