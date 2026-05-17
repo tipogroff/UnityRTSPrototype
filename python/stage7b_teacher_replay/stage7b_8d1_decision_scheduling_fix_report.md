@@ -1,9 +1,9 @@
 ﻿# Stage7B-8C.2 Unity Inference Smoke Report
 
-final_decision: GO
-ready_for_stage7b_8d_or_9: true
-blocker_code: none
-blocker_reason: none
+final_decision: NO_GO
+ready_for_stage7b_8d_or_9: false
+blocker_code: C
+blocker_reason: CollectObservations did not provide full real observation without padding
 
 ## Model
 - onnx_source_path: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
@@ -26,31 +26,31 @@ blocker_reason: none
 - actual_collect_all_expected_values: true
 - zero_fallback_used: false
 - defensive_pre_ready_observation_count: 0
-- defensive_pre_ready_observation_used_after_runtime_ready: false
+- defensive_pre_ready_observation_used_after_runtime_ready: true
 - warning_padding_first_frame: -1
 - warning_padding_first_academy_step: -1
 
 ## Lifecycle
 - initialize_count: 3
-- on_episode_begin_count: 1
-- collect_observations_count: 4
-- write_discrete_action_mask_count: 2
-- on_action_received_count: 2
+- on_episode_begin_count: 4
+- collect_observations_count: 4514
+- write_discrete_action_mask_count: 4511
+- on_action_received_count: 4511
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 1
+- inference_kick_decision_request_count: 2
 - inference_runtime_ready_observed: true
-- inference_first_ready_frame: 2
+- inference_first_ready_frame: 60752
 - inference_first_ready_fixed_tick: 1
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 5
+- candidate_action_index_last: 23
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 4
-- action_adapter_success_count: 2
-- runtime_apply_attempted: 2
-- runtime_apply_accepted: 2
+- candidate_builder_success_count: 9022
+- action_adapter_success_count: 4511
+- runtime_apply_attempted: 4511
+- runtime_apply_accepted: 4511
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -62,7 +62,7 @@ blocker_reason: none
 
 ## Console
 - unity_console_errors: 0
-- unity_console_warnings: 2
+- unity_console_warnings: 20
 - warning_fewer_observations_0_detected: false
 - warning_heuristic_not_implemented_detected: false
 - timeout_error_log_count: 0
@@ -75,4 +75,4 @@ blocker_reason: none
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-05-13T17:08:36.5162158Z
+generated_at_utc: 2026-05-17T14:12:27.2909255Z
