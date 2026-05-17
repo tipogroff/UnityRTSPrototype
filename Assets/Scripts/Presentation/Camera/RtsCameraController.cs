@@ -2,6 +2,7 @@ using RTS.Core;
 using RTS.Gameplay;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -56,8 +57,21 @@ namespace RTS.Presentation.CameraControls
             ReadZoom();
             ReadMiddleMouseDrag();
 
-            transform.position = Vector3.SmoothDamp(transform.position, _targetPosition, ref _moveVelocity, _smoothTime);
-            _camera.orthographicSize = Mathf.SmoothDamp(_camera.orthographicSize, _targetZoom, ref _zoomVelocity, _smoothTime);
+            transform.position = Vector3.SmoothDamp(
+                transform.position,
+                _targetPosition,
+                ref _moveVelocity,
+                _smoothTime,
+                Mathf.Infinity,
+                Time.unscaledDeltaTime);
+
+            _camera.orthographicSize = Mathf.SmoothDamp(
+                _camera.orthographicSize,
+                _targetZoom,
+                ref _zoomVelocity,
+                _smoothTime,
+                Mathf.Infinity,
+                Time.unscaledDeltaTime);
         }
 
         public void FocusMapCenter()
@@ -68,6 +82,11 @@ namespace RTS.Presentation.CameraControls
 
         private void ReadMovement()
         {
+            if (IsTextInputFocused())
+            {
+                return;
+            }
+
             Vector2 input = GetMoveInput();
             if (input.sqrMagnitude <= 0.0001f)
             {
@@ -88,6 +107,11 @@ namespace RTS.Presentation.CameraControls
 
         private void ReadZoom()
         {
+            if (IsTextInputFocused())
+            {
+                return;
+            }
+
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             {
                 return;
@@ -106,6 +130,12 @@ namespace RTS.Presentation.CameraControls
         {
             if (!_enableMiddleMouseDrag)
             {
+                return;
+            }
+
+            if (IsTextInputFocused())
+            {
+                _dragging = false;
                 return;
             }
 
@@ -295,6 +325,17 @@ namespace RTS.Presentation.CameraControls
 #else
             return false;
 #endif
+        }
+
+        private static bool IsTextInputFocused()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null || eventSystem.currentSelectedGameObject == null)
+            {
+                return false;
+            }
+
+            return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
         }
     }
 }

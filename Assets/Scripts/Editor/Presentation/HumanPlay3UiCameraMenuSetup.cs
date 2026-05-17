@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using RTS.Gameplay;
+using RTS.MLAgents.Stage7B;
+using RTS.MLAgents.Stage7B.TeacherReplay;
 using RTS.Presentation;
 using RTS.Presentation.CameraControls;
 using RTS.Presentation.UI;
@@ -41,6 +44,18 @@ namespace RTS.Editor.Presentation
             EnsureBuildSettings();
             AssetDatabase.SaveAssets();
             Debug.Log("[HumanPlay3UiCameraMenuSetup] Complete.");
+        }
+
+        [MenuItem("Tools/HumanPlay/Open Main Menu")]
+        public static void OpenMainMenu()
+        {
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        }
+
+        [MenuItem("Tools/HumanPlay/Open Demo Scene")]
+        public static void OpenDemoScene()
+        {
+            EditorSceneManager.OpenScene(DemoScenePath, OpenSceneMode.Single);
         }
 
         private static void ConfigureSprites(string root)
@@ -131,6 +146,7 @@ namespace RTS.Editor.Presentation
 
             AssignCommonSprites(canvas);
             DisableOldDiagnostics();
+            ConfigureStartupFlow();
             ConfigureHumanMode();
             ConfigureCamera();
 
@@ -150,6 +166,29 @@ namespace RTS.Editor.Presentation
             }
         }
 
+        private static void ConfigureStartupFlow()
+        {
+            MlAgentsTrainingBootstrap bootstrap = Object.FindFirstObjectByType<MlAgentsTrainingBootstrap>(FindObjectsInactive.Include);
+            if (bootstrap != null)
+            {
+                SetBool(bootstrap, "_autoStartEpisodeOnStart", false);
+                SetBool(bootstrap, "_stepScriptedOpponent", false);
+            }
+
+            EpisodeController episode = Object.FindFirstObjectByType<EpisodeController>(FindObjectsInactive.Include);
+            if (episode != null)
+            {
+                SetBool(episode, "_autoStartOnPlay", false);
+            }
+
+            Stage7BTeacherReplayDemoOrchestrator orchestrator =
+                Object.FindFirstObjectByType<Stage7BTeacherReplayDemoOrchestrator>(FindObjectsInactive.Include);
+            if (orchestrator != null)
+            {
+                orchestrator.enabled = false;
+            }
+        }
+
         private static void ConfigureHumanMode()
         {
             HumanPlayModeController mode = Object.FindFirstObjectByType<HumanPlayModeController>(FindObjectsInactive.Include);
@@ -160,7 +199,8 @@ namespace RTS.Editor.Presentation
 
             SerializedObject so = new SerializedObject(mode);
             SetEnum(so, "_initialMode", "AIvsPlayer2");
-            SetBool(so, "_autoStartOnEnable", false);
+            SetBool(so, "_autoStartOnEnable", true);
+            SetFloat(so, "_autoStartRuntimeReadyTimeoutSeconds", 5f);
             SetBool(so, "_loadMenuSceneOnReturn", true);
             SetString(so, "_menuSceneName", "MainMenu");
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -191,24 +231,25 @@ namespace RTS.Editor.Presentation
 
         private static void EnsureBuildSettings()
         {
-            List<EditorBuildSettingsScene> scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-            EnsureSceneInBuildSettings(scenes, MenuScenePath);
-            EnsureSceneInBuildSettings(scenes, DemoScenePath);
-            EditorBuildSettings.scenes = scenes.ToArray();
-        }
-
-        private static void EnsureSceneInBuildSettings(List<EditorBuildSettingsScene> scenes, string path)
-        {
-            for (int i = 0; i < scenes.Count; i++)
+            List<EditorBuildSettingsScene> existing = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            List<EditorBuildSettingsScene> ordered = new List<EditorBuildSettingsScene>
             {
-                if (scenes[i].path == path)
+                new EditorBuildSettingsScene(MenuScenePath, true),
+                new EditorBuildSettingsScene(DemoScenePath, true)
+            };
+
+            for (int i = 0; i < existing.Count; i++)
+            {
+                EditorBuildSettingsScene scene = existing[i];
+                if (scene.path == MenuScenePath || scene.path == DemoScenePath)
                 {
-                    scenes[i].enabled = true;
-                    return;
+                    continue;
                 }
+
+                ordered.Add(scene);
             }
 
-            scenes.Add(new EditorBuildSettingsScene(path, true));
+            EditorBuildSettings.scenes = ordered.ToArray();
         }
 
         private static void AssignCommonSprites(Object target)
@@ -276,6 +317,15 @@ namespace RTS.Editor.Presentation
             if (property != null)
             {
                 property.boolValue = value;
+            }
+        }
+
+        private static void SetFloat(SerializedObject so, string propertyName, float value)
+        {
+            SerializedProperty property = so.FindProperty(propertyName);
+            if (property != null)
+            {
+                property.floatValue = value;
             }
         }
 

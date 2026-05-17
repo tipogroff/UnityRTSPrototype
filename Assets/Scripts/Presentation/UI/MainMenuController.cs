@@ -48,17 +48,28 @@ namespace RTS.Presentation.UI
             Image background = CreateImage("Background", root, null, _backgroundColor);
             Stretch(background.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            RectTransform panel = CreatePanel("MenuPanel", root, new Vector2(520f, 440f), _panelSprite, _panelColor);
+            RectTransform panel = CreatePanel("MenuPanel", root, new Vector2(760f, 620f), _panelSprite, _panelColor);
             panel.anchorMin = new Vector2(0.5f, 0.5f);
             panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.anchoredPosition = Vector2.zero;
 
-            Text title = CreateText("Title", panel, "Unity RTS Prototype\nAgent vs Player Demo", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
-            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -82f), new Vector2(440f, 92f));
+            Text title = CreateText("Title", panel, "Unity RTS Prototype\nAgent vs Player Demo", 38, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -112f), new Vector2(640f, 120f));
 
-            CreateMenuButton(panel, "Start Demo", null, new Vector2(0f, -170f), () => InvokeSafe(() => _sceneFlowController.LoadDemo()));
-            CreateMenuButton(panel, "Settings", _settingsIcon, new Vector2(0f, -238f), ShowSettings);
-            CreateMenuButton(panel, "Quit", _quitIcon, new Vector2(0f, -306f), () => InvokeSafe(() => _sceneFlowController.Quit()));
+            RectTransform buttons = new GameObject("MainButtons", typeof(RectTransform), typeof(VerticalLayoutGroup)).GetComponent<RectTransform>();
+            buttons.SetParent(panel, false);
+            SetRect(buttons, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -88f), new Vector2(460f, 290f));
+            VerticalLayoutGroup buttonLayout = buttons.GetComponent<VerticalLayoutGroup>();
+            buttonLayout.spacing = 26f;
+            buttonLayout.childAlignment = TextAnchor.MiddleCenter;
+            buttonLayout.childControlWidth = false;
+            buttonLayout.childControlHeight = false;
+            buttonLayout.childForceExpandWidth = false;
+            buttonLayout.childForceExpandHeight = false;
+
+            CreateMenuButton(buttons, "Start Demo", null, () => InvokeSafe(() => _sceneFlowController.LoadDemo()));
+            CreateMenuButton(buttons, "Settings", _settingsIcon, ShowSettings);
+            CreateMenuButton(buttons, "Quit", _quitIcon, () => InvokeSafe(() => _sceneFlowController.Quit()));
 
             BuildSettingsPanel(root);
             _settingsPanel.SetActive(false);
@@ -66,25 +77,46 @@ namespace RTS.Presentation.UI
 
         private void BuildSettingsPanel(RectTransform root)
         {
-            RectTransform panel = CreatePanel("SettingsPanel", root, new Vector2(460f, 320f), _panelSprite, _panelColor);
+            RectTransform modalRoot = new GameObject("SettingsModal", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
+            modalRoot.SetParent(root, false);
+            Stretch(modalRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image shade = modalRoot.GetComponent<Image>();
+            shade.color = new Color(0f, 0f, 0f, 0.35f);
+            _settingsPanel = modalRoot.gameObject;
+
+            RectTransform panel = CreatePanel("SettingsPanel", modalRoot, new Vector2(620f, 420f), _panelSprite, _panelColor);
             panel.anchorMin = new Vector2(0.5f, 0.5f);
             panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.anchoredPosition = Vector2.zero;
-            _settingsPanel = panel.gameObject;
 
-            Text title = CreateText("Title", panel, "Settings", 26, FontStyle.Bold, TextAnchor.MiddleCenter);
-            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -48f), new Vector2(380f, 50f));
+            VerticalLayoutGroup layout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(56, 56, 38, 38);
+            layout.spacing = 28f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = false;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
 
-            Toggle fullscreen = CreateToggle(panel, "Fullscreen", new Vector2(-140f, -108f), Screen.fullScreen);
-            fullscreen.onValueChanged.AddListener(value => Screen.fullScreen = value);
+            Text title = CreateText("Title", panel, "Settings", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
+            AddLayout(title.gameObject, -1f, 56f);
 
-            Text volumeLabel = CreateText("VolumeLabel", panel, "Volume", 18, FontStyle.Normal, TextAnchor.MiddleLeft);
-            SetRect(volumeLabel.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-145f, -166f), new Vector2(130f, 34f));
-
-            Slider volume = CreateSlider(panel, new Vector2(70f, -166f), AudioListener.volume);
+            RectTransform volumeRow = CreateSettingsRow(panel, "VolumeRow");
+            Text volumeLabel = CreateText("VolumeLabel", volumeRow, "Volume", 22, FontStyle.Normal, TextAnchor.MiddleLeft);
+            AddLayout(volumeLabel.gameObject, 180f, 46f);
+            Slider volume = CreateSlider(volumeRow, Vector2.zero, AudioListener.volume);
+            AddLayout(volume.gameObject, 310f, 34f);
             volume.onValueChanged.AddListener(value => AudioListener.volume = value);
 
-            CreateMenuButton(panel, "Back", null, new Vector2(0f, -250f), HideSettings);
+            RectTransform fullscreenRow = CreateSettingsRow(panel, "FullscreenRow");
+            Text fullscreenLabel = CreateText("FullscreenLabel", fullscreenRow, "Fullscreen", 22, FontStyle.Normal, TextAnchor.MiddleLeft);
+            AddLayout(fullscreenLabel.gameObject, 180f, 46f);
+            Toggle fullscreen = CreateToggleBox(fullscreenRow, Screen.fullScreen);
+            AddLayout(fullscreen.gameObject, 46f, 46f);
+            fullscreen.onValueChanged.AddListener(value => Screen.fullScreen = value);
+
+            Button back = CreateMenuButton(panel, "Back", null, HideSettings);
+            AddLayout(back.gameObject, 280f, 62f);
         }
 
         private void ShowSettings()
@@ -103,16 +135,16 @@ namespace RTS.Presentation.UI
             }
         }
 
-        private Button CreateMenuButton(RectTransform parent, string label, Sprite icon, Vector2 anchoredPosition, UnityEngine.Events.UnityAction onClick)
+        private Button CreateMenuButton(RectTransform parent, string label, Sprite icon, UnityEngine.Events.UnityAction onClick)
         {
-            Button button = CreateButton(label + "Button", parent, label, icon, new Vector2(300f, 52f), onClick);
+            Button button = CreateButton(label + "Button", parent, label, icon, new Vector2(440f, 70f), onClick);
             button.image.sprite = _buttonSprite;
             button.image.type = _buttonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             button.image.color = _buttonColor;
             SpriteState state = button.spriteState;
             state.pressedSprite = _buttonPressedSprite;
             button.spriteState = state;
-            button.GetComponent<RectTransform>().anchoredPosition = anchoredPosition;
+            AddLayout(button.gameObject, 440f, 70f);
             return button;
         }
 
@@ -228,6 +260,56 @@ namespace RTS.Presentation.UI
             slider.fillRect = fill.rectTransform;
             slider.targetGraphic = background;
             return slider;
+        }
+
+        private RectTransform CreateSettingsRow(RectTransform parent, string name)
+        {
+            RectTransform row = new GameObject(name, typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
+            row.SetParent(parent, false);
+            AddLayout(row.gameObject, -1f, 52f);
+            HorizontalLayoutGroup layout = row.GetComponent<HorizontalLayoutGroup>();
+            layout.spacing = 24f;
+            layout.childAlignment = TextAnchor.MiddleLeft;
+            layout.childControlWidth = false;
+            layout.childControlHeight = false;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            return row;
+        }
+
+        private Toggle CreateToggleBox(RectTransform parent, bool value)
+        {
+            GameObject go = new GameObject("FullscreenToggle", typeof(RectTransform), typeof(Toggle));
+            go.transform.SetParent(parent, false);
+            RectTransform rect = go.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(42f, 42f);
+
+            Image box = CreateImage("Box", rect, _buttonSprite, _buttonColor);
+            Stretch(box.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            box.type = _buttonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
+
+            Image check = CreateImage("Checkmark", box.rectTransform, null, new Color(0.18f, 0.58f, 0.26f, 1f));
+            Stretch(check.rectTransform, Vector2.zero, Vector2.one, new Vector2(10f, 10f), new Vector2(-10f, -10f));
+
+            Toggle toggle = go.GetComponent<Toggle>();
+            toggle.targetGraphic = box;
+            toggle.graphic = check;
+            toggle.isOn = value;
+            return toggle;
+        }
+
+        private static void AddLayout(GameObject go, float preferredWidth, float preferredHeight)
+        {
+            LayoutElement layout = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            if (preferredWidth >= 0f)
+            {
+                layout.preferredWidth = preferredWidth;
+            }
+
+            if (preferredHeight >= 0f)
+            {
+                layout.preferredHeight = preferredHeight;
+            }
         }
 
         private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 size)

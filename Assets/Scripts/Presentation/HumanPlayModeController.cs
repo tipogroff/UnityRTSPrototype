@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Reflection;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.ML;
@@ -25,11 +27,14 @@ namespace RTS.Presentation
         [Header("Startup")]
         [SerializeField] private HumanPlayMode _initialMode = HumanPlayMode.AIvsAI;
         [SerializeField] private bool _autoStartOnEnable;
+        [SerializeField] private float _autoStartRuntimeReadyTimeoutSeconds = 5f;
 
         [Header("Diagnostics")]
         [SerializeField] private bool _logDiagnostics = true;
 
         private HumanPlayModeState _state = new HumanPlayModeState(HumanPlayMode.AIvsAI, false, Owner.Neutral, "Not started");
+        private Coroutine _startupCoroutine;
+        private bool _initialAutoStartCompleted;
 
         public HumanPlayMode CurrentMode => _state.Mode;
         public bool HasHumanSide => _state.HasHumanSide;
@@ -47,24 +52,38 @@ namespace RTS.Presentation
         private void OnEnable()
         {
             ResolveReferences();
+            LogStartupDiagnostics("OnEnable");
+            BeginInitialAutoStartIfNeeded();
+        }
 
+        private void Start()
+        {
+            ResolveReferences();
+            LogStartupDiagnostics("Start");
+            BeginInitialAutoStartIfNeeded();
+        }
+
+        private void BeginInitialAutoStartIfNeeded()
+        {
             if (!_autoStartOnEnable)
             {
                 return;
             }
 
-            switch (_initialMode)
+            if (_initialAutoStartCompleted || _startupCoroutine != null)
             {
-                case HumanPlayMode.Player1vsAI:
-                case HumanPlayMode.Player1vsScriptedOrHeuristic:
-                    StartPlayer1VsAI();
-                    break;
-                case HumanPlayMode.AIvsPlayer2:
-                    StartAIvsPlayer2();
-                    break;
-                default:
-                    StartAIvsAI();
-                    break;
+                return;
+            }
+
+            _startupCoroutine = StartCoroutine(StartInitialModeWhenRuntimeReady());
+        }
+
+        private void OnDisable()
+        {
+            if (_startupCoroutine != null)
+            {
+                StopCoroutine(_startupCoroutine);
+                _startupCoroutine = null;
             }
         }
 
@@ -102,6 +121,18 @@ namespace RTS.Presentation
         public void RestartMatch()
         {
             ResolveReferences();
+
+            if (_state.Mode == HumanPlayMode.AIvsPlayer2)
+            {
+                StartAIvsPlayer2();
+                return;
+            }
+
+            if (_state.Mode == HumanPlayMode.Player1vsAI || _state.Mode == HumanPlayMode.Player1vsScriptedOrHeuristic)
+            {
+                StartPlayer1VsAI();
+                return;
+            }
 
             if (_episodeController != null)
             {
@@ -147,6 +178,7 @@ namespace RTS.Presentation
         private void StartHumanVsAi(Owner humanSide, HumanPlayMode mode)
         {
             ResolveReferences();
+            LogStartupDiagnostics("StartHumanVsAi.before_configure");
 
             if (IsTrainerControlled)
             {
@@ -192,7 +224,78 @@ namespace RTS.Presentation
                     + $"p1Mode={_episodeController.Player1DecisionMode} p2Mode={_episodeController.Player2DecisionMode} "
                     + $"matchPhaseAfterStart={phaseAfter}");
             }
+            LogStartupDiagnostics("StartHumanVsAi.after_start");
             SetState(mode, true, humanSide, $"{mode} started. AI side mode: {aiMode}.");
+        }
+
+        private IEnumerator StartInitialModeWhenRuntimeReady()
+        {
+            if (_initialAutoStartCompleted)
+            {
+                yield break;
+            }
+
+            float timeout = Mathf.Max(0.25f, _autoStartRuntimeReadyTimeoutSeconds);
+            float start = Time.realtimeSinceStartup;
+            while (!AreRuntimeServicesReady(out string missing))
+            {
+                if (Time.realtimeSinceStartup - start >= timeout)
+                {
+                    SetState(_initialMode, false, Owner.Neutral, "Initial auto-start skipped; runtime services missing: " + missing);
+                    _startupCoroutine = null;
+                    yield break;
+                }
+
+                yield return null;
+            }
+
+            _initialAutoStartCompleted = true;
+            LogStartupDiagnostics("InitialAutoStart.ready");
+
+            switch (_initialMode)
+            {
+                case HumanPlayMode.Player1vsAI:
+                case HumanPlayMode.Player1vsScriptedOrHeuristic:
+                    StartPlayer1VsAI();
+                    break;
+                case HumanPlayMode.AIvsPlayer2:
+                    StartAIvsPlayer2();
+                    break;
+                default:
+                    StartAIvsAI();
+                    break;
+            }
+
+            _startupCoroutine = null;
+        }
+
+        private bool AreRuntimeServicesReady(out string missing)
+        {
+            ResolveReferences();
+
+            System.Text.StringBuilder builder = new System.Text.StringBuilder();
+            if (_episodeController == null)
+            {
+                builder.Append("EpisodeController ");
+            }
+
+            if (MatchManager.Instance == null && FindFirstObjectByType<MatchManager>() == null)
+            {
+                builder.Append("MatchManager ");
+            }
+
+            if (MatchBootstrap.Instance == null && FindFirstObjectByType<MatchBootstrap>() == null)
+            {
+                builder.Append("MatchBootstrap ");
+            }
+
+            if (GridManager.Instance == null && FindFirstObjectByType<GridManager>() == null)
+            {
+                builder.Append("GridManager ");
+            }
+
+            missing = builder.ToString().Trim();
+            return string.IsNullOrEmpty(missing);
         }
 
         private Week6PlayerControlMode ResolveAiControlMode()
@@ -236,6 +339,66 @@ namespace RTS.Presentation
             {
                 Debug.Log("[HumanPlayModeController] " + message);
             }
+        }
+
+        private void LogStartupDiagnostics(string context)
+        {
+            if (!_logDiagnostics)
+            {
+                return;
+            }
+
+            ResolveReferences();
+            bool bootstrapAutoStart = ReadPrivateBool(_trainingBootstrap, "_autoStartEpisodeOnStart");
+            bool bootstrapStepScripted = ReadPrivateBool(_trainingBootstrap, "_stepScriptedOpponent");
+            bool episodeAutoStart = ReadPrivateBool(_episodeController, "_autoStartOnPlay");
+            bool demoOrchestratorEnabled = IsAnyEnabledComponentType("RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator");
+            bool scriptedOpponentEnabled = IsAnyEnabledComponentType("RTS.ML.HeuristicPolicyAdapter")
+                || IsAnyEnabledComponentType("RTS.MLAgents.Stage7B.Week7ScriptedOpponentPacing");
+            string p1 = _episodeController != null ? _episodeController.Player1DecisionMode.ToString() : "n/a";
+            string p2 = _episodeController != null ? _episodeController.Player2DecisionMode.ToString() : "n/a";
+            bool control = _episodeController != null && _episodeController.EnableWeek6StudentMatchControl;
+
+            Debug.Log(
+                $"[HumanPlayModeController][Startup] context={context} "
+                + $"bootstrapAutoStart={bootstrapAutoStart} episodeAutoStart={episodeAutoStart} "
+                + $"initialMode={_initialMode} autoStartOnEnable={_autoStartOnEnable} "
+                + $"p1DecisionMode={p1} p2DecisionMode={p2} enableStudentMatchControl={control} "
+                + $"humanSide={_state.HumanSide} hasHumanSide={_state.HasHumanSide} "
+                + $"stage7BDemoOrchestratorEnabled={demoOrchestratorEnabled} "
+                + $"scriptedOpponentComponentEnabled={scriptedOpponentEnabled} "
+                + $"bootstrapStepScriptedOpponent={bootstrapStepScripted}");
+        }
+
+        private static bool ReadPrivateBool(object target, string fieldName)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+
+            FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            return field != null && field.FieldType == typeof(bool) && (bool)field.GetValue(target);
+        }
+
+        private static bool IsAnyEnabledComponentType(string fullTypeName)
+        {
+            MonoBehaviour[] behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null)
+                {
+                    continue;
+                }
+
+                if (behaviour.GetType().FullName == fullTypeName && behaviour.enabled)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void SetState(HumanPlayMode mode, bool hasHumanSide, Owner humanSide, string diagnostics)
