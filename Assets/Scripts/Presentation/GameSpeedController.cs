@@ -1,6 +1,8 @@
 using RTS.Gameplay;
 using RTS.MLAgents.Stage7B;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -273,6 +275,11 @@ namespace RTS.Presentation
             }
         }
 
+        public void SetOverlayVisible(bool visible)
+        {
+            _showOverlay = visible;
+        }
+
         private bool EvaluateModeGate()
         {
             if (!_enableOnlyInManualPlayMode)
@@ -295,6 +302,11 @@ namespace RTS.Presentation
 
         private bool WasKeyPressed(KeyCode key)
         {
+            if (IsUiFieldFocused())
+            {
+                return false;
+            }
+
             if (_inputBackendMode == InputBackendMode.NewInputOnly)
             {
                 if (TryGetInputSystemKeyPressed(key, out bool inputSystemPressedNewOnly) && inputSystemPressedNewOnly)
@@ -335,6 +347,17 @@ namespace RTS.Presentation
             }
 
             return false;
+        }
+
+        private static bool IsUiFieldFocused()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null || eventSystem.currentSelectedGameObject == null)
+            {
+                return false;
+            }
+
+            return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
         }
 
 #if ENABLE_INPUT_SYSTEM

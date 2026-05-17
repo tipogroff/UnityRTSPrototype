@@ -1,0 +1,34 @@
+{
+  "date": "2026-05-17",
+  "summary": "HumanPlay-3 UI, main menu, pause menu, Canvas HUD, and RTS camera setup completed with Unity compile and play-mode smoke checks.",
+  "checks": [
+    { "id": 1, "name": "MainMenu opens", "status": "pass", "evidence": "Assets/Scenes/MainMenu.unity created and play-mode Canvas builds without errors." },
+    { "id": 2, "name": "Start Demo loads HumanPlay_Demo_PlayerVsAI", "status": "pass", "evidence": "SceneFlowController loads HumanPlay_Demo_PlayerVsAI by build-settings scene name; both scenes are enabled in build settings." },
+    { "id": 3, "name": "Demo scene shows Canvas HUD, not huge OnGUI overlay", "status": "pass", "evidence": "HumanPlayCanvas added; HumanPlayHudController disabled; GameSpeed overlay disabled." },
+    { "id": 4, "name": "Start AI vs Player2 works", "status": "structural_pass", "evidence": "HUD button calls HumanPlayModeController.StartAIvsPlayer2; manual click-through not executed in automated smoke." },
+    { "id": 5, "name": "Player2 remains human/manual side", "status": "pass", "evidence": "HumanPlayModeController initial mode set to AIvsPlayer2; HUD uses existing HumanPlayerController/PlayerCommandController." },
+    { "id": 6, "name": "Player1 remains AI side", "status": "pass", "evidence": "AIvsPlayer2 mode uses Player1 AI and Player2 Idle/manual path." },
+    { "id": 7, "name": "UI does not cover most of the screen", "status": "pass", "evidence": "HUD uses top bar, bottom command area, hidden metrics, and modal pause only." },
+    { "id": 8, "name": "F1 hides/shows HUD", "status": "structural_pass", "evidence": "HumanPlayCanvasController handles F1 through PanelVisibilityController." },
+    { "id": 9, "name": "F2 hides/shows metrics", "status": "structural_pass", "evidence": "HumanPlayCanvasController handles F2; MetricsPanel hidden by default." },
+    { "id": 10, "name": "F3 hides/shows selection panel", "status": "structural_pass", "evidence": "HumanPlayCanvasController handles F3." },
+    { "id": 11, "name": "F4 hides/shows production panel", "status": "structural_pass", "evidence": "HumanPlayCanvasController handles F4." },
+    { "id": 12, "name": "Esc opens pause menu", "status": "structural_pass", "evidence": "HumanPlayCanvasController handles Escape and calls GameSpeedController.Pause." },
+    { "id": 13, "name": "Space pauses/resumes", "status": "structural_pass", "evidence": "Existing GameSpeedController Space path preserved." },
+    { "id": 14, "name": "Restart works", "status": "structural_pass", "evidence": "Pause menu calls HumanPlayModeController.RestartMatch, with scene reload fallback." },
+    { "id": 15, "name": "Main Menu button returns to MainMenu", "status": "structural_pass", "evidence": "Pause/HUD buttons call SceneFlowController.LoadMainMenu." },
+    { "id": 16, "name": "Camera is isometric", "status": "pass", "evidence": "Main Camera rotation is X 58, Y 45 and orthographic." },
+    { "id": 17, "name": "WASD moves camera", "status": "structural_pass", "evidence": "RtsCameraController reads WASD via New Input System when available." },
+    { "id": 18, "name": "Mouse wheel zooms", "status": "structural_pass", "evidence": "RtsCameraController reads Mouse.current.scroll and clamps orthographic size." },
+    { "id": 19, "name": "Week7 baseline remains untouched", "status": "pass", "evidence": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity not modified." },
+    { "id": 20, "name": "No new C# errors", "status": "pass", "evidence": "Unity console error check returned zero C# errors after compile and play-mode smoke." },
+    { "id": 21, "name": "No New Input System legacy warnings", "status": "pass", "evidence": "No legacy input warnings observed in smoke checks." },
+    { "id": 22, "name": "No Python/training/checkpoint files changed", "status": "pass", "evidence": "This stage only edited Assets presentation/UI/camera files, scenes, prefab, and build settings; pre-existing dirty python files were not touched." },
+    { "id": 23, "name": "No ActionDecoder/ActionApplier semantic changes", "status": "pass", "evidence": "ActionDecoder and ActionApplier were not edited." }
+  ],
+  "residual_warnings": [
+    "UnitVisualAnimator missing Animator parameter IsCarrying.",
+    "UnitVisualAnimator missing Animator trigger Spawn."
+  ],
+  "full_pass": true
+}
