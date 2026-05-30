@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.Presentation;
+using RTS.Presentation.Selection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -42,6 +44,7 @@ namespace RTS.Presentation.UI
         private CommandPanelView _commandPanel;
         private ProductionPanelView _productionPanel;
         private MetricsPanelView _metricsPanel;
+        private SelectionBoxView _selectionBoxView;
         private PanelVisibilityController _hudVisibility;
         private PanelVisibilityController _metricsVisibility;
         private PanelVisibilityController _selectionVisibility;
@@ -49,10 +52,16 @@ namespace RTS.Presentation.UI
         private HumanPlayModeController _modeController;
         private HumanPlayerController _humanPlayerController;
         private PlayerSelectionController _selectionController;
+        private SelectionManager _selectionManager;
         private PlayerCommandController _commandController;
         private GameSpeedController _speedController;
         private SceneFlowController _sceneFlowController;
         private MatchManager _matchManager;
+        private Button _moveButton;
+        private Button _attackButton;
+        private Button _harvestButton;
+        private Button _returnButton;
+        private Button _buildBarracksButton;
         private float _nextRefresh;
 
         private void Awake()
@@ -162,6 +171,7 @@ namespace RTS.Presentation.UI
             _hudVisibility = gameObject.AddComponent<PanelVisibilityController>();
             _hudVisibility.Initialize(_hudRoot.gameObject, true);
 
+            BuildSelectionBoxOverlay();
             BuildTopBar(_hudRoot);
             BuildBottomPanels(_hudRoot);
             BuildMetricsPanel(_hudRoot);
@@ -236,6 +246,7 @@ namespace RTS.Presentation.UI
             SetRect(commandStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 44f), new Vector2(-24f, 70f));
             _commandPanel = commands.gameObject.AddComponent<CommandPanelView>();
             _commandPanel.Initialize(commandStatus, _commandController);
+            _commandPanel.SetContextButtons(_moveButton, _attackButton, _harvestButton, _returnButton, _buildBarracksButton);
 
             RectTransform production = CreatePanel("ProductionPanel", _bottomRoot, new Vector2(360f, 0f));
             AddLayout(production.gameObject, 380f, -1f);
@@ -256,15 +267,32 @@ namespace RTS.Presentation.UI
         private void BuildCommandButtons(RectTransform commands)
         {
             GameObject row1 = CreateButtonRow(commands, "Row1", 58f);
-            AddLayout(CreateButton("MoveButton", row1.transform as RectTransform, "Move", null, () => _commandController?.BeginMoveCommandMode()).gameObject, 110f, 42f);
-            AddLayout(CreateButton("AttackButton", row1.transform as RectTransform, "Attack", null, () => _commandController?.BeginAttackCommandMode()).gameObject, 120f, 42f);
-            AddLayout(CreateButton("HarvestButton", row1.transform as RectTransform, "Harvest", null, () => _commandController?.TryHarvestSelected()).gameObject, 130f, 42f);
-            AddLayout(CreateButton("ReturnButton", row1.transform as RectTransform, "Return", null, () => _commandController?.TryReturnSelected()).gameObject, 120f, 42f);
+            _moveButton = CreateButton("MoveButton", row1.transform as RectTransform, "Move", null, () => _commandController?.BeginMoveCommandMode());
+            AddLayout(_moveButton.gameObject, 110f, 42f);
+            _attackButton = CreateButton("AttackButton", row1.transform as RectTransform, "Attack", null, () => _commandController?.BeginAttackCommandMode());
+            AddLayout(_attackButton.gameObject, 120f, 42f);
+            _harvestButton = CreateButton("HarvestButton", row1.transform as RectTransform, "Harvest", null, () => _commandController?.TryHarvestSelected());
+            AddLayout(_harvestButton.gameObject, 130f, 42f);
+            _returnButton = CreateButton("ReturnButton", row1.transform as RectTransform, "Return", null, () => _commandController?.TryReturnSelected());
+            AddLayout(_returnButton.gameObject, 120f, 42f);
 
             GameObject row2 = CreateButtonRow(commands, "Row2", 110f);
-            AddLayout(CreateButton("BuildBarracksButton", row2.transform as RectTransform, "Build Barracks", null, () => _commandController?.TryBuildBarracks()).gameObject, 180f, 42f);
+            _buildBarracksButton = CreateButton("BuildBarracksButton", row2.transform as RectTransform, "Build Barracks", null, () => _commandController?.TryBuildBarracks());
+            AddLayout(_buildBarracksButton.gameObject, 180f, 42f);
             AddLayout(CreateButton("RestartButton", row2.transform as RectTransform, "Restart", null, RestartMatch).gameObject, 120f, 42f);
             AddLayout(CreateButton("MainMenuButton", row2.transform as RectTransform, "Main Menu", _homeIcon, ReturnToMainMenu).gameObject, 150f, 42f);
+        }
+
+        private void BuildSelectionBoxOverlay()
+        {
+            RectTransform overlay = CreateRect("SelectionBoxOverlay", transform);
+            Stretch(overlay, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            _selectionBoxView = overlay.gameObject.AddComponent<SelectionBoxView>();
+            _selectionBoxView.Initialize(overlay);
+            if (_selectionManager != null)
+            {
+                _selectionManager.SetSelectionBoxView(_selectionBoxView);
+            }
         }
 
         private void BuildMetricsPanel(RectTransform parent)
@@ -321,11 +349,17 @@ namespace RTS.Presentation.UI
 
         private void Refresh(bool force)
         {
-            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            UnitRuntime selected = _selectionManager != null
+                ? _selectionManager.PrimarySelectedUnit
+                : _selectionController != null ? _selectionController.SelectedUnit : null;
+            IReadOnlyList<UnitRuntime> selectedUnits = _selectionManager != null
+                ? _selectionManager.SelectedUnits
+                : _selectionController != null ? _selectionController.SelectedUnits : null;
+            int selectionCount = selectedUnits != null ? selectedUnits.Count : (selected != null ? 1 : 0);
             _topResourceBar?.Refresh(_matchManager);
-            _selectionInfo?.Refresh(selected);
-            _commandPanel?.Refresh(_commandController);
-            _productionPanel?.Refresh(selected);
+            _selectionInfo?.Refresh(selectedUnits, selected);
+            _commandPanel?.Refresh(_commandController, selectedUnits, selected);
+            _productionPanel?.Refresh(selected, selectionCount);
             _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
         }
 
@@ -367,6 +401,12 @@ namespace RTS.Presentation.UI
             _modeController ??= FindFirstObjectByType<HumanPlayModeController>();
             _humanPlayerController ??= FindFirstObjectByType<HumanPlayerController>();
             _selectionController ??= FindFirstObjectByType<PlayerSelectionController>();
+            _selectionManager ??= FindFirstObjectByType<SelectionManager>();
+            if (_selectionManager != null && _selectionBoxView != null)
+            {
+                _selectionManager.SetSelectionBoxView(_selectionBoxView);
+            }
+
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();
             _speedController ??= FindFirstObjectByType<GameSpeedController>();
             _sceneFlowController ??= FindFirstObjectByType<SceneFlowController>();

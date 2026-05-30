@@ -1,375 +1,136 @@
 using System;
+using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
+using RTS.Presentation.Selection;
 using UnityEngine;
-using UnityEngine.EventSystems;
-
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
 
 namespace RTS.Presentation
 {
     [DisallowMultipleComponent]
     public sealed class PlayerSelectionController : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Camera _selectionCamera;
-        [SerializeField] private GridManager _gridManager;
+        [Header("Compatibility Facade")]
+        [SerializeField] private SelectionManager _selectionManager;
 
-        [Header("Selection")]
-        [SerializeField] private LayerMask _raycastMask = ~0;
-        [SerializeField] private float _raycastDistance = 500f;
-        [SerializeField] private bool _clearSelectionOnEmptyClick = true;
+        private static readonly IReadOnlyList<UnitRuntime> EmptySelection = Array.Empty<UnitRuntime>();
 
-        [Header("Marker")]
-        [SerializeField] private bool _createSelectionMarker = true;
-        [SerializeField] private Color _markerColor = new Color(0.1f, 0.9f, 0.2f, 0.55f);
-        [SerializeField] private Vector3 _markerScale = new Vector3(0.8f, 0.04f, 0.8f);
-        [SerializeField] private float _markerYOffset = 0.03f;
-
-        [Header("Diagnostics")]
-        [SerializeField] private bool _logWarnings = true;
-
-        private Owner _humanSide = Owner.Player1;
-        private bool _manualInputEnabled;
-        private bool _legacyInputUnavailable;
-        private GameObject _selectionMarker;
-
-        public UnitRuntime SelectedUnit { get; private set; }
-        public bool HasSelection => SelectedUnit != null;
+        public UnitRuntime SelectedUnit => PrimarySelectedUnit;
+        public UnitRuntime PrimarySelectedUnit => _selectionManager != null ? _selectionManager.PrimarySelectedUnit : null;
+        public IReadOnlyList<UnitRuntime> SelectedUnits => _selectionManager != null ? _selectionManager.SelectedUnits : EmptySelection;
+        public bool HasSelection => _selectionManager != null && _selectionManager.HasSelection;
+        public bool HasMultiSelection => _selectionManager != null && _selectionManager.HasMultiSelection;
+        public Owner HumanSide => _selectionManager != null ? _selectionManager.HumanSide : Owner.Neutral;
 
         public event Action<UnitRuntime> OnSelectionChanged;
+        public event Action<IReadOnlyList<UnitRuntime>> OnSelectionListChanged;
 
         private void Awake()
         {
-            ResolveReferences();
-            if (_createSelectionMarker)
-            {
-                EnsureSelectionMarker();
-            }
-
-            UpdateSelectionMarker();
+            ResolveSelectionManager();
         }
 
-        private void Update()
+        private void OnEnable()
         {
-            ResolveReferences();
-            ValidateSelectedUnit();
-            UpdateSelectionMarker();
+            ResolveSelectionManager();
+            Subscribe();
+        }
 
-            if (!_manualInputEnabled)
-            {
-                return;
-            }
-
-            if (!IsLeftClickPressed())
-            {
-                return;
-            }
-
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            if (!TryGetPointerRay(out Ray ray))
-            {
-                return;
-            }
-
-            if (TryResolveUnitFromRay(ray, out UnitRuntime hitUnit, out Vector3 worldPoint))
-            {
-                if (IsSelectableByHuman(hitUnit))
-                {
-                    Select(hitUnit);
-                }
-                else if (_clearSelectionOnEmptyClick)
-                {
-                    ClearSelection();
-                }
-
-                return;
-            }
-
-            if (!TryResolveWorldPointOnGround(ray, out worldPoint))
-            {
-                return;
-            }
-
-            GridPosition grid = _gridManager.WorldToCell(worldPoint);
-            if (!_gridManager.IsInside(grid))
-            {
-                if (_clearSelectionOnEmptyClick)
-                {
-                    ClearSelection();
-                }
-
-                return;
-            }
-
-            UnitRuntime occupant = _gridManager.GetOccupant(grid);
-            if (IsSelectableByHuman(occupant))
-            {
-                Select(occupant);
-            }
-            else if (_clearSelectionOnEmptyClick)
-            {
-                ClearSelection();
-            }
+        private void OnDisable()
+        {
+            Unsubscribe();
         }
 
         public void SetHumanSide(Owner humanSide)
         {
-            _humanSide = humanSide;
-            ValidateSelectedUnit();
-            UpdateSelectionMarker();
+            ResolveSelectionManager();
+            _selectionManager?.SetHumanSide(humanSide);
         }
 
         public void SetManualInputEnabled(bool enabled)
         {
-            _manualInputEnabled = enabled;
-            if (!enabled)
-            {
-                ClearSelection();
-            }
+            ResolveSelectionManager();
+            _selectionManager?.SetManualInputEnabled(enabled);
         }
 
         public void Select(UnitRuntime unit)
         {
-            if (!IsSelectableByHuman(unit))
-            {
-                return;
-            }
+            SelectSingle(unit);
+        }
 
-            if (SelectedUnit == unit)
-            {
-                return;
-            }
+        public void SelectSingle(UnitRuntime unit)
+        {
+            ResolveSelectionManager();
+            _selectionManager?.SelectSingle(unit);
+        }
 
-            SelectedUnit = unit;
-            OnSelectionChanged?.Invoke(SelectedUnit);
-            UpdateSelectionMarker();
+        public void AddToSelection(UnitRuntime unit)
+        {
+            ResolveSelectionManager();
+            _selectionManager?.AddToSelection(unit);
+        }
+
+        public void RemoveFromSelection(UnitRuntime unit)
+        {
+            ResolveSelectionManager();
+            _selectionManager?.RemoveFromSelection(unit);
         }
 
         public void ClearSelection()
         {
-            if (SelectedUnit == null)
+            ResolveSelectionManager();
+            _selectionManager?.ClearSelection();
+        }
+
+        public void SetSelection(IEnumerable<UnitRuntime> units)
+        {
+            ResolveSelectionManager();
+            _selectionManager?.SetSelection(units);
+        }
+
+        private void ResolveSelectionManager()
+        {
+            if (_selectionManager == null)
+            {
+                _selectionManager = GetComponent<SelectionManager>();
+            }
+
+            if (_selectionManager == null)
+            {
+                _selectionManager = FindFirstObjectByType<SelectionManager>();
+            }
+
+            if (_selectionManager == null)
+            {
+                _selectionManager = gameObject.AddComponent<SelectionManager>();
+            }
+        }
+
+        private void Subscribe()
+        {
+            if (_selectionManager == null)
             {
                 return;
             }
 
-            SelectedUnit = null;
-            OnSelectionChanged?.Invoke(null);
-            UpdateSelectionMarker();
+            _selectionManager.OnSelectionChanged -= HandleSelectionChanged;
+            _selectionManager.OnSelectionChanged += HandleSelectionChanged;
         }
 
-        private void ResolveReferences()
+        private void Unsubscribe()
         {
-            if (_selectionCamera == null)
-            {
-                _selectionCamera = Camera.main;
-                if (_selectionCamera == null)
-                {
-                    _selectionCamera = FindFirstObjectByType<Camera>();
-                }
-            }
-
-            if (_gridManager == null)
-            {
-                _gridManager = GridManager.Instance;
-                if (_gridManager == null)
-                {
-                    _gridManager = FindFirstObjectByType<GridManager>();
-                }
-            }
-        }
-
-        private void ValidateSelectedUnit()
-        {
-            if (SelectedUnit == null)
+            if (_selectionManager == null)
             {
                 return;
             }
 
-            if (!IsSelectableByHuman(SelectedUnit))
-            {
-                ClearSelection();
-            }
+            _selectionManager.OnSelectionChanged -= HandleSelectionChanged;
         }
 
-        private bool IsSelectableByHuman(UnitRuntime unit)
+        private void HandleSelectionChanged(IReadOnlyList<UnitRuntime> selectedUnits)
         {
-            return unit != null
-                && unit.IsAlive
-                && unit.Owner == _humanSide
-                && _humanSide != Owner.Neutral;
-        }
-
-        private bool TryGetPointerRay(out Ray ray)
-        {
-            ray = default;
-            if (_selectionCamera == null)
-            {
-                return false;
-            }
-
-#if ENABLE_INPUT_SYSTEM
-            Mouse mouse = Mouse.current;
-            if (mouse != null)
-            {
-                Vector2 pointer = mouse.position.ReadValue();
-                ray = _selectionCamera.ScreenPointToRay(pointer);
-                return true;
-            }
-#endif
-
-#if ENABLE_LEGACY_INPUT_MANAGER
-            if (_legacyInputUnavailable)
-            {
-                return false;
-            }
-
-            try
-            {
-                ray = _selectionCamera.ScreenPointToRay(Input.mousePosition);
-                return true;
-            }
-            catch (InvalidOperationException)
-            {
-                _legacyInputUnavailable = true;
-                return false;
-            }
-#else
-            return false;
-#endif
-        }
-
-        private bool TryResolveUnitFromRay(Ray ray, out UnitRuntime unit, out Vector3 worldPoint)
-        {
-            worldPoint = default;
-            unit = null;
-
-            if (Physics.Raycast(ray, out RaycastHit hit, _raycastDistance, _raycastMask, QueryTriggerInteraction.Ignore))
-            {
-                worldPoint = hit.point;
-                unit = hit.collider != null ? hit.collider.GetComponentInParent<UnitRuntime>() : null;
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryResolveWorldPointOnGround(Ray ray, out Vector3 worldPoint)
-        {
-            Plane ground = new Plane(Vector3.up, Vector3.zero);
-            if (ground.Raycast(ray, out float distance))
-            {
-                worldPoint = ray.GetPoint(distance);
-                return true;
-            }
-
-            worldPoint = default;
-            return false;
-        }
-
-        private bool IsLeftClickPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            Mouse mouse = Mouse.current;
-            if (mouse != null)
-            {
-                return mouse.leftButton.wasPressedThisFrame;
-            }
-#endif
-
-#if ENABLE_LEGACY_INPUT_MANAGER
-            if (_legacyInputUnavailable)
-            {
-                return false;
-            }
-
-            try
-            {
-                return Input.GetMouseButtonDown(0);
-            }
-            catch (InvalidOperationException)
-            {
-                _legacyInputUnavailable = true;
-                return false;
-            }
-#else
-            return false;
-#endif
-        }
-
-        private void EnsureSelectionMarker()
-        {
-            if (_selectionMarker != null)
-            {
-                return;
-            }
-
-            _selectionMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            _selectionMarker.name = "SelectionMarker";
-            _selectionMarker.transform.SetParent(transform, false);
-            _selectionMarker.transform.localScale = _markerScale;
-            int ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
-            if (ignoreRaycastLayer >= 0)
-            {
-                _selectionMarker.layer = ignoreRaycastLayer;
-            }
-
-            Collider markerCollider = _selectionMarker.GetComponent<Collider>();
-            if (markerCollider != null)
-            {
-                markerCollider.enabled = false;
-            }
-
-            Renderer markerRenderer = _selectionMarker.GetComponent<Renderer>();
-            if (markerRenderer != null)
-            {
-                Material markerMaterial = new Material(Shader.Find("Standard"));
-                markerMaterial.color = _markerColor;
-                markerRenderer.material = markerMaterial;
-            }
-
-            _selectionMarker.SetActive(false);
-        }
-
-        private void UpdateSelectionMarker()
-        {
-            if (_selectionMarker == null)
-            {
-                return;
-            }
-
-            if (SelectedUnit == null)
-            {
-                _selectionMarker.SetActive(false);
-                return;
-            }
-
-            _selectionMarker.SetActive(true);
-            Vector3 position = SelectedUnit.transform.position;
-            position.y += _markerYOffset;
-            _selectionMarker.transform.position = position;
-        }
-
-        private void OnDestroy()
-        {
-            if (_selectionMarker != null)
-            {
-                Destroy(_selectionMarker);
-            }
-        }
-
-        private void Warn(string message)
-        {
-            if (_logWarnings)
-            {
-                Debug.LogWarning("[PlayerSelectionController] " + message);
-            }
+            OnSelectionChanged?.Invoke(PrimarySelectedUnit);
+            OnSelectionListChanged?.Invoke(selectedUnits);
         }
     }
 }

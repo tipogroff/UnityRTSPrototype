@@ -20,12 +20,18 @@ namespace RTS.Presentation.UI
 
         public void Refresh(UnitRuntime selected)
         {
-            bool isBase = selected != null && selected.Type == UnitType.Base;
-            bool isBarracks = selected != null && selected.Type == UnitType.Barracks;
+            Refresh(selected, selected != null ? 1 : 0);
+        }
+
+        public void Refresh(UnitRuntime selected, int selectionCount)
+        {
+            bool single = selected != null && selectionCount == 1;
+            bool isBase = single && selected.Type == UnitType.Base;
+            bool isBarracks = single && selected.Type == UnitType.Barracks;
 
             if (_title != null)
             {
-                _title.text = isBase ? "Base Production" : (isBarracks ? "Barracks Production" : "Production");
+                _title.text = isBase ? "Base Production" : isBarracks ? "Barracks Production" : "Production";
             }
 
             if (_baseGroup != null)

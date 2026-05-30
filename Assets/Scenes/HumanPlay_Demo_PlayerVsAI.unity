@@ -224,6 +224,8 @@ GameObject:
   - component: {fileID: 279756835}
   - component: {fileID: 279756834}
   - component: {fileID: 279756833}
+  - component: {fileID: 279756839}
+  - component: {fileID: 279756838}
   m_Layer: 0
   m_Name: PresentationControls
   m_TagString: Untagged
@@ -286,18 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ec5e645ed2713478f35846565e3275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Presentation.PlayerSelectionController
-  _selectionCamera: {fileID: 330585545}
-  _gridManager: {fileID: 0}
-  _raycastMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _raycastDistance: 500
-  _clearSelectionOnEmptyClick: 1
-  _createSelectionMarker: 1
-  _markerColor: {r: 0.1, g: 0.9, b: 0.2, a: 0.55}
-  _markerScale: {x: 0.8, y: 0.04, z: 0.8}
-  _markerYOffset: 0.03
-  _logWarnings: 1
+  _selectionManager: {fileID: 279756839}
 --- !u!114 &279756834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,6 +383,46 @@ MonoBehaviour:
   _autoStartOnEnable: 1
   _autoStartRuntimeReadyTimeoutSeconds: 5
   _logDiagnostics: 1
+--- !u!114 &279756838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279756830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de501c98d3bdfce41a7b31533dd6c4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Presentation.Selection.SelectionMarkerController
+  _markerColor: {r: 0.1, g: 0.9, b: 0.2, a: 0.55}
+  _primaryMarkerColor: {r: 1, g: 0.85, b: 0.2, a: 0.7}
+  _markerScale: {x: 0.85, y: 0.035, z: 0.85}
+  _primaryMarkerScale: {x: 1.08, y: 0.04, z: 1.08}
+  _markerYOffset: 0.035
+--- !u!114 &279756839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279756830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46fe576be9eb31d45b24990dc76255cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Presentation.Selection.SelectionManager
+  _selectionCamera: {fileID: 0}
+  _gridManager: {fileID: 0}
+  _unitRegistry: {fileID: 0}
+  _selectionBoxView: {fileID: 0}
+  _markerController: {fileID: 0}
+  _raycastMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _raycastDistance: 500
+  _dragThresholdPixels: 8
+  _clearSelectionOnEmptyClick: 1
 --- !u!1001 &281969203
 PrefabInstance:
   m_ObjectHideFlags: 0

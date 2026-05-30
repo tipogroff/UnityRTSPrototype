@@ -163,8 +163,13 @@ namespace RTS.Presentation
 
         public void BeginMoveCommandMode()
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             CurrentMode = HumanCommandMode.Move;
-            SetStatus("Move mode: right click target cell.", true, string.Empty);
+            SetStatus("Move mode: right-click adjacent empty cell.", true, string.Empty);
         }
 
         public void TryAttackClickedTarget()
@@ -174,12 +179,22 @@ namespace RTS.Presentation
 
         public void BeginAttackCommandMode()
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             CurrentMode = HumanCommandMode.Attack;
             SetStatus("Attack mode: right click enemy target.", true, string.Empty);
         }
 
         public void TryHarvestSelected()
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
@@ -202,6 +217,11 @@ namespace RTS.Presentation
 
         public void TryReturnSelected()
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
@@ -325,6 +345,12 @@ namespace RTS.Presentation
 
         private void HandleContextRightClick(GridPosition targetCell, UnitRuntime targetUnit)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                CurrentMode = HumanCommandMode.Context;
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
@@ -368,6 +394,11 @@ namespace RTS.Presentation
 
         private void TryMoveToCell(GridPosition targetCell)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (!TryResolveDirectionFromSelection(selected, targetCell, out Direction direction, out string reason))
             {
@@ -380,6 +411,11 @@ namespace RTS.Presentation
 
         private void TryHarvestToCell(GridPosition targetCell)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null || selected.Type != UnitType.Worker)
             {
@@ -404,6 +440,11 @@ namespace RTS.Presentation
 
         private void TryReturnToCell(GridPosition targetCell)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null || selected.Type != UnitType.Worker)
             {
@@ -435,6 +476,11 @@ namespace RTS.Presentation
 
         private void TryAttackUnit(UnitRuntime targetUnit, GridPosition targetCell)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
@@ -540,6 +586,11 @@ namespace RTS.Presentation
 
         private void TryProduce(ProducibleUnit produceType, UnitType requiredProducer, string title)
         {
+            if (RejectIfMultiSelectionActive())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
@@ -777,6 +828,17 @@ namespace RTS.Presentation
         private void SetRejected(string reason)
         {
             SetStatus(reason, false, reason);
+        }
+
+        private bool RejectIfMultiSelectionActive()
+        {
+            if (_selectionController == null || !_selectionController.HasMultiSelection)
+            {
+                return false;
+            }
+
+            SetRejected("Group commands require pathfinding/formation; use single selection.");
+            return true;
         }
 
         private void SetStatus(string message, bool accepted, string rejectedReason)

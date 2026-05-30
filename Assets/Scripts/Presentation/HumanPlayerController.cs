@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.MLAgents.Stage7B;
@@ -25,6 +26,7 @@ namespace RTS.Presentation
         public bool IsHumanControlActive => _isHumanControlActive;
         public Owner HumanSide => _humanSide;
         public UnitRuntime SelectedUnit => _selectionController != null ? _selectionController.SelectedUnit : null;
+        public IReadOnlyList<UnitRuntime> SelectedUnits => _selectionController != null ? _selectionController.SelectedUnits : System.Array.Empty<UnitRuntime>();
         public string LastCommandStatus => _commandController != null ? _commandController.LastCommandStatus : "PlayerCommandController is missing.";
         public bool LastCommandAccepted => _commandController != null && _commandController.LastCommandAccepted;
         public string LastCommandRejectedReason => _commandController != null ? _commandController.LastCommandRejectedReason : "PlayerCommandController is missing.";

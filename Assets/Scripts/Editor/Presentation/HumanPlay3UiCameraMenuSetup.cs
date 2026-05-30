@@ -4,6 +4,7 @@ using RTS.MLAgents.Stage7B;
 using RTS.MLAgents.Stage7B.TeacherReplay;
 using RTS.Presentation;
 using RTS.Presentation.CameraControls;
+using RTS.Presentation.Selection;
 using RTS.Presentation.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -148,6 +149,7 @@ namespace RTS.Editor.Presentation
             DisableOldDiagnostics();
             ConfigureStartupFlow();
             ConfigureHumanMode();
+            ConfigureSelectionUx();
             ConfigureCamera();
 
             EditorSceneManager.SaveScene(scene);
@@ -227,6 +229,35 @@ namespace RTS.Editor.Presentation
             {
                 camera.gameObject.AddComponent<RtsCameraController>();
             }
+        }
+
+        private static void ConfigureSelectionUx()
+        {
+            PlayerSelectionController selectionController =
+                Object.FindFirstObjectByType<PlayerSelectionController>(FindObjectsInactive.Include);
+            if (selectionController == null)
+            {
+                GameObject presentationControls = GameObject.Find("PresentationControls");
+                if (presentationControls == null)
+                {
+                    presentationControls = new GameObject("PresentationControls");
+                }
+
+                selectionController = presentationControls.AddComponent<PlayerSelectionController>();
+            }
+
+            SelectionManager selectionManager = selectionController.GetComponent<SelectionManager>();
+            if (selectionManager == null)
+            {
+                selectionManager = selectionController.gameObject.AddComponent<SelectionManager>();
+            }
+
+            if (selectionController.GetComponent<SelectionMarkerController>() == null)
+            {
+                selectionController.gameObject.AddComponent<SelectionMarkerController>();
+            }
+
+            SetObject(selectionController, "_selectionManager", selectionManager);
         }
 
         private static void EnsureBuildSettings()
