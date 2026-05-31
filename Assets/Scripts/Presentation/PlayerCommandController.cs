@@ -55,6 +55,7 @@ namespace RTS.Presentation
         public string LastCommandRejectedReason { get; private set; } = string.Empty;
 
         public event Action<string, bool> OnCommandStatusChanged;
+        public event Action<GridPosition, Vector2> OnMoveContextRequested;
 
         private void Awake()
         {
@@ -170,6 +171,38 @@ namespace RTS.Presentation
 
             CurrentMode = HumanCommandMode.Move;
             SetStatus("Move mode: right-click adjacent empty cell.", true, string.Empty);
+        }
+
+        public bool SubmitMoveForUnit(UnitRuntime unit, Direction direction)
+        {
+            if (unit == null)
+            {
+                SetRejected("Move order unit is missing.");
+                return false;
+            }
+
+            if (unit.Owner != _humanSide)
+            {
+                SetRejected($"Move order unit belongs to {unit.Owner}, not {_humanSide}.");
+                return false;
+            }
+
+            AgentAction action = new AgentAction(
+                actorPosition: unit.GridPos,
+                actionType: UnitActionType.Move,
+                direction: direction,
+                produceUnitType: ProducibleUnit.Worker,
+                attackTargetPosition: default,
+                isValid: true,
+                invalidationReason: string.Empty,
+                sourceType: ActionSourceType.Debug);
+
+            return SubmitAgentAction(action, "Move order step");
+        }
+
+        public void PublishHumanOrderStatus(string message, bool accepted)
+        {
+            SetStatus(message, accepted, accepted ? string.Empty : message);
         }
 
         public void TryAttackClickedTarget()
@@ -385,7 +418,19 @@ namespace RTS.Presentation
             UnitRuntime occupant = _gridManager != null ? _gridManager.GetOccupant(targetCell) : null;
             if (occupant == null)
             {
-                TryMoveToCell(targetCell);
+                if (selected.IsBuilding || selected.Type == UnitType.Resource)
+                {
+                    SetRejected("Selected object cannot move.");
+                    return;
+                }
+
+                if (OnMoveContextRequested == null)
+                {
+                    SetRejected("Move context menu is unavailable.");
+                    return;
+                }
+
+                OnMoveContextRequested.Invoke(targetCell, GetPointerScreenPosition());
                 return;
             }
 
@@ -772,19 +817,19 @@ namespace RTS.Presentation
 #endif
         }
 
-        private void SubmitAgentAction(AgentAction action, string title)
+        private bool SubmitAgentAction(AgentAction action, string title)
         {
             EnsureActionApplier();
             if (_actionApplier == null)
             {
                 SetRejected("ActionApplier is unavailable; command not submitted.");
-                return;
+                return false;
             }
 
             if (_matchManager == null || _matchManager.Phase != MatchPhase.Running)
             {
                 SetRejected("Match is not running; command not submitted.");
-                return;
+                return false;
             }
 
             _actionApplier.ResetDiagnostics();
@@ -797,7 +842,7 @@ namespace RTS.Presentation
             if (accepted)
             {
                 SetAccepted($"{title} command accepted.");
-                return;
+                return true;
             }
 
             string reason = string.Empty;
@@ -818,6 +863,24 @@ namespace RTS.Presentation
             }
 
             SetRejected(reason);
+            return false;
+        }
+
+        private static Vector2 GetPointerScreenPosition()
+        {
+#if ENABLE_INPUT_SYSTEM
+            Mouse mouse = Mouse.current;
+            if (mouse != null)
+            {
+                return mouse.position.ReadValue();
+            }
+#endif
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+            return Input.mousePosition;
+#else
+            return Vector2.zero;
+#endif
         }
 
         private void SetAccepted(string message)

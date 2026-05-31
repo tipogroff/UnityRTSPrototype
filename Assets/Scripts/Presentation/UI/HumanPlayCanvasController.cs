@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.Presentation;
+using RTS.Presentation.Orders;
 using RTS.Presentation.Selection;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -54,6 +55,9 @@ namespace RTS.Presentation.UI
         private PlayerSelectionController _selectionController;
         private SelectionManager _selectionManager;
         private PlayerCommandController _commandController;
+        private GridPathfindingService _pathfindingService;
+        private HumanOrderController _orderController;
+        private ContextActionMenuView _contextMenu;
         private GameSpeedController _speedController;
         private SceneFlowController _sceneFlowController;
         private MatchManager _matchManager;
@@ -62,6 +66,7 @@ namespace RTS.Presentation.UI
         private Button _harvestButton;
         private Button _returnButton;
         private Button _buildBarracksButton;
+        private Button _stopButton;
         private float _nextRefresh;
 
         private void Awake()
@@ -70,6 +75,14 @@ namespace RTS.Presentation.UI
             EnsureEventSystem();
             BuildHud();
             Refresh(force: true);
+        }
+
+        private void OnDestroy()
+        {
+            if (_commandController != null)
+            {
+                _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
+            }
         }
 
         private void Update()
@@ -172,6 +185,7 @@ namespace RTS.Presentation.UI
             _hudVisibility.Initialize(_hudRoot.gameObject, true);
 
             BuildSelectionBoxOverlay();
+            BuildContextMenu();
             BuildTopBar(_hudRoot);
             BuildBottomPanels(_hudRoot);
             BuildMetricsPanel(_hudRoot);
@@ -245,7 +259,7 @@ namespace RTS.Presentation.UI
             Text commandStatus = CreateBody(commands, "No command submitted.");
             SetRect(commandStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 44f), new Vector2(-24f, 70f));
             _commandPanel = commands.gameObject.AddComponent<CommandPanelView>();
-            _commandPanel.Initialize(commandStatus, _commandController);
+            _commandPanel.Initialize(commandStatus, _commandController, _orderController);
             _commandPanel.SetContextButtons(_moveButton, _attackButton, _harvestButton, _returnButton, _buildBarracksButton);
 
             RectTransform production = CreatePanel("ProductionPanel", _bottomRoot, new Vector2(360f, 0f));
@@ -279,8 +293,17 @@ namespace RTS.Presentation.UI
             GameObject row2 = CreateButtonRow(commands, "Row2", 110f);
             _buildBarracksButton = CreateButton("BuildBarracksButton", row2.transform as RectTransform, "Build Barracks", null, () => _commandController?.TryBuildBarracks());
             AddLayout(_buildBarracksButton.gameObject, 180f, 42f);
+            _stopButton = CreateButton("StopButton", row2.transform as RectTransform, "Stop", null, CancelPrimaryOrder);
+            AddLayout(_stopButton.gameObject, 90f, 42f);
             AddLayout(CreateButton("RestartButton", row2.transform as RectTransform, "Restart", null, RestartMatch).gameObject, 120f, 42f);
             AddLayout(CreateButton("MainMenuButton", row2.transform as RectTransform, "Main Menu", _homeIcon, ReturnToMainMenu).gameObject, 150f, 42f);
+        }
+
+        private void BuildContextMenu()
+        {
+            RectTransform overlay = CreateRect("ContextActionMenu", transform);
+            _contextMenu = overlay.gameObject.AddComponent<ContextActionMenuView>();
+            _contextMenu.Initialize(_canvas, _panelSprite, _buttonSprite, _panelColor, _buttonColor);
         }
 
         private void BuildSelectionBoxOverlay()
@@ -372,6 +395,12 @@ namespace RTS.Presentation.UI
 
             if (WasKeyPressed(KeyCode.Escape))
             {
+                if (_contextMenu != null && _contextMenu.IsOpen)
+                {
+                    _contextMenu.Hide();
+                    return;
+                }
+
                 SetPauseMenuVisible(true);
             }
 
@@ -408,9 +437,69 @@ namespace RTS.Presentation.UI
             }
 
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();
+            _pathfindingService ??= FindFirstObjectByType<GridPathfindingService>();
+            if (_pathfindingService == null)
+            {
+                _pathfindingService = gameObject.AddComponent<GridPathfindingService>();
+            }
+
+            _orderController ??= FindFirstObjectByType<HumanOrderController>();
+            if (_orderController == null)
+            {
+                _orderController = gameObject.AddComponent<HumanOrderController>();
+            }
+
             _speedController ??= FindFirstObjectByType<GameSpeedController>();
             _sceneFlowController ??= FindFirstObjectByType<SceneFlowController>();
             _matchManager ??= MatchManager.Instance != null ? MatchManager.Instance : FindFirstObjectByType<MatchManager>();
+            _orderController.Configure(_pathfindingService, _commandController, _selectionController, _matchManager);
+            if (_commandController != null)
+            {
+                _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
+                _commandController.OnMoveContextRequested += HandleMoveContextRequested;
+            }
+        }
+
+        private void HandleMoveContextRequested(GridPosition targetCell, Vector2 screenPosition)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            if (_selectionController != null && _selectionController.HasMultiSelection)
+            {
+                _commandController?.PublishHumanOrderStatus("Group movement requires pathfinding/formation; use single selection.", false);
+                return;
+            }
+
+            if (selected == null)
+            {
+                _commandController?.PublishHumanOrderStatus("Select a unit first.", false);
+                return;
+            }
+
+            if (selected.IsBuilding || selected.Type == UnitType.Resource)
+            {
+                _commandController?.PublishHumanOrderStatus("Selected object cannot move.", false);
+                return;
+            }
+
+            _contextMenu?.Show(screenPosition, targetCell, IssueMoveOrder);
+        }
+
+        private void IssueMoveOrder(GridPosition targetCell)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            bool accepted = _orderController != null && _orderController.IssueMove(selected, targetCell);
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
+            _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "Move order unavailable.", accepted);
+            Refresh(force: true);
+        }
+
+        private void CancelPrimaryOrder()
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            _orderController?.CancelOrder(selected);
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
+            _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "No active order.", true);
+            Refresh(force: true);
         }
 
         private Button CreateVerticalButton(RectTransform parent, string label, float yFromTop, UnityEngine.Events.UnityAction onClick, Sprite icon = null)

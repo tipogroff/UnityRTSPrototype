@@ -1,0 +1,200 @@
+{
+  "task": "HumanPlay-3G.0",
+  "audit_type": "command_runtime_capabilities",
+  "code_changes": {
+    "gameplay_code_changed": false,
+    "runtime_semantics_changed": false,
+    "action_decoder_changed": false,
+    "action_applier_changed": false,
+    "python_training_checkpoints_changed": false,
+    "week7_baseline_scene_changed": false
+  },
+  "human_side": "Player2",
+  "command_pipeline": {
+    "submission": "PlayerCommandController -> ActionApplier.ApplyAction -> MatchManager.ApplyCommand",
+    "accepted_non_noop_behavior": "queued_in_MatchManager_pending_commands",
+    "execution": "next_MatchManager.StepMatch",
+    "safe_high_level_tick_strategy": "submit_at_most_one_low_level_command_per_unit_after_each_OnStepCompleted_and_recheck_live_state",
+    "last_applied_command_is_completion_signal": false
+  },
+  "commands": {
+    "move": {
+      "supported": true,
+      "agent_action": {
+        "action_type": "Move",
+        "fields": ["ActorPosition", "Direction"]
+      },
+      "adjacent_only": true,
+      "adjacency": "orthogonal_NESW",
+      "final_move_method": "GridManager.MoveUnit via UnitRuntime.MoveTo",
+      "preconditions": [
+        "match_running",
+        "actor_exists",
+        "actor_owned_by_command_owner",
+        "actor_alive",
+        "actor_not_resource_base_or_barracks",
+        "target_neighbor_inside_map",
+        "target_neighbor_empty_at_validation_and_execution"
+      ]
+    },
+    "harvest": {
+      "supported": true,
+      "agent_action": {
+        "action_type": "Harvest",
+        "fields": ["ActorPosition", "Direction"]
+      },
+      "adjacent_only": true,
+      "adjacency": "worker_orthogonally_adjacent_to_active_resource",
+      "carry_storage": "UnitModel.CarriedResources exposed by UnitRuntime.CarriedResources",
+      "has_carried_resources_check": "worker.CarriedResources > 0",
+      "full_check": "worker.CarriedResources >= GameConstants.MaxCarryCapacity",
+      "action_applier_full_check": "worker.CarriedResources >= 100",
+      "preconditions": [
+        "living_owned_worker",
+        "target_neighbor_inside_map",
+        "resource_manager_available",
+        "active_resource_node_at_target",
+        "worker_has_free_carry_capacity"
+      ]
+    },
+    "return": {
+      "supported": true,
+      "agent_action": {
+        "action_type": "Return",
+        "fields": ["ActorPosition", "Direction"]
+      },
+      "adjacent_only": true,
+      "adjacency": "worker_orthogonally_adjacent_to_own_base",
+      "deposit_flow": [
+        "UnitRuntime.DropAllCarriedResources",
+        "MatchManager.AddResources",
+        "PlayerState.AddResources"
+      ],
+      "preconditions": [
+        "living_owned_worker",
+        "worker_carried_resources_greater_than_zero",
+        "target_neighbor_inside_map",
+        "friendly_base_at_target"
+      ]
+    },
+    "produce": {
+      "supported": true,
+      "agent_action": {
+        "action_type": "Produce",
+        "fields": ["ActorPosition", "Direction", "ProduceUnitType"]
+      },
+      "supported_producers": {
+        "Base": ["Worker"],
+        "Barracks": ["Light", "Heavy", "Ranged"],
+        "Worker": ["Barracks_via_special_produce_path"]
+      },
+      "v2_produce_indices": {
+        "Barracks": 2,
+        "Worker": 3,
+        "Light": 4,
+        "Heavy": 5,
+        "Ranged": 6
+      },
+      "runtime_producible_enum_values": {
+        "Worker": 0,
+        "Light": 1,
+        "Heavy": 2,
+        "Ranged": 3
+      },
+      "normal_production_direction_required_for_final_spawn": false,
+      "normal_production_spawn": "BuildingRuntime.FindFreeNeighborCell scans first free surrounding 3x3 cell including diagonals at queue completion",
+      "worker_barracks_build_direction_required": true,
+      "preconditions": [
+        "living_owned_supported_producer",
+        "allowed_v2_produce_index_for_producer",
+        "definition_exists",
+        "sufficient_resources",
+        "production_queue_not_busy_for_base_or_barracks"
+      ],
+      "human_ui_payload_mismatch": {
+        "present": true,
+        "reason": "PlayerCommandController passes runtime ProducibleUnit enum values but ActionApplier interprets underlying values as raw v2 produce branch indices",
+        "effects": [
+          "Base_produce_worker_UI_submits_0_but_runtime_requires_3",
+          "Worker_build_barracks_UI_submits_0_but_runtime_requires_2",
+          "Barracks_produce_light_UI_submits_1_but_runtime_requires_4",
+          "Barracks_produce_heavy_UI_submits_2_but_runtime_requires_5",
+          "Barracks_produce_ranged_UI_submits_3_but_runtime_requires_6"
+        ]
+      }
+    },
+    "build_barracks": {
+      "runtime_supported": true,
+      "separate_build_command": false,
+      "representation": "Worker Produce with raw v2 produce index 2",
+      "spawn_timing": "immediate_during_next_step_production_phase",
+      "spawn_cell": "exact_orthogonally_adjacent_cell_from_direction",
+      "preconditions": [
+        "living_owned_worker",
+        "raw_v2_produce_index_2",
+        "owner_has_no_alive_barracks",
+        "barracks_definition_configured",
+        "adjacent_target_inside_map",
+        "adjacent_target_empty",
+        "sufficient_resources"
+      ],
+      "configuration": {
+        "asset_exists": true,
+        "asset_path": "Assets/ML/UnitDefs/UnitDef_Barracks.asset",
+        "referenced_by_game_config_mvp": true,
+        "game_config_path": "Assets/ML/GameConfig_MVP.asset",
+        "production_cost": 2,
+        "production_time": 8,
+        "is_building": true
+      },
+      "human_ui_reliable": false,
+      "human_ui_failure_reason": "TryBuildBarracks submits ProducibleUnit.Worker value 0 instead of raw v2 index 2"
+    }
+  },
+  "helpers": {
+    "grid_manager_get_free_adjacent_cell": false,
+    "grid_manager_public_helpers": [
+      "IsInside",
+      "IsCellOccupied",
+      "IsWalkable",
+      "GetOccupant",
+      "TryGetOccupant",
+      "GetNeighbour",
+      "GetValidNeighbours"
+    ],
+    "public_shared_pathfinding": false,
+    "existing_private_navigation_helpers": [
+      "HeuristicDriver.FindPathStep",
+      "HeuristicDriver.FindNearestBase",
+      "HeuristicDriver.FindNearestResource",
+      "BuildingRuntime.FindFreeNeighborCell"
+    ],
+    "public_resource_enumeration": "ResourceManager.GetAllResourceNodes",
+    "unit_runtime_public_state": [
+      "GridPos",
+      "Owner",
+      "Type",
+      "HP",
+      "MaxHP",
+      "IsAlive",
+      "CarriedResources",
+      "IsBuilding",
+      "Facing"
+    ]
+  },
+  "limitations": [
+    "human_move_harvest_return_are_low_level_adjacent_actions",
+    "no_public_reusable_pathfinding_service",
+    "no_human_high_level_order_queue",
+    "multi_selection_commands_rejected",
+    "human_production_and_build_barracks_blocked_by_payload_contract_mismatch",
+    "normal_production_spawn_can_fail_if_surrounding_3x3_cells_are_full",
+    "human_command_acceptance_means_queued_not_executed"
+  ],
+  "recommended_plan": {
+    "3G.1": "Add Player2 presentation-side high-level order state and OnStepCompleted tick driver; submit one adjacent low-level command per unit per tick.",
+    "3G.2": "Add reusable cardinal path helper plus move-to-cell, gather-resource, and return-to-base orders using live-state rechecks.",
+    "3G.3": "Route contextual clicks into high-level orders and expose order state/rejections; keep single-selection scope.",
+    "3G.4": "Add human-side v2 produce payload adapter for indices 2/3/4/5/6 and surface production queue progress and blocked-spawn completion."
+  }
+}

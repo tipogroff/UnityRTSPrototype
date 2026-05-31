@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.Presentation;
+using RTS.Presentation.Orders;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,16 +12,18 @@ namespace RTS.Presentation.UI
     {
         private Text _status;
         private PlayerCommandController _commandController;
+        private HumanOrderController _orderController;
         private Button _moveButton;
         private Button _attackButton;
         private Button _harvestButton;
         private Button _returnButton;
         private Button _buildBarracksButton;
 
-        public void Initialize(Text status, PlayerCommandController commandController)
+        public void Initialize(Text status, PlayerCommandController commandController, HumanOrderController orderController = null)
         {
             _status = status;
             _commandController = commandController;
+            _orderController = orderController;
         }
 
         public void SetContextButtons(
@@ -64,10 +67,13 @@ namespace RTS.Presentation.UI
             }
 
             string result = _commandController.LastCommandAccepted ? "accepted" : "rejected";
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(primary) : null;
+            string orderLine = order != null ? order.StatusText : "Order: none";
             _status.text = BuildContextLine(selectionCount, primary)
                 + "\nMode: " + _commandController.CurrentMode
                 + "\nLast: " + _commandController.LastCommandStatus
-                + "\nResult: " + result;
+                + "\nResult: " + result
+                + "\n" + orderLine;
         }
 
         private void RefreshButtons(int selectionCount, UnitRuntime primary)

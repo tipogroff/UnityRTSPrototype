@@ -1,0 +1,204 @@
+{
+  "task": "HumanPlay-3G.1",
+  "result": "implemented_requires_manual_pointer_ux_validation",
+  "full_pass_claimed": false,
+  "implementation": {
+    "grid_pathfinding_service": {
+      "created": true,
+      "algorithm": "BFS",
+      "directions": "cardinal_only",
+      "mutates_gameplay_state": false,
+      "path_excludes_start": true,
+      "path_includes_target": true,
+      "occupied_target_rejected": true,
+      "unreachable_target_rejected": true
+    },
+    "human_order_controller": {
+      "created": true,
+      "human_owner": "Player2",
+      "one_active_order_per_unit": true,
+      "cancels_previous_order": true,
+      "ticks_from": "MatchManager.OnStepCompleted",
+      "max_low_level_submissions_per_unit_per_tick": 1
+    },
+    "move_order": {
+      "created": true,
+      "direct_movement_calls": false,
+      "confirms_progress_from": "UnitRuntime.GridPos_after_later_OnStepCompleted",
+      "bounded_replan_count": 2,
+      "supports_cancel": true
+    },
+    "context_menu": {
+      "created_runtime": true,
+      "opens_for": "RMB_free_cell_single_selected_Player2_mobile_unit",
+      "move_button": true,
+      "outside_click_closes": true,
+      "escape_closes_before_pause": true
+    },
+    "hud": {
+      "order_status_visible": true,
+      "stop_button": true
+    },
+    "scene_wiring": {
+      "strategy": "runtime_created_by_HumanPlayCanvasController",
+      "demo_scene_yaml_changed": false,
+      "prefab_changed": false
+    }
+  },
+  "command_routing": [
+    "MoveOrder.TickAfterStep",
+    "PlayerCommandController.SubmitMoveForUnit",
+    "AgentAction_Move",
+    "ActionApplier.ApplyAction",
+    "MatchManager.ApplyCommand",
+    "queued_until_next_StepMatch"
+  ],
+  "constraints": {
+    "python_training_checkpoints_changed": false,
+    "observation_action_contract_changed": false,
+    "action_decoder_changed": false,
+    "action_applier_changed": false,
+    "ml_model_checkpoint_paths_changed": false,
+    "week7_baseline_scene_changed": false,
+    "direct_transform_position_movement_from_order_ui": false,
+    "direct_unit_runtime_move_to_from_order_ui": false,
+    "direct_grid_manager_move_unit_from_order_ui": false,
+    "direct_match_manager_step_match_from_order_ui": false,
+    "player2_bot_wiring_changed": false,
+    "player1_ai_wiring_changed": false
+  },
+  "validation": [
+    {
+      "id": 1,
+      "check": "MainMenu opens",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 2,
+      "check": "Start Demo loads HumanPlay_Demo_PlayerVsAI",
+      "status": "partial",
+      "details": "Demo scene was already active and entered Play Mode successfully."
+    },
+    {
+      "id": 3,
+      "check": "Demo starts AIvsPlayer2",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 4,
+      "check": "Select Player2 Worker with LMB",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 5,
+      "check": "RMB far free cell opens Move context menu",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 6,
+      "check": "Click Move",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 7,
+      "check": "Worker moves step by step to target",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 8,
+      "check": "Move routes through AgentAction -> ActionApplier -> MatchManager.ApplyCommand",
+      "status": "pass_static"
+    },
+    {
+      "id": 9,
+      "check": "No direct UnitRuntime.MoveTo or GridManager.MoveUnit from order/UI layer",
+      "status": "pass_static"
+    },
+    {
+      "id": 10,
+      "check": "Occupied target does not start fake movement",
+      "status": "pass_static"
+    },
+    {
+      "id": 11,
+      "check": "Multi-selection group move is disabled with readable status",
+      "status": "pass_static"
+    },
+    {
+      "id": 12,
+      "check": "Cancel stops future order steps",
+      "status": "pass_static_requires_manual_ux"
+    },
+    {
+      "id": 13,
+      "check": "Order status appears in HUD",
+      "status": "pass_static_requires_manual_visual"
+    },
+    {
+      "id": 14,
+      "check": "Pause menu still works",
+      "status": "pass_static_requires_manual_ux"
+    },
+    {
+      "id": 15,
+      "check": "Camera still works while paused",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 16,
+      "check": "Player1 AI continues",
+      "status": "not_run_manual"
+    },
+    {
+      "id": 17,
+      "check": "Player2 receives no bot commands",
+      "status": "pass_static_requires_manual_runtime_observation"
+    },
+    {
+      "id": 18,
+      "check": "No new C# errors",
+      "status": "pass",
+      "details": "Unity console reported zero C# errors after full refresh."
+    },
+    {
+      "id": 19,
+      "check": "No new legacy input warnings",
+      "status": "pass_runtime",
+      "details": "No legacy input warning appeared during Play Mode smoke check."
+    },
+    {
+      "id": 20,
+      "check": "Week7 baseline untouched",
+      "status": "pass_git"
+    },
+    {
+      "id": 21,
+      "check": "No Python/training/checkpoint/action-contract changes retained",
+      "status": "pass_git"
+    },
+    {
+      "id": 22,
+      "check": "ActionDecoder and ActionApplier semantics unchanged",
+      "status": "pass_git"
+    }
+  ],
+  "runtime_smoke": {
+    "unity_compile_errors": 0,
+    "entered_play_mode": true,
+    "exited_play_mode": true,
+    "human_order_controller_found": true,
+    "grid_pathfinding_service_found": true,
+    "inactive_context_action_menu_view_found": true,
+    "generated_trace_files_reverted": true,
+    "observed_existing_runtime_issue": "MissingReferenceException from SelectionBoxView.cs:64 after Play Mode stop; separate existing lifecycle issue, clean compile-only refresh returned zero errors"
+  },
+  "known_limitations": [
+    "manual_pointer_driven_end_to_end_validation_not_automated",
+    "auto_harvest_not_implemented",
+    "return_orchestration_not_implemented",
+    "production_not_fixed",
+    "build_barracks_not_implemented",
+    "group_movement_and_formations_not_implemented",
+    "cell_reservations_not_implemented"
+  ]
+}
