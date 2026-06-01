@@ -30,6 +30,10 @@ namespace RTS.Presentation.UI
         [Header("Refresh")]
         [SerializeField] private float _refreshInterval = 0.2f;
 
+        [Header("Attack Targeting")]
+        [SerializeField, Min(0)] private int _attackClickAcquireRadius = 3;
+        [SerializeField, Min(0)] private int _attackAreaRadius = 4;
+
         [Header("Colors")]
         [SerializeField] private Color _panelColor = new Color(0.08f, 0.09f, 0.08f, 0.88f);
         [SerializeField] private Color _buttonColor = new Color(0.78f, 0.67f, 0.48f, 1f);
@@ -57,6 +61,9 @@ namespace RTS.Presentation.UI
         private PlayerCommandController _commandController;
         private GridPathfindingService _pathfindingService;
         private HumanOrderController _orderController;
+        private AttackTargetAcquisitionService _attackTargets;
+        private GroupOrderPlanner _groupPlanner;
+        private GroupOrderReservationService _reservations;
         private ContextActionMenuView _contextMenu;
         private GameSpeedController _speedController;
         private SceneFlowController _sceneFlowController;
@@ -84,6 +91,7 @@ namespace RTS.Presentation.UI
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
                 _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
                 _commandController.OnAttackContextRequested -= HandleAttackContextRequested;
+                _commandController.OnAttackAreaContextRequested -= HandleAttackAreaContextRequested;
             }
         }
 
@@ -444,10 +452,28 @@ namespace RTS.Presentation.UI
             }
 
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();
+            _attackTargets ??= FindFirstObjectByType<AttackTargetAcquisitionService>();
+            if (_attackTargets == null)
+            {
+                _attackTargets = gameObject.AddComponent<AttackTargetAcquisitionService>();
+            }
+
             _pathfindingService ??= FindFirstObjectByType<GridPathfindingService>();
             if (_pathfindingService == null)
             {
                 _pathfindingService = gameObject.AddComponent<GridPathfindingService>();
+            }
+
+            _groupPlanner ??= FindFirstObjectByType<GroupOrderPlanner>();
+            if (_groupPlanner == null)
+            {
+                _groupPlanner = gameObject.AddComponent<GroupOrderPlanner>();
+            }
+
+            _reservations ??= FindFirstObjectByType<GroupOrderReservationService>();
+            if (_reservations == null)
+            {
+                _reservations = gameObject.AddComponent<GroupOrderReservationService>();
             }
 
             _orderController ??= FindFirstObjectByType<HumanOrderController>();
@@ -468,6 +494,9 @@ namespace RTS.Presentation.UI
                 _commandController.OnGatherContextRequested += HandleGatherContextRequested;
                 _commandController.OnAttackContextRequested -= HandleAttackContextRequested;
                 _commandController.OnAttackContextRequested += HandleAttackContextRequested;
+                _commandController.OnAttackAreaContextRequested -= HandleAttackAreaContextRequested;
+                _commandController.OnAttackAreaContextRequested += HandleAttackAreaContextRequested;
+                _commandController.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
             }
         }
 
@@ -477,7 +506,7 @@ namespace RTS.Presentation.UI
             Debug.Log($"[HumanMove3G1R] Canvas HandleMoveContextRequested target={targetCell} screen={screenPosition} selected={DescribeUnit(selected)} selectedCount={_selectionController?.SelectedUnits.Count ?? 0}");
             if (_selectionController != null && _selectionController.HasMultiSelection)
             {
-                _commandController?.PublishHumanOrderStatus("Group movement requires pathfinding/formation; use single selection.", false);
+                _contextMenu?.Show(screenPosition, targetCell, IssueGroupMoveOrder, moveLabel: "Move Group");
                 return;
             }
 
@@ -498,6 +527,16 @@ namespace RTS.Presentation.UI
                 targetCell,
                 IssueMoveOrder,
                 selected.Owner == Owner.Player2 && selected.Type == UnitType.Worker ? IssueBuildBarracksOrder : null);
+        }
+
+        private void IssueGroupMoveOrder(GridPosition targetCell)
+        {
+            string reason = "Group move order controller is unavailable.";
+            int issued = _orderController != null
+                ? _orderController.IssueGroupMove(GetSelectedUnits(), targetCell, out reason)
+                : 0;
+            _commandController?.PublishHumanOrderStatus(issued > 0 ? $"Group move: {issued} units." : reason, issued > 0);
+            Refresh(force: true);
         }
 
         private void IssueMoveOrder(GridPosition targetCell)
@@ -558,21 +597,13 @@ namespace RTS.Presentation.UI
 
         private void HandleAttackContextRequested(UnitRuntime target, Vector2 screenPosition)
         {
-            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
-            if (_selectionController != null && _selectionController.HasMultiSelection)
+            if (target == null)
             {
-                _commandController?.PublishHumanOrderStatus("Group attack is not implemented.", false);
+                _commandController?.PublishHumanOrderStatus("No enemy target in attack area.", false);
                 return;
             }
 
-            string reason = "Attack pathfinding service is unavailable.";
-            if (_pathfindingService == null || !_pathfindingService.CanUnitAttack(selected, out reason))
-            {
-                _commandController?.PublishHumanOrderStatus(reason, false);
-                return;
-            }
-
-            _contextMenu?.ShowAttack(screenPosition, target, IssueAttackOrder);
+            HandleAttackAreaContextRequested(target.GridPos, screenPosition);
         }
 
         private void IssueAttackOrder(UnitRuntime target)
@@ -586,12 +617,92 @@ namespace RTS.Presentation.UI
             Refresh(force: true);
         }
 
+        private void HandleAttackAreaContextRequested(GridPosition areaCell, Vector2 screenPosition)
+        {
+            IReadOnlyList<UnitRuntime> selectedUnits = GetSelectedUnits();
+            int attackCapableCount = CountAttackCapableUnits(selectedUnits);
+            if (attackCapableCount <= 0)
+            {
+                _commandController?.PublishHumanOrderStatus(
+                    selectedUnits != null && selectedUnits.Count > 1
+                        ? "No selected units can attack."
+                        : "Selected unit cannot attack.",
+                    false);
+                return;
+            }
+
+            int radius = selectedUnits.Count > 1 ? _attackAreaRadius : _attackClickAcquireRadius;
+            List<UnitRuntime> targets = _attackTargets != null
+                ? _attackTargets.FindEnemiesInArea(Owner.Player2, areaCell, radius)
+                : new List<UnitRuntime>();
+            if (targets.Count == 0)
+            {
+                _commandController?.PublishHumanOrderStatus("No enemy target in attack area.", false);
+                return;
+            }
+
+            string label = selectedUnits.Count > 1
+                ? $"Attack Area ({targets.Count})"
+                : "Attack " + targets[0].Type;
+            _commandController?.PublishHumanOrderStatus(
+                selectedUnits.Count > 1
+                    ? $"Attack area: {targets.Count} targets, {attackCapableCount} attackers."
+                    : "Attack target acquired: " + targets[0].Type + ".",
+                true);
+            _contextMenu?.ShowAttackArea(screenPosition, areaCell, label, IssueAttackAreaOrder);
+        }
+
+        private void IssueAttackAreaOrder(GridPosition areaCell)
+        {
+            IReadOnlyList<UnitRuntime> selectedUnits = GetSelectedUnits();
+            string reason = "Attack order controller is unavailable.";
+            int issued = _orderController != null
+                ? _orderController.IssueAttackArea(
+                    selectedUnits,
+                    areaCell,
+                    selectedUnits.Count > 1 ? _attackAreaRadius : _attackClickAcquireRadius,
+                    out reason)
+                : 0;
+            _commandController?.PublishHumanOrderStatus(
+                issued > 0 ? $"Issued attack orders: {issued}." : reason,
+                issued > 0);
+            Refresh(force: true);
+        }
+
+        private IReadOnlyList<UnitRuntime> GetSelectedUnits()
+        {
+            return _selectionManager != null
+                ? _selectionManager.SelectedUnits
+                : _selectionController != null ? _selectionController.SelectedUnits : System.Array.Empty<UnitRuntime>();
+        }
+
+        private int CountAttackCapableUnits(IReadOnlyList<UnitRuntime> units)
+        {
+            if (_pathfindingService == null || units == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null
+                    && unit.IsAlive
+                    && unit.Owner == Owner.Player2
+                    && _pathfindingService.CanUnitAttack(unit, out _))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
         private void CancelPrimaryOrder()
         {
-            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
-            _orderController?.CancelOrder(selected);
-            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
-            _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "No active order.", true);
+            int cancelled = _orderController != null ? _orderController.CancelAllSelectedOrders() : 0;
+            _commandController?.PublishHumanOrderStatus($"Cancelled orders: {cancelled}", true);
             Refresh(force: true);
         }
 

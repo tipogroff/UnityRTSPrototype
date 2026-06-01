@@ -12,6 +12,7 @@ namespace RTS.Presentation.Orders
         private readonly GridPathfindingService _pathfinding;
         private readonly PlayerCommandController _commandController;
         private readonly MatchManager _matchManager;
+        private readonly GroupOrderReservationService _reservations;
         private readonly List<GridPosition> _path = new List<GridPosition>();
         private int _nextWaypointIndex;
         private int _replanCount;
@@ -23,13 +24,15 @@ namespace RTS.Presentation.Orders
             GridPosition targetCell,
             GridPathfindingService pathfinding,
             PlayerCommandController commandController,
-            MatchManager matchManager)
+            MatchManager matchManager,
+            GroupOrderReservationService reservations = null)
             : base(unit, owner)
         {
             TargetCell = targetCell;
             _pathfinding = pathfinding;
             _commandController = commandController;
             _matchManager = matchManager;
+            _reservations = reservations;
         }
 
         public GridPosition TargetCell { get; }
@@ -136,6 +139,12 @@ namespace RTS.Presentation.Orders
             }
 
             Debug.Log($"[HumanMove3G1R] MoveOrder submit stage prime={isPrime} pathLength={_path.Count} nextIndex={_nextWaypointIndex} nextWaypoint={next} direction={direction} actor={Unit.GridPos}");
+            if (_reservations != null && !_reservations.TryReserveNextCell(Unit, next, out _))
+            {
+                SetStatus(HumanOrderStatus.WaitingForStep, $"Order: waiting for reserved movement cell toward {TargetCell}.");
+                return true;
+            }
+
             if (!_commandController.SubmitMoveForUnit(Unit, direction))
             {
                 Fail(_commandController.LastCommandRejectedReason);

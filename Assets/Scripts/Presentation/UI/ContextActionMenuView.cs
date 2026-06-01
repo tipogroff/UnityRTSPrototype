@@ -15,9 +15,11 @@ namespace RTS.Presentation.UI
         private Action<GridPosition> _buildBarracksAction;
         private Action<ResourceNode> _gatherAction;
         private Action<UnitRuntime> _attackAction;
+        private Action<GridPosition> _attackAreaAction;
         private GridPosition _targetCell;
         private ResourceNode _resource;
         private UnitRuntime _attackTarget;
+        private GridPosition _attackAreaCell;
         private Button _moveButton;
         private Button _buildBarracksButton;
         private Button _gatherButton;
@@ -58,12 +60,14 @@ namespace RTS.Presentation.UI
             Vector2 screenPosition,
             GridPosition targetCell,
             Action<GridPosition> moveAction,
-            Action<GridPosition> buildBarracksAction = null)
+            Action<GridPosition> buildBarracksAction = null,
+            string moveLabel = "Move")
         {
             ClearPendingActions();
             _targetCell = targetCell;
             _moveAction = moveAction;
             _buildBarracksAction = buildBarracksAction;
+            SetButtonLabel(_moveButton, moveLabel);
             SetVisibleActions(showMove: true, showBuildBarracks: buildBarracksAction != null, showGather: false, showAttack: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -109,6 +113,34 @@ namespace RTS.Presentation.UI
             ClearPendingActions();
             _attackTarget = target;
             _attackAction = attackAction;
+            SetButtonLabel(_attackButton, target != null ? "Attack " + target.Type : "Attack");
+            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: true);
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+
+            if (_canvasRect == null || _menu == null)
+            {
+                return;
+            }
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, screenPosition, null, out Vector2 local);
+            Vector2 half = _canvasRect.rect.size * 0.5f;
+            Vector2 margin = _menu.sizeDelta * 0.5f + new Vector2(8f, 8f);
+            local.x = Mathf.Clamp(local.x, -half.x + margin.x, half.x - margin.x);
+            local.y = Mathf.Clamp(local.y, -half.y + margin.y, half.y - margin.y);
+            _menu.anchoredPosition = local;
+        }
+
+        public void ShowAttackArea(
+            Vector2 screenPosition,
+            GridPosition areaCell,
+            string label,
+            Action<GridPosition> attackAreaAction)
+        {
+            ClearPendingActions();
+            _attackAreaCell = areaCell;
+            _attackAreaAction = attackAreaAction;
+            SetButtonLabel(_attackButton, label);
             SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: true);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -138,6 +170,7 @@ namespace RTS.Presentation.UI
             _buildBarracksAction = null;
             _gatherAction = null;
             _attackAction = null;
+            _attackAreaAction = null;
             _resource = null;
             _attackTarget = null;
         }
@@ -171,7 +204,16 @@ namespace RTS.Presentation.UI
         {
             Action<UnitRuntime> action = _attackAction;
             UnitRuntime target = _attackTarget;
-            action?.Invoke(target);
+            Action<GridPosition> areaAction = _attackAreaAction;
+            GridPosition areaCell = _attackAreaCell;
+            if (areaAction != null)
+            {
+                areaAction.Invoke(areaCell);
+            }
+            else
+            {
+                action?.Invoke(target);
+            }
             Hide();
         }
 
@@ -228,6 +270,15 @@ namespace RTS.Presentation.UI
             text.raycastTarget = false;
             Stretch(text.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             return go.GetComponent<Button>();
+        }
+
+        private static void SetButtonLabel(Button button, string label)
+        {
+            Text text = button != null ? button.GetComponentInChildren<Text>() : null;
+            if (text != null)
+            {
+                text.text = label;
+            }
         }
 
         private static RectTransform CreateRect(string name, Transform parent)

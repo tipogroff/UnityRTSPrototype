@@ -37,10 +37,13 @@ namespace RTS.Presentation
         [SerializeField] private ResourceManager _resourceManager;
         [SerializeField] private MatchManager _matchManager;
         [SerializeField] private EpisodeController _episodeController;
+        [SerializeField] private AttackTargetAcquisitionService _attackTargets;
 
         [Header("Raycast")]
         [SerializeField] private LayerMask _raycastMask = ~0;
         [SerializeField] private float _raycastDistance = 500f;
+        [SerializeField, Min(0)] private int _attackClickAcquireRadius = 3;
+        [SerializeField, Min(0)] private int _attackAreaAcquireRadius = 4;
 
         [Header("Diagnostics")]
         [SerializeField] private bool _logCommandDiagnostics = true;
@@ -60,6 +63,7 @@ namespace RTS.Presentation
         public event Action<GridPosition, Vector2> OnMoveContextRequested;
         public event Action<ResourceNode, Vector2> OnGatherContextRequested;
         public event Action<UnitRuntime, Vector2> OnAttackContextRequested;
+        public event Action<GridPosition, Vector2> OnAttackAreaContextRequested;
 
         private void Awake()
         {
@@ -161,6 +165,12 @@ namespace RTS.Presentation
             {
                 CurrentMode = HumanCommandMode.Context;
             }
+        }
+
+        public void SetAttackAcquireRadii(int clickRadius, int areaRadius)
+        {
+            _attackClickAcquireRadius = Mathf.Max(0, clickRadius);
+            _attackAreaAcquireRadius = Mathf.Max(0, areaRadius);
         }
 
         public void SetCommandMode(HumanCommandMode mode)
@@ -448,6 +458,11 @@ namespace RTS.Presentation
                     _episodeController = FindFirstObjectByType<EpisodeController>();
                 }
             }
+
+            if (_attackTargets == null)
+            {
+                _attackTargets = FindFirstObjectByType<AttackTargetAcquisitionService>();
+            }
         }
 
         private void EnsureActionApplier()
@@ -464,32 +479,11 @@ namespace RTS.Presentation
 
         private void HandleContextRightClick(GridPosition targetCell, UnitRuntime targetUnit)
         {
-            if (RejectIfMultiSelectionActive())
-            {
-                CurrentMode = HumanCommandMode.Context;
-                return;
-            }
-
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (selected == null)
             {
                 SetRejected("No selected unit.");
                 Debug.Log("[HumanMove3G1R] Context menu not opened reason=no selected unit");
-                return;
-            }
-
-            if (targetUnit != null
-                && targetUnit.Type != UnitType.Resource
-                && targetUnit.Owner != Owner.Neutral
-                && targetUnit.Owner != _humanSide)
-            {
-                if (OnAttackContextRequested == null)
-                {
-                    SetRejected("Attack context menu is unavailable.");
-                    return;
-                }
-
-                OnAttackContextRequested.Invoke(targetUnit, GetPointerScreenPosition());
                 return;
             }
 
@@ -524,9 +518,30 @@ namespace RTS.Presentation
                 return;
             }
 
+            if (_attackTargets != null
+                && _attackTargets.TryFindBestEnemyNearCell(
+                    _humanSide,
+                    targetCell,
+                    _selectionController != null && _selectionController.HasMultiSelection
+                        ? _attackAreaAcquireRadius
+                        : _attackClickAcquireRadius,
+                    out _,
+                    out _))
+            {
+                if (OnAttackAreaContextRequested == null)
+                {
+                    SetRejected("Attack context menu is unavailable.");
+                    return;
+                }
+
+                OnAttackAreaContextRequested.Invoke(targetCell, GetPointerScreenPosition());
+                return;
+            }
+
             UnitRuntime occupant = _gridManager != null ? _gridManager.GetOccupant(targetCell) : null;
             if (occupant == null)
             {
+                SetRejected("No enemy target in attack area.");
                 if (selected.IsBuilding || selected.Type == UnitType.Resource)
                 {
                     SetRejected("Selected object cannot move.");
@@ -658,13 +673,13 @@ namespace RTS.Presentation
                 return;
             }
 
-            if (OnAttackContextRequested == null)
+            if (OnAttackAreaContextRequested == null)
             {
                 SetRejected("Attack context menu is unavailable.");
                 return;
             }
 
-            OnAttackContextRequested.Invoke(targetUnit, GetPointerScreenPosition());
+            OnAttackAreaContextRequested.Invoke(targetCell, GetPointerScreenPosition());
         }
 
         private bool TryResolveDirectionFromSelection(UnitRuntime selected, GridPosition targetCell, out Direction direction, out string reason)

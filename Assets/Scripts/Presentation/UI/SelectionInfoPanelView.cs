@@ -73,7 +73,6 @@ namespace RTS.Presentation.UI
         {
             Dictionary<UnitType, int> counts = new Dictionary<UnitType, int>();
             int mobileCount = 0;
-            int buildingCount = 0;
             for (int i = 0; i < selectedUnits.Count; i++)
             {
                 UnitRuntime unit = selectedUnits[i];
@@ -86,17 +85,15 @@ namespace RTS.Presentation.UI
                 counts[unit.Type] = count + 1;
                 if (unit.IsBuilding)
                 {
-                    buildingCount++;
+                    continue;
                 }
-                else
-                {
-                    mobileCount++;
-                }
+
+                mobileCount++;
             }
 
             StringBuilder builder = new StringBuilder();
             builder.Append("Selected: ").Append(selectedUnits.Count);
-            builder.Append("\nMobile: ").Append(mobileCount).Append("  Buildings: ").Append(buildingCount);
+            builder.Append("\nMobile units: ").Append(mobileCount);
             builder.Append("\nPrimary: ");
             builder.Append(primary != null ? primary.Type + " " + primary.GridPos.ToString() : "None");
             builder.Append("\nTypes:");

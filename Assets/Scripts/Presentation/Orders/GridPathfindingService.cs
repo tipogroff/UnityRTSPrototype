@@ -342,7 +342,7 @@ namespace RTS.Presentation.Orders
             _gridManager ??= GridManager.Instance != null ? GridManager.Instance : FindFirstObjectByType<GridManager>();
         }
 
-        private static bool TryGetAttackRange(UnitRuntime attacker, out int attackRange, out string reason)
+        public bool TryGetAttackRange(UnitRuntime attacker, out int attackRange, out string reason)
         {
             attackRange = 0;
             if (attacker == null || !attacker.IsAlive)

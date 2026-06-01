@@ -142,7 +142,7 @@ namespace RTS.Presentation.UI
 
             if (selectionCount > 1)
             {
-                return "Group selected: commands are limited. Group move requires pathfinding/formation; use single selection.";
+                return $"Group selected: {selectionCount} mobile units. Use RMB for Move Group or Attack Area.";
             }
 
             return primary.Type switch

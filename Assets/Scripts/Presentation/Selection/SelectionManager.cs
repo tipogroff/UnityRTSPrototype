@@ -88,6 +88,13 @@ namespace RTS.Presentation.Selection
                 return;
             }
 
+            if (!IsEligibleForMultiSelection(unit))
+            {
+                SelectSingle(unit);
+                return;
+            }
+
+            RemoveBuildingsFromSelection();
             _selectedUnits.Add(unit);
             SortPrimaryFirst();
             NotifySelectionChanged();
@@ -210,6 +217,12 @@ namespace RTS.Presentation.Selection
             {
                 if (additive)
                 {
+                    if (!IsEligibleForMultiSelection(hitUnit))
+                    {
+                        SelectSingle(hitUnit);
+                        return;
+                    }
+
                     if (_selectedUnits.Contains(hitUnit))
                     {
                         RemoveFromSelection(hitUnit);
@@ -244,7 +257,7 @@ namespace RTS.Presentation.Selection
             _scratchUnits.Clear();
             foreach (UnitRuntime unit in EnumerateCandidateUnits())
             {
-                if (!IsSelectableByHuman(unit))
+                if (!IsEligibleForMultiSelection(unit))
                 {
                     continue;
                 }
@@ -263,7 +276,7 @@ namespace RTS.Presentation.Selection
 
             if (additive)
             {
-                bool changed = false;
+                bool changed = RemoveBuildingsFromSelection();
                 for (int i = 0; i < _scratchUnits.Count; i++)
                 {
                     UnitRuntime unit = _scratchUnits[i];
@@ -301,16 +314,25 @@ namespace RTS.Presentation.Selection
 
         private void SetSelectionInternal(IEnumerable<UnitRuntime> units)
         {
-            _selectedUnits.Clear();
+            var incomingUnits = new List<UnitRuntime>();
             if (units != null)
             {
                 foreach (UnitRuntime unit in units)
                 {
-                    if (unit == null || _selectedUnits.Contains(unit) || !IsSelectableByHuman(unit))
+                    if (unit != null && !incomingUnits.Contains(unit) && IsSelectableByHuman(unit))
                     {
-                        continue;
+                        incomingUnits.Add(unit);
                     }
+                }
+            }
 
+            _selectedUnits.Clear();
+            bool allowSingleBuilding = incomingUnits.Count == 1;
+            for (int i = 0; i < incomingUnits.Count; i++)
+            {
+                UnitRuntime unit = incomingUnits[i];
+                if (allowSingleBuilding || IsEligibleForMultiSelection(unit))
+                {
                     _selectedUnits.Add(unit);
                 }
             }
@@ -389,6 +411,26 @@ namespace RTS.Presentation.Selection
                 && _humanSide != Owner.Neutral
                 && unit.Owner == _humanSide
                 && unit.Type != UnitType.Resource;
+        }
+
+        private bool IsEligibleForMultiSelection(UnitRuntime unit)
+        {
+            return IsSelectableByHuman(unit) && !unit.IsBuilding;
+        }
+
+        private bool RemoveBuildingsFromSelection()
+        {
+            bool changed = false;
+            for (int i = _selectedUnits.Count - 1; i >= 0; i--)
+            {
+                if (_selectedUnits[i] != null && _selectedUnits[i].IsBuilding)
+                {
+                    _selectedUnits.RemoveAt(i);
+                    changed = true;
+                }
+            }
+
+            return changed;
         }
 
         private void ResolveReferences()

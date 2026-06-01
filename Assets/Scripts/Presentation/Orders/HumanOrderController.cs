@@ -14,6 +14,9 @@ namespace RTS.Presentation.Orders
         [SerializeField] private PlayerSelectionController _selectionController;
         [SerializeField] private MatchManager _matchManager;
         [SerializeField] private UnitRegistry _unitRegistry;
+        [SerializeField] private AttackTargetAcquisitionService _attackTargets;
+        [SerializeField] private GroupOrderPlanner _groupPlanner;
+        [SerializeField] private GroupOrderReservationService _reservations;
 
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _activeOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _visibleTerminalOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
@@ -67,7 +70,7 @@ namespace RTS.Presentation.Orders
             CancelOrder(unit);
             Debug.Log($"[HumanMove3G1R] IssueMove previous order cancelled={cancelledPrevious}");
             _visibleTerminalOrders.Remove(unit);
-            var order = new MoveOrder(unit, Owner.Player2, targetCell, _pathfinding, _commandController, _matchManager);
+            var order = new MoveOrder(unit, Owner.Player2, targetCell, _pathfinding, _commandController, _matchManager, _reservations);
             _activeOrders[unit] = order;
             OnOrderStatusChanged?.Invoke(unit, order);
             Debug.Log("[HumanMove3G1R] IssueMove order created; immediate prime attempted=true");
@@ -76,6 +79,37 @@ namespace RTS.Presentation.Orders
             PublishAndRetainTerminal(unit, order);
             Debug.Log($"[HumanMove3G1R] IssueMove prime result={primed} status={order.Status} text={order.StatusText}");
             return primed;
+        }
+
+        public int IssueGroupMove(
+            IReadOnlyList<UnitRuntime> units,
+            GridPosition clickedCell,
+            out string reason)
+        {
+            ResolveReferences();
+            if (_groupPlanner == null)
+            {
+                reason = "Group move planner is unavailable.";
+                return 0;
+            }
+
+            if (!_groupPlanner.TryPlanGroupMove(units, clickedCell, out Dictionary<UnitRuntime, GridPosition> destinations, out reason))
+            {
+                return 0;
+            }
+
+            _reservations?.BeginTick();
+            int issued = 0;
+            foreach (KeyValuePair<UnitRuntime, GridPosition> pair in destinations)
+            {
+                if (IssueMove(pair.Key, pair.Value))
+                {
+                    issued++;
+                }
+            }
+
+            reason = issued > 0 ? $"Group move: {issued} units." : "No group move orders could be issued.";
+            return issued;
         }
 
         public bool IssueHarvestLoop(UnitRuntime worker, ResourceNode resource, out string reason)
@@ -165,6 +199,15 @@ namespace RTS.Presentation.Orders
 
         public bool IssueAttack(UnitRuntime attacker, UnitRuntime target, out string reason)
         {
+            return IssueAttack(attacker, target, preferredAttackCell: null, out reason);
+        }
+
+        private bool IssueAttack(
+            UnitRuntime attacker,
+            UnitRuntime target,
+            GridPosition? preferredAttackCell,
+            out string reason)
+        {
             ResolveReferences();
             if (attacker == null || !attacker.IsAlive || attacker.Owner != Owner.Player2)
             {
@@ -195,7 +238,7 @@ namespace RTS.Presentation.Orders
 
             CancelOrder(attacker);
             _visibleTerminalOrders.Remove(attacker);
-            var order = new AttackOrder(attacker, target, _pathfinding, _commandController, _matchManager);
+            var order = new AttackOrder(attacker, target, _pathfinding, _commandController, _matchManager, preferredAttackCell, _reservations);
             _activeOrders[attacker] = order;
             OnOrderStatusChanged?.Invoke(attacker, order);
             bool primed = order.TryPrime();
@@ -203,6 +246,60 @@ namespace RTS.Presentation.Orders
             PublishAndRetainTerminal(attacker, order);
             reason = primed ? string.Empty : order.FailureReason;
             return primed;
+        }
+
+        public int IssueAttackArea(
+            IReadOnlyList<UnitRuntime> attackers,
+            GridPosition areaCenter,
+            int areaRadius,
+            out string reason)
+        {
+            ResolveReferences();
+            if (_attackTargets == null || _pathfinding == null)
+            {
+                reason = "Attack area services are unavailable.";
+                return 0;
+            }
+
+            List<UnitRuntime> targets = _attackTargets.FindEnemiesInArea(Owner.Player2, areaCenter, areaRadius);
+            if (targets.Count == 0)
+            {
+                reason = "No enemy target in attack area.";
+                return 0;
+            }
+
+            if (_groupPlanner == null)
+            {
+                reason = "Group attack planner is unavailable.";
+                return 0;
+            }
+
+            if (!_groupPlanner.TryPlanGroupAttackApproach(
+                    attackers,
+                    targets,
+                    areaRadius,
+                    out Dictionary<UnitRuntime, UnitRuntime> assignedTargets,
+                    out Dictionary<UnitRuntime, GridPosition?> preferredAttackCells,
+                    out string planningReason))
+            {
+                reason = planningReason;
+                return 0;
+            }
+
+            _reservations?.BeginTick();
+            int issued = 0;
+            foreach (KeyValuePair<UnitRuntime, UnitRuntime> pair in assignedTargets)
+            {
+                if (IssueAttack(pair.Key, pair.Value, preferredAttackCells[pair.Key], out _))
+                {
+                    issued++;
+                }
+            }
+
+            reason = issued > 0
+                ? $"Group attack: {issued} attackers, {targets.Count} targets."
+                : "No attack orders could be issued.";
+            return issued;
         }
 
         public bool CancelOrder(UnitRuntime unit)
@@ -214,24 +311,31 @@ namespace RTS.Presentation.Orders
 
             order.Cancel();
             _activeOrders.Remove(unit);
+            _reservations?.ClearForUnit(unit);
             _visibleTerminalOrders[unit] = order;
             OnOrderStatusChanged?.Invoke(unit, order);
             return true;
         }
 
-        public void CancelAllSelectedOrders()
+        public int CancelAllSelectedOrders()
         {
             ResolveReferences();
             if (_selectionController == null)
             {
-                return;
+                return 0;
             }
 
             IReadOnlyList<UnitRuntime> selected = _selectionController.SelectedUnits;
+            int cancelled = 0;
             for (int i = 0; i < selected.Count; i++)
             {
-                CancelOrder(selected[i]);
+                if (GroupOrderPlanner.IsMobilePlayer2Unit(selected[i]) && CancelOrder(selected[i]))
+                {
+                    cancelled++;
+                }
             }
+
+            return cancelled;
         }
 
         public HumanUnitOrder GetOrderStatus(UnitRuntime unit)
@@ -265,6 +369,7 @@ namespace RTS.Presentation.Orders
         private void TickActiveOrdersAfterCompletedStep()
         {
             Debug.Log($"[HumanMove3G1R] Deferred post-step order tick activeOrders={_activeOrders.Count}");
+            _reservations?.BeginTick();
             _scratchUnits.Clear();
             foreach (KeyValuePair<UnitRuntime, HumanUnitOrder> pair in _activeOrders)
             {
@@ -348,6 +453,9 @@ namespace RTS.Presentation.Orders
             _selectionController ??= FindFirstObjectByType<PlayerSelectionController>();
             _matchManager ??= MatchManager.Instance != null ? MatchManager.Instance : FindFirstObjectByType<MatchManager>();
             _unitRegistry ??= UnitRegistry.Instance != null ? UnitRegistry.Instance : FindFirstObjectByType<UnitRegistry>();
+            _attackTargets ??= FindFirstObjectByType<AttackTargetAcquisitionService>();
+            _groupPlanner ??= FindFirstObjectByType<GroupOrderPlanner>();
+            _reservations ??= FindFirstObjectByType<GroupOrderReservationService>();
         }
 
         private void Subscribe()

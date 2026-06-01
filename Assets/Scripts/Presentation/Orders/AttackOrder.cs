@@ -20,9 +20,11 @@ namespace RTS.Presentation.Orders
         private readonly GridPathfindingService _pathfinding;
         private readonly PlayerCommandController _commands;
         private readonly MatchManager _match;
+        private readonly GroupOrderReservationService _reservations;
         private readonly List<GridPosition> _path = new List<GridPosition>();
 
         private QueuedAction _queuedAction;
+        private GridPosition? _preferredAttackCell;
         private GridPosition? _queuedMoveTarget;
         private GridPosition _plannedTargetCell;
         private int _pathIndex;
@@ -35,13 +37,17 @@ namespace RTS.Presentation.Orders
             UnitRuntime target,
             GridPathfindingService pathfinding,
             PlayerCommandController commands,
-            MatchManager match)
+            MatchManager match,
+            GridPosition? preferredAttackCell = null,
+            GroupOrderReservationService reservations = null)
             : base(attacker, Owner.Player2)
         {
             _target = target;
             _pathfinding = pathfinding;
             _commands = commands;
             _match = match;
+            _preferredAttackCell = preferredAttackCell;
+            _reservations = reservations;
         }
 
         public UnitRuntime Target => _target;
@@ -161,6 +167,16 @@ namespace RTS.Presentation.Orders
             _replans++;
             _path.Clear();
             _pathIndex = 0;
+            if (TryPlanPreferredAttackCell(out List<GridPosition> preferredPath))
+            {
+                _path.AddRange(preferredPath);
+                _plannedTargetCell = _target.GridPos;
+                SetStatus(HumanOrderStatus.MovingToAttackRange, BuildTargetStatus("Order: moving to reserved attack approach."));
+                reason = string.Empty;
+                return _path.Count > 0;
+            }
+
+            _preferredAttackCell = null;
             if (!_pathfinding.TryFindAttackApproachPath(Unit, _target, out List<GridPosition> path, out _, out reason))
             {
                 return false;
@@ -186,6 +202,12 @@ namespace RTS.Presentation.Orders
             {
                 ResetPath();
                 return TryAdvance();
+            }
+
+            if (_reservations != null && !_reservations.TryReserveNextCell(Unit, next, out _))
+            {
+                SetStatus(HumanOrderStatus.WaitingForStep, BuildTargetStatus("Order: waiting for reserved attack approach cell."));
+                return true;
             }
 
             if (!_commands.SubmitMoveForUnit(Unit, direction))
@@ -250,6 +272,20 @@ namespace RTS.Presentation.Orders
             _path.Clear();
             _pathIndex = 0;
             _queuedMoveTarget = null;
+        }
+
+        private bool TryPlanPreferredAttackCell(out List<GridPosition> path)
+        {
+            path = null;
+            if (!_preferredAttackCell.HasValue
+                || !_pathfinding.TryGetAttackRange(Unit, out int range, out _)
+                || _preferredAttackCell.Value.ChebyshevDistance(_target.GridPos) > range
+                || !_pathfinding.IsCellAvailableForMove(Unit, _preferredAttackCell.Value, allowCurrentUnitCell: true))
+            {
+                return false;
+            }
+
+            return _pathfinding.TryFindPath(Unit, _preferredAttackCell.Value, out path, out _);
         }
 
         private string BuildTargetStatus(string prefix)
