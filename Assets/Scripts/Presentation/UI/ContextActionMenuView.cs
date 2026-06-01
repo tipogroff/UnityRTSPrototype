@@ -12,10 +12,12 @@ namespace RTS.Presentation.UI
         private RectTransform _canvasRect;
         private RectTransform _menu;
         private Action<GridPosition> _moveAction;
+        private Action<GridPosition> _buildBarracksAction;
         private Action<ResourceNode> _gatherAction;
         private GridPosition _targetCell;
         private ResourceNode _resource;
         private Button _moveButton;
+        private Button _buildBarracksButton;
         private Button _gatherButton;
 
         public bool IsOpen => gameObject.activeSelf;
@@ -32,29 +34,32 @@ namespace RTS.Presentation.UI
             outside.onClick.AddListener(Hide);
 
             _menu = CreateRect("MoveContextMenu", transform);
-            _menu.sizeDelta = new Vector2(150f, 58f);
+            _menu.sizeDelta = new Vector2(180f, 58f);
             Image panel = _menu.gameObject.AddComponent<Image>();
             panel.sprite = panelSprite;
             panel.type = panelSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             panel.color = panelColor;
 
             _moveButton = CreateButton(_menu, "Move", buttonSprite, buttonColor);
-            RectTransform moveRect = _moveButton.GetComponent<RectTransform>();
-            Stretch(moveRect, Vector2.zero, Vector2.one, new Vector2(8f, 8f), new Vector2(-8f, -8f));
             _moveButton.onClick.AddListener(HandleMoveClicked);
+            _buildBarracksButton = CreateButton(_menu, "Build Barracks", buttonSprite, buttonColor);
+            _buildBarracksButton.onClick.AddListener(HandleBuildBarracksClicked);
             _gatherButton = CreateButton(_menu, "Gather", buttonSprite, buttonColor);
-            RectTransform gatherRect = _gatherButton.GetComponent<RectTransform>();
-            Stretch(gatherRect, Vector2.zero, Vector2.one, new Vector2(8f, 8f), new Vector2(-8f, -8f));
             _gatherButton.onClick.AddListener(HandleGatherClicked);
             gameObject.SetActive(false);
         }
 
-        public void Show(Vector2 screenPosition, GridPosition targetCell, Action<GridPosition> moveAction)
+        public void Show(
+            Vector2 screenPosition,
+            GridPosition targetCell,
+            Action<GridPosition> moveAction,
+            Action<GridPosition> buildBarracksAction = null)
         {
             ClearPendingActions();
             _targetCell = targetCell;
             _moveAction = moveAction;
-            SetVisibleAction(_moveButton);
+            _buildBarracksAction = buildBarracksAction;
+            SetVisibleActions(showMove: true, showBuildBarracks: buildBarracksAction != null, showGather: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
             Debug.Log($"[HumanMove3G1R] Context menu opened target={targetCell} screen={screenPosition}");
@@ -77,7 +82,7 @@ namespace RTS.Presentation.UI
             ClearPendingActions();
             _resource = resource;
             _gatherAction = gatherAction;
-            SetVisibleAction(_gatherButton);
+            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: true);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
 
@@ -103,6 +108,7 @@ namespace RTS.Presentation.UI
         private void ClearPendingActions()
         {
             _moveAction = null;
+            _buildBarracksAction = null;
             _gatherAction = null;
             _resource = null;
         }
@@ -124,10 +130,43 @@ namespace RTS.Presentation.UI
             Hide();
         }
 
-        private void SetVisibleAction(Button visible)
+        private void HandleBuildBarracksClicked()
         {
-            _moveButton?.gameObject.SetActive(visible == _moveButton);
-            _gatherButton?.gameObject.SetActive(visible == _gatherButton);
+            Action<GridPosition> action = _buildBarracksAction;
+            GridPosition target = _targetCell;
+            action?.Invoke(target);
+            Hide();
+        }
+
+        private void SetVisibleActions(bool showMove, bool showBuildBarracks, bool showGather)
+        {
+            _moveButton?.gameObject.SetActive(showMove);
+            _buildBarracksButton?.gameObject.SetActive(showBuildBarracks);
+            _gatherButton?.gameObject.SetActive(showGather);
+
+            int count = 0;
+            LayoutVisibleButton(_moveButton, showMove, ref count);
+            LayoutVisibleButton(_buildBarracksButton, showBuildBarracks, ref count);
+            LayoutVisibleButton(_gatherButton, showGather, ref count);
+            if (_menu != null)
+            {
+                _menu.sizeDelta = new Vector2(180f, count * 42f + 16f);
+            }
+        }
+
+        private static void LayoutVisibleButton(Button button, bool visible, ref int index)
+        {
+            if (button == null || !visible)
+            {
+                return;
+            }
+
+            RectTransform rect = button.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.offsetMin = new Vector2(8f, -8f - (index + 1) * 42f);
+            rect.offsetMax = new Vector2(-8f, -8f - index * 42f);
+            index++;
         }
 
         private static Button CreateButton(RectTransform parent, string label, Sprite sprite, Color color)

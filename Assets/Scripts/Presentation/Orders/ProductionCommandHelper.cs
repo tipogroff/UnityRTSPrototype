@@ -52,5 +52,38 @@ namespace RTS.Presentation.Orders
 
             return rawV2Index >= 0;
         }
+
+        public static bool TryCreateBuildBarracksAction(
+            UnitRuntime worker,
+            Direction buildDirection,
+            out AgentAction action,
+            out string reason)
+        {
+            action = default;
+            reason = string.Empty;
+
+            if (worker == null)
+            {
+                reason = "Build Barracks worker is missing.";
+                return false;
+            }
+
+            if (worker.Owner != Owner.Player2 || worker.Type != UnitType.Worker)
+            {
+                reason = "Build Barracks requires a Player2 Worker.";
+                return false;
+            }
+
+            action = new AgentAction(
+                actorPosition: worker.GridPos,
+                actionType: UnitActionType.Produce,
+                direction: buildDirection,
+                produceUnitType: (ProducibleUnit)2,
+                attackTargetPosition: default,
+                isValid: true,
+                invalidationReason: string.Empty,
+                sourceType: ActionSourceType.Debug);
+            return true;
+        }
     }
 }

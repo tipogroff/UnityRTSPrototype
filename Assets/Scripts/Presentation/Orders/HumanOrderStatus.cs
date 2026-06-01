@@ -10,6 +10,8 @@ namespace RTS.Presentation.Orders
         Harvesting,
         MovingToBase,
         ReturningToBase,
+        MovingToBuildSite,
+        BuildingBarracks,
         Completed,
         Failed,
         Cancelled

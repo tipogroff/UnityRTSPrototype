@@ -228,6 +228,19 @@ namespace RTS.Presentation
             return accepted;
         }
 
+        public bool SubmitBuildBarracksForWorker(UnitRuntime worker, Direction direction, out string reason)
+        {
+            if (!ProductionCommandHelper.TryCreateBuildBarracksAction(worker, direction, out AgentAction action, out reason))
+            {
+                SetRejected(reason);
+                return false;
+            }
+
+            bool accepted = SubmitAgentAction(action, "Build Barracks");
+            reason = accepted ? string.Empty : LastCommandRejectedReason;
+            return accepted;
+        }
+
         public void PublishHumanOrderStatus(string message, bool accepted)
         {
             SetStatus(message, accepted, accepted ? string.Empty : message);
@@ -311,7 +324,7 @@ namespace RTS.Presentation
 
         public void TryBuildBarracks()
         {
-            SetRejected("Build Barracks is not available yet.");
+            SetRejected("Build Barracks: right-click a free target cell with a selected Player2 Worker.");
         }
 
         public void TryProduceLight()

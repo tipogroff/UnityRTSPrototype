@@ -490,7 +490,11 @@ namespace RTS.Presentation.UI
                 return;
             }
 
-            _contextMenu?.Show(screenPosition, targetCell, IssueMoveOrder);
+            _contextMenu?.Show(
+                screenPosition,
+                targetCell,
+                IssueMoveOrder,
+                selected.Owner == Owner.Player2 && selected.Type == UnitType.Worker ? IssueBuildBarracksOrder : null);
         }
 
         private void IssueMoveOrder(GridPosition targetCell)
@@ -500,6 +504,17 @@ namespace RTS.Presentation.UI
             bool accepted = _orderController != null && _orderController.IssueMove(selected, targetCell);
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
             _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "Move order unavailable.", accepted);
+            Refresh(force: true);
+        }
+
+        private void IssueBuildBarracksOrder(GridPosition buildCell)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            string reason = "Build Barracks order controller is unavailable.";
+            bool accepted = _orderController != null && _orderController.IssueBuildBarracks(selected, buildCell, out reason);
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
+            string status = order != null ? order.StatusText : reason;
+            _commandController?.PublishHumanOrderStatus(status, accepted);
             Refresh(force: true);
         }
 

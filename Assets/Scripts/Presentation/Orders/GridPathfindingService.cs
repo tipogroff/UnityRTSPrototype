@@ -171,6 +171,60 @@ namespace RTS.Presentation.Orders
             return true;
         }
 
+        public bool TryFindBuildApproachPath(
+            UnitRuntime worker,
+            GridPosition buildCell,
+            out List<GridPosition> path,
+            out GridPosition workerBuildPosition,
+            out Direction buildDirection,
+            out string reason)
+        {
+            path = new List<GridPosition>();
+            workerBuildPosition = default;
+            buildDirection = Direction.North;
+            reason = string.Empty;
+            ResolveReferences();
+
+            if (worker == null)
+            {
+                reason = "Cannot build Barracks: worker is missing.";
+                return false;
+            }
+
+            if (_gridManager == null)
+            {
+                reason = "Cannot build Barracks: GridManager is unavailable.";
+                return false;
+            }
+
+            if (!_gridManager.IsInside(buildCell))
+            {
+                reason = $"Cannot build Barracks: build cell {buildCell} is outside the map.";
+                return false;
+            }
+
+            if (_gridManager.IsCellOccupied(buildCell))
+            {
+                reason = $"Cannot build Barracks: build cell {buildCell} is occupied.";
+                return false;
+            }
+
+            if (!TryFindPathToAdjacent(worker, buildCell, out path, out workerBuildPosition, out string pathReason))
+            {
+                reason = $"Cannot build Barracks: {pathReason}";
+                return false;
+            }
+
+            if (!TryGetDirection(workerBuildPosition, buildCell, out buildDirection))
+            {
+                reason = $"Cannot build Barracks: approach cell {workerBuildPosition} is not cardinal-adjacent to {buildCell}.";
+                path.Clear();
+                return false;
+            }
+
+            return true;
+        }
+
         public bool IsCellAvailableForMove(UnitRuntime unit, GridPosition cell, bool allowCurrentUnitCell = false)
         {
             ResolveReferences();

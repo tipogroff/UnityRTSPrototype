@@ -128,6 +128,41 @@ namespace RTS.Presentation.Orders
             return primed;
         }
 
+        public bool IssueBuildBarracks(UnitRuntime worker, GridPosition buildCell, out string reason)
+        {
+            ResolveReferences();
+            if (worker == null || !worker.IsAlive || worker.Owner != Owner.Player2 || worker.Type != UnitType.Worker)
+            {
+                reason = "Build Barracks requires a living Player2 Worker.";
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            if (_pathfinding == null || _commandController == null || _matchManager == null || _unitRegistry == null)
+            {
+                reason = "Build Barracks order services are unavailable.";
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            if (!_pathfinding.TryFindBuildApproachPath(worker, buildCell, out _, out _, out _, out reason))
+            {
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            CancelOrder(worker);
+            _visibleTerminalOrders.Remove(worker);
+            var order = new BuildBarracksOrder(worker, buildCell, _pathfinding, _commandController, _matchManager, _unitRegistry);
+            _activeOrders[worker] = order;
+            OnOrderStatusChanged?.Invoke(worker, order);
+            bool primed = order.TryPrime();
+            OnOrderStatusChanged?.Invoke(worker, order);
+            PublishAndRetainTerminal(worker, order);
+            reason = primed ? string.Empty : order.FailureReason;
+            return primed;
+        }
+
         public bool CancelOrder(UnitRuntime unit)
         {
             if (unit == null || !_activeOrders.TryGetValue(unit, out HumanUnitOrder order))
