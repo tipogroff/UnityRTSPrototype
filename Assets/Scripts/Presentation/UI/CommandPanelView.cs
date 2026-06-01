@@ -101,6 +101,7 @@ namespace RTS.Presentation.UI
             {
                 case UnitType.Worker:
                     SetButton(_moveButton, true, true);
+                    SetButton(_attackButton, true, true);
                     SetButton(_harvestButton, true, true);
                     SetButton(_returnButton, true, true);
                     break;
@@ -146,7 +147,7 @@ namespace RTS.Presentation.UI
 
             return primary.Type switch
             {
-                UnitType.Worker => "Worker commands: Move, Harvest, Return.",
+                UnitType.Worker => "Worker commands: Move, Attack, Harvest, Return.",
                 UnitType.Base => "Base selected: use Production to make Workers.",
                 UnitType.Barracks => "Barracks selected: use Production to make combat units.",
                 UnitType.Light or UnitType.Heavy or UnitType.Ranged => "Combat commands: Move or Attack.",

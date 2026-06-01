@@ -225,6 +225,88 @@ namespace RTS.Presentation.Orders
             return true;
         }
 
+        public bool TryFindAttackApproachPath(
+            UnitRuntime attacker,
+            UnitRuntime target,
+            out List<GridPosition> path,
+            out GridPosition attackCell,
+            out string reason)
+        {
+            path = new List<GridPosition>();
+            attackCell = default;
+            reason = string.Empty;
+            ResolveReferences();
+
+            if (!TryGetAttackRange(attacker, out int attackRange, out reason))
+            {
+                return false;
+            }
+
+            if (target == null || !target.IsAlive || target.Owner == attacker.Owner || target.Owner == Owner.Neutral)
+            {
+                reason = "Cannot attack: target is missing, destroyed, or not an enemy player unit.";
+                return false;
+            }
+
+            if (attacker.GridPos.ChebyshevDistance(target.GridPos) <= attackRange)
+            {
+                attackCell = attacker.GridPos;
+                return true;
+            }
+
+            List<GridPosition> bestPath = null;
+            for (int y = target.GridPos.Y - attackRange; y <= target.GridPos.Y + attackRange; y++)
+            {
+                for (int x = target.GridPos.X - attackRange; x <= target.GridPos.X + attackRange; x++)
+                {
+                    GridPosition candidate = new GridPosition(x, y);
+                    if (candidate == target.GridPos
+                        || candidate.ChebyshevDistance(target.GridPos) > attackRange
+                        || !IsCellAvailableForMove(attacker, candidate, allowCurrentUnitCell: true))
+                    {
+                        continue;
+                    }
+
+                    if (!TryFindPath(attacker, candidate, out List<GridPosition> candidatePath, out _))
+                    {
+                        continue;
+                    }
+
+                    if (bestPath != null && candidatePath.Count >= bestPath.Count)
+                    {
+                        continue;
+                    }
+
+                    bestPath = candidatePath;
+                    attackCell = candidate;
+                }
+            }
+
+            if (bestPath == null)
+            {
+                reason = $"Cannot attack: no reachable cell within range {attackRange} of target {target.GridPos}.";
+                return false;
+            }
+
+            path.AddRange(bestPath);
+            return true;
+        }
+
+        public bool IsTargetInAttackRange(UnitRuntime attacker, UnitRuntime target)
+        {
+            return TryGetAttackRange(attacker, out int attackRange, out _)
+                   && target != null
+                   && target.IsAlive
+                   && target.Owner != attacker.Owner
+                   && target.Owner != Owner.Neutral
+                   && attacker.GridPos.ChebyshevDistance(target.GridPos) <= attackRange;
+        }
+
+        public bool CanUnitAttack(UnitRuntime attacker, out string reason)
+        {
+            return TryGetAttackRange(attacker, out _, out reason);
+        }
+
         public bool IsCellAvailableForMove(UnitRuntime unit, GridPosition cell, bool allowCurrentUnitCell = false)
         {
             ResolveReferences();
@@ -258,6 +340,28 @@ namespace RTS.Presentation.Orders
         private void ResolveReferences()
         {
             _gridManager ??= GridManager.Instance != null ? GridManager.Instance : FindFirstObjectByType<GridManager>();
+        }
+
+        private static bool TryGetAttackRange(UnitRuntime attacker, out int attackRange, out string reason)
+        {
+            attackRange = 0;
+            if (attacker == null || !attacker.IsAlive)
+            {
+                reason = "Cannot attack: attacker is missing or destroyed.";
+                return false;
+            }
+
+            GameConfig config = MatchBootstrap.Instance != null ? MatchBootstrap.Instance.GetConfig() : null;
+            UnitDefinition definition = config != null ? config.GetDefinition(attacker.Type) : null;
+            if (definition == null || definition.attackDamage <= 0 || definition.attackRange <= 0)
+            {
+                reason = $"Cannot attack: {attacker.Type} has no runtime attack capability.";
+                return false;
+            }
+
+            attackRange = definition.attackRange;
+            reason = string.Empty;
+            return true;
         }
 
         private static void ReconstructPath(

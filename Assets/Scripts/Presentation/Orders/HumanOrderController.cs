@@ -163,6 +163,48 @@ namespace RTS.Presentation.Orders
             return primed;
         }
 
+        public bool IssueAttack(UnitRuntime attacker, UnitRuntime target, out string reason)
+        {
+            ResolveReferences();
+            if (attacker == null || !attacker.IsAlive || attacker.Owner != Owner.Player2)
+            {
+                reason = "Attack requires a living Player2 unit.";
+                PublishFailure(attacker, reason);
+                return false;
+            }
+
+            if (target == null || !target.IsAlive || target.Owner == Owner.Player2 || target.Owner == Owner.Neutral)
+            {
+                reason = "Attack target must be a living enemy player unit.";
+                PublishFailure(attacker, reason);
+                return false;
+            }
+
+            if (_pathfinding == null || _commandController == null || _matchManager == null)
+            {
+                reason = "Attack order services are unavailable.";
+                PublishFailure(attacker, reason);
+                return false;
+            }
+
+            if (!_pathfinding.TryFindAttackApproachPath(attacker, target, out _, out _, out reason))
+            {
+                PublishFailure(attacker, reason);
+                return false;
+            }
+
+            CancelOrder(attacker);
+            _visibleTerminalOrders.Remove(attacker);
+            var order = new AttackOrder(attacker, target, _pathfinding, _commandController, _matchManager);
+            _activeOrders[attacker] = order;
+            OnOrderStatusChanged?.Invoke(attacker, order);
+            bool primed = order.TryPrime();
+            OnOrderStatusChanged?.Invoke(attacker, order);
+            PublishAndRetainTerminal(attacker, order);
+            reason = primed ? string.Empty : order.FailureReason;
+            return primed;
+        }
+
         public bool CancelOrder(UnitRuntime unit)
         {
             if (unit == null || !_activeOrders.TryGetValue(unit, out HumanUnitOrder order))

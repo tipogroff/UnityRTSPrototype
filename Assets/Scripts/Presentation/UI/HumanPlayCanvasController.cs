@@ -83,6 +83,7 @@ namespace RTS.Presentation.UI
             {
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
                 _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
+                _commandController.OnAttackContextRequested -= HandleAttackContextRequested;
             }
         }
 
@@ -465,6 +466,8 @@ namespace RTS.Presentation.UI
                 _commandController.OnMoveContextRequested += HandleMoveContextRequested;
                 _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
                 _commandController.OnGatherContextRequested += HandleGatherContextRequested;
+                _commandController.OnAttackContextRequested -= HandleAttackContextRequested;
+                _commandController.OnAttackContextRequested += HandleAttackContextRequested;
             }
         }
 
@@ -547,6 +550,36 @@ namespace RTS.Presentation.UI
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             string reason = "Gather order controller is unavailable.";
             bool accepted = _orderController != null && _orderController.IssueHarvestLoop(selected, resource, out reason);
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
+            string status = order != null ? order.StatusText : reason;
+            _commandController?.PublishHumanOrderStatus(status, accepted);
+            Refresh(force: true);
+        }
+
+        private void HandleAttackContextRequested(UnitRuntime target, Vector2 screenPosition)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            if (_selectionController != null && _selectionController.HasMultiSelection)
+            {
+                _commandController?.PublishHumanOrderStatus("Group attack is not implemented.", false);
+                return;
+            }
+
+            string reason = "Attack pathfinding service is unavailable.";
+            if (_pathfindingService == null || !_pathfindingService.CanUnitAttack(selected, out reason))
+            {
+                _commandController?.PublishHumanOrderStatus(reason, false);
+                return;
+            }
+
+            _contextMenu?.ShowAttack(screenPosition, target, IssueAttackOrder);
+        }
+
+        private void IssueAttackOrder(UnitRuntime target)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            string reason = "Attack order controller is unavailable.";
+            bool accepted = _orderController != null && _orderController.IssueAttack(selected, target, out reason);
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
             string status = order != null ? order.StatusText : reason;
             _commandController?.PublishHumanOrderStatus(status, accepted);

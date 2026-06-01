@@ -14,11 +14,14 @@ namespace RTS.Presentation.UI
         private Action<GridPosition> _moveAction;
         private Action<GridPosition> _buildBarracksAction;
         private Action<ResourceNode> _gatherAction;
+        private Action<UnitRuntime> _attackAction;
         private GridPosition _targetCell;
         private ResourceNode _resource;
+        private UnitRuntime _attackTarget;
         private Button _moveButton;
         private Button _buildBarracksButton;
         private Button _gatherButton;
+        private Button _attackButton;
 
         public bool IsOpen => gameObject.activeSelf;
 
@@ -46,6 +49,8 @@ namespace RTS.Presentation.UI
             _buildBarracksButton.onClick.AddListener(HandleBuildBarracksClicked);
             _gatherButton = CreateButton(_menu, "Gather", buttonSprite, buttonColor);
             _gatherButton.onClick.AddListener(HandleGatherClicked);
+            _attackButton = CreateButton(_menu, "Attack", buttonSprite, buttonColor);
+            _attackButton.onClick.AddListener(HandleAttackClicked);
             gameObject.SetActive(false);
         }
 
@@ -59,7 +64,7 @@ namespace RTS.Presentation.UI
             _targetCell = targetCell;
             _moveAction = moveAction;
             _buildBarracksAction = buildBarracksAction;
-            SetVisibleActions(showMove: true, showBuildBarracks: buildBarracksAction != null, showGather: false);
+            SetVisibleActions(showMove: true, showBuildBarracks: buildBarracksAction != null, showGather: false, showAttack: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
             Debug.Log($"[HumanMove3G1R] Context menu opened target={targetCell} screen={screenPosition}");
@@ -82,7 +87,29 @@ namespace RTS.Presentation.UI
             ClearPendingActions();
             _resource = resource;
             _gatherAction = gatherAction;
-            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: true);
+            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: true, showAttack: false);
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+
+            if (_canvasRect == null || _menu == null)
+            {
+                return;
+            }
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, screenPosition, null, out Vector2 local);
+            Vector2 half = _canvasRect.rect.size * 0.5f;
+            Vector2 margin = _menu.sizeDelta * 0.5f + new Vector2(8f, 8f);
+            local.x = Mathf.Clamp(local.x, -half.x + margin.x, half.x - margin.x);
+            local.y = Mathf.Clamp(local.y, -half.y + margin.y, half.y - margin.y);
+            _menu.anchoredPosition = local;
+        }
+
+        public void ShowAttack(Vector2 screenPosition, UnitRuntime target, Action<UnitRuntime> attackAction)
+        {
+            ClearPendingActions();
+            _attackTarget = target;
+            _attackAction = attackAction;
+            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: true);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
 
@@ -110,7 +137,9 @@ namespace RTS.Presentation.UI
             _moveAction = null;
             _buildBarracksAction = null;
             _gatherAction = null;
+            _attackAction = null;
             _resource = null;
+            _attackTarget = null;
         }
 
         private void HandleMoveClicked()
@@ -138,16 +167,26 @@ namespace RTS.Presentation.UI
             Hide();
         }
 
-        private void SetVisibleActions(bool showMove, bool showBuildBarracks, bool showGather)
+        private void HandleAttackClicked()
+        {
+            Action<UnitRuntime> action = _attackAction;
+            UnitRuntime target = _attackTarget;
+            action?.Invoke(target);
+            Hide();
+        }
+
+        private void SetVisibleActions(bool showMove, bool showBuildBarracks, bool showGather, bool showAttack)
         {
             _moveButton?.gameObject.SetActive(showMove);
             _buildBarracksButton?.gameObject.SetActive(showBuildBarracks);
             _gatherButton?.gameObject.SetActive(showGather);
+            _attackButton?.gameObject.SetActive(showAttack);
 
             int count = 0;
             LayoutVisibleButton(_moveButton, showMove, ref count);
             LayoutVisibleButton(_buildBarracksButton, showBuildBarracks, ref count);
             LayoutVisibleButton(_gatherButton, showGather, ref count);
+            LayoutVisibleButton(_attackButton, showAttack, ref count);
             if (_menu != null)
             {
                 _menu.sizeDelta = new Vector2(180f, count * 42f + 16f);

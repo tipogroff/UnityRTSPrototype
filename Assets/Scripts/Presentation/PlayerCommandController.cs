@@ -59,6 +59,7 @@ namespace RTS.Presentation
         public event Action<string, bool> OnCommandStatusChanged;
         public event Action<GridPosition, Vector2> OnMoveContextRequested;
         public event Action<ResourceNode, Vector2> OnGatherContextRequested;
+        public event Action<UnitRuntime, Vector2> OnAttackContextRequested;
 
         private void Awake()
         {
@@ -237,6 +238,51 @@ namespace RTS.Presentation
             }
 
             bool accepted = SubmitAgentAction(action, "Build Barracks");
+            reason = accepted ? string.Empty : LastCommandRejectedReason;
+            return accepted;
+        }
+
+        public bool SubmitAttackForUnit(UnitRuntime attacker, UnitRuntime target, out string reason)
+        {
+            if (attacker == null || !attacker.IsAlive)
+            {
+                reason = "Attacker is missing or no longer alive.";
+                SetRejected(reason);
+                return false;
+            }
+
+            if (target == null || !target.IsAlive)
+            {
+                reason = "Attack target is missing or no longer alive.";
+                SetRejected(reason);
+                return false;
+            }
+
+            if (attacker.Owner != Owner.Player2)
+            {
+                reason = "Attack requires a Player2 unit.";
+                SetRejected(reason);
+                return false;
+            }
+
+            if (target.Owner == Owner.Player2 || target.Owner == Owner.Neutral)
+            {
+                reason = "Attack target must be an enemy player unit.";
+                SetRejected(reason);
+                return false;
+            }
+
+            AgentAction action = new AgentAction(
+                actorPosition: attacker.GridPos,
+                actionType: UnitActionType.Attack,
+                direction: Direction.North,
+                produceUnitType: ProducibleUnit.Worker,
+                attackTargetPosition: target.GridPos,
+                isValid: true,
+                invalidationReason: string.Empty,
+                sourceType: ActionSourceType.Debug);
+
+            bool accepted = SubmitAgentAction(action, "Attack");
             reason = accepted ? string.Empty : LastCommandRejectedReason;
             return accepted;
         }
@@ -432,9 +478,18 @@ namespace RTS.Presentation
                 return;
             }
 
-            if (targetUnit != null && targetUnit.Owner != Owner.Neutral && targetUnit.Owner != _humanSide)
+            if (targetUnit != null
+                && targetUnit.Type != UnitType.Resource
+                && targetUnit.Owner != Owner.Neutral
+                && targetUnit.Owner != _humanSide)
             {
-                TryAttackUnit(targetUnit, targetCell);
+                if (OnAttackContextRequested == null)
+                {
+                    SetRejected("Attack context menu is unavailable.");
+                    return;
+                }
+
+                OnAttackContextRequested.Invoke(targetUnit, GetPointerScreenPosition());
                 return;
             }
 
@@ -603,17 +658,13 @@ namespace RTS.Presentation
                 return;
             }
 
-            AgentAction action = new AgentAction(
-                actorPosition: selected.GridPos,
-                actionType: UnitActionType.Attack,
-                direction: Direction.North,
-                produceUnitType: ProducibleUnit.Worker,
-                attackTargetPosition: targetCell,
-                isValid: true,
-                invalidationReason: string.Empty,
-                sourceType: ActionSourceType.Debug);
+            if (OnAttackContextRequested == null)
+            {
+                SetRejected("Attack context menu is unavailable.");
+                return;
+            }
 
-            SubmitAgentAction(action, "Attack");
+            OnAttackContextRequested.Invoke(targetUnit, GetPointerScreenPosition());
         }
 
         private bool TryResolveDirectionFromSelection(UnitRuntime selected, GridPosition targetCell, out Direction direction, out string reason)

@@ -12,6 +12,8 @@ namespace RTS.Presentation.Orders
         ReturningToBase,
         MovingToBuildSite,
         BuildingBarracks,
+        MovingToAttackRange,
+        Attacking,
         Completed,
         Failed,
         Cancelled
