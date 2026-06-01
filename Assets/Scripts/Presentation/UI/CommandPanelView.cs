@@ -13,11 +13,6 @@ namespace RTS.Presentation.UI
         private Text _status;
         private PlayerCommandController _commandController;
         private HumanOrderController _orderController;
-        private Button _moveButton;
-        private Button _attackButton;
-        private Button _harvestButton;
-        private Button _returnButton;
-        private Button _buildBarracksButton;
 
         public void Initialize(Text status, PlayerCommandController commandController, HumanOrderController orderController = null)
         {
@@ -26,26 +21,16 @@ namespace RTS.Presentation.UI
             _orderController = orderController;
         }
 
-        public void SetContextButtons(
-            Button moveButton,
-            Button attackButton,
-            Button harvestButton,
-            Button returnButton,
-            Button buildBarracksButton)
-        {
-            _moveButton = moveButton;
-            _attackButton = attackButton;
-            _harvestButton = harvestButton;
-            _returnButton = returnButton;
-            _buildBarracksButton = buildBarracksButton;
-        }
-
         public void Refresh(PlayerCommandController commandController)
         {
             Refresh(commandController, null, null);
         }
 
-        public void Refresh(PlayerCommandController commandController, IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary)
+        public void Refresh(
+            PlayerCommandController commandController,
+            IReadOnlyList<UnitRuntime> selectedUnits,
+            UnitRuntime primary,
+            ResourceNode hoveredResource = null)
         {
             if (commandController != null)
             {
@@ -53,7 +38,6 @@ namespace RTS.Presentation.UI
             }
 
             int selectionCount = selectedUnits != null ? selectedUnits.Count : (primary != null ? 1 : 0);
-            RefreshButtons(selectionCount, primary);
 
             if (_status == null)
             {
@@ -69,68 +53,16 @@ namespace RTS.Presentation.UI
             string result = _commandController.LastCommandAccepted ? "accepted" : "rejected";
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(primary) : null;
             string orderLine = order != null ? order.StatusText : "Order: none";
+            string resourceLine = hoveredResource != null
+                ? "Hover resource: " + hoveredResource.CurrentResources + " remaining (" + (hoveredResource.IsExhausted ? "Exhausted" : "Active") + ")"
+                : "Hover resource: none";
             _status.text = BuildContextLine(selectionCount, primary)
                 + "\nMode: " + _commandController.CurrentMode
                 + "\nLast: " + _commandController.LastCommandStatus
                 + "\nResult: " + result
-                + "\n" + orderLine;
-        }
-
-        private void RefreshButtons(int selectionCount, UnitRuntime primary)
-        {
-            SetButton(_moveButton, false, false);
-            SetButton(_attackButton, false, false);
-            SetButton(_harvestButton, false, false);
-            SetButton(_returnButton, false, false);
-            SetButton(_buildBarracksButton, false, false);
-
-            if (primary == null || selectionCount <= 0)
-            {
-                return;
-            }
-
-            if (selectionCount > 1)
-            {
-                bool hasMobile = ContainsMobile(primary);
-                SetButton(_moveButton, hasMobile, false);
-                SetButton(_attackButton, hasMobile, false);
-                return;
-            }
-
-            switch (primary.Type)
-            {
-                case UnitType.Worker:
-                    SetButton(_moveButton, true, true);
-                    SetButton(_attackButton, true, true);
-                    SetButton(_harvestButton, true, true);
-                    SetButton(_returnButton, true, true);
-                    break;
-                case UnitType.Light:
-                case UnitType.Heavy:
-                case UnitType.Ranged:
-                    SetButton(_moveButton, true, true);
-                    SetButton(_attackButton, true, true);
-                    break;
-                case UnitType.Base:
-                case UnitType.Barracks:
-                    break;
-            }
-        }
-
-        private static bool ContainsMobile(UnitRuntime primary)
-        {
-            return primary != null && !primary.IsBuilding;
-        }
-
-        private static void SetButton(Button button, bool visible, bool interactable)
-        {
-            if (button == null)
-            {
-                return;
-            }
-
-            button.gameObject.SetActive(visible);
-            button.interactable = interactable;
+                + "\n" + orderLine
+                + "\n" + resourceLine
+                + "\n" + BuildControlHints(selectionCount);
         }
 
         private static string BuildContextLine(int selectionCount, UnitRuntime primary)
@@ -142,17 +74,27 @@ namespace RTS.Presentation.UI
 
             if (selectionCount > 1)
             {
-                return $"Group selected: {selectionCount} mobile units. Use RMB for Move Group or Attack Area.";
+                return $"Group selected: {selectionCount} mobile units. Use RMB for Move Group / Attack Area.";
             }
 
             return primary.Type switch
             {
-                UnitType.Worker => "Worker commands: Move, Attack, Harvest, Return.",
+                UnitType.Worker => "Worker selected: use RMB for Move, Gather, Attack, Build Barracks.",
                 UnitType.Base => "Base selected: use Production to make Workers.",
                 UnitType.Barracks => "Barracks selected: use Production to make combat units.",
-                UnitType.Light or UnitType.Heavy or UnitType.Ranged => "Combat commands: Move or Attack.",
+                UnitType.Light or UnitType.Heavy or UnitType.Ranged => "Combat unit selected: use RMB for Move / Attack.",
                 _ => "No contextual commands available."
             };
+        }
+
+        private static string BuildControlHints(int selectionCount)
+        {
+            if (selectionCount > 1)
+            {
+                return "Controls: LMB select, Drag units, RMB empty=Group Move, RMB enemy area=Group Attack, Stop=cancel selected.";
+            }
+
+            return "Controls: LMB select, Drag units, RMB empty=Move, RMB resource=Gather, RMB enemy=Attack, RMB free with Worker=Build, Stop=cancel selected.";
         }
     }
 }

@@ -12,7 +12,7 @@
   "bot_actions_attempted_after": 0,
   "bot_decision_attempt_count": 0,
   "bot_decision_executed_count": 0,
-  "student_actions_attempted": 6000,
+  "student_actions_attempted": 48,
   "accepted_bot_commands": 0,
   "rejected_bot_commands": 0,
   "accepted_bot_move_actions": 0,
@@ -29,7 +29,7 @@
   "blocked_attack_cooldown_count": 0,
   "blocked_attack_window_cap_count": 0,
   "max_aggressive_actions_observed_per_window": 0,
-  "terminal_reason": "StepLimitReached",
+  "terminal_reason": "EnemyBaseDestroyed",
   "duplicate_spawn_detected": false,
   "stage6b3_files_touched": []
 }

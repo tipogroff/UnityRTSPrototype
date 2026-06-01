@@ -31,7 +31,7 @@ namespace RTS.Presentation.UI
             if (_player2 != null)
             {
                 int value = matchManager != null ? matchManager.GetResources(Owner.Player2) : 0;
-                _player2.text = "P2 Human: " + value;
+                _player2.text = "P2 Human Resources: " + value;
             }
 
             if (_phase != null)

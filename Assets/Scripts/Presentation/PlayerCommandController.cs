@@ -561,6 +561,12 @@ namespace RTS.Presentation
                 return;
             }
 
+            if (selected.Type == UnitType.Worker && occupant.Owner == _humanSide)
+            {
+                SetRejected("Build cell is occupied.");
+                return;
+            }
+
             SetRejected("Context command is not available for this target.");
             Debug.Log($"[HumanMove3G1R] Context menu not opened reason=occupied unsupported target={DescribeUnit(occupant)}");
         }

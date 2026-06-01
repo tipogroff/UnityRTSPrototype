@@ -64,17 +64,17 @@ namespace RTS.Presentation.UI
         private AttackTargetAcquisitionService _attackTargets;
         private GroupOrderPlanner _groupPlanner;
         private GroupOrderReservationService _reservations;
+        private ResourceManager _resourceManager;
+        private GridManager _gridManager;
+        private Camera _commandCamera;
+        private ResourceVisualStateController _resourceVisualStateController;
         private ContextActionMenuView _contextMenu;
         private GameSpeedController _speedController;
         private SceneFlowController _sceneFlowController;
         private MatchManager _matchManager;
-        private Button _moveButton;
-        private Button _attackButton;
-        private Button _harvestButton;
-        private Button _returnButton;
-        private Button _buildBarracksButton;
         private Button _stopButton;
         private float _nextRefresh;
+        private ResourceNode _hoveredResource;
 
         private void Awake()
         {
@@ -270,7 +270,6 @@ namespace RTS.Presentation.UI
             SetRect(commandStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 44f), new Vector2(-24f, 70f));
             _commandPanel = commands.gameObject.AddComponent<CommandPanelView>();
             _commandPanel.Initialize(commandStatus, _commandController, _orderController);
-            _commandPanel.SetContextButtons(_moveButton, _attackButton, _harvestButton, _returnButton, _buildBarracksButton);
 
             RectTransform production = CreatePanel("ProductionPanel", _bottomRoot, new Vector2(360f, 0f));
             AddLayout(production.gameObject, 380f, -1f);
@@ -295,19 +294,7 @@ namespace RTS.Presentation.UI
 
         private void BuildCommandButtons(RectTransform commands)
         {
-            GameObject row1 = CreateButtonRow(commands, "Row1", 58f);
-            _moveButton = CreateButton("MoveButton", row1.transform as RectTransform, "Move", null, () => _commandController?.BeginMoveCommandMode());
-            AddLayout(_moveButton.gameObject, 110f, 42f);
-            _attackButton = CreateButton("AttackButton", row1.transform as RectTransform, "Attack", null, () => _commandController?.BeginAttackCommandMode());
-            AddLayout(_attackButton.gameObject, 120f, 42f);
-            _harvestButton = CreateButton("HarvestButton", row1.transform as RectTransform, "Harvest", null, () => _commandController?.TryHarvestSelected());
-            AddLayout(_harvestButton.gameObject, 130f, 42f);
-            _returnButton = CreateButton("ReturnButton", row1.transform as RectTransform, "Return", null, () => _commandController?.TryReturnSelected());
-            AddLayout(_returnButton.gameObject, 120f, 42f);
-
-            GameObject row2 = CreateButtonRow(commands, "Row2", 110f);
-            _buildBarracksButton = CreateButton("BuildBarracksButton", row2.transform as RectTransform, "Build Barracks", null, () => _commandController?.TryBuildBarracks());
-            AddLayout(_buildBarracksButton.gameObject, 180f, 42f);
+            GameObject row2 = CreateButtonRow(commands, "Row2", 58f);
             _stopButton = CreateButton("StopButton", row2.transform as RectTransform, "Stop", null, CancelPrimaryOrder);
             AddLayout(_stopButton.gameObject, 90f, 42f);
             AddLayout(CreateButton("RestartButton", row2.transform as RectTransform, "Restart", null, RestartMatch).gameObject, 120f, 42f);
@@ -395,10 +382,15 @@ namespace RTS.Presentation.UI
                 : _selectionController != null ? _selectionController.SelectedUnits : null;
             int selectionCount = selectedUnits != null ? selectedUnits.Count : (selected != null ? 1 : 0);
             _topResourceBar?.Refresh(_matchManager);
+            UpdateHoveredResource();
             _selectionInfo?.Refresh(selectedUnits, selected);
-            _commandPanel?.Refresh(_commandController, selectedUnits, selected);
+            _commandPanel?.Refresh(_commandController, selectedUnits, selected, _hoveredResource);
             _productionPanel?.Refresh(selected, selectionCount, _commandController);
             _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
+            if (_stopButton != null)
+            {
+                _stopButton.interactable = selectionCount > 0;
+            }
         }
 
         private void HandleHotkeys()
@@ -476,6 +468,15 @@ namespace RTS.Presentation.UI
                 _reservations = gameObject.AddComponent<GroupOrderReservationService>();
             }
 
+            _resourceManager ??= ResourceManager.Instance != null ? ResourceManager.Instance : FindFirstObjectByType<ResourceManager>();
+            _gridManager ??= GridManager.Instance != null ? GridManager.Instance : FindFirstObjectByType<GridManager>();
+            _commandCamera ??= Camera.main != null ? Camera.main : FindFirstObjectByType<Camera>();
+            _resourceVisualStateController ??= FindFirstObjectByType<ResourceVisualStateController>();
+            if (_resourceVisualStateController == null)
+            {
+                _resourceVisualStateController = gameObject.AddComponent<ResourceVisualStateController>();
+            }
+
             _orderController ??= FindFirstObjectByType<HumanOrderController>();
             if (_orderController == null)
             {
@@ -506,7 +507,12 @@ namespace RTS.Presentation.UI
             Debug.Log($"[HumanMove3G1R] Canvas HandleMoveContextRequested target={targetCell} screen={screenPosition} selected={DescribeUnit(selected)} selectedCount={_selectionController?.SelectedUnits.Count ?? 0}");
             if (_selectionController != null && _selectionController.HasMultiSelection)
             {
-                _contextMenu?.Show(screenPosition, targetCell, IssueGroupMoveOrder, moveLabel: "Move Group");
+                _contextMenu?.Show(
+                    screenPosition,
+                    targetCell,
+                    IssueGroupMoveOrder,
+                    moveLabel: "Move Group",
+                    hint: "Group move order. Use RMB enemy area for group attack.");
                 return;
             }
 
@@ -526,7 +532,10 @@ namespace RTS.Presentation.UI
                 screenPosition,
                 targetCell,
                 IssueMoveOrder,
-                selected.Owner == Owner.Player2 && selected.Type == UnitType.Worker ? IssueBuildBarracksOrder : null);
+                selected.Owner == Owner.Player2 && selected.Type == UnitType.Worker ? IssueBuildBarracksOrder : null,
+                hint: selected.Owner == Owner.Player2 && selected.Type == UnitType.Worker
+                    ? "Move or Build Barracks on this free cell."
+                    : "Move order.");
         }
 
         private void IssueGroupMoveOrder(GridPosition targetCell)
@@ -578,10 +587,15 @@ namespace RTS.Presentation.UI
             if (resource == null || resource.IsExhausted)
             {
                 _commandController?.PublishHumanOrderStatus("Resource is exhausted.", false);
+                _contextMenu?.ShowInfo(screenPosition, "Resource is exhausted.");
                 return;
             }
 
-            _contextMenu?.ShowGather(screenPosition, resource, IssueHarvestLoop);
+            _contextMenu?.ShowGather(
+                screenPosition,
+                resource,
+                IssueHarvestLoop,
+                hint: "Worker will gather and return automatically.");
         }
 
         private void IssueHarvestLoop(ResourceNode resource)
@@ -649,7 +663,14 @@ namespace RTS.Presentation.UI
                     ? $"Attack area: {targets.Count} targets, {attackCapableCount} attackers."
                     : "Attack target acquired: " + targets[0].Type + ".",
                 true);
-            _contextMenu?.ShowAttackArea(screenPosition, areaCell, label, IssueAttackAreaOrder);
+            _contextMenu?.ShowAttackArea(
+                screenPosition,
+                areaCell,
+                label,
+                IssueAttackAreaOrder,
+                hint: selectedUnits.Count > 1
+                    ? "Attack Area: selected units attack enemies in this area."
+                    : "Attack selected enemy target.");
         }
 
         private void IssueAttackAreaOrder(GridPosition areaCell)
@@ -711,6 +732,82 @@ namespace RTS.Presentation.UI
             return unit == null
                 ? "<null>"
                 : $"{unit.name} owner={unit.Owner} type={unit.Type} grid={unit.GridPos}";
+        }
+
+        private void UpdateHoveredResource()
+        {
+            _hoveredResource = null;
+            if (_resourceManager == null || _gridManager == null || _commandCamera == null || IsUiFieldFocused())
+            {
+                return;
+            }
+
+            if (!TryGetPointerRay(out Ray ray))
+            {
+                return;
+            }
+
+            GridPosition cell;
+            if (Physics.Raycast(ray, out RaycastHit hit, 500f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                UnitRuntime hitUnit = hit.collider != null ? hit.collider.GetComponentInParent<UnitRuntime>() : null;
+                cell = hitUnit != null && hitUnit.Type == UnitType.Resource
+                    ? hitUnit.GridPos
+                    : _gridManager.WorldToCell(hit.point);
+            }
+            else if (TryResolveWorldPointOnGround(ray, out Vector3 worldPoint))
+            {
+                cell = _gridManager.WorldToCell(worldPoint);
+            }
+            else
+            {
+                return;
+            }
+
+            if (!_gridManager.IsInside(cell))
+            {
+                return;
+            }
+
+            _hoveredResource = _resourceManager.GetResourceNode(cell);
+        }
+
+        private bool TryGetPointerRay(out Ray ray)
+        {
+            ray = default;
+            if (_commandCamera == null)
+            {
+                return false;
+            }
+
+#if ENABLE_INPUT_SYSTEM
+            Mouse mouse = Mouse.current;
+            if (mouse != null)
+            {
+                ray = _commandCamera.ScreenPointToRay(mouse.position.ReadValue());
+                return true;
+            }
+#endif
+
+#if ENABLE_LEGACY_INPUT_MANAGER && !ENABLE_INPUT_SYSTEM
+            ray = _commandCamera.ScreenPointToRay(Input.mousePosition);
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        private static bool TryResolveWorldPointOnGround(Ray ray, out Vector3 worldPoint)
+        {
+            Plane ground = new Plane(Vector3.up, Vector3.zero);
+            if (ground.Raycast(ray, out float distance))
+            {
+                worldPoint = ray.GetPoint(distance);
+                return true;
+            }
+
+            worldPoint = default;
+            return false;
         }
 
         private Button CreateVerticalButton(RectTransform parent, string label, float yFromTop, UnityEngine.Events.UnityAction onClick, Sprite icon = null)

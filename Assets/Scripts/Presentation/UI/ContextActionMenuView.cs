@@ -24,6 +24,7 @@ namespace RTS.Presentation.UI
         private Button _buildBarracksButton;
         private Button _gatherButton;
         private Button _attackButton;
+        private Text _hintText;
 
         public bool IsOpen => gameObject.activeSelf;
 
@@ -53,6 +54,7 @@ namespace RTS.Presentation.UI
             _gatherButton.onClick.AddListener(HandleGatherClicked);
             _attackButton = CreateButton(_menu, "Attack", buttonSprite, buttonColor);
             _attackButton.onClick.AddListener(HandleAttackClicked);
+            _hintText = CreateHintLabel(_menu);
             gameObject.SetActive(false);
         }
 
@@ -61,13 +63,15 @@ namespace RTS.Presentation.UI
             GridPosition targetCell,
             Action<GridPosition> moveAction,
             Action<GridPosition> buildBarracksAction = null,
-            string moveLabel = "Move")
+            string moveLabel = "Move",
+            string hint = null)
         {
             ClearPendingActions();
             _targetCell = targetCell;
             _moveAction = moveAction;
             _buildBarracksAction = buildBarracksAction;
             SetButtonLabel(_moveButton, moveLabel);
+            SetHint(hint);
             SetVisibleActions(showMove: true, showBuildBarracks: buildBarracksAction != null, showGather: false, showAttack: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -86,11 +90,12 @@ namespace RTS.Presentation.UI
             _menu.anchoredPosition = local;
         }
 
-        public void ShowGather(Vector2 screenPosition, ResourceNode resource, Action<ResourceNode> gatherAction)
+        public void ShowGather(Vector2 screenPosition, ResourceNode resource, Action<ResourceNode> gatherAction, string hint = null)
         {
             ClearPendingActions();
             _resource = resource;
             _gatherAction = gatherAction;
+            SetHint(hint);
             SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: true, showAttack: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -108,12 +113,13 @@ namespace RTS.Presentation.UI
             _menu.anchoredPosition = local;
         }
 
-        public void ShowAttack(Vector2 screenPosition, UnitRuntime target, Action<UnitRuntime> attackAction)
+        public void ShowAttack(Vector2 screenPosition, UnitRuntime target, Action<UnitRuntime> attackAction, string hint = null)
         {
             ClearPendingActions();
             _attackTarget = target;
             _attackAction = attackAction;
             SetButtonLabel(_attackButton, target != null ? "Attack " + target.Type : "Attack");
+            SetHint(hint);
             SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: true);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
@@ -135,13 +141,36 @@ namespace RTS.Presentation.UI
             Vector2 screenPosition,
             GridPosition areaCell,
             string label,
-            Action<GridPosition> attackAreaAction)
+            Action<GridPosition> attackAreaAction,
+            string hint = null)
         {
             ClearPendingActions();
             _attackAreaCell = areaCell;
             _attackAreaAction = attackAreaAction;
             SetButtonLabel(_attackButton, label);
+            SetHint(hint);
             SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: true);
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+
+            if (_canvasRect == null || _menu == null)
+            {
+                return;
+            }
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, screenPosition, null, out Vector2 local);
+            Vector2 half = _canvasRect.rect.size * 0.5f;
+            Vector2 margin = _menu.sizeDelta * 0.5f + new Vector2(8f, 8f);
+            local.x = Mathf.Clamp(local.x, -half.x + margin.x, half.x - margin.x);
+            local.y = Mathf.Clamp(local.y, -half.y + margin.y, half.y - margin.y);
+            _menu.anchoredPosition = local;
+        }
+
+        public void ShowInfo(Vector2 screenPosition, string info)
+        {
+            ClearPendingActions();
+            SetHint(info);
+            SetVisibleActions(showMove: false, showBuildBarracks: false, showGather: false, showAttack: false);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
 
@@ -223,15 +252,25 @@ namespace RTS.Presentation.UI
             _buildBarracksButton?.gameObject.SetActive(showBuildBarracks);
             _gatherButton?.gameObject.SetActive(showGather);
             _attackButton?.gameObject.SetActive(showAttack);
+            bool showHint = _hintText != null && !string.IsNullOrWhiteSpace(_hintText.text);
+            if (_hintText != null)
+            {
+                _hintText.gameObject.SetActive(showHint);
+            }
 
             int count = 0;
             LayoutVisibleButton(_moveButton, showMove, ref count);
             LayoutVisibleButton(_buildBarracksButton, showBuildBarracks, ref count);
             LayoutVisibleButton(_gatherButton, showGather, ref count);
             LayoutVisibleButton(_attackButton, showAttack, ref count);
+            if (showHint)
+            {
+                LayoutHint(_hintText, ref count);
+            }
+
             if (_menu != null)
             {
-                _menu.sizeDelta = new Vector2(180f, count * 42f + 16f);
+                _menu.sizeDelta = new Vector2(230f, count * 42f + 16f);
             }
         }
 
@@ -247,6 +286,21 @@ namespace RTS.Presentation.UI
             rect.anchorMax = new Vector2(1f, 1f);
             rect.offsetMin = new Vector2(8f, -8f - (index + 1) * 42f);
             rect.offsetMax = new Vector2(-8f, -8f - index * 42f);
+            index++;
+        }
+
+        private static void LayoutHint(Text hint, ref int index)
+        {
+            if (hint == null)
+            {
+                return;
+            }
+
+            RectTransform rect = hint.rectTransform;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.offsetMin = new Vector2(10f, -8f - (index + 1) * 42f);
+            rect.offsetMax = new Vector2(-10f, -8f - index * 42f);
             index++;
         }
 
@@ -270,6 +324,31 @@ namespace RTS.Presentation.UI
             text.raycastTarget = false;
             Stretch(text.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             return go.GetComponent<Button>();
+        }
+
+        private static Text CreateHintLabel(RectTransform parent)
+        {
+            GameObject go = new GameObject("Hint", typeof(RectTransform), typeof(Text));
+            go.transform.SetParent(parent, false);
+            Text text = go.GetComponent<Text>();
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.fontSize = 13;
+            text.fontStyle = FontStyle.Italic;
+            text.alignment = TextAnchor.MiddleLeft;
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.verticalOverflow = VerticalWrapMode.Truncate;
+            text.color = new Color(0.95f, 0.92f, 0.85f, 1f);
+            text.raycastTarget = false;
+            text.text = string.Empty;
+            return text;
+        }
+
+        private void SetHint(string hint)
+        {
+            if (_hintText != null)
+            {
+                _hintText.text = string.IsNullOrWhiteSpace(hint) ? string.Empty : hint;
+            }
         }
 
         private static void SetButtonLabel(Button button, string label)

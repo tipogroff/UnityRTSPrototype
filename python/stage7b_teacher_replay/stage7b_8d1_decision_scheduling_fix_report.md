@@ -32,25 +32,25 @@ blocker_reason: CollectObservations did not provide full real observation withou
 
 ## Lifecycle
 - initialize_count: 3
-- on_episode_begin_count: 3
-- collect_observations_count: 6228
-- write_discrete_action_mask_count: 6224
-- on_action_received_count: 6224
+- on_episode_begin_count: 2
+- collect_observations_count: 2484
+- write_discrete_action_mask_count: 2481
+- on_action_received_count: 2481
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 3
+- inference_kick_decision_request_count: 2
 - inference_runtime_ready_observed: true
 - inference_first_ready_frame: 2
 - inference_first_ready_fixed_tick: 1
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 29
+- candidate_action_index_last: 97
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 12448
-- action_adapter_success_count: 6224
-- runtime_apply_attempted: 6224
-- runtime_apply_accepted: 6224
+- candidate_builder_success_count: 4962
+- action_adapter_success_count: 2481
+- runtime_apply_attempted: 2481
+- runtime_apply_accepted: 2481
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -62,7 +62,7 @@ blocker_reason: CollectObservations did not provide full real observation withou
 
 ## Console
 - unity_console_errors: 0
-- unity_console_warnings: 4
+- unity_console_warnings: 5
 - warning_fewer_observations_0_detected: false
 - warning_heuristic_not_implemented_detected: false
 - timeout_error_log_count: 0
@@ -75,4 +75,4 @@ blocker_reason: CollectObservations did not provide full real observation withou
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-06-01T22:46:40.2895170Z
+generated_at_utc: 2026-06-01T23:41:58.7118244Z
