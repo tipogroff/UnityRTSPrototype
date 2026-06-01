@@ -664,7 +664,7 @@ namespace RTS.Presentation.UI
                     out reason)
                 : 0;
             _commandController?.PublishHumanOrderStatus(
-                issued > 0 ? $"Issued attack orders: {issued}." : reason,
+                reason,
                 issued > 0);
             Refresh(force: true);
         }

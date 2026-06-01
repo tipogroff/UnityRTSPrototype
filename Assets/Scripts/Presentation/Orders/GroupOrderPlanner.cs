@@ -113,7 +113,6 @@ namespace RTS.Presentation.Orders
             }
 
             var assignedCounts = new Dictionary<UnitRuntime, int>();
-            var reservedApproachCells = new HashSet<GridPosition>();
             for (int i = 0; i < validTargets.Count; i++)
             {
                 assignedCounts[validTargets[i]] = 0;
@@ -125,9 +124,34 @@ namespace RTS.Presentation.Orders
                 UnitRuntime target = FindBestTarget(attacker, validTargets, assignedCounts);
                 assignedTargets[attacker] = target;
                 assignedCounts[target]++;
-                preferredAttackCells[attacker] = TryFindUniqueAttackCell(attacker, target, reservedApproachCells, out GridPosition cell)
-                    ? cell
-                    : (GridPosition?)null;
+            }
+
+            foreach (UnitRuntime target in validTargets)
+            {
+                List<UnitRuntime> assignedAttackers = new List<UnitRuntime>();
+                foreach (KeyValuePair<UnitRuntime, UnitRuntime> pair in assignedTargets)
+                {
+                    if (pair.Value == target)
+                    {
+                        assignedAttackers.Add(pair.Key);
+                    }
+                }
+
+                assignedAttackers.Sort(CompareUnits);
+                Dictionary<UnitRuntime, GridPosition?> targetSlots = AssignPreferredAttackSlotsForTarget(target, assignedAttackers);
+                foreach (KeyValuePair<UnitRuntime, GridPosition?> slot in targetSlots)
+                {
+                    preferredAttackCells[slot.Key] = slot.Value;
+                }
+            }
+
+            for (int i = 0; i < remainingAttackers.Count; i++)
+            {
+                UnitRuntime attacker = remainingAttackers[i];
+                if (!preferredAttackCells.ContainsKey(attacker))
+                {
+                    preferredAttackCells[attacker] = null;
+                }
             }
 
             reason = preferredAttackCells.ContainsValue(null)
@@ -187,19 +211,91 @@ namespace RTS.Presentation.Orders
             return candidates;
         }
 
-        private bool TryFindUniqueAttackCell(
-            UnitRuntime attacker,
-            UnitRuntime target,
-            HashSet<GridPosition> reservedApproachCells,
-            out GridPosition bestCell)
+        private Dictionary<UnitRuntime, GridPosition?> AssignPreferredAttackSlotsForTarget(UnitRuntime target, List<UnitRuntime> attackers)
         {
-            bestCell = default;
-            if (!_pathfinding.TryGetAttackRange(attacker, out int range, out _))
+            var result = new Dictionary<UnitRuntime, GridPosition?>();
+            if (target == null || attackers == null || attackers.Count == 0)
             {
-                return false;
+                return result;
             }
 
-            List<GridPosition> candidates = new List<GridPosition>();
+            var reservedSlots = new HashSet<GridPosition>();
+            for (int i = 0; i < attackers.Count; i++)
+            {
+                result[attackers[i]] = null;
+            }
+
+            var pendingAttackers = new List<UnitRuntime>(attackers);
+            while (pendingAttackers.Count > 0)
+            {
+                UnitRuntime bestAttacker = null;
+                GridPosition bestCell = default;
+                int bestPathLength = int.MaxValue;
+                int bestTargetDistance = int.MaxValue;
+
+                for (int i = 0; i < pendingAttackers.Count; i++)
+                {
+                    UnitRuntime attacker = pendingAttackers[i];
+                    if (!_pathfinding.TryGetAttackRange(attacker, out int attackRange, out _))
+                    {
+                        continue;
+                    }
+
+                    List<GridPosition> attackerCandidates = BuildAttackCandidatesFor(attacker, target, attackRange);
+                    for (int candidateIndex = 0; candidateIndex < attackerCandidates.Count; candidateIndex++)
+                    {
+                        GridPosition candidate = attackerCandidates[candidateIndex];
+                        if (reservedSlots.Contains(candidate))
+                        {
+                            continue;
+                        }
+
+                        int pathLength;
+                        if (candidate == attacker.GridPos)
+                        {
+                            pathLength = 0;
+                        }
+                        else if (!_pathfinding.TryFindPath(attacker, candidate, out List<GridPosition> path, out _))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            pathLength = path.Count;
+                        }
+
+                        int targetDistance = candidate.ChebyshevDistance(target.GridPos);
+                        if (bestAttacker == null
+                            || pathLength < bestPathLength
+                            || (pathLength == bestPathLength && targetDistance < bestTargetDistance)
+                            || (pathLength == bestPathLength && targetDistance == bestTargetDistance && CompareUnits(attacker, bestAttacker) < 0)
+                            || (pathLength == bestPathLength && targetDistance == bestTargetDistance && attacker == bestAttacker && CompareCells(candidate, bestCell) < 0))
+                        {
+                            bestAttacker = attacker;
+                            bestCell = candidate;
+                            bestPathLength = pathLength;
+                            bestTargetDistance = targetDistance;
+                        }
+                    }
+                }
+
+                if (bestAttacker == null)
+                {
+                    break;
+                }
+
+                result[bestAttacker] = bestCell;
+                reservedSlots.Add(bestCell);
+                pendingAttackers.Remove(bestAttacker);
+            }
+
+            return result;
+        }
+
+        private List<GridPosition> BuildAttackCandidatesFor(UnitRuntime attacker, UnitRuntime target, int range)
+        {
+            var candidates = new List<GridPosition>();
+            bool isMelee = range <= 1;
             if (_pathfinding.IsTargetInAttackRange(attacker, target))
             {
                 candidates.Add(attacker.GridPos);
@@ -210,10 +306,22 @@ namespace RTS.Presentation.Orders
                 for (int x = target.GridPos.X - range; x <= target.GridPos.X + range; x++)
                 {
                     GridPosition cell = new GridPosition(x, y);
-                    if (cell == target.GridPos
-                        || cell.ChebyshevDistance(target.GridPos) > range
-                        || reservedApproachCells.Contains(cell)
-                        || !_pathfinding.IsCellAvailableForMove(attacker, cell, allowCurrentUnitCell: true))
+                    if (cell == target.GridPos || cell.ChebyshevDistance(target.GridPos) > range)
+                    {
+                        continue;
+                    }
+
+                    if (isMelee && cell.ChebyshevDistance(target.GridPos) != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!isMelee && cell.ChebyshevDistance(target.GridPos) == 1)
+                    {
+                        continue;
+                    }
+
+                    if (!_pathfinding.IsCellAvailableForMove(attacker, cell, allowCurrentUnitCell: true))
                     {
                         continue;
                     }
@@ -222,32 +330,40 @@ namespace RTS.Presentation.Orders
                 }
             }
 
-            candidates.Sort(CompareCells);
-            int bestLength = int.MaxValue;
-            bool found = false;
-            for (int i = 0; i < candidates.Count; i++)
+            if (!isMelee)
             {
-                GridPosition candidate = candidates[i];
-                if (reservedApproachCells.Contains(candidate)
-                    || !_pathfinding.TryFindPath(attacker, candidate, out List<GridPosition> path, out _))
+                for (int y = target.GridPos.Y - range; y <= target.GridPos.Y + range; y++)
                 {
-                    continue;
-                }
+                    for (int x = target.GridPos.X - range; x <= target.GridPos.X + range; x++)
+                    {
+                        GridPosition cell = new GridPosition(x, y);
+                        if (cell == target.GridPos
+                            || cell.ChebyshevDistance(target.GridPos) > range
+                            || !_pathfinding.IsCellAvailableForMove(attacker, cell, allowCurrentUnitCell: true)
+                            || candidates.Contains(cell))
+                        {
+                            continue;
+                        }
 
-                if (!found || path.Count < bestLength)
-                {
-                    bestCell = candidate;
-                    bestLength = path.Count;
-                    found = true;
+                        candidates.Add(cell);
+                    }
                 }
             }
 
-            if (found)
+            candidates.Sort((left, right) =>
             {
-                reservedApproachCells.Add(bestCell);
-            }
+                int leftDistance = left.ChebyshevDistance(attacker.GridPos);
+                int rightDistance = right.ChebyshevDistance(attacker.GridPos);
+                int distanceComparison = leftDistance.CompareTo(rightDistance);
+                if (distanceComparison != 0)
+                {
+                    return distanceComparison;
+                }
 
-            return found;
+                return CompareCells(left, right);
+            });
+
+            return candidates;
         }
 
         private List<UnitRuntime> FilterMobilePlayer2Units(IReadOnlyList<UnitRuntime> units)

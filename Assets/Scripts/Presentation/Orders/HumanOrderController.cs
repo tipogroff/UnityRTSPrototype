@@ -9,6 +9,8 @@ namespace RTS.Presentation.Orders
     [DisallowMultipleComponent]
     public sealed class HumanOrderController : MonoBehaviour
     {
+        private const string GroupAttackLogPrefix = "[HumanGroupAttack3G6R]";
+
         [SerializeField] private GridPathfindingService _pathfinding;
         [SerializeField] private PlayerCommandController _commandController;
         [SerializeField] private PlayerSelectionController _selectionController;
@@ -262,6 +264,20 @@ namespace RTS.Presentation.Orders
             }
 
             List<UnitRuntime> targets = _attackTargets.FindEnemiesInArea(Owner.Player2, areaCenter, areaRadius);
+            int selectedCount = attackers != null ? attackers.Count : 0;
+            int attackCapableCount = 0;
+            if (attackers != null)
+            {
+                for (int i = 0; i < attackers.Count; i++)
+                {
+                    if (attackers[i] != null && _pathfinding.CanUnitAttack(attackers[i], out _))
+                    {
+                        attackCapableCount++;
+                    }
+                }
+            }
+
+            Debug.Log($"{GroupAttackLogPrefix} GroupAttackIssue selectedUnits={selectedCount} attackCapable={attackCapableCount} areaCenter={areaCenter} areaRadius={areaRadius} acquiredEnemies={targets.Count}");
             if (targets.Count == 0)
             {
                 reason = "No enemy target in attack area.";
@@ -290,6 +306,8 @@ namespace RTS.Presentation.Orders
             int issued = 0;
             foreach (KeyValuePair<UnitRuntime, UnitRuntime> pair in assignedTargets)
             {
+                GridPosition? preferred = preferredAttackCells[pair.Key];
+                Debug.Log($"{GroupAttackLogPrefix} Assignment attacker={DescribeUnit(pair.Key)} assignedTarget={DescribeUnit(pair.Value)} preferredCell={(preferred.HasValue ? preferred.Value.ToString() : "<none>")} planningReason={planningReason}");
                 if (IssueAttack(pair.Key, pair.Value, preferredAttackCells[pair.Key], out _))
                 {
                     issued++;
@@ -297,8 +315,9 @@ namespace RTS.Presentation.Orders
             }
 
             reason = issued > 0
-                ? $"Group attack: {issued} attackers, {targets.Count} targets."
+                ? $"Group attack: {issued} attackers, {targets.Count} target(s)."
                 : "No attack orders could be issued.";
+            Debug.Log($"{GroupAttackLogPrefix} GroupAttackIssued issued={issued} selectedUnits={selectedCount} attackCapable={attackCapableCount} targets={targets.Count} reason={reason}");
             return issued;
         }
 
@@ -435,6 +454,15 @@ namespace RTS.Presentation.Orders
             if (!order.IsTerminal)
             {
                 return;
+            }
+
+            if (order is AttackOrder attackOrder)
+            {
+                _reservations?.ReleaseAttackSlot(unit);
+                if (attackOrder.Target == null || !attackOrder.Target.IsAlive)
+                {
+                    _reservations?.ReleaseAttackSlotsForTarget(attackOrder.Target);
+                }
             }
 
             _activeOrders.Remove(unit);
