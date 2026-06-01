@@ -270,11 +270,16 @@ namespace RTS.Presentation.UI
             Button worker = CreateButton("WorkerButton", baseGroup.transform as RectTransform, "Worker", null, () => _commandController?.TryProduceWorker());
             AddLayout(worker.gameObject, 160f, 44f);
             GameObject barracksGroup = CreateButtonRow(production, "BarracksGroup", 88f);
-            AddLayout(CreateButton("LightButton", barracksGroup.transform as RectTransform, "Light", null, () => _commandController?.TryProduceLight()).gameObject, 105f, 44f);
-            AddLayout(CreateButton("HeavyButton", barracksGroup.transform as RectTransform, "Heavy", null, () => _commandController?.TryProduceHeavy()).gameObject, 110f, 44f);
-            AddLayout(CreateButton("RangedButton", barracksGroup.transform as RectTransform, "Ranged", null, () => _commandController?.TryProduceRanged()).gameObject, 120f, 44f);
+            Button light = CreateButton("LightButton", barracksGroup.transform as RectTransform, "Light", null, () => _commandController?.TryProduceLight());
+            Button heavy = CreateButton("HeavyButton", barracksGroup.transform as RectTransform, "Heavy", null, () => _commandController?.TryProduceHeavy());
+            Button ranged = CreateButton("RangedButton", barracksGroup.transform as RectTransform, "Ranged", null, () => _commandController?.TryProduceRanged());
+            AddLayout(light.gameObject, 105f, 44f);
+            AddLayout(heavy.gameObject, 110f, 44f);
+            AddLayout(ranged.gameObject, 120f, 44f);
+            Text productionStatus = CreateBody(production, string.Empty);
+            SetRect(productionStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 12f), new Vector2(-24f, 92f));
             _productionPanel = production.gameObject.AddComponent<ProductionPanelView>();
-            _productionPanel.Initialize(productionTitle, baseGroup, barracksGroup);
+            _productionPanel.Initialize(productionTitle, baseGroup, barracksGroup, productionStatus, worker, light, heavy, ranged);
             _productionVisibility = production.gameObject.AddComponent<PanelVisibilityController>();
             _productionVisibility.Initialize(production.gameObject, true);
         }
@@ -383,7 +388,7 @@ namespace RTS.Presentation.UI
             _topResourceBar?.Refresh(_matchManager);
             _selectionInfo?.Refresh(selectedUnits, selected);
             _commandPanel?.Refresh(_commandController, selectedUnits, selected);
-            _productionPanel?.Refresh(selected, selectionCount);
+            _productionPanel?.Refresh(selected, selectionCount, _commandController);
             _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
         }
 

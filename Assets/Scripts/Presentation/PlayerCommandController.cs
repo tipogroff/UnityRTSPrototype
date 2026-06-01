@@ -2,6 +2,7 @@ using System;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.ML;
+using RTS.Presentation.Orders;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -53,6 +54,7 @@ namespace RTS.Presentation
         public string LastCommandStatus { get; private set; } = "No command submitted yet.";
         public bool LastCommandAccepted { get; private set; }
         public string LastCommandRejectedReason { get; private set; } = string.Empty;
+        public string LastProductionCommandStatus { get; private set; } = "No production command submitted yet.";
 
         public event Action<string, bool> OnCommandStatusChanged;
         public event Action<GridPosition, Vector2> OnMoveContextRequested;
@@ -304,28 +306,27 @@ namespace RTS.Presentation
 
         public void TryProduceWorker()
         {
-            TryProduce(ProducibleUnit.Worker, UnitType.Base, "Produce Worker");
+            TryProduce(UnitType.Worker, UnitType.Base, "Worker");
         }
 
         public void TryBuildBarracks()
         {
-            // Worker build Barracks uses Produce action with Worker produce slot under existing runtime mapping.
-            TryProduce(ProducibleUnit.Worker, UnitType.Worker, "Build Barracks");
+            SetRejected("Build Barracks is not available yet.");
         }
 
         public void TryProduceLight()
         {
-            TryProduce(ProducibleUnit.Light, UnitType.Barracks, "Produce Light");
+            TryProduce(UnitType.Light, UnitType.Barracks, "Light");
         }
 
         public void TryProduceHeavy()
         {
-            TryProduce(ProducibleUnit.Heavy, UnitType.Barracks, "Produce Heavy");
+            TryProduce(UnitType.Heavy, UnitType.Barracks, "Heavy");
         }
 
         public void TryProduceRanged()
         {
-            TryProduce(ProducibleUnit.Ranged, UnitType.Barracks, "Produce Ranged");
+            TryProduce(UnitType.Ranged, UnitType.Barracks, "Ranged");
         }
 
         private void ResolveReferences()
@@ -702,10 +703,11 @@ namespace RTS.Presentation
             return accepted;
         }
 
-        private void TryProduce(ProducibleUnit produceType, UnitType requiredProducer, string title)
+        private void TryProduce(UnitType producedType, UnitType requiredProducer, string title)
         {
             if (RejectIfMultiSelectionActive())
             {
+                LastProductionCommandStatus = "Rejected: production requires a single selected building.";
                 return;
             }
 
@@ -713,53 +715,39 @@ namespace RTS.Presentation
             if (selected == null)
             {
                 SetRejected("No selected producer.");
+                LastProductionCommandStatus = "Rejected: no selected producer.";
                 return;
             }
 
             if (selected.Type != requiredProducer)
             {
-                SetRejected($"{title} requires selected {requiredProducer}.");
+                SetRejected($"Produce {title} requires selected {requiredProducer}.");
+                LastProductionCommandStatus = $"Rejected: Produce {title} requires selected {requiredProducer}.";
                 return;
             }
 
-            if (!TryFindFirstFreeAdjacentDirection(selected.GridPos, out Direction direction))
+            GameConfig config = MatchBootstrap.Instance != null ? MatchBootstrap.Instance.GetConfig() : null;
+            if (config == null || config.GetDefinition(producedType) == null)
             {
-                SetRejected("No adjacent free cell for produce command.");
+                SetRejected("Unit definition missing.");
+                LastProductionCommandStatus = "Rejected: unit definition missing.";
                 return;
             }
 
-            AgentAction action = new AgentAction(
-                actorPosition: selected.GridPos,
-                actionType: UnitActionType.Produce,
-                direction: direction,
-                produceUnitType: produceType,
-                attackTargetPosition: default,
-                isValid: true,
-                invalidationReason: string.Empty,
-                sourceType: ActionSourceType.Debug);
-
-            SubmitAgentAction(action, title);
-        }
-
-        private bool TryFindFirstFreeAdjacentDirection(GridPosition actorPos, out Direction direction)
-        {
-            foreach (Direction candidate in Enum.GetValues(typeof(Direction)))
+            if (!ProductionCommandHelper.TryCreateAction(selected, producedType, out AgentAction action, out string reason))
             {
-                GridPosition target = actorPos.Neighbour(candidate);
-                if (_gridManager == null || !_gridManager.IsInside(target))
-                {
-                    continue;
-                }
-
-                if (_gridManager.GetOccupant(target) == null)
-                {
-                    direction = candidate;
-                    return true;
-                }
+                SetRejected(reason);
+                LastProductionCommandStatus = "Rejected: " + reason;
+                return;
             }
 
-            direction = Direction.North;
-            return false;
+            if (SubmitAgentAction(action, "Produce " + title))
+            {
+                LastProductionCommandStatus = "Production started: " + title;
+                return;
+            }
+
+            LastProductionCommandStatus = "Rejected: " + LastCommandRejectedReason;
         }
 
         private bool TryResolvePointerTarget(out GridPosition targetCell, out UnitRuntime targetUnit, out bool hitAny)
