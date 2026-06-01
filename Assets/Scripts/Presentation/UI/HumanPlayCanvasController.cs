@@ -463,6 +463,7 @@ namespace RTS.Presentation.UI
         private void HandleMoveContextRequested(GridPosition targetCell, Vector2 screenPosition)
         {
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            Debug.Log($"[HumanMove3G1R] Canvas HandleMoveContextRequested target={targetCell} screen={screenPosition} selected={DescribeUnit(selected)} selectedCount={_selectionController?.SelectedUnits.Count ?? 0}");
             if (_selectionController != null && _selectionController.HasMultiSelection)
             {
                 _commandController?.PublishHumanOrderStatus("Group movement requires pathfinding/formation; use single selection.", false);
@@ -487,6 +488,7 @@ namespace RTS.Presentation.UI
         private void IssueMoveOrder(GridPosition targetCell)
         {
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            Debug.Log($"[HumanMove3G1R] Canvas IssueMove target={targetCell} selected={DescribeUnit(selected)}");
             bool accepted = _orderController != null && _orderController.IssueMove(selected, targetCell);
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
             _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "Move order unavailable.", accepted);
@@ -500,6 +502,13 @@ namespace RTS.Presentation.UI
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
             _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "No active order.", true);
             Refresh(force: true);
+        }
+
+        private static string DescribeUnit(UnitRuntime unit)
+        {
+            return unit == null
+                ? "<null>"
+                : $"{unit.name} owner={unit.Owner} type={unit.Type} grid={unit.GridPos}";
         }
 
         private Button CreateVerticalButton(RectTransform parent, string label, float yFromTop, UnityEngine.Events.UnityAction onClick, Sprite icon = null)

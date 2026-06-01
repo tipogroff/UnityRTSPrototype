@@ -75,8 +75,13 @@ namespace RTS.Presentation
                 return;
             }
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            bool pointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            int selectedCount = _selectionController != null ? _selectionController.SelectedUnits.Count : 0;
+            Debug.Log($"[HumanMove3G1R] RMB received pointerOverUi={pointerOverUi} selectedCount={selectedCount} primary={DescribeUnit(selected)} mode={CurrentMode}");
+            if (pointerOverUi)
             {
+                Debug.Log("[HumanMove3G1R] RMB context menu not opened reason=pointer over UI");
                 return;
             }
 
@@ -87,8 +92,11 @@ namespace RTS.Presentation
                     SetRejected("Pointer target is invalid for command submission.");
                 }
 
+                Debug.Log($"[HumanMove3G1R] RMB context menu not opened reason=pointer target unresolved hitAny={hitAny}");
                 return;
             }
+
+            Debug.Log($"[HumanMove3G1R] RMB resolved cell={targetCell} target={(targetUnit == null ? "free" : DescribeUnit(targetUnit))}");
 
             switch (CurrentMode)
             {
@@ -175,6 +183,7 @@ namespace RTS.Presentation
 
         public bool SubmitMoveForUnit(UnitRuntime unit, Direction direction)
         {
+            Debug.Log($"[HumanMove3G1R] SubmitMoveForUnit invoked unit={DescribeUnit(unit)} direction={direction} actorPosition={(unit != null ? unit.GridPos.ToString() : "<null>")}");
             if (unit == null)
             {
                 SetRejected("Move order unit is missing.");
@@ -197,7 +206,9 @@ namespace RTS.Presentation
                 invalidationReason: string.Empty,
                 sourceType: ActionSourceType.Debug);
 
-            return SubmitAgentAction(action, "Move order step");
+            bool accepted = SubmitAgentAction(action, "Move order step");
+            Debug.Log($"[HumanMove3G1R] SubmitMoveForUnit ActionApplier result accepted={accepted} reason={LastCommandRejectedReason}");
+            return accepted;
         }
 
         public void PublishHumanOrderStatus(string message, bool accepted)
@@ -388,6 +399,7 @@ namespace RTS.Presentation
             if (selected == null)
             {
                 SetRejected("No selected unit.");
+                Debug.Log("[HumanMove3G1R] Context menu not opened reason=no selected unit");
                 return;
             }
 
@@ -421,20 +433,24 @@ namespace RTS.Presentation
                 if (selected.IsBuilding || selected.Type == UnitType.Resource)
                 {
                     SetRejected("Selected object cannot move.");
+                    Debug.Log($"[HumanMove3G1R] Context menu not opened reason=selected object cannot move unit={DescribeUnit(selected)}");
                     return;
                 }
 
                 if (OnMoveContextRequested == null)
                 {
                     SetRejected("Move context menu is unavailable.");
+                    Debug.Log("[HumanMove3G1R] Context menu not opened reason=no OnMoveContextRequested subscriber");
                     return;
                 }
 
+                Debug.Log($"[HumanMove3G1R] Requesting context menu target={targetCell} selected={DescribeUnit(selected)} occupied=false");
                 OnMoveContextRequested.Invoke(targetCell, GetPointerScreenPosition());
                 return;
             }
 
             SetRejected("Context command is not available for this target.");
+            Debug.Log($"[HumanMove3G1R] Context menu not opened reason=occupied unsupported target={DescribeUnit(occupant)}");
         }
 
         private void TryMoveToCell(GridPosition targetCell)
@@ -716,6 +732,7 @@ namespace RTS.Presentation
                     targetCell = targetUnit.GridPos;
                 }
 
+                Debug.Log($"[HumanMove3G1R] Pointer raycast world={hit.point} resolvedCell={targetCell} occupied={targetUnit != null}");
                 return _gridManager.IsInside(targetCell);
             }
 
@@ -729,6 +746,7 @@ namespace RTS.Presentation
                 }
 
                 targetUnit = _gridManager.GetOccupant(targetCell);
+                Debug.Log($"[HumanMove3G1R] Pointer ground world={worldPoint} resolvedCell={targetCell} occupied={targetUnit != null}");
                 return true;
             }
 
@@ -881,6 +899,13 @@ namespace RTS.Presentation
 #else
             return Vector2.zero;
 #endif
+        }
+
+        private static string DescribeUnit(UnitRuntime unit)
+        {
+            return unit == null
+                ? "<null>"
+                : $"{unit.name} owner={unit.Owner} type={unit.Type} grid={unit.GridPos}";
         }
 
         private void SetAccepted(string message)

@@ -1,0 +1,83 @@
+{
+  "task": "HumanPlay-3G.1R",
+  "status": "partial_pass",
+  "root_cause": [
+    "HumanOrderController.IssueMove created MoveOrder without immediately queuing the first low-level Move command.",
+    "MoveOrder continuation submitted from MatchManager.OnStepCompleted before StepMatch cleared pending commands, so newly queued continuation commands were discarded by the same step cleanup."
+  ],
+  "fix": [
+    "IssueMove now calls MoveOrder.TryPrime immediately.",
+    "MatchManager exposes OnStepCleanupCompleted after normal buffer cleanup.",
+    "HumanOrderController submits continuation steps from OnStepCleanupCompleted.",
+    "Context menu invokes Move action before hiding."
+  ],
+  "context_menu_opened": null,
+  "context_menu_opened_status": "requires_physical_game_view_pointer_validation",
+  "issue_move_invoked": true,
+  "first_move_primed_immediately": true,
+  "action_applier_accepted": true,
+  "command_queued": true,
+  "stepmatch_executed": true,
+  "unit_gridpos_changed": true,
+  "adjacent_move_pass": true,
+  "far_move_pass": true,
+  "cancel_pass": true,
+  "direct_movement_bypass_present": false,
+  "action_decoder_changed": false,
+  "action_applier_changed": false,
+  "week7_baseline_changed": false,
+  "python_training_changed": false,
+  "runtime_mode": {
+    "mode": "AIvsPlayer2",
+    "has_human_side": true,
+    "human_side": "Player2"
+  },
+  "runtime_evidence": {
+    "adjacent_move": {
+      "issue_move_accepted": true,
+      "start": "(22, 22)",
+      "target": "(23, 22)",
+      "final": "(23, 22)",
+      "steps": 1
+    },
+    "far_move": {
+      "issue_move_accepted": true,
+      "start": "(23, 22)",
+      "target": "(23, 18)",
+      "grid_positions_by_step": [
+        "(23, 21)",
+        "(23, 20)",
+        "(23, 19)",
+        "(23, 18)"
+      ],
+      "steps": 4
+    },
+    "cancel": {
+      "issue_move_accepted": true,
+      "cancelled_at_step": 1,
+      "grid_at_cancel": "(22, 21)",
+      "grid_through_step_4": "(22, 21)"
+    }
+  },
+  "diagnostics_prefix": "[HumanMove3G1R]",
+  "command_route": [
+    "HumanOrderController.IssueMove",
+    "MoveOrder.TryPrime_or_post_cleanup_tick",
+    "PlayerCommandController.SubmitMoveForUnit",
+    "AgentAction_Move",
+    "ActionApplier.ApplyAction",
+    "MatchManager.ApplyCommand",
+    "MatchManager.StepMatch_normal_movement_phase"
+  ],
+  "compile_validation": {
+    "unity_csharp_errors": 0
+  },
+  "manual_game_view_validation_required": [
+    "LMB selection",
+    "RMB context menu opening",
+    "Move button pointer click",
+    "HUD visual status",
+    "Stop button pointer click",
+    "pause menu and camera interaction"
+  ]
+}

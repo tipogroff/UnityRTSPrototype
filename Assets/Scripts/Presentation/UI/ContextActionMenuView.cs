@@ -47,6 +47,7 @@ namespace RTS.Presentation.UI
             _moveAction = moveAction;
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
+            Debug.Log($"[HumanMove3G1R] Context menu opened target={targetCell} screen={screenPosition}");
 
             if (_canvasRect == null || _menu == null)
             {
@@ -71,8 +72,9 @@ namespace RTS.Presentation.UI
         {
             Action<GridPosition> action = _moveAction;
             GridPosition target = _targetCell;
-            Hide();
+            Debug.Log($"[HumanMove3G1R] Context menu Move clicked target={target}");
             action?.Invoke(target);
+            Hide();
         }
 
         private static Button CreateButton(RectTransform parent, string label, Sprite sprite, Color color)
