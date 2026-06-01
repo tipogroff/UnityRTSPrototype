@@ -56,6 +56,7 @@ namespace RTS.Presentation
 
         public event Action<string, bool> OnCommandStatusChanged;
         public event Action<GridPosition, Vector2> OnMoveContextRequested;
+        public event Action<ResourceNode, Vector2> OnGatherContextRequested;
 
         private void Awake()
         {
@@ -208,6 +209,20 @@ namespace RTS.Presentation
 
             bool accepted = SubmitAgentAction(action, "Move order step");
             Debug.Log($"[HumanMove3G1R] SubmitMoveForUnit ActionApplier result accepted={accepted} reason={LastCommandRejectedReason}");
+            return accepted;
+        }
+
+        public bool SubmitHarvestForUnit(UnitRuntime worker, Direction direction, out string reason)
+        {
+            bool accepted = SubmitWorkerDirectionalAction(worker, UnitActionType.Harvest, direction, "Harvest order step");
+            reason = accepted ? string.Empty : LastCommandRejectedReason;
+            return accepted;
+        }
+
+        public bool SubmitReturnForUnit(UnitRuntime worker, Direction direction, out string reason)
+        {
+            bool accepted = SubmitWorkerDirectionalAction(worker, UnitActionType.Return, direction, "Return order step");
+            reason = accepted ? string.Empty : LastCommandRejectedReason;
             return accepted;
         }
 
@@ -411,9 +426,22 @@ namespace RTS.Presentation
 
             if (selected.Type == UnitType.Worker
                 && _resourceManager != null
-                && _resourceManager.GetResourceNode(targetCell) != null)
+                && _resourceManager.GetResourceNode(targetCell) is ResourceNode resource)
             {
-                TryHarvestToCell(targetCell);
+                if (resource.IsExhausted)
+                {
+                    SetRejected("Resource is exhausted.");
+                    Debug.Log($"[HumanHarvest3G2R] Gather context rejected resourceGrid={resource.GridPosition} reason=Resource is exhausted.");
+                    return;
+                }
+
+                if (OnGatherContextRequested == null)
+                {
+                    SetRejected("Gather context menu is unavailable.");
+                    return;
+                }
+
+                OnGatherContextRequested.Invoke(resource, GetPointerScreenPosition());
                 return;
             }
 
@@ -643,6 +671,35 @@ namespace RTS.Presentation
                 sourceType: ActionSourceType.Debug);
 
             SubmitAgentAction(action, title);
+        }
+
+        private bool SubmitWorkerDirectionalAction(UnitRuntime worker, UnitActionType actionType, Direction direction, string title)
+        {
+            if (worker == null)
+            {
+                SetRejected($"{title} worker is missing.");
+                return false;
+            }
+
+            if (_humanSide != Owner.Player2 || worker.Owner != Owner.Player2 || worker.Type != UnitType.Worker)
+            {
+                SetRejected($"{title} requires a Player2 Worker.");
+                return false;
+            }
+
+            AgentAction action = new AgentAction(
+                actorPosition: worker.GridPos,
+                actionType: actionType,
+                direction: direction,
+                produceUnitType: ProducibleUnit.Worker,
+                attackTargetPosition: default,
+                isValid: true,
+                invalidationReason: string.Empty,
+                sourceType: ActionSourceType.Debug);
+
+            bool accepted = SubmitAgentAction(action, title);
+            Debug.Log($"[HumanHarvest3G2] {title} accepted={accepted} worker={DescribeUnit(worker)} direction={direction} reason={LastCommandRejectedReason}");
+            return accepted;
         }
 
         private void TryProduce(ProducibleUnit produceType, UnitType requiredProducer, string title)

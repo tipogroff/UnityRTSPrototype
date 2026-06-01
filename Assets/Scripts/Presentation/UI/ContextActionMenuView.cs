@@ -12,7 +12,11 @@ namespace RTS.Presentation.UI
         private RectTransform _canvasRect;
         private RectTransform _menu;
         private Action<GridPosition> _moveAction;
+        private Action<ResourceNode> _gatherAction;
         private GridPosition _targetCell;
+        private ResourceNode _resource;
+        private Button _moveButton;
+        private Button _gatherButton;
 
         public bool IsOpen => gameObject.activeSelf;
 
@@ -34,17 +38,23 @@ namespace RTS.Presentation.UI
             panel.type = panelSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             panel.color = panelColor;
 
-            Button move = CreateButton(_menu, "Move", buttonSprite, buttonColor);
-            RectTransform moveRect = move.GetComponent<RectTransform>();
+            _moveButton = CreateButton(_menu, "Move", buttonSprite, buttonColor);
+            RectTransform moveRect = _moveButton.GetComponent<RectTransform>();
             Stretch(moveRect, Vector2.zero, Vector2.one, new Vector2(8f, 8f), new Vector2(-8f, -8f));
-            move.onClick.AddListener(HandleMoveClicked);
+            _moveButton.onClick.AddListener(HandleMoveClicked);
+            _gatherButton = CreateButton(_menu, "Gather", buttonSprite, buttonColor);
+            RectTransform gatherRect = _gatherButton.GetComponent<RectTransform>();
+            Stretch(gatherRect, Vector2.zero, Vector2.one, new Vector2(8f, 8f), new Vector2(-8f, -8f));
+            _gatherButton.onClick.AddListener(HandleGatherClicked);
             gameObject.SetActive(false);
         }
 
         public void Show(Vector2 screenPosition, GridPosition targetCell, Action<GridPosition> moveAction)
         {
+            ClearPendingActions();
             _targetCell = targetCell;
             _moveAction = moveAction;
+            SetVisibleAction(_moveButton);
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
             Debug.Log($"[HumanMove3G1R] Context menu opened target={targetCell} screen={screenPosition}");
@@ -62,10 +72,39 @@ namespace RTS.Presentation.UI
             _menu.anchoredPosition = local;
         }
 
+        public void ShowGather(Vector2 screenPosition, ResourceNode resource, Action<ResourceNode> gatherAction)
+        {
+            ClearPendingActions();
+            _resource = resource;
+            _gatherAction = gatherAction;
+            SetVisibleAction(_gatherButton);
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+
+            if (_canvasRect == null || _menu == null)
+            {
+                return;
+            }
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, screenPosition, null, out Vector2 local);
+            Vector2 half = _canvasRect.rect.size * 0.5f;
+            Vector2 margin = _menu.sizeDelta * 0.5f + new Vector2(8f, 8f);
+            local.x = Mathf.Clamp(local.x, -half.x + margin.x, half.x - margin.x);
+            local.y = Mathf.Clamp(local.y, -half.y + margin.y, half.y - margin.y);
+            _menu.anchoredPosition = local;
+        }
+
         public void Hide()
         {
-            _moveAction = null;
+            ClearPendingActions();
             gameObject.SetActive(false);
+        }
+
+        private void ClearPendingActions()
+        {
+            _moveAction = null;
+            _gatherAction = null;
+            _resource = null;
         }
 
         private void HandleMoveClicked()
@@ -77,9 +116,23 @@ namespace RTS.Presentation.UI
             Hide();
         }
 
+        private void HandleGatherClicked()
+        {
+            Action<ResourceNode> action = _gatherAction;
+            ResourceNode resource = _resource;
+            action?.Invoke(resource);
+            Hide();
+        }
+
+        private void SetVisibleAction(Button visible)
+        {
+            _moveButton?.gameObject.SetActive(visible == _moveButton);
+            _gatherButton?.gameObject.SetActive(visible == _gatherButton);
+        }
+
         private static Button CreateButton(RectTransform parent, string label, Sprite sprite, Color color)
         {
-            GameObject go = new GameObject("MoveButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            GameObject go = new GameObject(label + "Button", typeof(RectTransform), typeof(Image), typeof(Button));
             go.transform.SetParent(parent, false);
             Image image = go.GetComponent<Image>();
             image.sprite = sprite;

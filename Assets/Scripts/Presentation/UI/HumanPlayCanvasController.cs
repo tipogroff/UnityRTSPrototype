@@ -82,6 +82,7 @@ namespace RTS.Presentation.UI
             if (_commandController != null)
             {
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
+                _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
             }
         }
 
@@ -457,6 +458,8 @@ namespace RTS.Presentation.UI
             {
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
                 _commandController.OnMoveContextRequested += HandleMoveContextRequested;
+                _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
+                _commandController.OnGatherContextRequested += HandleGatherContextRequested;
             }
         }
 
@@ -492,6 +495,41 @@ namespace RTS.Presentation.UI
             bool accepted = _orderController != null && _orderController.IssueMove(selected, targetCell);
             HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
             _commandController?.PublishHumanOrderStatus(order != null ? order.StatusText : "Move order unavailable.", accepted);
+            Refresh(force: true);
+        }
+
+        private void HandleGatherContextRequested(ResourceNode resource, Vector2 screenPosition)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            if (_selectionController != null && _selectionController.HasMultiSelection)
+            {
+                _commandController?.PublishHumanOrderStatus("Gather requires a single selected Worker.", false);
+                return;
+            }
+
+            if (selected == null || selected.Owner != Owner.Player2 || selected.Type != UnitType.Worker)
+            {
+                _commandController?.PublishHumanOrderStatus("Gather requires a selected Player2 Worker.", false);
+                return;
+            }
+
+            if (resource == null || resource.IsExhausted)
+            {
+                _commandController?.PublishHumanOrderStatus("Resource is exhausted.", false);
+                return;
+            }
+
+            _contextMenu?.ShowGather(screenPosition, resource, IssueHarvestLoop);
+        }
+
+        private void IssueHarvestLoop(ResourceNode resource)
+        {
+            UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
+            string reason = "Gather order controller is unavailable.";
+            bool accepted = _orderController != null && _orderController.IssueHarvestLoop(selected, resource, out reason);
+            HumanUnitOrder order = _orderController != null ? _orderController.GetOrderStatus(selected) : null;
+            string status = order != null ? order.StatusText : reason;
+            _commandController?.PublishHumanOrderStatus(status, accepted);
             Refresh(force: true);
         }
 

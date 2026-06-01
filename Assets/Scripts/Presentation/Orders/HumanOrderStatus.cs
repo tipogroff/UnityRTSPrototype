@@ -6,6 +6,10 @@ namespace RTS.Presentation.Orders
         Pending,
         Moving,
         WaitingForStep,
+        MovingToResource,
+        Harvesting,
+        MovingToBase,
+        ReturningToBase,
         Completed,
         Failed,
         Cancelled

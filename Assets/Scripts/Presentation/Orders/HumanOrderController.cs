@@ -13,6 +13,7 @@ namespace RTS.Presentation.Orders
         [SerializeField] private PlayerCommandController _commandController;
         [SerializeField] private PlayerSelectionController _selectionController;
         [SerializeField] private MatchManager _matchManager;
+        [SerializeField] private UnitRegistry _unitRegistry;
 
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _activeOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _visibleTerminalOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
@@ -77,17 +78,68 @@ namespace RTS.Presentation.Orders
             return primed;
         }
 
-        public void CancelOrder(UnitRuntime unit)
+        public bool IssueHarvestLoop(UnitRuntime worker, ResourceNode resource, out string reason)
+        {
+            ResolveReferences();
+            bool cancelledPrevious = worker != null && _activeOrders.ContainsKey(worker);
+            Debug.Log($"[HumanHarvest3G2R] IssueHarvestLoop worker={DescribeUnit(worker)} carry={worker?.CarriedResources ?? 0} resourceGrid={(resource != null ? resource.GridPosition.ToString() : "<null>")} resourceAmount={resource?.CurrentResources ?? 0} previousOrderCancelled={cancelledPrevious}");
+            if (worker == null || !worker.IsAlive || worker.Owner != Owner.Player2 || worker.Type != UnitType.Worker)
+            {
+                reason = "Gather requires a living Player2 Worker.";
+                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            if (resource == null)
+            {
+                reason = "Resource is unavailable.";
+                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            if (resource.IsExhausted)
+            {
+                reason = "Resource is exhausted.";
+                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            if (_pathfinding == null || _commandController == null || _matchManager == null || _unitRegistry == null)
+            {
+                reason = "Gather order services are unavailable.";
+                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                PublishFailure(worker, reason);
+                return false;
+            }
+
+            CancelOrder(worker);
+            _visibleTerminalOrders.Remove(worker);
+            var order = new HarvestLoopOrder(worker, resource, _pathfinding, _commandController, _matchManager, _unitRegistry);
+            _activeOrders[worker] = order;
+            OnOrderStatusChanged?.Invoke(worker, order);
+            bool primed = order.TryPrime();
+            OnOrderStatusChanged?.Invoke(worker, order);
+            PublishAndRetainTerminal(worker, order);
+            reason = primed ? string.Empty : order.FailureReason;
+            Debug.Log($"[HumanHarvest3G2R] IssueHarvestLoop accepted={primed} reason={reason} status={order.Status} text={order.StatusText}");
+            return primed;
+        }
+
+        public bool CancelOrder(UnitRuntime unit)
         {
             if (unit == null || !_activeOrders.TryGetValue(unit, out HumanUnitOrder order))
             {
-                return;
+                return false;
             }
 
             order.Cancel();
             _activeOrders.Remove(unit);
             _visibleTerminalOrders[unit] = order;
             OnOrderStatusChanged?.Invoke(unit, order);
+            return true;
         }
 
         public void CancelAllSelectedOrders()
@@ -121,9 +173,15 @@ namespace RTS.Presentation.Orders
             return terminal;
         }
 
+        public string GetOrderStatusText(UnitRuntime unit)
+        {
+            return GetOrderStatus(unit)?.StatusText ?? "Order: none.";
+        }
+
         private void HandleStepCompleted(MatchStateSnapshot snapshot)
         {
             Debug.Log($"[HumanMove3G1R] OnStepCleanupCompleted step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
+            Debug.Log($"[HumanHarvest3G2R] Step cleanup step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
             TickActiveOrdersAfterCompletedStep();
         }
 
@@ -212,6 +270,7 @@ namespace RTS.Presentation.Orders
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();
             _selectionController ??= FindFirstObjectByType<PlayerSelectionController>();
             _matchManager ??= MatchManager.Instance != null ? MatchManager.Instance : FindFirstObjectByType<MatchManager>();
+            _unitRegistry ??= UnitRegistry.Instance != null ? UnitRegistry.Instance : FindFirstObjectByType<UnitRegistry>();
         }
 
         private void Subscribe()

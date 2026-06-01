@@ -109,6 +109,68 @@ namespace RTS.Presentation.Orders
             return false;
         }
 
+        public bool TryFindPathToAdjacent(
+            UnitRuntime unit,
+            GridPosition targetCell,
+            out List<GridPosition> path,
+            out GridPosition adjacentCell,
+            out string reason)
+        {
+            path = new List<GridPosition>();
+            adjacentCell = default;
+            reason = string.Empty;
+            ResolveReferences();
+
+            if (unit == null)
+            {
+                reason = "Cannot find interaction path: unit is missing.";
+                return false;
+            }
+
+            if (_gridManager == null)
+            {
+                reason = "Cannot find interaction path: GridManager is unavailable.";
+                return false;
+            }
+
+            if (!_gridManager.IsInside(targetCell))
+            {
+                reason = $"Cannot interact: target {targetCell} is outside the map.";
+                return false;
+            }
+
+            List<GridPosition> bestPath = null;
+            foreach (GridPosition candidate in GetCardinalNeighbours(targetCell))
+            {
+                if (!IsCellAvailableForMove(unit, candidate, allowCurrentUnitCell: true))
+                {
+                    continue;
+                }
+
+                if (!TryFindPath(unit, candidate, out List<GridPosition> candidatePath, out _))
+                {
+                    continue;
+                }
+
+                if (bestPath != null && candidatePath.Count >= bestPath.Count)
+                {
+                    continue;
+                }
+
+                bestPath = candidatePath;
+                adjacentCell = candidate;
+            }
+
+            if (bestPath == null)
+            {
+                reason = $"Cannot interact: no reachable free cardinal-adjacent cell near {targetCell}.";
+                return false;
+            }
+
+            path.AddRange(bestPath);
+            return true;
+        }
+
         public bool IsCellAvailableForMove(UnitRuntime unit, GridPosition cell, bool allowCurrentUnitCell = false)
         {
             ResolveReferences();
