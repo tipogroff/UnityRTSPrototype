@@ -4,6 +4,7 @@ using RTS.Core;
 using RTS.Gameplay;
 using RTS.ML;
 using RTS.MLAgents.Stage7B;
+using RTS.Presentation.CameraControls;
 using RTS.Presentation.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ namespace RTS.Presentation
         [Header("References")]
         [SerializeField] private EpisodeController _episodeController;
         [SerializeField] private MlAgentsTrainingBootstrap _trainingBootstrap;
+        [SerializeField] private RtsCameraController _cameraController;
 
         [Header("AI Defaults")]
         [SerializeField] private Week6PlayerControlMode _preferredAiMode = Week6PlayerControlMode.StudentInference;
@@ -116,6 +118,7 @@ namespace RTS.Presentation
 
             HumanPlayCommandSourceDiagnostics.ResetHistory();
             _episodeController.StartNewEpisode();
+            FocusCameraForMode(HumanPlayMode.AIvsAI, Owner.Neutral);
             SetState(HumanPlayMode.AIvsAI, false, Owner.Neutral, "AI vs AI started.");
         }
 
@@ -153,6 +156,7 @@ namespace RTS.Presentation
 
             HumanPlayCommandSourceDiagnostics.ResetHistory();
             _episodeController.StartNewEpisode();
+            FocusCameraForMode(HumanPlayMode.AIvsBot, Owner.Neutral);
             SetState(HumanPlayMode.AIvsBot, false, Owner.Neutral, $"AI vs Bot started. Player1 AI mode: {aiMode}.");
         }
 
@@ -182,6 +186,7 @@ namespace RTS.Presentation
             {
                 HumanPlayCommandSourceDiagnostics.ResetHistory();
                 _episodeController.ResetEpisode();
+                FocusCameraForMode(_state.Mode, _state.HumanSide);
                 SetState(_state.Mode, _state.HasHumanSide, _state.HumanSide, "Match restarted.");
                 return;
             }
@@ -192,6 +197,11 @@ namespace RTS.Presentation
                 string diagnostics = started
                     ? "Match restarted through MlAgentsTrainingBootstrap."
                     : "MlAgentsTrainingBootstrap rejected restart request.";
+                if (started)
+                {
+                    FocusCameraForMode(_state.Mode, _state.HumanSide);
+                }
+
                 SetState(_state.Mode, _state.HasHumanSide, _state.HumanSide, diagnostics);
                 return;
             }
@@ -260,6 +270,7 @@ namespace RTS.Presentation
             }
 
             _episodeController.StartNewEpisode();
+            FocusCameraForMode(mode, humanSide);
             if (_logDiagnostics)
             {
                 MatchPhase phaseAfter = _episodeController.GetMatchState().Phase;
@@ -407,6 +418,39 @@ namespace RTS.Presentation
             if (_trainingBootstrap == null)
             {
                 _trainingBootstrap = FindFirstObjectByType<MlAgentsTrainingBootstrap>();
+            }
+
+            if (_cameraController == null)
+            {
+                _cameraController = FindFirstObjectByType<RtsCameraController>();
+            }
+        }
+
+        private void FocusCameraForMode(HumanPlayMode mode, Owner humanSide)
+        {
+            if (_cameraController == null)
+            {
+                ResolveReferences();
+            }
+
+            if (_cameraController == null)
+            {
+                EmitDiagnostic("RtsCameraController is missing. Match start camera focus skipped.");
+                return;
+            }
+
+            switch (mode)
+            {
+                case HumanPlayMode.AIvsPlayer2:
+                    _cameraController.FocusOnOwnerAfterMatchStart(Owner.Player2);
+                    break;
+                case HumanPlayMode.AIvsBot:
+                case HumanPlayMode.AIvsAI:
+                    _cameraController.FocusOnOwnerAfterMatchStart(Owner.Player1);
+                    break;
+                default:
+                    _cameraController.FocusOnOwnerAfterMatchStart(humanSide);
+                    break;
             }
         }
 
