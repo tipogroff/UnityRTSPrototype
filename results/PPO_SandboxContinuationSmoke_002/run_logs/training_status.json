@@ -1,0 +1,38 @@
+{
+    "Stage7B_RTS_Student": {
+        "checkpoints": [
+            {
+                "steps": 1975,
+                "file_path": "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1975.onnx",
+                "reward": 1.9299999102950096,
+                "creation_time": 1780362621.3444214,
+                "auxillary_file_paths": [
+                    "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1975.pt"
+                ]
+            },
+            {
+                "steps": 2039,
+                "file_path": "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2039.onnx",
+                "reward": 1.9299999102950096,
+                "creation_time": 1780362621.531599,
+                "auxillary_file_paths": [
+                    "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2039.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2039,
+            "file_path": "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student.onnx",
+            "reward": 1.9299999102950096,
+            "creation_time": 1780362621.531599,
+            "auxillary_file_paths": [
+                "results\\PPO_SandboxContinuationSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2039.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}

@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_005\\Stage7B_RTS_Student\\checkpoint.pt",
+        "SHA256":  "67713FB964824A0DF39EC2DF2DEC53865DEA29A371DD2F8DC35E9529B736FDE1",
+        "LastWriteUtc":  "2026-05-11T08:23:21.0489521Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_009\\Stage7B_RTS_Student.onnx",
+        "SHA256":  "6CB30828EBF7029EF0D02AB91707A18A9FA6467FE7D0CE187AD554C57A7BE2D4",
+        "LastWriteUtc":  "2026-05-11T09:14:26.3612408Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_009\\Stage7B_RTS_Student\\checkpoint.pt",
+        "SHA256":  "EE0C8271B7E1EE0FF2CD169952AD6E4D2CEC36B5E4C8AFB758C27627EAE2175A",
+        "LastWriteUtc":  "2026-05-11T09:14:26.2671025Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_009\\Stage7B_RTS_Student\\Stage7B_RTS_Student-10048.onnx",
+        "SHA256":  "6CB30828EBF7029EF0D02AB91707A18A9FA6467FE7D0CE187AD554C57A7BE2D4",
+        "LastWriteUtc":  "2026-05-11T09:14:26.3206715Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_010_PostKickConfirm\\Stage7B_RTS_Student.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T10:17:17.5525698Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_010_PostKickConfirm\\Stage7B_RTS_Student\\checkpoint.pt",
+        "SHA256":  "9B25B6B147AE5BF877C9E3C76104EA04168F3CE86FF7CF2ACC82EB33DBE02EB9",
+        "LastWriteUtc":  "2026-05-11T10:17:17.4653240Z"
+    },
+    {
+        "Path":  "results\\Stage7B_ImitationSmoke_010_PostKickConfirm\\Stage7B_RTS_Student\\Stage7B_RTS_Student-10053.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T10:17:17.5199445Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T14:37:22.5002589Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\checkpoint.pt",
+        "SHA256":  "A396768E8EE81AFF553C5764F25A559DA892F3634789F069E0C41EB0E1C59FBB",
+        "LastWriteUtc":  "2026-05-11T14:37:22.4125755Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1941.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T14:37:22.2898218Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_001\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2005.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T14:37:22.4691946Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_002\\Stage7B_RTS_Student.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T16:47:11.0946497Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_002\\Stage7B_RTS_Student\\checkpoint.pt",
+        "SHA256":  "686E1497A24A07052111769A1F2756FFFF7442AFD5C09DDBD4406407DD1A2578",
+        "LastWriteUtc":  "2026-05-11T16:47:11.0028952Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-101.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T16:33:53.7992713Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-1984.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T16:47:10.8805578Z"
+    },
+    {
+        "Path":  "results\\Stage7B_PPOFineTuneSmoke_002\\Stage7B_RTS_Student\\Stage7B_RTS_Student-2048.onnx",
+        "SHA256":  "C96059B1A608E3A7B8AA501F4F04965E8A2C91AEF478BF25DD16D664A219696A",
+        "LastWriteUtc":  "2026-05-11T16:47:11.0620404Z"
+    }
+]
