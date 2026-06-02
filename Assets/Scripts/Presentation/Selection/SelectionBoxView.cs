@@ -12,17 +12,31 @@ namespace RTS.Presentation.Selection
         private RectTransform _root;
         private RectTransform _box;
         private RectTransform _parentRect;
+        private bool _isTearingDown;
 
         public void Initialize(RectTransform parentRect)
         {
+            if (_isTearingDown)
+            {
+                return;
+            }
+
             _parentRect = parentRect;
-            EnsureBox();
+            if (!EnsureBox())
+            {
+                return;
+            }
+
             Hide();
         }
 
         public void Show(Vector2 startScreen, Vector2 currentScreen)
         {
-            EnsureBox();
+            if (!EnsureBox())
+            {
+                return;
+            }
+
             if (_parentRect == null)
             {
                 _parentRect = transform.parent as RectTransform;
@@ -50,15 +64,46 @@ namespace RTS.Presentation.Selection
 
         public void Hide()
         {
-            EnsureBox();
+            if (!EnsureBox())
+            {
+                return;
+            }
+
             _box.gameObject.SetActive(false);
         }
 
-        private void EnsureBox()
+        private void OnEnable()
         {
+            _isTearingDown = false;
+        }
+
+        private void OnDisable()
+        {
+            _isTearingDown = true;
             if (_box != null)
             {
-                return;
+                _box.gameObject.SetActive(false);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            _isTearingDown = true;
+            _box = null;
+            _root = null;
+            _parentRect = null;
+        }
+
+        private bool EnsureBox()
+        {
+            if (_isTearingDown || !isActiveAndEnabled)
+            {
+                return false;
+            }
+
+            if (_box != null)
+            {
+                return true;
             }
 
             _root = GetComponent<RectTransform>();
@@ -83,6 +128,7 @@ namespace RTS.Presentation.Selection
             Outline outline = boxObject.GetComponent<Outline>();
             outline.effectColor = _borderColor;
             outline.effectDistance = new Vector2(2f, -2f);
+            return true;
         }
     }
 }

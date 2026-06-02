@@ -100,6 +100,13 @@ namespace RTS.Presentation.UI
 
         private void OnDestroy()
         {
+            if (_selectionManager != null)
+            {
+                _selectionManager.ClearSelectionBoxView(_selectionBoxView);
+            }
+
+            _selectionBoxView = null;
+
             if (_commandController != null)
             {
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
