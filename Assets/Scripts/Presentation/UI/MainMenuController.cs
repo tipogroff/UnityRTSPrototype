@@ -143,37 +143,41 @@ namespace RTS.Presentation.UI
             shade.color = new Color(0f, 0f, 0f, 0.35f);
             _settingsPanel = modalRoot.gameObject;
 
-            RectTransform panel = CreatePanel("SettingsPanel", modalRoot, new Vector2(760f, 700f), _panelSprite, _panelColor);
+            RectTransform panel = CreatePanel("SettingsPanel", modalRoot, new Vector2(700f, 560f), _panelSprite, _panelColor);
             panel.anchorMin = new Vector2(0.5f, 0.5f);
             panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.anchoredPosition = Vector2.zero;
 
-            VerticalLayoutGroup layout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(56, 56, 30, 30);
-            layout.spacing = 12f;
-            layout.childAlignment = TextAnchor.UpperCenter;
-            layout.childControlWidth = true;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
-
             Text title = CreateText("Title", panel, "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438", 30, FontStyle.Bold, TextAnchor.MiddleCenter);
-            AddLayout(title.gameObject, -1f, 48f);
+            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -48f), new Vector2(620f, 48f));
 
-            _gridSettingValue = CreateVisualSettingsRow(panel, "GridRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0441\u0435\u0442\u043a\u0443", DemoVisualSettings.ToggleGrid);
-            _unitMarkersSettingValue = CreateVisualSettingsRow(panel, "UnitMarkersRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043c\u0430\u0440\u043a\u0435\u0440\u044b \u044e\u043d\u0438\u0442\u043e\u0432", DemoVisualSettings.ToggleUnitMarkers);
-            _controlHintsSettingValue = CreateVisualSettingsRow(panel, "ControlHintsRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u0438 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f", DemoVisualSettings.ToggleControlHints);
-            _graphicsQualitySettingValue = CreateVisualSettingsRow(panel, "GraphicsQualityRow", "\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0433\u0440\u0430\u0444\u0438\u043a\u0438", DemoVisualSettings.CycleGraphicsQuality);
-            _cameraHeightSettingValue = CreateVisualSettingsRow(panel, "CameraHeightRow", "\u0412\u044b\u0441\u043e\u0442\u0430 \u043a\u0430\u043c\u0435\u0440\u044b", DemoVisualSettings.CycleCameraHeight);
-            _interfaceScaleSettingValue = CreateVisualSettingsRow(panel, "InterfaceScaleRow", "\u041c\u0430\u0441\u0448\u0442\u0430\u0431 \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430", DemoVisualSettings.CycleInterfaceScale);
+            RectTransform content = new GameObject("SettingsContent", typeof(RectTransform)).GetComponent<RectTransform>();
+            content.SetParent(panel, false);
+            SetRect(content, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -229f), new Vector2(610f, 282f));
+
+            _gridSettingValue = CreateVisualSettingsRow(content, "GridRow", "\u0421\u0435\u0442\u043a\u0430", 21f, DemoVisualSettings.ToggleGrid);
+            _unitMarkersSettingValue = CreateVisualSettingsRow(content, "UnitMarkersRow", "\u041c\u0430\u0440\u043a\u0435\u0440\u044b \u044e\u043d\u0438\u0442\u043e\u0432", 69f, DemoVisualSettings.ToggleUnitMarkers);
+            _controlHintsSettingValue = CreateVisualSettingsRow(content, "ControlHintsRow", "\u041f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u0438 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f", 117f, DemoVisualSettings.ToggleControlHints);
+            _graphicsQualitySettingValue = CreateVisualSettingsRow(content, "GraphicsQualityRow", "\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0433\u0440\u0430\u0444\u0438\u043a\u0438", 165f, DemoVisualSettings.CycleGraphicsQuality);
+            _cameraHeightSettingValue = CreateVisualSettingsRow(content, "CameraHeightRow", "\u0412\u044b\u0441\u043e\u0442\u0430 \u043a\u0430\u043c\u0435\u0440\u044b", 213f, DemoVisualSettings.CycleCameraHeight);
+            _interfaceScaleSettingValue = CreateVisualSettingsRow(content, "InterfaceScaleRow", "\u041c\u0430\u0441\u0448\u0442\u0430\u0431 \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430", 261f, DemoVisualSettings.CycleInterfaceScale);
 
             _settingsStatus = CreateText("SettingsStatus", panel, string.Empty, 18, FontStyle.Bold, TextAnchor.MiddleCenter);
-            AddLayout(_settingsStatus.gameObject, -1f, 30f);
+            SetRect(_settingsStatus.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -410f), new Vector2(610f, 30f));
 
-            Button apply = CreateMenuButton(panel, "\u041f\u0440\u0438\u043c\u0435\u043d\u0438\u0442\u044c", null, ApplySettings);
-            AddLayout(apply.gameObject, 280f, 54f);
-            Button back = CreateMenuButton(panel, "\u041d\u0430\u0437\u0430\u0434", null, HideSettings);
-            AddLayout(back.gameObject, 280f, 54f);
+            RectTransform footer = new GameObject("Footer", typeof(RectTransform), typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();
+            footer.SetParent(panel, false);
+            SetRect(footer, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -474f), new Vector2(560f, 52f));
+            HorizontalLayoutGroup footerLayout = footer.GetComponent<HorizontalLayoutGroup>();
+            footerLayout.spacing = 20f;
+            footerLayout.childAlignment = TextAnchor.MiddleCenter;
+            footerLayout.childControlWidth = false;
+            footerLayout.childControlHeight = false;
+            footerLayout.childForceExpandWidth = false;
+            footerLayout.childForceExpandHeight = false;
+
+            CreateCompactSettingsButton(footer, "\u041f\u0440\u0438\u043c\u0435\u043d\u0438\u0442\u044c", ApplySettings, new Vector2(250f, 48f));
+            CreateCompactSettingsButton(footer, "\u041d\u0430\u0437\u0430\u0434", HideSettings, new Vector2(250f, 48f));
             RefreshSettingsLabels();
         }
 
@@ -183,6 +187,8 @@ namespace RTS.Presentation.UI
             {
                 RefreshSettingsLabels();
                 _settingsStatus.text = string.Empty;
+                _mainPanel?.SetActive(false);
+                _modeSelectPanel?.SetActive(false);
                 _settingsPanel.SetActive(true);
             }
         }
@@ -192,33 +198,42 @@ namespace RTS.Presentation.UI
             if (_settingsPanel != null)
             {
                 _settingsPanel.SetActive(false);
+                ShowMainPanel();
             }
         }
 
-        private Text CreateVisualSettingsRow(RectTransform parent, string name, string label, System.Action update)
+        private Text CreateVisualSettingsRow(RectTransform parent, string name, string label, float yFromTop, System.Action update)
         {
             RectTransform row = CreateSettingsRow(parent, name);
-            Text settingLabel = CreateText("Label", row, label, 20, FontStyle.Normal, TextAnchor.MiddleLeft);
-            AddLayout(settingLabel.gameObject, 430f, 46f);
+            SetRect(row, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -yFromTop), new Vector2(610f, 42f));
+            Text settingLabel = CreateText("Label", row, label, 18, FontStyle.Normal, TextAnchor.MiddleLeft);
+            settingLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            AddLayout(settingLabel.gameObject, 390f, 42f);
             Button valueButton = CreateCompactSettingsButton(row, update);
-            AddLayout(valueButton.gameObject, 190f, 44f);
+            AddLayout(valueButton.gameObject, 190f, 42f);
             return valueButton.GetComponentInChildren<Text>();
         }
 
         private Button CreateCompactSettingsButton(RectTransform parent, System.Action update)
         {
-            Button button = CreateButton("ValueButton", parent, string.Empty, null, new Vector2(190f, 44f), () =>
+            return CreateCompactSettingsButton(parent, string.Empty, () =>
             {
                 update?.Invoke();
                 RefreshSettingsLabels();
                 _settingsStatus.text = string.Empty;
-            });
+            }, new Vector2(190f, 42f));
+        }
+
+        private Button CreateCompactSettingsButton(RectTransform parent, string label, System.Action update, Vector2 size)
+        {
+            Button button = CreateButton("ValueButton", parent, label, null, size, () => update?.Invoke());
             button.image.sprite = _buttonSprite;
             button.image.type = _buttonSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             button.image.color = _buttonColor;
             SpriteState state = button.spriteState;
             state.pressedSprite = _buttonPressedSprite;
             button.spriteState = state;
+            AddLayout(button.gameObject, size.x, size.y);
             return button;
         }
 
@@ -381,10 +396,10 @@ namespace RTS.Presentation.UI
             row.SetParent(parent, false);
             AddLayout(row.gameObject, -1f, 52f);
             HorizontalLayoutGroup layout = row.GetComponent<HorizontalLayoutGroup>();
-            layout.spacing = 24f;
+            layout.spacing = 30f;
             layout.childAlignment = TextAnchor.MiddleLeft;
-            layout.childControlWidth = false;
-            layout.childControlHeight = false;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
             return row;
