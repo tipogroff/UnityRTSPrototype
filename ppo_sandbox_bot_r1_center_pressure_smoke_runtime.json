@@ -1,0 +1,23 @@
+﻿{
+  "sandbox_scene": "Assets/Scenes/PPO_TrainingSandbox_Player1AI_vs_ScriptedBot.unity",
+  "center_pressure_enabled": true,
+  "scripted_opponent_profile": "CenterPressure",
+  "student_agent_found": true,
+  "bootstrap_found": true,
+  "scripted_opponent_active": true,
+  "duplicate_agent_found": false,
+  "non_student_agent_count": 0,
+  "bot_decisions_executed": 80,
+  "bot_actions_attempted": 2473,
+  "bot_commands_accepted": 2473,
+  "bot_commands_rejected": 0,
+  "center_rally_moves": 319,
+  "center_area_visits": 60,
+  "edge_lane_moves": 162,
+  "base_idle_steps": 3,
+  "first_center_move_step": 20,
+  "first_attack_step": -1,
+  "avg_combat_distance_to_center": 7.911,
+  "permanent_base_idle": false,
+  "center_pressure_observed": false
+}

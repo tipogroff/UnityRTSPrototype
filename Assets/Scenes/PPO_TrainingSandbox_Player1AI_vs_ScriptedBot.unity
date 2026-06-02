@@ -1484,6 +1484,7 @@ MonoBehaviour:
   _startResources: 60
   _stage7BRuntimeMode: 2
   _forceTrainerControlledMode: 1
+  _scriptedOpponentTacticProfile: 1
 --- !u!4 &1539652542
 Transform:
   m_ObjectHideFlags: 0
