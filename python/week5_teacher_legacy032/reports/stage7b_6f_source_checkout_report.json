@@ -1,0 +1,69 @@
+{
+  "stage": "Stage7B-6F",
+  "date": "2026-05-10",
+  "source_provenance_status": "inferred_with_strong_evidence",
+  "source_checkout_status": "success",
+  "package": {
+    "name": "gym-microrts",
+    "version": "0.3.2",
+    "dist_info_path": "python/week5_teacher_reference/.venv_microrts032_reference/lib/site-packages/gym_microrts-0.3.2.dist-info",
+    "pip_show_location": "python/week5_teacher_reference/.venv_microrts032_reference/lib/site-packages",
+    "direct_url_json_present": false,
+    "editable_install_indicators": {
+      "egg_link_present": false,
+      "easy_install_pth_present": false,
+      "installed_microrts_dot_git_present": true,
+      "installed_microrts_dot_git_gitdir_resolves": false
+    }
+  },
+  "provenance_evidence": {
+    "metadata_repo_url": "https://github.com/vwxyzjn/gym-microrts",
+    "metadata_repo_signal": "METADATA README badge and clone instructions reference vwxyzjn/gym-microrts",
+    "versioneer_full_revisionid": "32e0da83c5b279800c27ca0bb2544ed660458b9f",
+    "versioneer_version": "v0.3.2",
+    "installed_build_sh_present": true,
+    "installed_classpath_present": true,
+    "installed_project_present": true,
+    "installed_drone_present": true,
+    "installed_src_present": false,
+    "installed_lib_present": false,
+    "microrts_jar_provenance_inference": "Pinned root commit 32e0da8 references microrts submodule commit 59d6ff0; this explains installed runtime jar classes and build descriptors"
+  },
+  "checkout": {
+    "path": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source",
+    "source_acquisition_command": "git clone --recursive https://github.com/vwxyzjn/gym-microrts.git python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source; git checkout 32e0da83c5b279800c27ca0bb2544ed660458b9f; git submodule update --init --recursive",
+    "root_remote": "https://github.com/vwxyzjn/gym-microrts.git",
+    "root_commit": "32e0da83c5b279800c27ca0bb2544ed660458b9f",
+    "root_tag_or_describe": "v0.3.2",
+    "root_dirty": true,
+    "root_dirty_reason": "untracked build_stage7b_unmodified/ artifact directory",
+    "microrts_submodule_remote": "https://github.com/Farama-Foundation/MicroRTS.git",
+    "microrts_submodule_commit": "59d6ff014d1522396c112c161f98be40d4b453e3",
+    "microrts_submodule_tag_or_describe": "59d6ff0",
+    "microrts_submodule_dirty": false
+  },
+  "source_inventory": {
+    "java_source_found": true,
+    "jni_gridnet_client_source_path": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/tests/JNIGridnetClient.java",
+    "jni_gridnet_vec_client_source_path": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/tests/JNIGridnetVecClient.java",
+    "jni_gridnet_self_play_source_path": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/tests/JNIGridnetClientSelfPlay.java",
+    "required_runtime_sources": {
+      "rts/GameState.java": true,
+      "rts/PhysicalGameState.java": true,
+      "rts/units/Unit.java": true,
+      "rts/Player.java": true
+    },
+    "build_descriptor_found": true,
+    "build_tool": "build.sh (shell pipeline around javac/jar)",
+    "build_descriptors": [
+      "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/setup.py",
+      "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/build.sh"
+    ],
+    "source_contains_required_classes": true
+  },
+  "decision_gate_inputs": {
+    "source_found": true,
+    "checkout_succeeded": true,
+    "direct_rebuild_from_installed_package": "NO_GO (installed package lacks src/ and lib/ required by build.sh)"
+  }
+}

@@ -15,6 +15,14 @@ using UnityEditor;
 
 namespace RTS.MLAgents.Stage7B
 {
+    public enum Stage7BRuntimeMode
+    {
+        HeuristicDryRun = 0,
+        TeacherReplayDemoRecording = 1,
+        TrainerControlled = 2,
+        InferenceOnly = 3,
+    }
+
     [DisallowMultipleComponent]
     public sealed class MlAgentsTrainingBootstrap : MonoBehaviour
     {
@@ -25,8 +33,14 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private bool _stepScriptedOpponent = true;
         [SerializeField] private bool _ensureWeek6StaticHarvestLayout = true;
         [SerializeField] private GameConfig _fallbackConfig;
+        [SerializeField] private int _stage7BMatchMaxSteps = 6000;
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24;
         [SerializeField] private int _startResources = 60;
+        [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
+        [SerializeField] private bool _forceTrainerControlledMode;
+
+        [Header("Demo/Interactive Mode")]
+        [SerializeField] private bool _autoStartEpisodeOnStart = true;
 
         public GridManager GridManager { get; private set; }
         public UnitRegistry UnitRegistry { get; private set; }
@@ -35,44 +49,171 @@ namespace RTS.MLAgents.Stage7B
         public MatchBootstrap MatchBootstrap { get; private set; }
         public HeuristicPolicyAdapter ScriptedOpponentAdapter { get; private set; }
         public StudentMlAgent StudentAgent { get; private set; }
+        public Week7ScriptedOpponentPacing ScriptedOpponentPacing { get; private set; }
         public bool StepScriptedOpponent => _stepScriptedOpponent;
         public Owner StudentPlayer => _studentPlayer;
         public Owner ScriptedOpponent => _scriptedOpponent;
         public bool DuplicateSpawnDetected { get; private set; }
+        public bool HasRuntimeEpisodeStarted => _hasRuntimeEpisodeStarted;
+        public bool IsStartingEpisode => _isStartingEpisode;
+        public int StartNewEpisodeInvocationCount => _startNewEpisodeInvocationCount;
+        public int StartNewEpisodeSkippedReentrantCount => _startNewEpisodeSkippedReentrantCount;
+        public string LastStartNewEpisodeReason => _lastStartNewEpisodeReason;
+        public string LastStartNewEpisodeCaller => _lastStartNewEpisodeCaller;
+        public string LastStartNewEpisodePath => _lastStartNewEpisodePath;
+        public Stage7BRuntimeMode RuntimeMode => _forceTrainerControlledMode
+            ? Stage7BRuntimeMode.TrainerControlled
+            : _stage7BRuntimeMode;
+
+        private bool _isStartingEpisode;
+        private bool _hasRuntimeEpisodeStarted;
+        private int _startNewEpisodeInvocationCount;
+        private int _startNewEpisodeSkippedReentrantCount;
+        private string _lastStartNewEpisodeReason = "none";
+        private string _lastStartNewEpisodeCaller = "none";
+        private string _lastStartNewEpisodePath = "none";
+        private bool _deferredStudentEnableForInference;
+        private int _bootstrapFixedTick;
+        private int _inferenceReadyAfterFixedTick;
+        private bool _inferenceRuntimeReady;
+        private GameConfig _runtimeConfigOverride;
 
         private void Awake()
         {
+            Stage7BResetTimeoutTrace.ResetSession();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.enter", StudentAgent, this);
             ResolveRuntimeObjects();
             EnsureWeek6StaticHarvestLayout();
             ConfigureMatchBootstrap();
             EnsureAcademyAutomaticStepping();
             EnsureMlAgentObject();
+
+            if (RuntimeMode == Stage7BRuntimeMode.InferenceOnly
+                && Application.isPlaying
+                && StudentAgent != null
+                && StudentAgent.enabled)
+            {
+                StudentAgent.enabled = false;
+                _deferredStudentEnableForInference = true;
+            }
+
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.exit", StudentAgent, this);
         }
 
         private void Start()
         {
-            StartNewEpisode();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Start.enter", StudentAgent, this);
+            if (RuntimeMode == Stage7BRuntimeMode.TrainerControlled)
+            {
+                PrepareRuntimeForTrainerControlledStart();
+            }
+            else if (_autoStartEpisodeOnStart)
+            {
+                StartNewEpisode("bootstrap_start", nameof(MlAgentsTrainingBootstrap) + "." + nameof(Start));
+            }
+
+            ApplyRuntimeModeConfiguration();
+
+            if (_deferredStudentEnableForInference
+                && StudentAgent != null
+                && !StudentAgent.enabled)
+            {
+                StudentAgent.enabled = true;
+                _deferredStudentEnableForInference = false;
+            }
+
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Start.exit", StudentAgent, this);
+        }
+
+        private void FixedUpdate()
+        {
+            _bootstrapFixedTick++;
+            UpdateInferenceRuntimeReadyState();
+        }
+
+        private void OnDestroy()
+        {
+            CleanupAcademyFixedUpdateStepper();
         }
 
         public void StartNewEpisode()
         {
-            ResolveRuntimeObjects();
-            EnsureWeek6StaticHarvestLayout();
-            ConfigureMatchBootstrap();
-            EnsureAcademyAutomaticStepping();
-            CleanupRuntimeObjects();
-            MatchBootstrap.Setup();
-            ConfigureScriptedOpponent();
-            DuplicateSpawnDetected = DetectDuplicateSpawn();
+            StartNewEpisode("legacy_start_new_episode", "MlAgentsTrainingBootstrap.StartNewEpisode");
+        }
+
+        public bool StartNewEpisode(string reason, string caller)
+        {
+            _startNewEpisodeInvocationCount++;
+            _lastStartNewEpisodeReason = string.IsNullOrWhiteSpace(reason) ? "unspecified" : reason;
+            _lastStartNewEpisodeCaller = string.IsNullOrWhiteSpace(caller) ? "unspecified" : caller;
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.enter", StudentAgent, this);
+
+            if (_isStartingEpisode)
+            {
+                _startNewEpisodeSkippedReentrantCount++;
+                _lastStartNewEpisodePath = "skipped_reentrant";
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.skipped_reentrant", StudentAgent, this);
+                return false;
+            }
+
+            _isStartingEpisode = true;
+            _lastStartNewEpisodePath = RuntimeMode == Stage7BRuntimeMode.TrainerControlled
+                ? "trainer_controlled_guarded_full_reset"
+                : "runtime_full_reset";
+
+            try
+            {
+                ResolveRuntimeObjects();
+                EnsureWeek6StaticHarvestLayout();
+                ConfigureMatchBootstrap();
+                EnsureAcademyAutomaticStepping();
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.CleanupRuntimeObjects.enter", StudentAgent, this);
+                CleanupRuntimeObjects();
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.CleanupRuntimeObjects.exit", StudentAgent, this);
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchBootstrap.Setup.enter", StudentAgent, this);
+                MatchBootstrap.Setup();
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchBootstrap.Setup.exit", StudentAgent, this);
+                ConfigureScriptedOpponent();
+                DuplicateSpawnDetected = DetectDuplicateSpawn();
+                ScriptedOpponentPacing?.ResetForEpisode(DuplicateSpawnDetected);
+                _hasRuntimeEpisodeStarted = true;
+                ArmInferenceRuntimeReadyGateAfterEpisodeStart();
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.StartNewEpisode.exit", StudentAgent, this);
+                return true;
+            }
+            finally
+            {
+                _isStartingEpisode = false;
+            }
+        }
+
+        public bool StartNewEpisodeForAgentReset()
+        {
+            return StartNewEpisode("mlagents_on_episode_begin", "StudentMlAgent.OnEpisodeBegin");
         }
 
         public void EnsureReadyForDecision()
         {
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.enter", StudentAgent, this);
             ResolveRuntimeObjects();
             if (MatchManager == null || MatchManager.Phase != MatchPhase.Running)
             {
-                StartNewEpisode();
+                Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.recover", StudentAgent, this);
+                StartNewEpisode("ensure_ready_for_decision_recover", "MlAgentsTrainingBootstrap.EnsureReadyForDecision");
             }
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.EnsureReadyForDecision.exit", StudentAgent, this);
+        }
+
+        private void PrepareRuntimeForTrainerControlledStart()
+        {
+            _lastStartNewEpisodePath = "trainer_controlled_start_prepare_only";
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.TrainerControlledStart.prepare_enter", StudentAgent, this);
+            ResolveRuntimeObjects();
+            EnsureWeek6StaticHarvestLayout();
+            ConfigureMatchBootstrap();
+            EnsureAcademyAutomaticStepping();
+            ApplyRuntimeModeConfiguration();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.TrainerControlledStart.prepare_exit", StudentAgent, this);
         }
 
         private void ResolveRuntimeObjects()
@@ -84,8 +225,10 @@ namespace RTS.MLAgents.Stage7B
             MatchBootstrap = EnsureSceneComponent<MatchBootstrap>("MatchBootstrap");
             EnsureSceneComponent<VictoryResolver>("VictoryResolver");
             ScriptedOpponentAdapter = EnsureSceneComponent<HeuristicPolicyAdapter>("Stage7B_ScriptedOpponent");
+            ScriptedOpponentPacing = EnsureSceneComponent<Week7ScriptedOpponentPacing>("Stage7B_ScriptedOpponentPacing");
             EnsureSceneComponent<Stage7BHeuristicDryRunLogger>("Stage7B_HeuristicDryRunLogger");
             EnsureSceneComponent<Stage7BRuntimeContractDumper>("Stage7B_RuntimeContractDumper");
+            EnsureSceneComponent<Stage7BTrainingFlowDiagnostics>("Stage7B_TrainingFlowDiagnostics");
         }
 
         private void EnsureMlAgentObject()
@@ -97,10 +240,13 @@ namespace RTS.MLAgents.Stage7B
                 StudentAgent = host.AddComponent<StudentMlAgent>();
             }
 
+            RemoveUnexpectedAgentComponents(StudentAgent.gameObject);
+
             StudentAgent.Configure(this, _studentPlayer);
 
             if (!_autoConfigureMlAgents)
             {
+                ApplyRuntimeModeConfiguration();
                 return;
             }
 
@@ -108,7 +254,7 @@ namespace RTS.MLAgents.Stage7B
             if (behavior != null)
             {
                 behavior.BehaviorName = "Stage7B_RTS_Student";
-                behavior.BehaviorType = BehaviorType.HeuristicOnly;
+                behavior.BehaviorType = ResolveBehaviorType(RuntimeMode);
                 behavior.TeamId = _studentPlayer == Owner.Player1 ? 0 : 1;
                 behavior.BrainParameters.VectorObservationSize = ObservationContract.TotalFloats;
                 behavior.BrainParameters.NumStackedVectorObservations = 1;
@@ -122,9 +268,11 @@ namespace RTS.MLAgents.Stage7B
                 requester.DecisionPeriod = 1;
                 requester.DecisionStep = 0;
                 requester.TakeActionsBetweenDecisions = false;
+                requester.enabled = ShouldEnableDecisionRequester(RuntimeMode, _hasRuntimeEpisodeStarted);
             }
 
-            StudentAgent.MaxStep = GameConstants.MaxEpisodeSteps;
+            StudentAgent.MaxStep = ResolveConfiguredMatchMaxSteps();
+            ApplyRuntimeModeConfiguration();
 
             if (Application.isPlaying && StudentAgent.isActiveAndEnabled)
             {
@@ -135,10 +283,176 @@ namespace RTS.MLAgents.Stage7B
 
         private static void EnsureAcademyAutomaticStepping()
         {
+            if (!Academy.IsInitialized)
+            {
+                return;
+            }
+
             Academy academy = Academy.Instance;
             if (academy != null && !academy.AutomaticSteppingEnabled)
             {
                 academy.AutomaticSteppingEnabled = true;
+            }
+        }
+
+        private static void CleanupAcademyFixedUpdateStepper()
+        {
+            GameObject stepper = GameObject.Find("AcademyFixedUpdateStepper");
+            if (stepper != null)
+            {
+                Destroy(stepper);
+            }
+        }
+
+        private void ApplyRuntimeModeConfiguration()
+        {
+            if (StudentAgent == null)
+            {
+                return;
+            }
+
+            BehaviorParameters behavior = StudentAgent.GetComponent<BehaviorParameters>();
+            DecisionRequester requester = StudentAgent.GetComponent<DecisionRequester>();
+            Stage7BRuntimeMode mode = RuntimeMode;
+
+            if (behavior != null)
+            {
+                behavior.BehaviorName = "Stage7B_RTS_Student";
+                behavior.BehaviorType = ResolveBehaviorType(mode);
+            }
+
+            if (requester != null)
+            {
+                requester.DecisionPeriod = 1;
+                requester.DecisionStep = 0;
+                requester.TakeActionsBetweenDecisions = false;
+                requester.enabled = ShouldEnableDecisionRequester(mode, _hasRuntimeEpisodeStarted);
+            }
+
+            if (mode == Stage7BRuntimeMode.TrainerControlled || mode == Stage7BRuntimeMode.InferenceOnly)
+            {
+                StudentAgent.ConfigureForTrainerControlledMode();
+                DisableTeacherReplayOrchestrators();
+            }
+        }
+
+        private static BehaviorType ResolveBehaviorType(Stage7BRuntimeMode mode)
+        {
+            return mode switch
+            {
+                Stage7BRuntimeMode.TrainerControlled => BehaviorType.Default,
+                Stage7BRuntimeMode.InferenceOnly => BehaviorType.InferenceOnly,
+                _ => BehaviorType.HeuristicOnly,
+            };
+        }
+
+        private static bool ShouldEnableDecisionRequester(Stage7BRuntimeMode mode, bool runtimeEpisodeStarted)
+        {
+            if (mode == Stage7BRuntimeMode.TrainerControlled)
+            {
+                return true;
+            }
+
+            if (mode == Stage7BRuntimeMode.InferenceOnly)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public bool InferenceRuntimeReady => RuntimeMode != Stage7BRuntimeMode.InferenceOnly || _inferenceRuntimeReady;
+
+        public int BootstrapFixedTick => _bootstrapFixedTick;
+
+        private void ArmInferenceRuntimeReadyGateAfterEpisodeStart()
+        {
+            if (RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                _inferenceRuntimeReady = _hasRuntimeEpisodeStarted
+                    && MatchManager != null
+                    && MatchManager.Phase == MatchPhase.Running;
+                _inferenceReadyAfterFixedTick = _bootstrapFixedTick;
+                return;
+            }
+
+            // Hold first inference decision until at least the next fixed tick after runtime setup.
+            _inferenceRuntimeReady = false;
+            _inferenceReadyAfterFixedTick = _bootstrapFixedTick + 1;
+        }
+
+        private void UpdateInferenceRuntimeReadyState()
+        {
+            if (RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
+            {
+                return;
+            }
+
+            if (_inferenceRuntimeReady)
+            {
+                return;
+            }
+
+            bool runtimeStable = _hasRuntimeEpisodeStarted
+                && !_isStartingEpisode
+                && MatchManager != null
+                && MatchManager.Phase == MatchPhase.Running;
+            if (!runtimeStable)
+            {
+                return;
+            }
+
+            if (_bootstrapFixedTick < _inferenceReadyAfterFixedTick)
+            {
+                return;
+            }
+
+            _inferenceRuntimeReady = true;
+        }
+
+        private static void DisableTeacherReplayOrchestrators()
+        {
+            TeacherReplay.Stage7BTeacherReplayDemoOrchestrator[] orchestrators =
+                FindObjectsByType<TeacherReplay.Stage7BTeacherReplayDemoOrchestrator>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
+
+            for (int i = 0; i < orchestrators.Length; i++)
+            {
+                TeacherReplay.Stage7BTeacherReplayDemoOrchestrator orchestrator = orchestrators[i];
+                if (orchestrator != null && orchestrator.enabled)
+                {
+                    orchestrator.enabled = false;
+                }
+            }
+        }
+
+        private static void RemoveUnexpectedAgentComponents(GameObject host)
+        {
+            if (host == null)
+            {
+                return;
+            }
+
+            Agent[] agents = host.GetComponents<Agent>();
+            for (int i = 0; i < agents.Length; i++)
+            {
+                Agent agent = agents[i];
+                if (agent == null || agent is StudentMlAgent)
+                {
+                    continue;
+                }
+
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    DestroyImmediate(agent);
+                }
+                else
+#endif
+                {
+                    Destroy(agent);
+                }
             }
         }
 
@@ -149,7 +463,9 @@ namespace RTS.MLAgents.Stage7B
                 _fallbackConfig = LoadDefaultConfig();
             }
 
-            SetPrivateField(MatchBootstrap, "_config", _fallbackConfig);
+            GameConfig configuredGameConfig = ResolveConfiguredGameConfig();
+
+            SetPrivateField(MatchBootstrap, "_config", configuredGameConfig);
             SetPrivateField(MatchBootstrap, "_scenarioPreset", _scenarioPreset);
             SetPrivateField(
                 MatchBootstrap,
@@ -176,6 +492,7 @@ namespace RTS.MLAgents.Stage7B
             ScriptedOpponentAdapter.SetPlayerControlModes(
                 _studentPlayer == Owner.Player1 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic,
                 _studentPlayer == Owner.Player2 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic);
+            ScriptedOpponentPacing?.AttachAdapter(ScriptedOpponentAdapter, _scriptedOpponent);
         }
 
         private void CleanupRuntimeObjects()
@@ -198,6 +515,7 @@ namespace RTS.MLAgents.Stage7B
             GridManager?.InitGrid(GameConstants.MapWidth, GameConstants.MapHeight);
             ResourceManager?.Clear();
             MatchManager?.ResetMatch();
+            Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.MatchManager.ResetMatch", StudentAgent, this);
         }
 
         private void EnsureWeek6StaticHarvestLayout()
@@ -417,6 +735,45 @@ namespace RTS.MLAgents.Stage7B
 #else
             return null;
 #endif
+        }
+
+        private GameConfig ResolveConfiguredGameConfig()
+        {
+            if (_fallbackConfig == null)
+            {
+                return null;
+            }
+
+            int configuredMaxSteps = ResolveConfiguredMatchMaxSteps();
+            if (_fallbackConfig.maxEpisodeSteps == configuredMaxSteps)
+            {
+                _runtimeConfigOverride = null;
+                return _fallbackConfig;
+            }
+
+            if (_runtimeConfigOverride == null)
+            {
+                _runtimeConfigOverride = Instantiate(_fallbackConfig);
+                _runtimeConfigOverride.name = _fallbackConfig.name + "_Stage7B_RuntimeOverride";
+            }
+
+            _runtimeConfigOverride.maxEpisodeSteps = configuredMaxSteps;
+            return _runtimeConfigOverride;
+        }
+
+        private int ResolveConfiguredMatchMaxSteps()
+        {
+            if (_stage7BMatchMaxSteps > 0)
+            {
+                return _stage7BMatchMaxSteps;
+            }
+
+            if (_fallbackConfig != null && _fallbackConfig.maxEpisodeSteps > 0)
+            {
+                return _fallbackConfig.maxEpisodeSteps;
+            }
+
+            return GameConstants.MaxEpisodeSteps;
         }
     }
 }

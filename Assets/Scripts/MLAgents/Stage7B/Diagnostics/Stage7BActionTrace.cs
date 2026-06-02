@@ -50,6 +50,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         public int SelectedNonNoOpCount { get; private set; }
         public int AcceptedCommands { get; private set; }
         public int RejectedCommands { get; private set; }
+        public IReadOnlyDictionary<string, int> RejectReasonHistogram => _rejectReasonHistogram;
         public float RewardSum { get; private set; }
         public string TerminalReason { get; private set; } = "none";
         public int ResetCount { get; private set; }

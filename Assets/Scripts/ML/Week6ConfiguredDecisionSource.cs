@@ -1,5 +1,6 @@
 using System;
 using RTS.Core;
+using RTS.Presentation;
 
 namespace RTS.ML
 {
@@ -38,9 +39,12 @@ namespace RTS.ML
                     _player1Mode == Week6PlayerControlMode.HeuristicBaseline ? HeuristicControlMode.Heuristic : HeuristicControlMode.Idle,
                     _player2Mode == Week6PlayerControlMode.HeuristicBaseline ? HeuristicControlMode.Heuristic : HeuristicControlMode.Idle);
 
-                var heuristicTotals = _heuristicAdapter.ExecuteDecisionStepWithCounts(stepInput);
-                accepted += heuristicTotals.acceptedTotal;
-                rejected += heuristicTotals.rejectedTotal;
+                using (HumanPlayCommandSourceDiagnostics.PushSource($"Week6ConfiguredDecisionSource.Heuristic[p1={_player1Mode},p2={_player2Mode}]"))
+                {
+                    var heuristicTotals = _heuristicAdapter.ExecuteDecisionStepWithCounts(stepInput);
+                    accepted += heuristicTotals.acceptedTotal;
+                    rejected += heuristicTotals.rejectedTotal;
+                }
             }
 
             if (_studentAdapter != null)

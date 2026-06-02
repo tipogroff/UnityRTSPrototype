@@ -1,0 +1,19 @@
+{
+    "status": "partial_pass",
+    "previous_part6_invalidated": true,
+    "player2_auto_command_source_before": "Stage7B_MLAgentsTrainingBootstrap._stepScriptedOpponent=true -> StudentMlAgent executes ScriptedOpponentAdapter for Player2.",
+    "player2_auto_command_source_after": "Disabled in HumanPlay_Demo_PlayerVsAI: Stage7B_MLAgentsTrainingBootstrap._stepScriptedOpponent=false; Player2 automation source absent during validation windows.",
+    "p1_decision_mode": "HeuristicBaseline",
+    "p2_decision_mode": "Idle",
+    "human_side": "Player2",
+    "player2_auto_commands_without_input_count": 0,
+    "player2_human_commands_count": 0,
+    "player2_auto_ai_disabled": true,
+    "player2_selection_pass": true,
+    "player1_selection_blocked": true,
+    "player2_move_command_owner": "Player2",
+    "player2_move_command_source": "unverified_by_automation",
+    "player1_ai_continues": false,
+    "week7_baseline_untouched": true,
+    "constraints_respected": true
+}

@@ -1,0 +1,64 @@
+{"episode_id": 0, "step_id": 0, "teacher_command_count": 2, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 25, "action_type": 2, "attack_target_local": 14}}
+{"episode_id": 0, "step_id": 1, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 2, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 3, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 4, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 5, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 6, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 7, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 8, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 9, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 10, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 11, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 12, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 13, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 14, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 15, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 16, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 17, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 18, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 19, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 20, "teacher_command_count": 1, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 25, "action_type": 1, "attack_target_local": 15}}
+{"episode_id": 0, "step_id": 21, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 22, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 23, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 24, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 25, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 26, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 27, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 28, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 29, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 30, "teacher_command_count": 1, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 26, "action_type": 3, "attack_target_local": 4}}
+{"episode_id": 0, "step_id": 31, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 32, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 33, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 34, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 35, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 36, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 37, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 38, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 39, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 40, "teacher_command_count": 1, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 26, "action_type": 1, "attack_target_local": 33}}
+{"episode_id": 0, "step_id": 41, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 42, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 43, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 44, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 45, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 46, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 47, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 48, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 49, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 50, "teacher_command_count": 3, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 25, "action_type": 2, "attack_target_local": 18}}
+{"episode_id": 0, "step_id": 51, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 52, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 53, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 54, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 55, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 56, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 57, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 58, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 59, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 60, "teacher_command_count": 1, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "state_sync_failed", "teacher_command_preview": {"actor_flat": 27, "action_type": 1, "attack_target_local": 16}}
+{"episode_id": 0, "step_id": 61, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 62, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}
+{"episode_id": 0, "step_id": 63, "teacher_command_count": 0, "state_sync_success": false, "candidate_match": false, "runtime_apply_success": false, "drop_reason": "missing_teacher_commands"}

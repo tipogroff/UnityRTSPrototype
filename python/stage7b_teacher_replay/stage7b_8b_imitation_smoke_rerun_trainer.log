@@ -1,0 +1,19 @@
+[command]
+python/stage7b_mlagents/.venv_mlagents/Scripts/mlagents-learn.exe config/stage7b_imitation_smoke.yaml --run-id Stage7B_ImitationSmoke_003 --force
+
+[version]
+ml-agents: 0.30.0
+ml-agents-envs: 0.30.0
+communicator_api: 1.5.0
+pytorch: 2.2.2+cpu
+
+[run]
+[INFO] Listening on port 5004. Start training by pressing the Play button in the Unity Editor.
+[INFO] Connected to Unity environment with package version 4.0.2 and communication version 1.5.0
+
+[error]
+mlagents_envs.exception.UnityTimeOutException: The Unity environment took too long to respond.
+Stack root: TrainerController._reset_env -> env_manager.reset -> SubprocessEnvManager._reset_env -> recv timeout.
+
+[exit_code]
+1

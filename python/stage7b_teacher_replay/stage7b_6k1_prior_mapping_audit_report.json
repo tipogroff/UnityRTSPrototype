@@ -1,0 +1,248 @@
+{
+  "stage": "Stage7B-6K.1",
+  "generated_at_utc": "2026-05-10T18:44:17Z",
+  "status": "audit_only_fix_plan_prepared",
+  "files_inspected": [
+    "Assets/Scripts/Core/UnitType.cs",
+    "Assets/Scripts/Gameplay/Grid/GridPosition.cs",
+    "Assets/Scripts/ML/ActionContract.cs",
+    "Assets/Scripts/ML/ActionContractMappings.cs",
+    "Assets/Scripts/ML/ActionDecoder.cs",
+    "Assets/Scripts/ML/ActionMaskBuilder.cs",
+    "Assets/Scripts/ML/ActionApplier.cs",
+    "Assets/Scripts/ML/Week6StudentPolicyAdapter.cs",
+    "Assets/Scripts/MLAgents/Stage7B/TeacherReplay/Stage7BTeacherReplayActionResolver.cs",
+    "Assets/Scripts/MLAgents/Stage7B/CandidateActions/MlAgentsCandidateActionBuilder.cs",
+    "Assets/Scripts/MLAgents/Stage7B/TeacherConversion/Stage7BTeacherActionConverter.cs",
+    "python/week6_student/student_inference_adapter.py",
+    "python/week6_student/student_branch_contract.py",
+    "python/week6_student/stage10d6_run_semantic_adapter_rebuild.py",
+    "python/week6_student/stage10d13a_current_action_direction_fix_candidate_audit.py",
+    "python/week6_student/reports/LEGACY032_UNITY_V2_STAGE10D4_OBSERVATION_SEMANTIC_REMEDIATION_REPORT.md",
+    "python/week6_student/reports/LEGACY032_UNITY_V2_STAGE10D6_MAPPING_PATCH_AND_SEMANTIC_REBUILD_REPORT.md",
+    "python/week6_student/reports/LEGACY032_UNITY_V2_STAGE10D1R_CORRECTED_OWNER_SEMANTICS_RERUN_REPORT.md",
+    "python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.json",
+    "python/week5_teacher_legacy032/semantic_observation_adapter_legacy032_to_unity_v2.py",
+    "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2.py",
+    "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2_observation_semantics.py",
+    "python/week5_teacher_legacy032/scripts/export_replay_ready_teacher_rollout_stage7b.py",
+    "python/week5_teacher_legacy032/scripts/legacy032_policy_action.py",
+    "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/types.py",
+    "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/rts/UnitAction.java",
+    "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/rts/units/Unit.java",
+    "python/stage7b_teacher_replay/stage7b_6j_return_direction_audit_report.json",
+    "python/stage7b_teacher_replay/stage7b_6j_return_direction_audit_report.md",
+    "python/stage7b_teacher_conversion/stage7b_teacher_to_candidate_conversion_report.md",
+    "CURRENT_PIPELINE_RUNBOOK.md",
+    "FIRST_SUCCESSFUL_PIPELINE_BASELINE.md",
+    "STAGE6B3_SUCCESSFUL_PIPELINE_ARTIFACT_INDEX.md"
+  ],
+  "old_mapping_fix_found": true,
+  "old_mapping_fix_classification": "Stage6B3/Stage10D fix found for semantic observation mapping/current_action_direction diagnostics, but no reusable action-branch direction remap function was found.",
+  "old_action_branch_direction_remap_found": false,
+  "old_mapping_fix_files": [
+    "python/week5_teacher_legacy032/observation_semantics/legacy032_to_unity_v2_observation_mapping.json",
+    "python/week5_teacher_legacy032/semantic_observation_adapter_legacy032_to_unity_v2.py",
+    "python/week5_teacher_legacy032/scripts/adapt_legacy032_to_unity_v2_observation_semantics.py",
+    "python/week6_student/stage10d6_run_semantic_adapter_rebuild.py",
+    "python/week6_student/stage10d13a_current_action_direction_fix_candidate_audit.py",
+    "python/week6_student/reports/LEGACY032_UNITY_V2_STAGE10D6_MAPPING_PATCH_AND_SEMANTIC_REBUILD_REPORT.md"
+  ],
+  "old_mapping_function_names": [
+    "Legacy032ToUnityV2SemanticObservationAdapter.adapt_flat",
+    "adapt_legacy032_observation_to_unity_v2",
+    "_build_direction_expected",
+    "_apply_channel_rule",
+    "set_direction_onehot",
+    "stage10d6_run_semantic_adapter_rebuild.main"
+  ],
+  "old_direction_mapping_table": {
+    "stage10d_observation_side": {
+      "legacy032_raw_observation_direction_planes": "unavailable",
+      "unity_direction_channel_default_for_typed_cells": "dir_south channel 20",
+      "current_action_direction_candidate_audit": "diagnostic probes only; no runtime action branch remap selected"
+    },
+    "legacy032_action_constants": {
+      "0": "UP / y-1",
+      "1": "RIGHT / x+1",
+      "2": "DOWN / y+1",
+      "3": "LEFT / x-1"
+    },
+    "unity_action_constants": {
+      "0": "North / y+1",
+      "1": "East / x+1",
+      "2": "South / y-1",
+      "3": "West / x-1"
+    },
+    "legacy032_to_unity_coordinate_conversion_implied_by_sources": {
+      "0": 2,
+      "1": 1,
+      "2": 0,
+      "3": 3
+    }
+  },
+  "unity_direction_convention": {
+    "enum_order": {
+      "0": "North",
+      "1": "East",
+      "2": "South",
+      "3": "West"
+    },
+    "grid_mapping": {
+      "North": "+Y",
+      "East": "+X",
+      "South": "-Y",
+      "West": "-X"
+    },
+    "flat_index_formula": "Y * MapWidth + X",
+    "source_files": [
+      "Assets/Scripts/Core/UnitType.cs",
+      "Assets/Scripts/Gameplay/Grid/GridPosition.cs",
+      "Assets/Scripts/ML/ActionApplier.cs",
+      "Assets/Scripts/ML/ActionContract.cs"
+    ]
+  },
+  "legacy032_direction_convention": {
+    "branch_value_order": {
+      "0": "UP",
+      "1": "RIGHT",
+      "2": "DOWN",
+      "3": "LEFT"
+    },
+    "grid_mapping": {
+      "UP": "Y-1",
+      "RIGHT": "X+1",
+      "DOWN": "Y+1",
+      "LEFT": "X-1"
+    },
+    "source_files": [
+      "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/types.py",
+      "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/rts/UnitAction.java",
+      "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source/gym_microrts/microrts/src/rts/units/Unit.java"
+    ],
+    "unity_and_legacy032_y_axis_opposite": true
+  },
+  "stage7b_current_mapping_table": {
+    "TryResolveTeacherCommand": {
+      "move_dir": "ActionContractMappings.TryDirectionFromIndex(command.move_dir) raw direct",
+      "harvest_dir": "ActionContractMappings.TryDirectionFromIndex(command.harvest_dir) raw direct",
+      "return_dir": "ActionContractMappings.TryDirectionFromIndex(command.return_dir) raw direct",
+      "produce_dir": "ActionContractMappings.TryDirectionFromIndex(command.produce_dir) raw direct"
+    },
+    "TryResolveSingleActorAction": {
+      "move_dir": "(Direction)perCellBranchesFlat[BRANCH_MOVE_DIR] raw direct",
+      "harvest_dir": "(Direction)perCellBranchesFlat[BRANCH_HARVEST_DIR] raw direct",
+      "return_dir": "(Direction)perCellBranchesFlat[BRANCH_RETURN_DIR] raw direct",
+      "produce_dir": "(Direction)perCellBranchesFlat[BRANCH_PRODUCE_DIR] raw direct"
+    },
+    "problem": "Stage7B resolver treats legacy032 direction branch values as Unity Direction enum values without y-axis conversion."
+  },
+  "mismatch_pattern_from_6j": {
+    "source": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "episodes_scanned": 8,
+    "steps_total": 4096,
+    "teacher_commands_total": 2952,
+    "state_sync_success_count": 4096,
+    "state_sync_failed_count": 0,
+    "runtime_apply_accept_rate": 1.0,
+    "runtime_apply_rejected_count": 0,
+    "candidate_match_rate": 0.7906504273414612,
+    "return_commands_total": 134,
+    "return_commands_matched": 72,
+    "return_commands_dropped": 62,
+    "return_match_rate": 0.5373134613037109,
+    "return_direction_mismatch_count": 62,
+    "return_direction_mismatch_rate": 0.46268656849861147,
+    "return_mismatch_by_teacher_dir": {
+      "South": 62
+    },
+    "return_mismatch_by_candidate_dir": {
+      "North": 62
+    },
+    "y_axis_flip_suspected_count": 62,
+    "x_axis_flip_suspected_count": 0,
+    "target_cell_has_base_teacher_side_count": 0,
+    "target_cell_has_base_unity_side_count": 62,
+    "representative_example": {
+      "episode": 0,
+      "step": 30,
+      "actor": [2, 1],
+      "action_type": "Return",
+      "teacher_dir_raw_label_under_unity_enum": "South",
+      "unity_candidate_direction": "North",
+      "teacher_target_under_current_stage7b_mapping": [2, 0],
+      "teacher_target_has_base": false,
+      "unity_candidate_target": [2, 2],
+      "unity_candidate_target_has_base": true
+    }
+  },
+  "recommended_fix_scope": "return_only",
+  "recommended_fix_scope_options": {
+    "return_only": {
+      "recommended": true,
+      "reason": "6J has direct Return-specific occupant proof: every dropped Return mismatch is South->North, and the Unity-side North target contains the friendly base."
+    },
+    "all_cardinal_action_branches": {
+      "recommended": false,
+      "reason": "Legacy032 source implies the same y-axis conversion for Move/Harvest/Return/Produce, but 6J gives hard target-cell proof only for Return. Broad remap should wait for branch-specific no-regression evidence."
+    },
+    "use_existing_adapter_function": {
+      "recommended": false,
+      "reason": "No existing action-branch remap function was found; Stage10D functions operate on observations/current_action-direction diagnostics."
+    },
+    "no_fix": {
+      "recommended": false,
+      "reason": "6J metrics show systematic Return y-axis inversion and HOLD before demo recording."
+    }
+  },
+  "recommended_mapping_table": {
+    "apply_to_stage7b_return_dir_only_in_6k2": {
+      "teacher_legacy032_0_UP": "Unity Direction.South (2)",
+      "teacher_legacy032_1_RIGHT": "Unity Direction.East (1)",
+      "teacher_legacy032_2_DOWN": "Unity Direction.North (0)",
+      "teacher_legacy032_3_LEFT": "Unity Direction.West (3)"
+    },
+    "integer_mapping": {
+      "0": 2,
+      "1": 1,
+      "2": 0,
+      "3": 3
+    },
+    "human_label_mapping": {
+      "teacher North/UP": "Unity South",
+      "teacher East/RIGHT": "Unity East",
+      "teacher South/DOWN": "Unity North",
+      "teacher West/LEFT": "Unity West"
+    }
+  },
+  "risk_assessment": [
+    "Return-only fix is narrow and directly supported by 6J base-occupant proof.",
+    "The legacy032 source indicates Move, Harvest, Return, and Produce all use the same UP/RIGHT/DOWN/LEFT y-down convention, so Return-only may leave other direction mismatches unresolved.",
+    "Applying all-branch remap immediately could regress Move/Harvest/Produce matching because 6J did not provide equally strong per-branch target semantics proof.",
+    "No ActionApplier, MatchManager, MlAgentsCandidateActionBuilder, teacher policy, or Stage6B3 checkpoint should be changed for this fix."
+  ],
+  "validation_plan_after_fix": {
+    "stage": "Stage7B-6K.2",
+    "rerun_source": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "expected_success_metrics": [
+      "state_sync_failed_count = 0",
+      "runtime_apply_accept_rate remains 1.0 or near 1.0",
+      "return_direction_mismatch_count_after_6k ~= 0",
+      "return_match_rate_after_6k improves from 0.5373",
+      "overall candidate_match_rate improves from 0.79065",
+      "no regression in Move/Harvest/Produce matching",
+      "Stage6B3 baseline untouched",
+      "no ML-Agents/PPO/imitation/.demo"
+    ],
+    "additional_checks": [
+      "Report Return-only before/after table by teacher direction and candidate direction.",
+      "Keep runtime_apply_rejected_count at 0 or explain every rejection.",
+      "If Move/Harvest/Produce direction mismatches retain y-axis signatures after Return-only fix, open a separate all-cardinal-branch remap audit."
+    ]
+  },
+  "stage6b3_baseline_touched": false,
+  "ml_agents_training_started": false,
+  "ppo_started": false,
+  "imitation_learning_started": false,
+  "demo_recording_started": false
+}

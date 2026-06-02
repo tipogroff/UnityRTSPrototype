@@ -1,0 +1,146 @@
+{
+    "generatedAtUtc": "2026-05-10T18:56:38Z",
+    "status": "GO",
+    "summary": "Stage7B-6J Return direction mismatch audit on larger replay-ready export.",
+    "selectedSourcePath": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "selectedSourceFormat": "legacy032_replay_ready_export",
+    "episodesScanned": 8,
+    "episodesReplayAttempted": 8,
+    "stepsTotal": 4096,
+    "stepsReplayAttempted": 4096,
+    "teacherCommandsTotal": 2952,
+    "teacherNonNoOpCommandsTotal": 2952,
+    "stateSyncSuccessCount": 4096,
+    "stateSyncFailedCount": 0,
+    "preObservationMatchCount": 0,
+    "preObservationMismatchCount": 0,
+    "candidateMatchCount": 2396,
+    "candidateDropCount": 1088,
+    "candidateMatchRate": 0.8116531372070313,
+    "nonNoOpTotal": 2952,
+    "nonNoOpCandidateMatchCount": 2396,
+    "nonNoOpCandidateMatchRate": 0.8116531372070313,
+    "noTeacherCommandSteps": 2383,
+    "runtimeApplyAttemptedCount": 2396,
+    "runtimeApplyAcceptedCount": 2396,
+    "runtimeApplyRejectedCount": 0,
+    "runtimeApplyAcceptRate": 1.0,
+    "totalMismatches": 556,
+    "noMatchingCandidateCount": 556,
+    "directionMismatchCount": 385,
+    "firstRuntimeRejectStep": -1,
+    "firstRuntimeRejectActionSummary": "",
+    "postStateMatchCount": 1181,
+    "postStateMismatchCount": 532,
+    "postStateComparisonMode": "partial",
+    "candidateCountMin": 10,
+    "candidateCountMean": 36.139892578125,
+    "candidateCountMax": 70,
+    "candidateOverflowCount": 0,
+    "terminalMatchCount": 1713,
+    "terminalMismatchCount": 0,
+    "demoRecordingReady": true,
+    "returnDirectionMappingMode": "invert_y_for_legacy032_teacher",
+    "returnDirectionMappingAppliedCount": 134,
+    "candidateMatchCountBefore6J": 2334,
+    "candidateMatchCountAfter6K": 2396,
+    "candidateMatchRateBefore6J": 0.7906504273414612,
+    "candidateMatchRateAfter6K": 0.8116531372070313,
+    "returnCommandsMatchedBefore6J": 72,
+    "returnCommandsMatchedAfter6K": 134,
+    "returnCommandsDroppedBefore6J": 62,
+    "returnCommandsDroppedAfter6K": 0,
+    "returnMatchRateBefore6J": 0.5373134613037109,
+    "returnMatchRateAfter6K": 1.0,
+    "returnDirectionMismatchCountBefore6J": 62,
+    "returnDirectionMismatchCountAfter6K": 0,
+    "returnDirectionMismatchRateBefore6J": 0.46268656849861147,
+    "returnDirectionMismatchRateAfter6K": 0.0,
+    "returnCommandsTotal": 134,
+    "returnCommandsMatched": 134,
+    "returnCommandsDropped": 0,
+    "returnMatchRate": 1.0,
+    "returnDirectionMismatchCount": 0,
+    "returnDirectionMismatchRate": 0.0,
+    "oppositeDirectionCount": 0,
+    "yAxisFlipSuspectedCount": 0,
+    "xAxisFlipSuspectedCount": 0,
+    "teacherTargetOutsideMapCount": 0,
+    "unityTargetOutsideMapCount": 0,
+    "targetCellHasBaseTeacherSideCount": 0,
+    "targetCellHasBaseUnitySideCount": 0,
+    "mismatchByActionType": [
+        {
+            "key": "move",
+            "value": 222
+        },
+        {
+            "key": "harvest",
+            "value": 51
+        },
+        {
+            "key": "produce",
+            "value": 283
+        }
+    ],
+    "mismatchByDirection": [
+        {
+            "key": "South",
+            "value": 294
+        },
+        {
+            "key": "North",
+            "value": 116
+        },
+        {
+            "key": "East",
+            "value": 116
+        },
+        {
+            "key": "West",
+            "value": 30
+        }
+    ],
+    "returnMismatchByTeacherDir": [],
+    "returnMismatchByCandidateDir": [],
+    "first10ReturnMismatches": [],
+    "dropReasonHistogram": [
+        {
+            "key": "post_state_desync",
+            "value": 532
+        },
+        {
+            "key": "no_matching_candidate",
+            "value": 556
+        }
+    ],
+    "matchByActionType": [
+        {
+            "key": "harvest",
+            "value": 103
+        },
+        {
+            "key": "produce",
+            "value": 354
+        },
+        {
+            "key": "move",
+            "value": 1805
+        },
+        {
+            "key": "return",
+            "value": 134
+        }
+    ],
+    "dropByActionType": [],
+    "rejectedActionTypeHistogram": [],
+    "runtimeRejectReasonHistogram": [],
+    "notes": [
+        "Stage7B-6J: Return direction mismatch audit. Runtime apply enabled.",
+        "ML-Agents training/PPO/imitation/.demo were not started by this runner.",
+        "post_state_comparison_mode=partial: unit count, resource node count, player resources, terminal checked.",
+        "Stage7B-6K: Return-only mapping mode is invert_y_for_legacy032_teacher.",
+        "no_teacher_command_steps classified separately, not counted in candidateDropCount.",
+        "Stage6B3 baseline/checkpoint assets were not modified by this runner."
+    ]
+}

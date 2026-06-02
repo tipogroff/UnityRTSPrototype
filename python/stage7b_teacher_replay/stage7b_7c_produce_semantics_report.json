@@ -1,0 +1,83 @@
+{
+  "generated_at_utc": "2026-05-10T21:07:51Z",
+  "status": "GO",
+  "decision": "GO_TO_STAGE7B_7D_RERECORD_CLEAN_DEMO",
+  "source_path": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+  "summary": "Stage7B-7C Produce semantics mismatch audit/classification.",
+  "fix_applied": "diagnostic/classification only; no runtime legality change",
+  "root_cause_produce_type_mismatch": "All 86 old produce_type_mismatch rows are Worker raw=1. In legacy032/v2 raw=1 is Base, but old diagnostics printed it as Light because raw v2 values were formatted through ProducibleUnit. Unity current runtime supports Worker->Barracks only, not Worker->Base.",
+  "root_cause_action_type_missing_from_candidates": "All 171 rows are Worker raw=2 Barracks while the owner already has an alive Barracks. Unity CandidateBuilder masks Worker->Barracks in that state via HasAliveBarracks, matching ActionApplier/MatchManager.",
+  "mapping_conclusion": "no produce_unit_type offset; Light/Heavy/Ranged order matches legacy032 and Unity v2",
+  "general": {
+    "candidate_match_rate_before_7b": 0.91294,
+    "candidate_match_rate_after_7c": 0.9129403829574585,
+    "runtime_apply_accept_rate_after_7c": 1.0,
+    "runtime_apply_rejected_count_after_7c": 0,
+    "state_sync_failed_count_after_7c": 0,
+    "demo_recording_ready_after_7c": true
+  },
+  "produce": {
+    "produce_commands_total": 637,
+    "produce_match_rate_before_7b": 0.596546,
+    "produce_match_rate_after_7c_exact_candidate_match": 0.5965462923049927,
+    "produce_commands_matched_before_7b": 380,
+    "produce_commands_matched_after_7c_exact_candidate_match": 380,
+    "produce_commands_dropped_before_7b": 257,
+    "produce_commands_dropped_after_7c": 257,
+    "produce_commands_classified_after_7c": 257,
+    "produce_unclassified_remaining_after_7c": 0,
+    "produce_type_mismatch_before_7b": 86,
+    "produce_type_mismatch_after_7c_unclassified": 0,
+    "action_type_missing_from_candidates_before_7b": 171,
+    "action_type_missing_from_candidates_after_7c_unclassified": 0,
+    "produce_direction_mismatch_after_7c": 0,
+    "raw_teacher_produce_unit_type_histogram": {
+      "1": 86,
+      "2": 336,
+      "3": 144,
+      "4": 71
+    },
+    "actor_type_histogram": {
+      "Barracks": 71,
+      "Base": 144,
+      "Worker": 422
+    },
+    "actor_type_x_raw_unit_histogram": {
+      "Barracks|4:Light": 71,
+      "Base|3:Worker": 144,
+      "Worker|1:Base": 86,
+      "Worker|2:Barracks": 336
+    },
+    "classified_reason_histogram": {
+      "runtime_state_semantics_gap": 171,
+      "unsupported_worker_build_base": 86
+    },
+    "old_reason_histogram": {
+      "action_type_missing_from_candidates": 171,
+      "produce_type_mismatch": 86
+    }
+  },
+  "other_actions": {
+    "move_match_rate_after_7c": 1.0,
+    "harvest_match_rate_after_7c": 1.0,
+    "return_match_rate_after_7c": 1.0,
+    "move_direction_mismatch_after_7c": 0,
+    "harvest_direction_mismatch_after_7c": 0,
+    "return_direction_mismatch_after_7c": 0
+  },
+  "go_criteria": {
+    "unity_code_compiles": "verified separately via Unity console",
+    "week7_scene_opens": "verified separately via Unity MCP",
+    "unity_console_errors": "verified separately via Unity MCP",
+    "stage6b3_baseline_untouched": true,
+    "no_mlagents_training": true,
+    "no_ppo": true,
+    "no_imitation_learning": true,
+    "no_large_demo_recording": true
+  },
+  "notes": [
+    "Candidate truth remains MlAgentsCandidateActionBuilder; runtime truth remains ActionApplier/MatchManager.",
+    "MlAgentsCandidateActionBuilder is not missing runtime-legal Produce for these rows.",
+    "Unsupported Worker->Base and Unity one-Barracks-cap rows should be dropped before clean demo recording."
+  ]
+}

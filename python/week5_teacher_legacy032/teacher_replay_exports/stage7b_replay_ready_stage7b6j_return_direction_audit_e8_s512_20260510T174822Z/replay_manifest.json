@@ -1,0 +1,102 @@
+{
+  "schema_version": "stage7b.teacher_replay_ready.v1",
+  "source_teacher_lineage": "legacy032",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_3m_from_1m_postfix\\agent_final.pt",
+  "policy_source": "legacy032_policy_action",
+  "env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "gym_microrts_version": "0.3.2",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "seed": 17,
+  "episodes": 8,
+  "max_steps_per_episode": 512,
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "attack_target_size": 49,
+  "attack_target_center_index": 24,
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "action_shape": [
+    576,
+    7
+  ],
+  "contains_initial_state": true,
+  "contains_pre_state": true,
+  "contains_post_state": true,
+  "contains_teacher_command_list": true,
+  "contains_terminal_metadata": true,
+  "replay_ready": true,
+  "runtime_state_availability": {
+    "available": true,
+    "reason": "runtime state JSON bridge detected in vec_env/JNIGridnetVecClient",
+    "missing_fields": [],
+    "sample_state_preview": {
+      "map_width": 24,
+      "map_height": 24,
+      "step": 1,
+      "players_count": 2,
+      "units_count": 8,
+      "resource_nodes_count": 4,
+      "terminal": {
+        "done": false,
+        "winner": null,
+        "reason": null
+      }
+    }
+  },
+  "strict_load": true,
+  "strict_load_report": {
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_resume_3m_from_1m_postfix\\agent_final.pt",
+    "checkpoint_format": "weights_only_state_dict",
+    "strict": true,
+    "strict_load_status": "STRICT_LOAD_ENFORCED",
+    "missing_keys": [],
+    "unexpected_keys": []
+  },
+  "architecture_build_report": {
+    "architecture": "legacy032_resolution_aware_gridnet_v1",
+    "mapsize": 576,
+    "obs_shape": [
+      24,
+      24,
+      27
+    ],
+    "nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "fallback_architecture_used": false
+  },
+  "expected_architecture": "legacy032_resolution_aware_gridnet_v1",
+  "raw_action_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "created_utc": "2026-05-10T17:48:45Z",
+  "notes": [
+    "No ML-Agents training/PPO/imitation/demo is run by this script.",
+    "Export includes teacher commands and contract diagnostics.",
+    "Authoritative runtime state is not faked when unavailable."
+  ]
+}

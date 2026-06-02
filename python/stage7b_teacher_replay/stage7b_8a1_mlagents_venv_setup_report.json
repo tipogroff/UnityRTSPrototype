@@ -1,0 +1,43 @@
+{
+  "status": "GO",
+  "generated_at_utc": "2026-05-10T22:48:30Z",
+  "venv_path": "python/stage7b_mlagents/.venv_mlagents",
+  "python_executable": "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe",
+  "python_version": "3.9.13",
+  "pip_version": "26.0.1",
+  "mlagents_installed": true,
+  "mlagents_version": "0.30.0",
+  "mlagents_envs_installed": true,
+  "mlagents_envs_version": "0.30.0",
+  "torch_version": "2.2.2",
+  "numpy_version": "1.21.2",
+  "protobuf_version": "3.20.3",
+  "grpcio_version": "1.80.0",
+  "mlagents_learn_available": true,
+  "mlagents_learn_help_ok": true,
+  "demo_file_path": "Assets/Demonstrations/stage7b_teacher_replay_clean_smoke.demo",
+  "demo_file_exists": true,
+  "demo_file_size_bytes": 15068229,
+  "config_path": "config/stage7b_imitation_smoke.yaml",
+  "config_exists": true,
+  "behavior_name": "Stage7B_RTS_Student",
+  "ready_for_stage7b_8b": true,
+  "stage6b3_baseline_touched": false,
+  "no_training_started": true,
+  "no_ppo_started": true,
+  "no_imitation_started": true,
+  "attempted_primary_pin": "mlagents==1.1.0",
+  "primary_pin_result": "FAILED_NO_MATCHING_DISTRIBUTION",
+  "compatible_pin_set_applied": [
+    "mlagents==0.30.0",
+    "mlagents_envs==0.30.0",
+    "protobuf==3.20.3",
+    "torch==2.2.2"
+  ],
+  "active_project_venv_modified": false,
+  "notes": [
+    "Dedicated Stage7B ML-Agents venv created and used for all installs.",
+    "Active project .venv still has no mlagents package (verified).",
+    "No training commands executed in this stage; only setup and --help validation."
+  ]
+}

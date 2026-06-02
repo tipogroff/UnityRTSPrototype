@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
+using RTS.Presentation;
 
 namespace RTS.Gameplay
 {
@@ -382,6 +383,7 @@ namespace RTS.Gameplay
         public System.Action<MatchResolution> OnMatchResolved;
         public System.Action<int> OnStepAdvanced;
         public System.Action<MatchStateSnapshot> OnStepCompleted;
+        public System.Action<MatchStateSnapshot> OnStepCleanupCompleted;
         public System.Action<MatchCommand> OnCommandAccepted;
         public System.Action<MatchCommand, string> OnCommandRejected;
         public System.Action<MatchCommand, string, MatchCommandRejectionDiagnostics> OnCommandRejectedDetailed;
@@ -477,6 +479,7 @@ namespace RTS.Gameplay
             }
 
             ResolveReferences();
+            LogPendingHumanMoves("StepMatch begin");
 
             _acceptedCommandsThisStep = 0;
             _invalidCommandsThisStep = 0;
@@ -496,6 +499,7 @@ namespace RTS.Gameplay
 
             // 5) Combat.
             ExecuteCombatPhase();
+            LogPendingHumanMoveResults();
 
             // Step counter is advanced after all gameplay phases.
             Step++;
@@ -520,6 +524,7 @@ namespace RTS.Gameplay
 
             _pendingCommands.Clear();
             ClearPhaseCommandBuffers();
+            OnStepCleanupCompleted?.Invoke(snapshot);
 
             return Phase == MatchPhase.Running;
         }
@@ -556,7 +561,41 @@ namespace RTS.Gameplay
             }
 
             _pendingCommands.Add(command);
+            if (command.Owner == Owner.Player2 && command.ActionType == UnitActionType.Move)
+            {
+                Debug.Log($"[HumanMove3G1R] MatchManager queued Player2 Move actor={command.UnitPosition} direction={command.Direction} pendingCount={_pendingCommands.Count}");
+            }
             return true;
+        }
+
+        private void LogPendingHumanMoves(string stage)
+        {
+            for (int i = 0; i < _pendingCommands.Count; i++)
+            {
+                MatchCommand command = _pendingCommands[i];
+                if (command.Owner != Owner.Player2 || command.ActionType != UnitActionType.Move)
+                {
+                    continue;
+                }
+
+                Debug.Log($"[HumanMove3G1R] MatchManager {stage} Player2 Move actor={command.UnitPosition} direction={command.Direction} pendingCount={_pendingCommands.Count}");
+            }
+        }
+
+        private void LogPendingHumanMoveResults()
+        {
+            for (int i = 0; i < _movementCommands.Count; i++)
+            {
+                ResolvedCommand resolved = _movementCommands[i];
+                MatchCommand command = resolved.Command;
+                if (command.Owner != Owner.Player2 || command.ActionType != UnitActionType.Move)
+                {
+                    continue;
+                }
+
+                UnitRuntime unit = resolved.Unit;
+                Debug.Log($"[HumanMove3G1R] MatchManager movement phase result actorBefore={command.UnitPosition} direction={command.Direction} finalGrid={(unit != null ? unit.GridPos.ToString() : "<null>")} changed={unit != null && unit.GridPos != command.UnitPosition}");
+            }
         }
 
         public int ApplyCommands(IReadOnlyList<MatchCommand> commands)
@@ -975,7 +1014,13 @@ namespace RTS.Gameplay
                 return false;
             }
 
-            return worker.AddCarriedResources(harvested) > 0;
+            bool carriedAdded = worker.AddCarriedResources(harvested) > 0;
+            if (carriedAdded)
+            {
+                TryGetVisualBridge(worker)?.OnVisualHarvest();
+            }
+
+            return carriedAdded;
         }
 
         private bool TryExecuteDeposit(ResolvedCommand command)
@@ -1230,6 +1275,18 @@ namespace RTS.Gameplay
             }
 
             return _combatResolver.TryAttack(attacker, target);
+        }
+
+        private static VisualEventBridge TryGetVisualBridge(UnitRuntime unit)
+        {
+            if (unit == null)
+            {
+                return null;
+            }
+
+            return unit.GetComponent<VisualEventBridge>()
+                   ?? unit.GetComponentInParent<VisualEventBridge>(true)
+                   ?? unit.GetComponentInChildren<VisualEventBridge>(true);
         }
 
         private MatchResolution ResolveCompletion()

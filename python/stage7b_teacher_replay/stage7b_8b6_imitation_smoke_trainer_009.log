@@ -1,0 +1,90 @@
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\stage7b_mlagents\.venv_mlagents\lib\site-packages\torch\__init__.py:696: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\tensor\python_tensor.cpp:453.)
+  _C._set_default_tensor_type(t)
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\stage7b_mlagents\.venv_mlagents\lib\site-packages\torch\__init__.py:696: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\torch\csrc\tensor\python_tensor.cpp:453.)
+  _C._set_default_tensor_type(t)
+[INFO] Listening on port 5004. Start training by pressing the Play button in the Unity Editor.
+[INFO] Connected to Unity environment with package version 4.0.2 and communication version 1.5.0
+[INFO] Connected new brain: Stage7B_RTS_Student?team=0
+
+
+	Unity Technologies
+
+ Version information:
+  ml-agents: 0.30.0,
+  ml-agents-envs: 0.30.0,
+  Communicator API: 1.5.0,
+  PyTorch: 2.2.2+cpu
+[INFO] Hyperparameters for behavior name Stage7B_RTS_Student: 
+	trainer_type:	ppo
+	hyperparameters:	
+	  batch_size:	128
+	  buffer_size:	2048
+	  learning_rate:	0.0003
+	  beta:	0.005
+	  epsilon:	0.2
+	  lambd:	0.95
+	  num_epoch:	3
+	  shared_critic:	False
+	  learning_rate_schedule:	linear
+	  beta_schedule:	linear
+	  epsilon_schedule:	linear
+	network_settings:	
+	  normalize:	False
+	  hidden_units:	256
+	  num_layers:	2
+	  vis_encode_type:	simple
+	  memory:	None
+	  goal_conditioning_type:	hyper
+	  deterministic:	False
+	reward_signals:	
+	  extrinsic:	
+	    gamma:	0.99
+	    strength:	1.0
+	    network_settings:	
+	      normalize:	False
+	      hidden_units:	128
+	      num_layers:	2
+	      vis_encode_type:	simple
+	      memory:	None
+	      goal_conditioning_type:	hyper
+	      deterministic:	False
+	init_path:	None
+	keep_checkpoints:	2
+	checkpoint_interval:	500000
+	max_steps:	10000
+	time_horizon:	64
+	summary_freq:	500
+	threaded:	False
+	self_play:	None
+	behavioral_cloning:	
+	  demo_path:	Assets/Demonstrations/stage7b_teacher_replay_clean_smoke.demo
+	  steps:	5000
+	  strength:	0.5
+	  samples_per_update:	0
+	  num_epoch:	3
+	  batch_size:	128
+[INFO] Stage7B_RTS_Student. Step: 500. Time Elapsed: 43.748 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 1000. Time Elapsed: 45.731 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 1500. Time Elapsed: 47.692 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 2000. Time Elapsed: 49.648 s. No episode was completed since last summary. Training.
+C:\Projects\UnityRTSPrototype\UnityRTSPrototype\python\stage7b_mlagents\.venv_mlagents\lib\site-packages\mlagents\trainers\torch_entities\utils.py:289: UserWarning: The use of `x.T` on tensors of dimension other than 2 to reverse their shape is deprecated and it will throw an error in a future release. Consider `x.mT` to transpose batches of matrices or `x.permute(*torch.arange(x.ndim - 1, -1, -1))` to reverse the dimensions of a tensor. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\builder\windows\pytorch\aten\src\ATen\native\TensorShape.cpp:3641.)
+  torch.nn.functional.one_hot(_act.T, action_size[i]).float()
+[INFO] Stage7B_RTS_Student. Step: 2500. Time Elapsed: 54.579 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 3000. Time Elapsed: 56.306 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 3500. Time Elapsed: 58.268 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 4000. Time Elapsed: 60.223 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 4500. Time Elapsed: 64.820 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 5000. Time Elapsed: 66.798 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 5500. Time Elapsed: 68.522 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 6000. Time Elapsed: 70.475 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 6500. Time Elapsed: 75.062 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 7000. Time Elapsed: 77.028 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 7500. Time Elapsed: 78.974 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 8000. Time Elapsed: 80.695 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 8500. Time Elapsed: 85.161 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 9000. Time Elapsed: 87.075 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 9500. Time Elapsed: 89.071 s. No episode was completed since last summary. Training.
+[INFO] Stage7B_RTS_Student. Step: 10000. Time Elapsed: 91.029 s. No episode was completed since last summary. Training.
+[INFO] Exported results\Stage7B_ImitationSmoke_009\Stage7B_RTS_Student\Stage7B_RTS_Student-10048.onnx
+[INFO] Copied results\Stage7B_ImitationSmoke_009\Stage7B_RTS_Student\Stage7B_RTS_Student-10048.onnx to results\Stage7B_ImitationSmoke_009\Stage7B_RTS_Student.onnx.
+TRAINER_EXIT_CODE:0  

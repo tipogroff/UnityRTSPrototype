@@ -1,0 +1,125 @@
+{
+  "stage": "Stage7B Episode Duration Tuning v2",
+  "generated_at_utc": "2026-05-11T16:05:00Z",
+  "final_decision": "GO",
+  "goal": "Extend Stage7B episode horizon for richer inference behavior while preserving inference/runtime contracts.",
+  "scope_classification": {
+    "stage7b_only_change": true,
+    "global_non_stage7b_runtime_change": false,
+    "max_episode_steps_global_changed": false,
+    "max_episode_steps_global_value": 2000,
+    "notes": [
+      "Stage7B serialized decision cap changed in Week7 scene.",
+      "Extended smoke target/timeout changed only in Stage7B menu runner constants.",
+      "GameConstants.MaxEpisodeSteps remained unchanged at 2000."
+    ]
+  },
+  "parameter_changes": {
+    "stage7b_decision_limit": {
+      "old": 512,
+      "new": 1500,
+      "source": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity"
+    },
+    "extended_inference_smoke_target": {
+      "old": 300,
+      "new": 1000,
+      "source": "Assets/Scripts/MLAgents/Stage7B/Editor/Stage7BInferenceMode8CMenu.cs"
+    },
+    "extended_inference_timeout_seconds": {
+      "old": 900,
+      "new": 1200,
+      "source": "Assets/Scripts/MLAgents/Stage7B/Editor/Stage7BInferenceMode8CMenu.cs"
+    }
+  },
+  "run_evidence": {
+    "source_report": "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json",
+    "generated_at_utc": "2026-05-11T15:15:41.9477721Z",
+    "decisions_completed": 1000,
+    "decision_target_reached": true,
+    "episode_terminal_reached": false,
+    "episode_terminal_reason": "none",
+    "match_state_at_stop": "Running",
+    "on_episode_begin_count": 2,
+    "reset_count_proxy": 1
+  },
+  "runtime_contract": {
+    "behavior_type_runtime": "InferenceOnly",
+    "behavior_name_runtime": "Stage7B_RTS_Student",
+    "heuristic_call_count": 0,
+    "observation_values_written_by_agent": 15552,
+    "observation_expected": 15552,
+    "observation_padding_warning": false,
+    "runtime_apply_attempted": 1000,
+    "runtime_apply_accepted": 1000,
+    "runtime_apply_rejected": 0,
+    "runtime_reject_reasons": [],
+    "duplicate_spawn_detected": false,
+    "runtime_contract_ok": true
+  },
+  "student_action_breakdown": {
+    "noop": 41,
+    "move": 892,
+    "harvest": 22,
+    "return": 2,
+    "produce": 41,
+    "attack": 2,
+    "total": 1000,
+    "move_ratio": 0.892
+  },
+  "movement_and_midmap_diagnostics": {
+    "spatial_telemetry_available": false,
+    "distance_to_enemy_base_metric_available": false,
+    "midmap_crossing_metric_available": false,
+    "classification": "PARTIAL",
+    "reason": "Available action/runtime/scheduler traces include action types and counters but no unit position vectors or base-distance fields.",
+    "fallback_evidence": {
+      "move_actions": 892,
+      "move_ratio": 0.892,
+      "attack_actions": 2,
+      "produce_actions": 41,
+      "interpretation": "The policy is movement-dominant and non-idle, but exact far-progress and mid-map thresholds cannot be measured from current telemetry schema."
+    }
+  },
+  "scripted_opponent_status": {
+    "present_enabled_non_idle": true,
+    "source": "python/stage7b_teacher_replay/stage7b_scripted_opponent_pacing_tuning_report.json",
+    "latest_verified_snapshot": {
+      "bot_decision_executed_count": 37,
+      "actions_per_100_steps": 14.45,
+      "first_attack_step": -1,
+      "opening_grace_worked": true,
+      "terminal_reason": "stage7b_decision_limit"
+    },
+    "baseline_comparison": {
+      "actions_per_100_before": 33.51,
+      "actions_per_100_after": 14.45,
+      "drop_percent": 56.88
+    },
+    "notes": [
+      "Scripted pacing metrics are taken from the latest dedicated pacing validation artifact.",
+      "Current v2 1000-decision smoke report does not embed scripted pacing counters in its schema."
+    ]
+  },
+  "unity_console": {
+    "errors": 0,
+    "warnings": 1,
+    "warning_classification": "benign_spawn_saturation",
+    "warning_message_sample": "BuildingRuntime spawn failed near occupied cell while trying to spawn unit (non-fatal).",
+    "blocking": false
+  },
+  "acceptance_matrix": {
+    "decision_limit_raised_512_to_1500": "PASS",
+    "extended_target_raised_300_to_1000": "PASS",
+    "timeout_raised_900_to_1200": "PASS",
+    "decisions_reached_at_least_1000": "PASS",
+    "runtime_apply_acceptance_no_rejects": "PASS",
+    "inference_only_no_heuristic": "PASS",
+    "episode_not_short_early_cutoff": "PASS",
+    "scripted_bot_pacing_preserved": "PASS",
+    "movement_far_progress_quantified": "PARTIAL"
+  },
+  "conclusion": {
+    "go_for_next_stage": true,
+    "summary": "v2 duration targets are met with preserved inference/runtime safety contracts; spatial movement threshold verification remains partial due to telemetry schema limits."
+  }
+}

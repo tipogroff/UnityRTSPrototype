@@ -1,0 +1,53 @@
+{
+  "status": "NO_GO",
+  "generated_at_utc": "2026-05-10T22:39:00Z",
+  "python_executable": "c:/Projects/UnityRTSPrototype/UnityRTSPrototype/.venv/Scripts/python.exe",
+  "python_version": "3.10.11",
+  "pip_version": "26.0.1",
+  "mlagents_installed": false,
+  "mlagents_version": null,
+  "mlagents_envs_installed": false,
+  "mlagents_envs_version": null,
+  "torch_version": "2.11.0",
+  "numpy_version": "1.26.4",
+  "protobuf_version": null,
+  "grpcio_version": null,
+  "mlagents_learn_available": false,
+  "unity_version": "6000.3.10f1",
+  "unity_mlagents_package_version": "4.0.2",
+  "behavior_name": "Stage7B_RTS_Student",
+  "observation_size": 15552,
+  "discrete_branch_count": 1,
+  "candidate_branch_size": 128,
+  "demo_file_path": "Assets/Demonstrations/stage7b_teacher_replay_clean_smoke.demo",
+  "demo_file_exists": true,
+  "demo_file_size_bytes": 15068229,
+  "config_path": "config/stage7b_imitation_smoke.yaml",
+  "config_created": true,
+  "training_command": "mlagents-learn config/stage7b_imitation_smoke.yaml --run-id Stage7B_ImitationSmoke_001 --force",
+  "ready_for_stage7b_8b": false,
+  "stage6b3_baseline_touched": false,
+  "no_training_started": true,
+  "no_ppo_started": true,
+  "no_imitation_started": true,
+  "python_environment_conflict_detected": false,
+  "existing_project_venvs_checked": [
+    "python/week5_teacher/.venv_day2_py39",
+    "python/week5_teacher_reference/.venv_microrts032_reference"
+  ],
+  "install_plan": {
+    "recommended_new_venv": "python/stage7b_mlagents/.venv_mlagents",
+    "commands": [
+      "python -m venv python/stage7b_mlagents/.venv_mlagents",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip install --upgrade pip",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip install mlagents==1.1.0",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip show mlagents mlagents-envs torch numpy protobuf grpcio"
+    ]
+  },
+  "notes": [
+    "Preflight only: training was not started.",
+    "Active workspace .venv does not contain mlagents or mlagents-envs.",
+    "mlagents-learn is unavailable on PATH and in active venv.",
+    "Config draft is prepared and behavior key matches Stage7B_RTS_Student."
+  ]
+}

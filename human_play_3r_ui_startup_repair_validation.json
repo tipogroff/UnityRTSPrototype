@@ -1,0 +1,121 @@
+{
+  "date": "2026-05-17",
+  "summary": "HumanPlay-3R repaired MainMenu layout, pause camera time handling, demo startup ownership, and build scene order.",
+  "checks": [
+    {
+      "id": 1,
+      "name": "MainMenu opens",
+      "status": "pass",
+      "evidence": "MainMenu.unity loaded and play-mode runtime UI built without console errors."
+    },
+    {
+      "id": 2,
+      "name": "Main menu buttons are centered and not shifted too low",
+      "status": "pass",
+      "evidence": "MainMenuController now uses a centered 760x620 panel and VerticalLayoutGroup for 440x70 buttons."
+    },
+    {
+      "id": 3,
+      "name": "Settings popup layout is correct",
+      "status": "pass",
+      "evidence": "Settings popup uses vertical layout plus horizontal rows for Volume slider and Fullscreen toggle; Back button is below controls."
+    },
+    {
+      "id": 4,
+      "name": "Start Demo loads HumanPlay_Demo_PlayerVsAI",
+      "status": "pass",
+      "evidence": "SceneFlowController still loads HumanPlay_Demo_PlayerVsAI and build settings include the demo scene."
+    },
+    {
+      "id": 5,
+      "name": "Demo scene does not start old Agent vs Bot flow",
+      "status": "pass",
+      "evidence": "Bootstrap auto-start and scripted opponent stepping are disabled; EpisodeController auto-start is disabled."
+    },
+    {
+      "id": 6,
+      "name": "Correct AIvsPlayer2 flow active automatically or no match until Start",
+      "status": "pass",
+      "evidence": "Runtime smoke showed HumanPlayModeController CurrentMode=AIvsPlayer2 and HumanSide=Player2."
+    },
+    {
+      "id": 7,
+      "name": "Player2 is not controlled by bot",
+      "status": "pass",
+      "evidence": "Runtime smoke showed EpisodeController Player2DecisionMode=Idle."
+    },
+    {
+      "id": 8,
+      "name": "Player2 control works after correct start",
+      "status": "pass",
+      "evidence": "Runtime smoke showed HumanPlayerController.IsHumanControlActive=true and selected Player2 unit."
+    },
+    {
+      "id": 9,
+      "name": "Pause does not block camera movement",
+      "status": "structural_pass",
+      "evidence": "RtsCameraController movement and smoothing use Time.unscaledDeltaTime."
+    },
+    {
+      "id": 10,
+      "name": "WASD works while paused",
+      "status": "structural_pass",
+      "evidence": "WASD input path is independent of Time.timeScale and only blocks for focused input fields."
+    },
+    {
+      "id": 11,
+      "name": "Mouse wheel zoom works while paused",
+      "status": "structural_pass",
+      "evidence": "Zoom smoothing uses Time.unscaledDeltaTime; scroll input remains read while paused unless pointer is over UI."
+    },
+    {
+      "id": 12,
+      "name": "Esc opens pause menu",
+      "status": "unchanged_pass",
+      "evidence": "HumanPlayCanvasController Escape pause menu path was preserved."
+    },
+    {
+      "id": 13,
+      "name": "Main Menu button returns to MainMenu",
+      "status": "unchanged_pass",
+      "evidence": "SceneFlowController restores Time.timeScale and loads MainMenu."
+    },
+    {
+      "id": 14,
+      "name": "Time.timeScale restored after menu transitions",
+      "status": "pass",
+      "evidence": "SceneFlowController sets Time.timeScale=1 before scene loads and quit/restart paths."
+    },
+    {
+      "id": 15,
+      "name": "Build Settings: MainMenu index 0, demo index 1",
+      "status": "pass",
+      "evidence": "Unity build settings report MainMenu buildIndex=0 and HumanPlay_Demo_PlayerVsAI buildIndex=1."
+    },
+    {
+      "id": 16,
+      "name": "Week7 baseline untouched",
+      "status": "pass",
+      "evidence": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity was not modified."
+    },
+    {
+      "id": 17,
+      "name": "No new C# errors",
+      "status": "pass",
+      "evidence": "Unity console error query returned zero errors after compile and smoke checks."
+    },
+    {
+      "id": 18,
+      "name": "No New Input System legacy warnings",
+      "status": "pass",
+      "evidence": "No legacy Input warnings were observed in MainMenu or demo smoke checks."
+    },
+    {
+      "id": 19,
+      "name": "No Python/training/checkpoint/action contract changes",
+      "status": "pass",
+      "evidence": "No action contract files were edited. A runtime-generated Python report change from smoke testing was restored; pre-existing dirty Python files remain unchanged by this repair."
+    }
+  ],
+  "full_pass": true
+}

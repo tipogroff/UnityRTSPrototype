@@ -1,0 +1,297 @@
+﻿{
+    "generatedUtc": "2026-05-12T20:50:10.0553965Z",
+    "inPlayMode": true,
+    "prefabs": [
+        {
+            "role": "Worker",
+            "prefabPath": "Assets/Prefabs/Worker.prefab",
+            "ok": true,
+            "hasInterpolator": true,
+            "hasBridge": true,
+            "hasVisualAnimator": true,
+            "hasRootCollider": true,
+            "visualRootFound": true,
+            "teamMarkerFound": true,
+            "visualRootAssigned": true,
+            "moveDuration": 0.30000001192092898,
+            "useScaledTime": true,
+            "enableInterpolation": true,
+            "teleportThreshold": 0.05000000074505806,
+            "rootLocalPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootLocalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "markerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "markerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "expectedRootLocalPosition": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "expectedRootLocalScale": {
+                "x": 0.6000000238418579,
+                "y": 0.800000011920929,
+                "z": 0.6000000238418579
+            },
+            "expectedMarkerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "expectedMarkerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "notes": []
+        },
+        {
+            "role": "Light",
+            "prefabPath": "Assets/Prefabs/Light.prefab",
+            "ok": true,
+            "hasInterpolator": true,
+            "hasBridge": true,
+            "hasVisualAnimator": true,
+            "hasRootCollider": true,
+            "visualRootFound": true,
+            "teamMarkerFound": true,
+            "visualRootAssigned": true,
+            "moveDuration": 0.30000001192092898,
+            "useScaledTime": true,
+            "enableInterpolation": true,
+            "teleportThreshold": 0.05000000074505806,
+            "rootLocalPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootLocalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "markerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "markerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "expectedRootLocalPosition": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "expectedRootLocalScale": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            },
+            "expectedMarkerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "expectedMarkerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "notes": []
+        },
+        {
+            "role": "Heavy",
+            "prefabPath": "Assets/Prefabs/Heavy.prefab",
+            "ok": true,
+            "hasInterpolator": true,
+            "hasBridge": true,
+            "hasVisualAnimator": true,
+            "hasRootCollider": true,
+            "visualRootFound": true,
+            "teamMarkerFound": true,
+            "visualRootAssigned": true,
+            "moveDuration": 0.30000001192092898,
+            "useScaledTime": true,
+            "enableInterpolation": true,
+            "teleportThreshold": 0.05000000074505806,
+            "rootLocalPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootLocalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "markerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "markerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "expectedRootLocalPosition": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "expectedRootLocalScale": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            },
+            "expectedMarkerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "expectedMarkerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "notes": []
+        },
+        {
+            "role": "Ranged",
+            "prefabPath": "Assets/Prefabs/Ranged.prefab",
+            "ok": true,
+            "hasInterpolator": true,
+            "hasBridge": true,
+            "hasVisualAnimator": true,
+            "hasRootCollider": true,
+            "visualRootFound": true,
+            "teamMarkerFound": true,
+            "visualRootAssigned": true,
+            "moveDuration": 0.30000001192092898,
+            "useScaledTime": true,
+            "enableInterpolation": true,
+            "teleportThreshold": 0.05000000074505806,
+            "rootLocalPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rootLocalScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "markerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "markerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "expectedRootLocalPosition": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "expectedRootLocalScale": {
+                "x": 0.5,
+                "y": 1.2000000476837159,
+                "z": 0.5
+            },
+            "expectedMarkerLocalPosition": {
+                "x": 0.0,
+                "y": 0.019999999552965165,
+                "z": 0.0
+            },
+            "expectedMarkerLocalScale": {
+                "x": 0.7200000286102295,
+                "y": 0.019999999552965165,
+                "z": 0.7200000286102295
+            },
+            "notes": []
+        }
+    ],
+    "playMode": {
+        "executed": true,
+        "interpolatorsObserved": 58,
+        "interpolatorsMoving": 0,
+        "stuckOffsetCount": 0,
+        "animatorMismatchCount": 34,
+        "ownerColorMismatchCount": 0,
+        "markerOffsetMismatchCount": 9,
+        "notes": [
+            "Animator IsMoving is true after interpolation completion on Player1_Worker_(1, 1).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(21, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).",
+            "Animator IsMoving is true after interpolation completion on Player1_Light_(2, 3).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(22, 22).",
+            "Animator IsMoving is true after interpolation completion on Player1_Heavy_(0, 3).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(1, 2).",
+            "TeamMarker_Ring is not anchored as expected on Player2_Light_(23, 21).",
+            "Animator IsMoving is true after interpolation completion on Player2_Light_(23, 21).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 2).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 2).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(2, 3).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).",
+            "Animator IsMoving is true after interpolation completion on Player1_Light_(0, 4).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player1_Ranged_(0, 3).",
+            "Animator IsMoving is true after interpolation completion on Player1_Ranged_(0, 3).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).",
+            "Animator IsMoving is true after interpolation completion on Player1_Light_(0, 4).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 4).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "TeamMarker_Ring is not anchored as expected on Player1_Light_(0, 2).",
+            "Animator IsMoving is true after interpolation completion on Player1_Light_(0, 2).",
+            "Animator IsMoving is true after interpolation completion on Player1_Worker_(3, 1).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player2_Worker_(20, 20).",
+            "Animator IsMoving is true after interpolation completion on Player1_Ranged_(2, 3)."
+        ]
+    },
+    "trace": {
+        "lineCount": 1759,
+        "hasStarted": true,
+        "hasUpdated": false,
+        "hasCompleted": true,
+        "hasSnapped": true,
+        "hasInterrupted": false,
+        "notes": []
+    }
+}

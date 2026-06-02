@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1778454004",
+        "python_version": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\stage7b_mlagents\\.venv_mlagents\\Scripts\\mlagents-learn config/stage7b_imitation_smoke.yaml --run-id Stage7B_ImitationSmoke_001 --force",
+        "mlagents_version": "0.30.0",
+        "mlagents_envs_version": "0.30.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cpu",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1778454032"
+    },
+    "total": 27.8047288,
+    "count": 1,
+    "self": 0.0036769999999997083,
+    "children": {
+        "run_training.setup": {
+            "total": 0.06097999999999981,
+            "count": 1,
+            "self": 0.06097999999999981
+        },
+        "TrainerController.start_learning": {
+            "total": 27.7400718,
+            "count": 1,
+            "self": 0.00019379999999458164,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 27.739871200000003,
+                    "count": 1,
+                    "self": 27.739871200000003
+                },
+                "trainer_threads": {
+                    "total": 7.000000010748408e-07,
+                    "count": 1,
+                    "self": 7.000000010748408e-07
+                },
+                "TrainerController._save_models": {
+                    "total": 6.100000000230921e-06,
+                    "count": 1,
+                    "self": 6.100000000230921e-06
+                }
+            }
+        }
+    }
+}

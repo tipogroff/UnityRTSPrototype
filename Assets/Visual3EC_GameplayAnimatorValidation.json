@@ -1,0 +1,307 @@
+{
+    "generatedAtUtc": "2026-05-12T06:54:13.0988561Z",
+    "success": true,
+    "usedEmbeddedClipsOnly": true,
+    "gameplayRuntimeCodeChanged": false,
+    "existingVisualEventBridgeHooksDetected": true,
+    "validationScenePath": "Assets/Scenes/Visual3EC_GameplayAnimatorValidation.unity",
+    "screenshotTargets": [
+        "Assets/Screenshots/Visual_3E_C_GameplayIdle_Week7.png",
+        "Assets/Screenshots/Visual_3E_C_AnimatorPrefabCheck.png",
+        "Assets/Screenshots/Visual_3E_C_OwnerColorStillCorrect.png"
+    ],
+    "roles": [
+        {
+            "Role": "Worker",
+            "PrefabPath": "Assets/Prefabs/Worker.prefab",
+            "ControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Worker_Animator.controller",
+            "FbxPath": "Assets/Art/Quaternius/UltimateAnimatedCharacterPack/FBX/Casual_Male.fbx",
+            "VisualModelName": "Visual_Worker_Casual_Male_Model",
+            "PrefabUpdated": false,
+            "PrefabHasAnimator": true,
+            "AnimatorReferenceAssigned": true,
+            "TeamMarkerFound": true,
+            "TeamMarkerOutsideAnimatedHierarchy": true,
+            "RootComponentsStable": true,
+            "AnimatorTargetPath": "Worker/VisualRoot/Visual_Worker_Casual_Male_Model",
+            "TeamMarkerPath": "Worker/VisualRoot/TeamMarker_Ring",
+            "AvatarName": "",
+            "ControllerGuid": "32c9963e51aff6841bbe1b6ab22e50fb",
+            "RootComponentTypes": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.CapsuleCollider",
+                "UnityEngine.MeshRenderer",
+                "RTS.Presentation.UnitVisualAnimator",
+                "RTS.Presentation.VisualEventBridge"
+            ],
+            "RequiredStatesMissing": [],
+            "RequiredParametersMissing": [],
+            "MissingMotions": [],
+            "Clips": [
+                {
+                    "State": "Idle",
+                    "RequestedClip": "CharacterArmature|Idle",
+                    "ResolvedClip": "CharacterArmature|Idle",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 4.1666669845581059
+                },
+                {
+                    "State": "Walk",
+                    "RequestedClip": "CharacterArmature|Walk",
+                    "ResolvedClip": "CharacterArmature|Walk",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Attack",
+                    "RequestedClip": "CharacterArmature|Punch",
+                    "ResolvedClip": "CharacterArmature|Punch",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 0.75
+                },
+                {
+                    "State": "Harvest",
+                    "RequestedClip": "CharacterArmature|PickUp",
+                    "ResolvedClip": "CharacterArmature|PickUp",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Death",
+                    "RequestedClip": "CharacterArmature|Death",
+                    "ResolvedClip": "CharacterArmature|Death",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 2.2916667461395265
+                }
+            ],
+            "Notes": [
+                "Avatar asset was not found in FBX; Animator avatar assignment skipped."
+            ]
+        },
+        {
+            "Role": "Light",
+            "PrefabPath": "Assets/Prefabs/Light.prefab",
+            "ControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Light_Animator.controller",
+            "FbxPath": "Assets/Art/Quaternius/UltimateAnimatedCharacterPack/FBX/Viking_Male.fbx",
+            "VisualModelName": "Visual_Light_Viking_Male_Model",
+            "PrefabUpdated": false,
+            "PrefabHasAnimator": true,
+            "AnimatorReferenceAssigned": true,
+            "TeamMarkerFound": true,
+            "TeamMarkerOutsideAnimatedHierarchy": true,
+            "RootComponentsStable": true,
+            "AnimatorTargetPath": "Light/VisualRoot/Visual_Light_Viking_Male_Model",
+            "TeamMarkerPath": "Light/VisualRoot/Visual_Light_Viking_Male_Model/TeamMarker_Ring",
+            "AvatarName": "",
+            "ControllerGuid": "ea5965521b15de84585ab3a9ea102966",
+            "RootComponentTypes": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.CapsuleCollider",
+                "UnityEngine.MeshRenderer",
+                "RTS.Presentation.UnitVisualAnimator",
+                "RTS.Presentation.VisualEventBridge"
+            ],
+            "RequiredStatesMissing": [],
+            "RequiredParametersMissing": [],
+            "MissingMotions": [],
+            "Clips": [
+                {
+                    "State": "Idle",
+                    "RequestedClip": "CharacterArmature|Idle",
+                    "ResolvedClip": "CharacterArmature|Idle",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 4.1666669845581059
+                },
+                {
+                    "State": "Walk",
+                    "RequestedClip": "CharacterArmature|Walk",
+                    "ResolvedClip": "CharacterArmature|Walk",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Attack",
+                    "RequestedClip": "CharacterArmature|SwordSlash",
+                    "ResolvedClip": "CharacterArmature|SwordSlash",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.0416667461395264
+                },
+                {
+                    "State": "Harvest",
+                    "RequestedClip": "CharacterArmature|PickUp",
+                    "ResolvedClip": "CharacterArmature|PickUp",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Death",
+                    "RequestedClip": "CharacterArmature|Death",
+                    "ResolvedClip": "CharacterArmature|Death",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 2.2916667461395265
+                }
+            ],
+            "Notes": [
+                "Avatar asset was not found in FBX; Animator avatar assignment skipped."
+            ]
+        },
+        {
+            "Role": "Heavy",
+            "PrefabPath": "Assets/Prefabs/Heavy.prefab",
+            "ControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Heavy_Animator.controller",
+            "FbxPath": "Assets/Art/Quaternius/UltimateAnimatedCharacterPack/FBX/Knight_Male.fbx",
+            "VisualModelName": "Visual_Heavy_Knight_Male_Model",
+            "PrefabUpdated": false,
+            "PrefabHasAnimator": true,
+            "AnimatorReferenceAssigned": true,
+            "TeamMarkerFound": true,
+            "TeamMarkerOutsideAnimatedHierarchy": true,
+            "RootComponentsStable": true,
+            "AnimatorTargetPath": "Heavy/VisualRoot/Visual_Heavy_Knight_Male_Model",
+            "TeamMarkerPath": "Heavy/VisualRoot/TeamMarker_Ring",
+            "AvatarName": "",
+            "ControllerGuid": "bdafb7d7d2b5e2a49a4e5f6dc8458750",
+            "RootComponentTypes": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.CapsuleCollider",
+                "UnityEngine.MeshRenderer",
+                "RTS.Presentation.UnitVisualAnimator",
+                "RTS.Presentation.VisualEventBridge"
+            ],
+            "RequiredStatesMissing": [],
+            "RequiredParametersMissing": [],
+            "MissingMotions": [],
+            "Clips": [
+                {
+                    "State": "Idle",
+                    "RequestedClip": "CharacterArmature|Idle",
+                    "ResolvedClip": "CharacterArmature|Idle",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 4.1666669845581059
+                },
+                {
+                    "State": "Walk",
+                    "RequestedClip": "CharacterArmature|Walk",
+                    "ResolvedClip": "CharacterArmature|Walk",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Attack",
+                    "RequestedClip": "CharacterArmature|SwordSlash",
+                    "ResolvedClip": "CharacterArmature|SwordSlash",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.0416667461395264
+                },
+                {
+                    "State": "Harvest",
+                    "RequestedClip": "CharacterArmature|PickUp",
+                    "ResolvedClip": "CharacterArmature|PickUp",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Death",
+                    "RequestedClip": "CharacterArmature|Death",
+                    "ResolvedClip": "CharacterArmature|Death",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 2.2916667461395265
+                }
+            ],
+            "Notes": [
+                "Avatar asset was not found in FBX; Animator avatar assignment skipped."
+            ]
+        },
+        {
+            "Role": "Ranged",
+            "PrefabPath": "Assets/Prefabs/Ranged.prefab",
+            "ControllerPath": "Assets/Art/AnimatorControllers/Gameplay/RTS_Ranged_Animator.controller",
+            "FbxPath": "Assets/Art/Quaternius/UltimateAnimatedCharacterPack/FBX/Wizard.fbx",
+            "VisualModelName": "Visual_Ranged_Wizard_Model",
+            "PrefabUpdated": false,
+            "PrefabHasAnimator": true,
+            "AnimatorReferenceAssigned": true,
+            "TeamMarkerFound": true,
+            "TeamMarkerOutsideAnimatedHierarchy": true,
+            "RootComponentsStable": true,
+            "AnimatorTargetPath": "Ranged/VisualRoot/Visual_Ranged_Wizard_Model",
+            "TeamMarkerPath": "Ranged/VisualRoot/TeamMarker_Ring",
+            "AvatarName": "",
+            "ControllerGuid": "137a4f4d20ca6ac45818f57dab17f37f",
+            "RootComponentTypes": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.CapsuleCollider",
+                "UnityEngine.MeshRenderer",
+                "RTS.Presentation.UnitVisualAnimator",
+                "RTS.Presentation.VisualEventBridge"
+            ],
+            "RequiredStatesMissing": [],
+            "RequiredParametersMissing": [],
+            "MissingMotions": [],
+            "Clips": [
+                {
+                    "State": "Idle",
+                    "RequestedClip": "CharacterArmature|Idle",
+                    "ResolvedClip": "CharacterArmature|Idle",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 4.1666669845581059
+                },
+                {
+                    "State": "Walk",
+                    "RequestedClip": "CharacterArmature|Walk",
+                    "ResolvedClip": "CharacterArmature|Walk",
+                    "Assigned": true,
+                    "Loop": true,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Attack",
+                    "RequestedClip": "CharacterArmature|Shoot_OneHanded",
+                    "ResolvedClip": "CharacterArmature|Shoot_OneHanded",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 0.5416666865348816
+                },
+                {
+                    "State": "Harvest",
+                    "RequestedClip": "CharacterArmature|PickUp",
+                    "ResolvedClip": "CharacterArmature|PickUp",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 1.25
+                },
+                {
+                    "State": "Death",
+                    "RequestedClip": "CharacterArmature|Death",
+                    "ResolvedClip": "CharacterArmature|Death",
+                    "Assigned": true,
+                    "Loop": false,
+                    "Length": 2.2916667461395265
+                }
+            ],
+            "Notes": [
+                "Avatar asset was not found in FBX; Animator avatar assignment skipped."
+            ]
+        }
+    ]
+}

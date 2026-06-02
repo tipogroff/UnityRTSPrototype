@@ -1,0 +1,189 @@
+{
+    "generated_at_utc": "2026-05-10T20:42:56Z",
+    "status": "GO",
+    "summary": "Stage7B-7B Move/Harvest/Produce direction mapping fix validation.",
+    "source_path": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "decision": "GO_TO_STAGE7B_8_SMALL_IMITATION_SMOKE",
+    "direction_pattern_conclusion": "no_direction_mismatches",
+    "cardinal_direction_mapping_mode": "invert_y_for_legacy032_teacher",
+    "contract_error_count": 0,
+    "episodes_scanned": 8,
+    "steps_total": 4096,
+    "teacher_commands_total": 2952,
+    "candidate_match_count": 2695,
+    "candidate_drop_count": 257,
+    "candidate_match_rate": 0.9129403829574585,
+    "runtime_apply_attempted_count": 2695,
+    "runtime_apply_accepted_count": 2695,
+    "runtime_apply_rejected_count": 0,
+    "runtime_apply_accept_rate": 1.0,
+    "state_sync_success_count": 4096,
+    "state_sync_failed_count": 0,
+    "state_sync_failed_count_after_7b": 0,
+    "no_teacher_command_steps": 2383,
+    "candidate_count_min": 10,
+    "candidate_count_mean": 36.139892578125,
+    "candidate_count_max": 70,
+    "demo_recording_ready_after_7b": true,
+    "candidate_match_count_before_7a": 2396,
+    "candidate_match_count_after_7b": 2695,
+    "candidate_match_rate_before_7a": 0.8116530179977417,
+    "candidate_match_rate_after_7b": 0.9129403829574585,
+    "runtime_apply_accept_rate_before_7a": 1.0,
+    "runtime_apply_accept_rate_after_7b": 1.0,
+    "runtime_apply_rejected_count_after_7b": 0,
+    "mapping_applied_action_types": [
+        {
+            "key": "harvest",
+            "value": 154
+        },
+        {
+            "key": "produce",
+            "value": 637
+        },
+        {
+            "key": "move",
+            "value": 2027
+        },
+        {
+            "key": "return",
+            "value": 134
+        }
+    ],
+    "move_mapping_applied_count": 2027,
+    "harvest_mapping_applied_count": 154,
+    "return_mapping_applied_count": 134,
+    "produce_mapping_applied_count": 637,
+    "move_commands_total": 2027,
+    "move_commands_matched": 2027,
+    "move_commands_dropped": 0,
+    "move_match_rate": 1.0,
+    "move_match_rate_before_7a": 0.8904790282249451,
+    "move_match_rate_after_7b": 1.0,
+    "move_direction_mismatch_count": 0,
+    "move_direction_mismatch_count_before_7a": 222,
+    "move_direction_mismatch_count_after_7b": 0,
+    "move_direction_mismatch_rate": 0.0,
+    "move_opposite_direction_count": 0,
+    "move_y_axis_flip_count": 0,
+    "move_x_axis_flip_count": 0,
+    "move_mapping_like_count": 0,
+    "move_legality_or_state_divergence_count": 0,
+    "move_mismatch_by_teacher_dir": [],
+    "move_mismatch_by_candidate_dir": [],
+    "first_10_move_mismatches": [],
+    "harvest_commands_total": 154,
+    "harvest_commands_matched": 154,
+    "harvest_commands_dropped": 0,
+    "harvest_match_rate": 1.0,
+    "harvest_match_rate_before_7a": 0.6688309907913208,
+    "harvest_match_rate_after_7b": 1.0,
+    "harvest_direction_mismatch_count": 0,
+    "harvest_direction_mismatch_count_before_7a": 51,
+    "harvest_direction_mismatch_count_after_7b": 0,
+    "harvest_direction_mismatch_rate": 0.0,
+    "harvest_opposite_direction_count": 0,
+    "harvest_y_axis_flip_count": 0,
+    "harvest_x_axis_flip_count": 0,
+    "harvest_mapping_like_count": 0,
+    "harvest_legality_or_state_divergence_count": 0,
+    "harvest_mismatch_by_teacher_dir": [],
+    "harvest_mismatch_by_candidate_dir": [],
+    "first_10_harvest_mismatches": [],
+    "produce_commands_total": 637,
+    "produce_commands_matched": 380,
+    "produce_commands_dropped": 257,
+    "produce_match_rate": 0.5965462923049927,
+    "produce_match_rate_before_7a": 0.5557299852371216,
+    "produce_match_rate_after_7b": 0.5965462923049927,
+    "produce_direction_mismatch_count": 0,
+    "produce_direction_mismatch_count_before_7a": 26,
+    "produce_direction_mismatch_count_after_7b": 0,
+    "produce_direction_mismatch_rate": 0.0,
+    "produce_opposite_direction_count": 0,
+    "produce_y_axis_flip_count": 0,
+    "produce_x_axis_flip_count": 0,
+    "produce_mapping_like_count": 0,
+    "produce_legality_or_state_divergence_count": 0,
+    "produce_type_mismatch_count": 86,
+    "produce_type_mismatch_count_after_7b": 86,
+    "action_type_missing_from_candidates_count": 171,
+    "action_type_missing_from_candidates_after_7b": 171,
+    "produce_mismatch_by_teacher_dir": [
+        {
+            "key": "North",
+            "value": 111
+        },
+        {
+            "key": "East",
+            "value": 116
+        },
+        {
+            "key": "West",
+            "value": 30
+        }
+    ],
+    "produce_mismatch_by_candidate_dir": [
+        {
+            "key": "North",
+            "value": 34
+        },
+        {
+            "key": "East",
+            "value": 43
+        },
+        {
+            "key": "none",
+            "value": 171
+        },
+        {
+            "key": "West",
+            "value": 9
+        }
+    ],
+    "first_10_produce_mismatches": [
+        "ep=0,step=351,cmd=3,actor=(3,11),teacher_dir=North,candidate_dir=North,teacher_target=(3,12),unity_target=(3,12),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=358,cmd=0,actor=(3,6),teacher_dir=East,candidate_dir=East,teacher_target=(4,6),unity_target=(4,6),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=359,cmd=0,actor=(3,6),teacher_dir=East,candidate_dir=East,teacher_target=(4,6),unity_target=(4,6),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=401,cmd=4,actor=(0,5),teacher_dir=North,candidate_dir=none,teacher_target=(0,6),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(0, 5), type=Produce)",
+        "ep=0,step=406,cmd=0,actor=(5,6),teacher_dir=North,candidate_dir=none,teacher_target=(5,7),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(5, 6), type=Produce)",
+        "ep=0,step=407,cmd=0,actor=(5,6),teacher_dir=North,candidate_dir=none,teacher_target=(5,7),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(5, 6), type=Produce)",
+        "ep=1,step=338,cmd=2,actor=(5,2),teacher_dir=North,candidate_dir=North,teacher_target=(5,3),unity_target=(5,3),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=1,step=339,cmd=0,actor=(5,2),teacher_dir=North,candidate_dir=North,teacher_target=(5,3),unity_target=(5,3),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=1,step=340,cmd=0,actor=(5,2),teacher_dir=North,candidate_dir=North,teacher_target=(5,3),unity_target=(5,3),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=1,step=340,cmd=1,actor=(3,5),teacher_dir=East,candidate_dir=East,teacher_target=(4,5),unity_target=(4,5),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)"
+    ],
+    "return_commands_total": 134,
+    "return_commands_matched": 134,
+    "return_commands_dropped": 0,
+    "return_match_rate": 1.0,
+    "return_match_rate_after_7b": 1.0,
+    "return_direction_mismatch_count": 0,
+    "return_direction_mismatch_count_after_7b": 0,
+    "return_direction_mismatch_rate": 0.0,
+    "mhp_direction_mismatch_count": 0,
+    "mhp_opposite_direction_count": 0,
+    "mhp_y_axis_flip_count": 0,
+    "mhp_y_axis_flip_rate": -1.0,
+    "mhp_x_axis_flip_count": 0,
+    "mhp_x_axis_flip_rate": -1.0,
+    "runtime_reject_reason_histogram": [],
+    "state_sync_failure_reasons": [],
+    "remaining_mismatch_reason_histogram": [
+        {
+            "key": "produce_type_mismatch",
+            "value": 86
+        },
+        {
+            "key": "action_type_missing_from_candidates",
+            "value": 171
+        }
+    ],
+    "notes": [
+        "Mapping-only validation: no ML-Agents training, PPO, imitation learning, or large .demo recording was started.",
+        "Teacher policy, reward, ActionApplier, MatchManager, and MlAgentsCandidateActionBuilder were not modified by this runner.",
+        "Teacher Replay resolver maps Move/Harvest/Return/Produce cardinal direction branches with legacy032 vertical-axis conversion.",
+        "Stage7B-7B GO criteria met for Stage7B-8 small imitation smoke.",
+        "Stage6B3 baseline/checkpoint assets were not modified by this runner."
+    ]
+}

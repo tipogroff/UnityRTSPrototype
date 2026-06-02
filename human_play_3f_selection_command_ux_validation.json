@@ -1,0 +1,63 @@
+{
+  "stage": "HumanPlay-3F",
+  "date": "2026-05-17",
+  "status": "implemented_with_editor_smoke_validation",
+  "unity_compile": {
+    "status": "pass",
+    "errors": 0
+  },
+  "play_mode_smoke": {
+    "status": "pass",
+    "errors": 0,
+    "notes": "Entered and exited HumanPlay_Demo_PlayerVsAI play mode without C# errors."
+  },
+  "build_settings": {
+    "status": "pass",
+    "index_0": "Assets/Scenes/MainMenu.unity",
+    "index_1": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity"
+  },
+  "checklist": [
+    { "id": 1, "item": "MainMenu still opens.", "status": "preserved" },
+    { "id": 2, "item": "Start Demo still loads HumanPlay_Demo_PlayerVsAI.", "status": "preserved" },
+    { "id": 3, "item": "Demo still starts correct AIvsPlayer2 mode.", "status": "preserved_from_3R" },
+    { "id": 4, "item": "Player2 single selection works.", "status": "implemented" },
+    { "id": 5, "item": "Player1 selection is blocked.", "status": "implemented" },
+    { "id": 6, "item": "Empty click clears selection.", "status": "implemented" },
+    { "id": 7, "item": "Shift+click adds/removes Player2 objects.", "status": "implemented" },
+    { "id": 8, "item": "Drag rectangle appears.", "status": "implemented" },
+    { "id": 9, "item": "Drag-select selects multiple Player2 units.", "status": "implemented" },
+    { "id": 10, "item": "Drag-select does not select Player1 units.", "status": "implemented" },
+    { "id": 11, "item": "Selection markers appear for selected objects.", "status": "implemented" },
+    { "id": 12, "item": "Markers clear on selection clear/restart.", "status": "implemented" },
+    { "id": 13, "item": "Selection panel shows single selected object details.", "status": "implemented" },
+    { "id": 14, "item": "Selection panel shows multi-selection count/type summary.", "status": "implemented" },
+    { "id": 15, "item": "Worker selection shows Move/Harvest/Return/Build Barracks.", "status": "implemented" },
+    { "id": 16, "item": "Base selection shows Produce Worker.", "status": "implemented" },
+    { "id": 17, "item": "Barracks selection shows Produce Light/Heavy/Ranged.", "status": "implemented" },
+    { "id": 18, "item": "Combat unit selection shows Move/Attack.", "status": "implemented" },
+    { "id": 19, "item": "Production buttons call PlayerCommandController and show accepted/rejected status.", "status": "implemented" },
+    { "id": 20, "item": "Invalid command shows readable rejection reason.", "status": "implemented" },
+    { "id": 21, "item": "F3 hides/shows selection panel.", "status": "preserved" },
+    { "id": 22, "item": "F4 hides/shows production panel.", "status": "preserved" },
+    { "id": 23, "item": "Esc pause menu still works.", "status": "preserved" },
+    { "id": 24, "item": "Camera controls still work while paused.", "status": "preserved_from_3R" },
+    { "id": 25, "item": "No new C# errors.", "status": "pass" },
+    { "id": 26, "item": "No New Input System legacy warnings.", "status": "guarded_input_paths" },
+    { "id": 27, "item": "Week7 baseline untouched.", "status": "pass" },
+    { "id": 28, "item": "No Python/training/checkpoint/action contract changes.", "status": "pass_for_intentional_edits" },
+    { "id": 29, "item": "No direct gameplay movement bypass added.", "status": "pass" }
+  ],
+  "manual_game_view_followup": [
+    "Confirm drag rectangle visual position at target demo resolution.",
+    "Confirm mouse click/drag selection feel with actual scene colliders.",
+    "Confirm selected marker scale reads well in the final Game view camera."
+  ],
+  "constraints": {
+    "python_training_checkpoints_changed": false,
+    "observation_action_contract_changed": false,
+    "action_decoder_semantics_changed": false,
+    "action_applier_semantics_changed": false,
+    "week7_baseline_scene_changed": false,
+    "direct_movement_bypass_added": false
+  }
+}

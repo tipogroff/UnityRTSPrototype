@@ -1,0 +1,94 @@
+{
+  "status": "NO-GO",
+  "stage": "Stage7B-8B.4",
+  "run_id": "Stage7B_ImitationSmoke_007",
+  "scene_path": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+  "config_path": "config/stage7b_imitation_smoke.yaml",
+  "commands": {
+    "inspect_environment": [
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe --version",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip --version",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip show mlagents",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip show mlagents-envs",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip show torch",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip show onnx"
+    ],
+    "install_onnx": [
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip install onnx",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip install --force-reinstall --no-deps numpy==1.21.2 protobuf==3.20.3 onnx==1.14.0"
+    ],
+    "validate_env": [
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -c \"import onnx; print(onnx.__version__)\"",
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/python.exe -m pip check"
+    ],
+    "smoke_rerun": [
+      "python/stage7b_mlagents/.venv_mlagents/Scripts/mlagents-learn.exe config/stage7b_imitation_smoke.yaml --run-id Stage7B_ImitationSmoke_007 --force"
+    ]
+  },
+  "python_environment": {
+    "python_version": "Python 3.9.13",
+    "pip_version": "pip 26.0.1",
+    "mlagents_version": "0.30.0",
+    "mlagents_envs_version": "0.30.0",
+    "torch_version": "2.2.2",
+    "onnx_version": "1.14.0",
+    "pip_check_result": "No broken requirements found.",
+    "pip_check_clean": true
+  },
+  "pre_run_diagnostics": {
+    "behavior_name_runtime": "Stage7B_RTS_Student",
+    "behavior_type_runtime": "Default",
+    "decision_requester_enabled": true,
+    "decision_period": 1,
+    "take_actions_between_decisions": false,
+    "manual_loop_enabled": false,
+    "watchdog_manual_fallback_enabled": false,
+    "teacher_replay_orchestrator_enabled": false,
+    "student_teacher_replay_orchestrator_is_null": true,
+    "demo_mode_active": false
+  },
+  "trainer_result": {
+    "trainer_started": true,
+    "config_loaded": false,
+    "unity_connected": false,
+    "behavior_name_matched": false,
+    "training_steps_completed": 0,
+    "loss_nan_detected": false,
+    "reward_nan_detected": false,
+    "unity_time_out_exception": true,
+    "trainer_reset_env_timeout": true,
+    "trainer_exit_code": 1,
+    "trainer_exit_code_interpretation": "UnityTimeOutException during environment reset",
+    "final_export_save_error_absent": false,
+    "manual_stop_after_checkpoint_export": false
+  },
+  "artifacts": {
+    "trainer_log": "python/stage7b_teacher_replay/stage7b_8b4_imitation_smoke_trainer_007.log",
+    "results_dir": "results/Stage7B_ImitationSmoke_007",
+    "checkpoint_saved": false,
+    "checkpoint_path": null,
+    "export_model_path": null,
+    "tfevents_saved": false,
+    "tfevents_path": null,
+    "generated_files": [
+      "results/Stage7B_ImitationSmoke_007/configuration.yaml",
+      "results/Stage7B_ImitationSmoke_007/run_logs/training_status.json",
+      "results/Stage7B_ImitationSmoke_007/run_logs/timers.json"
+    ]
+  },
+  "unity_console": {
+    "errors_before": 0,
+    "warnings_before": 0,
+    "errors_after": 0,
+    "warnings_after": 0,
+    "unity_console_errors": 0,
+    "unity_console_warnings": 0
+  },
+  "decision": "NO-GO",
+  "reason": "ONNX dependency is now fixed and validates cleanly, but the rerun still fails before training begins with UnityTimeOutException during _reset_env, so the smoke cannot reach checkpoint/export/save confirmation.",
+  "ready_for_stage7b_8c": false,
+  "changed_files": [
+    "python/stage7b_teacher_replay/stage7b_8b4_onnx_dependency_fix_report.json",
+    "python/stage7b_teacher_replay/stage7b_8b4_onnx_dependency_fix_report.md"
+  ]
+}

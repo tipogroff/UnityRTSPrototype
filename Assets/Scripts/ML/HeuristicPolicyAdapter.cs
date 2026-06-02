@@ -351,6 +351,7 @@ namespace RTS.ML
 
         public event Action<HeuristicActionEvaluation> OnActionEvaluated;
         public event Action<HeuristicDecisionCycleEvaluation> OnDecisionCycleEvaluated;
+        public Func<Owner, UnitActionType, bool> ActionSelectionFilter { get; set; }
 
         // Diagnostic counter: incremented each time a player falls through to the residual
         // obs/mask rebuild path because useCanonicalStepInput was true but stepInput.Perspective
@@ -2254,7 +2255,9 @@ namespace RTS.ML
                 return false;
             }
 
-            if (actorMask.IsActionTypeEnabled(UnitActionType.Attack) &&
+            if (actorMask.IsActionTypeEnabled(UnitActionType.Attack)
+                && IsActionAllowed(playerId, UnitActionType.Attack)
+                &&
                 TryChooseAttackTargetLocal(playerId, combatUnit.GridPos, actorMask.AttackTargetLocalMask, out int attackLocal))
             {
                 selection = new DebugActionSelection(
@@ -2295,6 +2298,25 @@ namespace RTS.ML
             }
 
             return false;
+        }
+
+        private bool IsActionAllowed(Owner owner, UnitActionType actionType)
+        {
+            Func<Owner, UnitActionType, bool> filter = ActionSelectionFilter;
+            if (filter == null)
+            {
+                return true;
+            }
+
+            try
+            {
+                return filter(owner, actionType);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[HeuristicPolicyAdapter] ActionSelectionFilter failed: " + ex.Message);
+                return true;
+            }
         }
 
         private bool TryChooseReturnDirection(UnitRuntime worker, ActorActionMask actorMask, out Direction direction)

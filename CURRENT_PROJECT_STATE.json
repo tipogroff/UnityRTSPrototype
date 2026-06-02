@@ -1,0 +1,173 @@
+{
+  "status": "frozen_2026-06-02",
+  "current_demo_scene": {
+    "path": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+    "build_index": 1,
+    "active_for_humanplay": true,
+    "must_protect": true
+  },
+  "main_menu_scene": {
+    "path": "Assets/Scenes/MainMenu.unity",
+    "build_index": 0,
+    "active_entry": true,
+    "must_protect": true
+  },
+  "protected_scenes": [
+    "Assets/Scenes/MainMenu.unity",
+    "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+    "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity"
+  ],
+  "player1_controller": {
+    "owner": "Player1",
+    "mode": "StudentInference",
+    "runtime_source": "EpisodeController week6 control mode via HumanPlayModeController.StartAIvsPlayer2"
+  },
+  "player2_controller": {
+    "owner": "Player2",
+    "mode": "HumanManual (Idle decision mode + HumanPlayerController input)",
+    "runtime_source": "HumanPlayModeController.StartAIvsPlayer2 + HumanPlayerController"
+  },
+  "current_agent": {
+    "game_object": "Stage7B_StudentMlAgent",
+    "component": "RTS.MLAgents.Stage7B.StudentMlAgent",
+    "player_perspective": "Player1",
+    "bootstrap": "Stage7B_MLAgentsTrainingBootstrap",
+    "runtime_mode": "InferenceOnly",
+    "step_scripted_opponent": false
+  },
+  "current_model_asset": {
+    "path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx",
+    "guid": "6d127165551f3de4d97e97652c4979c5"
+  },
+  "current_behavior_name": "Stage7B_RTS_Student",
+  "human_controls": {
+    "selection": {
+      "single_click_lmb": "Select single Player2 unit/building",
+      "drag_lmb": "Select Player2 mobile units only",
+      "drag_excludes": ["Base", "Barracks", "Resource"],
+      "single_building_selection_preserved": true
+    },
+    "context_rmb": {
+      "empty_cell": ["Move (single)", "Group Move (multi)", "Build Barracks option for Player2 Worker"],
+      "resource_cell": ["Gather for selected Player2 Worker", "Exhausted resource shows rejection/info"],
+      "enemy_or_enemy_area": ["Attack (single)", "Attack Area (multi)"]
+    },
+    "stop_cancel": "Stop button cancels selected active orders",
+    "production": {
+      "base": ["Worker"],
+      "barracks": ["Light", "Heavy", "Ranged"]
+    }
+  },
+  "implemented_features": [
+    "MainMenu to Demo flow",
+    "AI vs Player2 startup",
+    "Single selection",
+    "Drag unit-only multi-selection",
+    "Move",
+    "Group Move",
+    "Gather loop",
+    "Build Barracks",
+    "Base production",
+    "Barracks production",
+    "Attack",
+    "Attack Area",
+    "Group attack fan-out",
+    "Stop/Cancel",
+    "Resource remaining display",
+    "Exhausted resource visual state",
+    "HUD/context hints",
+    "Pause menu",
+    "RTS camera controls"
+  ],
+  "command_routes": {
+    "human_input": "HumanPlayCanvasController + SelectionManager + context/production views",
+    "order_layer": "HumanOrderController + MoveOrder/HarvestLoopOrder/BuildBarracksOrder/AttackOrder",
+    "submission_layer": "PlayerCommandController -> AgentAction",
+    "runtime_validation": "ActionApplier.ApplyAction",
+    "runtime_application": "MatchManager.ApplyCommand",
+    "runtime_execution": "MatchManager.StepMatch phases"
+  },
+  "production_payload_indices": {
+    "worker_build_barracks": 2,
+    "base_produce_worker": 3,
+    "barracks_produce_light": 4,
+    "barracks_produce_heavy": 5,
+    "barracks_produce_ranged": 6
+  },
+  "attack_contract": {
+    "actor_position": "required",
+    "action_type": "Attack",
+    "attack_target_position": "required",
+    "direction": "structural, not primary attack intent",
+    "produce_unit_type": "structural, ignored for attack semantics",
+    "range_metric": "Chebyshev via UnitDefinition.attackRange",
+    "execution": "MatchManager.TryExecuteAttack -> CombatResolver.TryAttack"
+  },
+  "ui_state": {
+    "active_hud_source": "Assets/Prefabs/UI/HumanPlayCanvas.prefab",
+    "legacy_hud_component": "HumanPlayHudController present but disabled in demo scene",
+    "lower_command_row": ["Stop", "Restart", "Main Menu"],
+    "obsolete_buttons_removed_from_active_row": ["Move", "Harvest", "Attack", "Return"],
+    "resource_display": "Top bar Player2 resources + command panel hover remaining/exhausted",
+    "exhausted_visual": "ResourceVisualStateController tint + Exhausted label",
+    "context_hints": true,
+    "pause_menu": true,
+    "camera_status": "RtsCameraController (WASD, wheel zoom, optional middle-drag)"
+  },
+  "known_limitations": [
+    "Group commands are presentation-side fan-out, not runtime group command primitives",
+    "Group attack is not full crowd/formation navigation",
+    "Dense combat can cause waiting/replanning and non-ideal positioning",
+    "Reservation/slots are guidance; runtime occupancy/combat remains authoritative",
+    "No AoE/splash damage",
+    "No dedicated attack-move control in current HumanPlay UI",
+    "Production spawn uses local 3x3 neighbor search with no explicit spawn reservation",
+    "Exhausted resources remain visible by design",
+    "Pre-existing unrelated dirty path in workspace: python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source"
+  ],
+  "protected_invariants": {
+    "protected_assets": [
+      "Python training pipeline",
+      "Checkpoints and ONNX models",
+      "Observation/action contract",
+      "ActionDecoder semantics",
+      "ActionApplier semantics",
+      "MatchManager runtime semantics",
+      "Week7 baseline scene",
+      "Current HumanPlay demo scene",
+      "MainMenu scene"
+    ],
+    "ui_must_not_mutate_runtime_directly": [
+      "No direct transform movement for gameplay",
+      "No direct HP mutation",
+      "No direct resource amount mutation",
+      "No direct PlayerState resource mutation",
+      "No direct spawn/destroy side effects from UI",
+      "No direct MatchManager.StepMatch trigger from UI command widgets"
+    ],
+    "required_route": [
+      "HumanOrderController/order",
+      "PlayerCommandController",
+      "AgentAction",
+      "ActionApplier",
+      "MatchManager"
+    ]
+  },
+  "validation": {
+    "unity_compile_errors": 0,
+    "scene_changes": false,
+    "prefab_changes": false,
+    "gameplay_script_semantic_changes": false,
+    "model_or_checkpoint_changes": false,
+    "python_training_changes": false,
+    "action_decoder_changes": false,
+    "action_applier_changes": false,
+    "week7_baseline_changes": false,
+    "demo_scene_changes": false,
+    "main_menu_changes": false,
+    "uncertainties": [
+      "BehaviorParameters scene YAML shows Default while runtime bootstrap enforces InferenceOnly mode configuration.",
+      "HumanPlayCanvas UI is prefab-driven and runtime-built, so many concrete child controls are not separately serialized in scene YAML."
+    ]
+  }
+}

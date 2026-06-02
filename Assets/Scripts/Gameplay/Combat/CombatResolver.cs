@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
+using RTS.Presentation;
 
 namespace RTS.Gameplay
 {
@@ -99,6 +100,9 @@ namespace RTS.Gameplay
 
             Debug.Log($"[CombatResolver] {attacker.Owner}.{attacker.Type} атакует {target.Owner}.{target.Type} с уроном {attackerDef.attackDamage} на дистанции {GetDistance(attacker.GridPos, target.GridPos)}");
 
+            TryGetVisualBridge(attacker)?.OnVisualAttack();
+            TryGetVisualBridge(target)?.OnVisualHit();
+
             bool died = target.TakeDamage(attackerDef.attackDamage);
             if (died)
             {
@@ -164,6 +168,9 @@ namespace RTS.Gameplay
 
             Debug.Log($"[CombatResolver] {deadUnit.Owner}.{deadUnit.Type} уничтожен игроком {killerOwner} на клетке {deadUnit.GridPos}");
 
+            TryGetVisualBridge(deadUnit)?.OnVisualDeath();
+            VisualDeathPlaybackSpawner.TrySpawn(deadUnit, out _, out _);
+
             if (_gridManager != null &&
                 _gridManager.TryGetOccupant(deadUnit.GridPos, out var occupant) &&
                 occupant == deadUnit)
@@ -189,6 +196,18 @@ namespace RTS.Gameplay
             }
 
             Object.Destroy(deadUnit.gameObject);
+        }
+
+        private static VisualEventBridge TryGetVisualBridge(UnitRuntime unit)
+        {
+            if (unit == null)
+            {
+                return null;
+            }
+
+            return unit.GetComponent<VisualEventBridge>()
+                   ?? unit.GetComponentInParent<VisualEventBridge>(true)
+                   ?? unit.GetComponentInChildren<VisualEventBridge>(true);
         }
 
         private static bool IsPlayerUnit(Owner owner)

@@ -1,0 +1,182 @@
+{
+    "generated_at_utc": "2026-05-10T20:10:34Z",
+    "status": "GO",
+    "summary": "Stage7B-7A Move/Harvest/Produce mismatch audit.",
+    "source_path": "python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z",
+    "decision": "HOLD_FOR_STAGE7B_7B_MAPPING_FIX",
+    "direction_pattern_conclusion": "dominant_y_axis_flip",
+    "contract_error_count": 0,
+    "episodes_scanned": 8,
+    "steps_total": 4096,
+    "teacher_commands_total": 2952,
+    "candidate_match_count": 2396,
+    "candidate_drop_count": 556,
+    "candidate_match_rate": 0.8116531372070313,
+    "runtime_apply_attempted_count": 2396,
+    "runtime_apply_accepted_count": 2396,
+    "runtime_apply_rejected_count": 0,
+    "runtime_apply_accept_rate": 1.0,
+    "state_sync_success_count": 4096,
+    "state_sync_failed_count": 0,
+    "no_teacher_command_steps": 2383,
+    "candidate_count_min": 10,
+    "candidate_count_mean": 36.139892578125,
+    "candidate_count_max": 70,
+    "move_commands_total": 2027,
+    "move_commands_matched": 1805,
+    "move_commands_dropped": 222,
+    "move_match_rate": 0.8904785513877869,
+    "move_direction_mismatch_count": 222,
+    "move_direction_mismatch_rate": 0.10952146351337433,
+    "move_opposite_direction_count": 202,
+    "move_y_axis_flip_count": 202,
+    "move_x_axis_flip_count": 0,
+    "move_mapping_like_count": 202,
+    "move_legality_or_state_divergence_count": 222,
+    "move_mismatch_by_teacher_dir": [
+        {
+            "key": "South",
+            "value": 157
+        },
+        {
+            "key": "North",
+            "value": 65
+        }
+    ],
+    "move_mismatch_by_candidate_dir": [
+        {
+            "key": "North",
+            "value": 157
+        },
+        {
+            "key": "East",
+            "value": 20
+        },
+        {
+            "key": "South",
+            "value": 45
+        }
+    ],
+    "first_10_move_mismatches": [
+        "ep=0,step=130,cmd=0,actor=(1,0),teacher_dir=South,candidate_dir=North,teacher_target=(1,-1),unity_target=(1,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(1, 0), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=150,cmd=0,actor=(3,1),teacher_dir=North,candidate_dir=East,teacher_target=(3,2),unity_target=(4,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(3, 1), type=Move, teacher_dir=North, cand_dir=East)",
+        "ep=0,step=170,cmd=1,actor=(0,3),teacher_dir=South,candidate_dir=North,teacher_target=(0,2),unity_target=(0,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=191,cmd=0,actor=(0,3),teacher_dir=South,candidate_dir=North,teacher_target=(0,2),unity_target=(0,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=201,cmd=0,actor=(1,0),teacher_dir=South,candidate_dir=North,teacher_target=(1,-1),unity_target=(1,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(1, 0), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=213,cmd=1,actor=(1,3),teacher_dir=South,candidate_dir=North,teacher_target=(1,2),unity_target=(1,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(1, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=220,cmd=1,actor=(0,3),teacher_dir=South,candidate_dir=North,teacher_target=(0,2),unity_target=(0,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=270,cmd=1,actor=(0,3),teacher_dir=South,candidate_dir=North,teacher_target=(0,2),unity_target=(0,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=311,cmd=2,actor=(2,3),teacher_dir=South,candidate_dir=North,teacher_target=(2,2),unity_target=(2,4),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(2, 3), type=Move, teacher_dir=South, cand_dir=North)",
+        "ep=0,step=321,cmd=0,actor=(1,0),teacher_dir=South,candidate_dir=North,teacher_target=(1,-1),unity_target=(1,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(1, 0), type=Move, teacher_dir=South, cand_dir=North)"
+    ],
+    "harvest_commands_total": 154,
+    "harvest_commands_matched": 103,
+    "harvest_commands_dropped": 51,
+    "harvest_match_rate": 0.6688311696052551,
+    "harvest_direction_mismatch_count": 51,
+    "harvest_direction_mismatch_rate": 0.3311688303947449,
+    "harvest_opposite_direction_count": 51,
+    "harvest_y_axis_flip_count": 51,
+    "harvest_x_axis_flip_count": 0,
+    "harvest_mapping_like_count": 51,
+    "harvest_legality_or_state_divergence_count": 51,
+    "harvest_mismatch_by_teacher_dir": [
+        {
+            "key": "North",
+            "value": 51
+        }
+    ],
+    "harvest_mismatch_by_candidate_dir": [
+        {
+            "key": "South",
+            "value": 51
+        }
+    ],
+    "first_10_harvest_mismatches": [
+        "ep=0,step=130,cmd=2,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=170,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=220,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=270,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=320,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=361,cmd=1,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=0,step=452,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=1,step=131,cmd=0,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=1,step=201,cmd=1,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)",
+        "ep=1,step=241,cmd=1,actor=(0,2),teacher_dir=North,candidate_dir=South,teacher_target=(0,3),unity_target=(0,1),teacher_expected=False,unity_expected=True,nearest=direction_mismatch (actor=(0, 2), type=Harvest, teacher_dir=North, cand_dir=South)"
+    ],
+    "produce_commands_total": 637,
+    "produce_commands_matched": 354,
+    "produce_commands_dropped": 283,
+    "produce_match_rate": 0.5557299852371216,
+    "produce_direction_mismatch_count": 26,
+    "produce_direction_mismatch_rate": 0.040816325694322589,
+    "produce_opposite_direction_count": 31,
+    "produce_y_axis_flip_count": 31,
+    "produce_x_axis_flip_count": 0,
+    "produce_mapping_like_count": 31,
+    "produce_legality_or_state_divergence_count": 45,
+    "produce_type_mismatch_count": 81,
+    "produce_mismatch_by_teacher_dir": [
+        {
+            "key": "South",
+            "value": 137
+        },
+        {
+            "key": "East",
+            "value": 116
+        },
+        {
+            "key": "West",
+            "value": 30
+        }
+    ],
+    "produce_mismatch_by_candidate_dir": [
+        {
+            "key": "North",
+            "value": 31
+        },
+        {
+            "key": "South",
+            "value": 29
+        },
+        {
+            "key": "East",
+            "value": 43
+        },
+        {
+            "key": "none",
+            "value": 171
+        },
+        {
+            "key": "West",
+            "value": 9
+        }
+    ],
+    "first_10_produce_mismatches": [
+        "ep=0,step=202,cmd=1,actor=(2,3),teacher_dir=South,candidate_dir=North,teacher_target=(2,2),unity_target=(2,4),teacher_expected=False,unity_expected=True,nearest=produce_direction_mismatch (teacher_dir=South, cand_dir=North)",
+        "ep=0,step=351,cmd=3,actor=(3,11),teacher_dir=South,candidate_dir=South,teacher_target=(3,10),unity_target=(3,10),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=358,cmd=0,actor=(3,6),teacher_dir=East,candidate_dir=East,teacher_target=(4,6),unity_target=(4,6),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=359,cmd=0,actor=(3,6),teacher_dir=East,candidate_dir=East,teacher_target=(4,6),unity_target=(4,6),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=0,step=401,cmd=4,actor=(0,5),teacher_dir=South,candidate_dir=none,teacher_target=(0,4),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(0, 5), type=Produce)",
+        "ep=0,step=406,cmd=0,actor=(5,6),teacher_dir=South,candidate_dir=none,teacher_target=(5,5),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(5, 6), type=Produce)",
+        "ep=0,step=407,cmd=0,actor=(5,6),teacher_dir=South,candidate_dir=none,teacher_target=(5,5),unity_target=(-1,-1),teacher_expected=True,unity_expected=False,nearest=action_type_missing_from_candidates (actor=(5, 6), type=Produce)",
+        "ep=1,step=302,cmd=2,actor=(2,3),teacher_dir=South,candidate_dir=North,teacher_target=(2,2),unity_target=(2,4),teacher_expected=False,unity_expected=True,nearest=produce_direction_mismatch (teacher_dir=South, cand_dir=North)",
+        "ep=1,step=338,cmd=2,actor=(5,2),teacher_dir=South,candidate_dir=South,teacher_target=(5,1),unity_target=(5,1),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)",
+        "ep=1,step=339,cmd=0,actor=(5,2),teacher_dir=South,candidate_dir=South,teacher_target=(5,1),unity_target=(5,1),teacher_expected=True,unity_expected=True,nearest=produce_type_mismatch (teacher=Light, cand=Heavy)"
+    ],
+    "mhp_direction_mismatch_count": 299,
+    "mhp_opposite_direction_count": 284,
+    "mhp_y_axis_flip_count": 284,
+    "mhp_y_axis_flip_rate": 0.9498327970504761,
+    "mhp_x_axis_flip_count": 0,
+    "mhp_x_axis_flip_rate": 0.0,
+    "runtime_reject_reason_histogram": [],
+    "state_sync_failure_reasons": [],
+    "notes": [
+        "Audit-only: no ML-Agents training, PPO, imitation learning, or large .demo recording was started.",
+        "Teacher policy, reward, ActionApplier, MatchManager, and MlAgentsCandidateActionBuilder were not modified by this runner.",
+        "Return direction mapping remains the Stage7B-6K return-only fix; Move/Harvest/Produce mapping is only measured.",
+        "M/H/P direction mismatches show a dominant Y-axis pattern; hold before large dataset and run Stage7B-7B mapping fix proposal.",
+        "Stage6B3 baseline/checkpoint assets were not modified by this runner."
+    ]
+}

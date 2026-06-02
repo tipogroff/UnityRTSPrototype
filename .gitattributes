@@ -1,0 +1,4 @@
+# Large generated trace artifacts should be stored in Git LFS.
+# This prevents accidental commits of >100MB JSONL payloads.
+python/stage7b_teacher_replay/*.jsonl filter=lfs diff=lfs merge=lfs -text
+Assets/*Runtime*Trace*.jsonl filter=lfs diff=lfs merge=lfs -text

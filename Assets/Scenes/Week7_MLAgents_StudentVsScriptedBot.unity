@@ -119,6 +119,156 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &211542167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 211542168}
+  - component: {fileID: 211542170}
+  - component: {fileID: 211542169}
+  m_Layer: 0
+  m_Name: Ground_Grid_Overlay_24x24
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &211542168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211542167}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.5, y: -0.045, z: 11.5}
+  m_LocalScale: {x: 2.4, y: 1, z: 2.4}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1636843303}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &211542169
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211542167}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b6e045415860db340a211557d8647813, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &211542170
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211542167}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &279756830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 279756832}
+  - component: {fileID: 279756831}
+  m_Layer: 0
+  m_Name: PresentationControls
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &279756831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279756830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db1480c75bccbfd41bba5906e018f421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Presentation.GameSpeedController
+  _enableOnlyInManualPlayMode: 0
+  _trainingBootstrap: {fileID: 0}
+  _showDiagnostics: 1
+  _hotkeysEnabled: 1
+  _defaultSpeed: 1
+  _speedHalf: 0.5
+  _speedQuarter: 0.25
+  _speedTenth: 0.1
+  _pauseKey: 32
+  _speed1xKey: 49
+  _speedHalfKey: 50
+  _speedQuarterKey: 51
+  _speedTenthKey: 52
+  _stepKey: 110
+  _showOverlay: 1
+  _overlayPosition: {x: 10, y: 10}
+--- !u!4 &279756832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279756830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &281969203
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -414,6 +564,10 @@ PrefabInstance:
       value: Player1_Worker_(1, 1)
       objectReference: {fileID: 0}
     - target: {fileID: 6483269704763304164, guid: 42c6a8e049ccd9042b847a32585697b0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6483269704763304164, guid: 42c6a8e049ccd9042b847a32585697b0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
       objectReference: {fileID: 0}
@@ -690,7 +844,6 @@ GameObject:
   m_Component:
   - component: {fileID: 477664554}
   - component: {fileID: 477664553}
-  - component: {fileID: 477664552}
   - component: {fileID: 477664551}
   - component: {fileID: 477664550}
   m_Layer: 0
@@ -718,8 +871,14 @@ MonoBehaviour:
   MaxStep: 0
   _playerPerspective: 1
   _autoResolveBootstrap: 1
-  _requestDecisionInFixedUpdate: 1
-  _stage7BMaxDecisionsPerEpisode: 256
+  _manualFixedUpdateDecisionRequests: 0
+  _allowConcurrentDecisionSourcesForDebug: 0
+  _enableDecisionRequesterWatchdogFallback: 0
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_actual_collect_observations_trace.jsonl
+  _actionTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_action_trace.jsonl
+  _runtimeApplyTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_runtime_apply_trace.jsonl
+  _decisionSchedulerTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_decision_scheduler_trace.jsonl
+  _stage7BMaxDecisionsPerEpisode: 6000
   _logRejectedActions: 0
 --- !u!114 &477664551
 MonoBehaviour:
@@ -733,25 +892,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 5
+  DecisionPeriod: 1
   DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
---- !u!114 &477664552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 477664549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Agent
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  TakeActionsBetweenDecisions: 0
 --- !u!114 &477664553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,19 +908,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 1
+    VectorObservationSize: 15552
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 01000000
-    VectorActionSize: 01000000
+      BranchSizes: 80000000
+    VectorActionSize: 80000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d127165551f3de4d97e97652c4979c5, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: My Behavior
+  m_BehaviorName: Stage7B_RTS_Student
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -1165,6 +1308,96 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &921516331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 921516332}
+  - component: {fileID: 921516334}
+  - component: {fileID: 921516333}
+  m_Layer: 0
+  m_Name: Ground_Stylized_Grass_24x24
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &921516332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921516331}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.5, y: -0.05, z: 11.5}
+  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1636843303}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &921516333
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921516331}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d2add40b26be7f34bbb73cadbb5112fb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &921516334
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921516331}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1422870927
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,6 +1453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1539652542}
   - component: {fileID: 1539652541}
+  - component: {fileID: 1539652543}
   m_Layer: 0
   m_Name: Stage7B_MLAgentsTrainingBootstrap
   m_TagString: Untagged
@@ -1245,8 +1479,11 @@ MonoBehaviour:
   _stepScriptedOpponent: 1
   _ensureWeek6StaticHarvestLayout: 1
   _fallbackConfig: {fileID: 0}
+  _stage7BMatchMaxSteps: 6000
   _scenarioPreset: 3
   _startResources: 60
+  _stage7BRuntimeMode: 2
+  _forceTrainerControlledMode: 1
 --- !u!4 &1539652542
 Transform:
   m_ObjectHideFlags: 0
@@ -1260,6 +1497,122 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1539652543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539652540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e270efbe8f08e0c498b5d9c215b0f1b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.MLAgents.Stage7B.Diagnostics.Stage7BInferenceSmokeDiagnostics
+  _reportJsonRelativePath: python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json
+  _reportMdRelativePath: python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.md
+  _traceJsonlRelativePath: python/stage7b_teacher_replay/stage7b_8d1_inference_lifecycle_trace.jsonl
+  _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
+  _agentInventoryRelativePath: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
+  _sourceTraceRelativePath: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
+  _writeIntervalSeconds: 1
+  _onnxSourcePath: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
+  _unityModelAssetPath: Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx
+  _modelCopiedIntoAssets: 1
+  _modelImportSucceeded: 1
+--- !u!1 &1604562316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1604562318}
+  - component: {fileID: 1604562317}
+  m_Layer: 0
+  m_Name: Stage7B_DemoOrchestrator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1604562317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604562316}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c12b94be4d6b543989e92e34f59aa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.MLAgents.Stage7B.TeacherReplay.Stage7BTeacherReplayDemoOrchestrator
+  _studentAgent: {fileID: 0}
+  _replayReadySourceDir: python/week5_teacher_legacy032/teacher_replay_exports/stage7b_replay_ready_stage7b6j_return_direction_audit_e8_s512_20260510T174822Z
+  _maxRecordedDecisions: 64
+  _maxEpisodes: 1
+  _playerPerspective: 1
+  _skipMismatchedCommands: 1
+  _skipNoTeacherCommandSteps: 1
+  _skipTeacherNoOpCommands: 1
+  _produceFilteringEnabled: 1
+  _runtimeServicesMaxWaitSeconds: 15
+  _runtimeServicesPollIntervalSeconds: 0.25
+  _smokeReportJsonPath: python/stage7b_teacher_replay/stage7b_demo_recording_smoke_report.json
+  _smokeReportMdPath: python/stage7b_teacher_replay/stage7b_demo_recording_smoke_report.md
+  _traceJsonlPath: python/stage7b_teacher_replay/stage7b_demo_recording_trace.jsonl
+  _droppedCommandsJsonlPath: python/stage7b_teacher_replay/stage7b_demo_recording_dropped_commands.jsonl
+  _expectedDemoRelativePath: Assets/Demonstrations/stage7b_teacher_replay_smoke.demo
+--- !u!4 &1604562318
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604562316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1636843302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1636843303}
+  m_Layer: 0
+  m_Name: PresentationVisuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1636843303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636843302}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 921516332}
+  - {fileID: 211542168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1688997547
@@ -1592,3 +1945,6 @@ SceneRoots:
   - {fileID: 467106700}
   - {fileID: 1422870929}
   - {fileID: 282681322}
+  - {fileID: 1604562318}
+  - {fileID: 1636843303}
+  - {fileID: 279756832}

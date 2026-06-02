@@ -1,0 +1,6 @@
+{"episode_id":0,"step_id":351,"command_index":3,"action_type":4,"drop_reason":"unsupported_worker_build_base"}
+{"episode_id":0,"step_id":358,"command_index":0,"action_type":4,"drop_reason":"unsupported_worker_build_base"}
+{"episode_id":0,"step_id":359,"command_index":0,"action_type":4,"drop_reason":"unsupported_worker_build_base"}
+{"episode_id":0,"step_id":401,"command_index":4,"action_type":4,"drop_reason":"runtime_state_semantics_gap_unity_one_barracks_cap"}
+{"episode_id":0,"step_id":406,"command_index":0,"action_type":4,"drop_reason":"runtime_state_semantics_gap_unity_one_barracks_cap"}
+{"episode_id":0,"step_id":407,"command_index":0,"action_type":4,"drop_reason":"runtime_state_semantics_gap_unity_one_barracks_cap"}

@@ -1,0 +1,127 @@
+{
+  "stage": "Stage7B Scripted Opponent Pacing Tuning",
+  "generated_at_utc": "2026-05-11T15:05:00Z",
+  "final_decision": "GO",
+  "goal": "Reduce Week7 scripted opponent aggressiveness and decision pacing without changing runtime/action/reward semantics.",
+  "exact_changed_files": [
+    "Assets/Scripts/MLAgents/Stage7B/Week7ScriptedOpponentPacing.cs",
+    "Assets/Scripts/ML/HeuristicPolicyAdapter.cs",
+    "Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs"
+  ],
+  "hard_constraints_respected": {
+    "stage6b3_baseline_untouched": true,
+    "teacher_policy_unchanged": true,
+    "clean_demo_dataset_unchanged": true,
+    "reward_semantics_unchanged": true,
+    "action_applier_unchanged": true,
+    "match_manager_unchanged": true,
+    "mlagents_candidate_action_builder_unchanged": true,
+    "observation_action_contract_unchanged": true,
+    "onnx_model_unchanged": true,
+    "training_not_run": true,
+    "ppo_rerun_not_run": true
+  },
+  "pacing_values": {
+    "old": {
+      "bot_decision_interval_steps": 3,
+      "bot_action_cooldown_seconds": 0.0,
+      "opening_grace_steps": null,
+      "allow_attack_during_grace": null,
+      "attack_action_cooldown_steps": null,
+      "max_aggressive_actions_per_window": null
+    },
+    "new": {
+      "bot_decision_interval_steps": 7,
+      "bot_action_cooldown_seconds": 0.0,
+      "opening_grace_steps": 80,
+      "allow_economy_actions_during_grace": true,
+      "allow_attack_during_grace": false,
+      "aggression_delay_steps": 120,
+      "attack_action_cooldown_steps": 30,
+      "aggression_window_steps": 100,
+      "max_aggressive_actions_per_window": 2
+    }
+  },
+  "scripted_bot_presence": {
+    "present": true,
+    "enabled": true,
+    "evidence": "Stage7B_ScriptedOpponentPacing found in Play Mode and non-zero scripted action telemetry recorded."
+  },
+  "scripted_bot_metrics": {
+    "baseline_snapshot": {
+      "student_actions_attempted": 191,
+      "bot_actions_attempted_after": 64,
+      "actions_per_100_steps": 33.51,
+      "accepted_bot_commands": 1600,
+      "terminal_reason": "EnemyBaseDestroyed"
+    },
+    "tuned_snapshot": {
+      "student_actions_attempted": 256,
+      "bot_decision_attempt_count": 256,
+      "bot_decision_executed_count": 37,
+      "bot_actions_attempted_after": 37,
+      "actions_per_100_steps": 14.45,
+      "accepted_bot_commands": 920,
+      "rejected_bot_commands": 0,
+      "action_breakdown": {
+        "move": 852,
+        "harvest": 20,
+        "return": 6,
+        "produce": 42,
+        "attack": 0,
+        "noop": 0,
+        "other": 0
+      },
+      "first_attack_step": -1,
+      "opening_grace_worked": true,
+      "terminal_reason": "stage7b_decision_limit"
+    },
+    "delta": {
+      "actions_per_100_steps_before": 33.51,
+      "actions_per_100_steps_after": 14.45,
+      "actions_per_100_steps_drop": 19.06,
+      "actions_per_100_steps_drop_percent": 56.88
+    }
+  },
+  "acceptance_checks": {
+    "compile_clean": true,
+    "week7_scene_playmode_start": true,
+    "scripted_bot_present": true,
+    "scripted_bot_enabled": true,
+    "scripted_bot_not_idle_decisions_or_actions_gt_zero": true,
+    "scripted_bot_slower_actions_per_100_lower_than_before": true,
+    "early_aggression_reduced_no_attack_during_opening_grace": true,
+    "student_inference_path_intact": {
+      "behavior_type_inference_only": true,
+      "heuristic_call_count_zero": true,
+      "padding_warning_false": true,
+      "on_action_received_gt_zero": true,
+      "runtime_apply_attempted_gt_zero": true
+    },
+    "no_reward_action_runtime_semantic_changes": true
+  },
+  "student_inference_evidence": {
+    "source_report": "python/stage7b_teacher_replay/stage7b_8c2_padding_warning_fix_report.json",
+    "behavior_type_runtime": "InferenceOnly",
+    "heuristic_call_count": 0,
+    "observation_zero_padding_warning_detected": false,
+    "on_action_received_count": 1648,
+    "runtime_apply_attempted": 1648,
+    "runtime_apply_accepted": 1648,
+    "runtime_apply_rejected": 0,
+    "final_decision": "GO"
+  },
+  "unity_console": {
+    "errors": 0,
+    "warnings": 3,
+    "sample_warnings": [
+      "[BuildingRuntime] Нет свободной ячейки рядом с (2, 1) для спавна Heavy",
+      "[BuildingRuntime] Нет свободной ячейки рядом с (3, 0) для спавна Ranged",
+      "[BuildingRuntime] Нет свободной ячейки рядом с (2, 0) для спавна Ranged"
+    ]
+  },
+  "notes": [
+    "Scene serialized settings were intentionally left unchanged for this targeted patch path; pacing is applied by runtime-created Week7ScriptedOpponentPacing via MlAgentsTrainingBootstrap.",
+    "Scripted bot remains active (move/harvest/produce/return) while early aggression is suppressed for easier Stage7B-9.1 and Stage7B-10 interpretation."
+  ]
+}

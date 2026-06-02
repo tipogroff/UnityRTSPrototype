@@ -1,0 +1,38 @@
+{
+  "task": "HUMAN_PLAY_2_PART4_DEMO_SCENE",
+  "scene": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+  "baseline_scene": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+  "status": "partial_pass_manual_checks_remaining",
+  "validated": {
+    "demo_scene_created": true,
+    "demo_scene_load_save_ok": true,
+    "presentation_controls_components_present": true,
+    "default_mode_player1_vs_ai": true,
+    "camera_refs_wired": true,
+    "bootstrap_inference_only": true,
+    "trainer_forced_disabled": true,
+    "baseline_week7_reload_ok": true,
+    "baseline_week7_is_dirty_false": true,
+    "scripts_compile_errors_assets_scripts": false
+  },
+  "manual_remaining": {
+    "live_selection_and_marker": true,
+    "adjacent_move_acceptance": true,
+    "non_adjacent_rejection": true,
+    "hud_restart_button_flow": true,
+    "continuous_player2_ai_behavior": true,
+    "full_diploma_demo_walkthrough": true
+  },
+  "warnings_observed": [
+    "[UnitVisualAnimator] Animator parameter 'IsCarrying' is missing.",
+    "[UnitVisualAnimator] Animator trigger 'Spawn' is missing."
+  ],
+  "constraints_respected": {
+    "no_python_training_checkpoint_edits": true,
+    "no_observation_action_contract_edits": true,
+    "no_actiondecoder_actionapplier_semantic_changes": true,
+    "no_gameplay_rule_changes": true,
+    "no_direct_movement_bypass_path": true
+  },
+  "unrelated_existing_workspace_change": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source"
+}

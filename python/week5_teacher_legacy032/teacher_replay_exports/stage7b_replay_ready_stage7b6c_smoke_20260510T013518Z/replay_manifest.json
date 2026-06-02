@@ -1,0 +1,106 @@
+{
+  "schema_version": "stage7b.teacher_replay_ready.v1",
+  "source_teacher_lineage": "legacy032",
+  "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+  "policy_source": "legacy032_policy_action",
+  "env_id": "MicrortsRandomEnemyShapedReward1-v1",
+  "gym_microrts_version": "0.3.2",
+  "map_path": "maps/24x24/basesWorkers24x24.xml",
+  "seed": 17,
+  "episodes": 1,
+  "max_steps_per_episode": 64,
+  "branch_sizes": [
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "attack_target_size": 49,
+  "attack_target_center_index": 24,
+  "observation_shape": [
+    24,
+    24,
+    27
+  ],
+  "action_shape": [
+    576,
+    7
+  ],
+  "contains_initial_state": false,
+  "contains_pre_state": false,
+  "contains_post_state": false,
+  "contains_teacher_command_list": true,
+  "contains_terminal_metadata": true,
+  "replay_ready": false,
+  "runtime_state_availability": {
+    "available": false,
+    "reason": "gym_microrts==0.3.2 Python wrapper does not expose authoritative runtime state; available payloads are observation tensor, action mask, and info.raw_rewards.",
+    "missing_fields": [
+      "map_width",
+      "map_height",
+      "player_resources",
+      "unit_list(stable_id,type,owner,x,y,hp,carried,pending_action)",
+      "resource_nodes(x,y,remaining)",
+      "building_queues(producing_unit_type,progress,remaining)",
+      "match_phase",
+      "step_counter"
+    ],
+    "instrumentation_hint": {
+      "where": "python/week5_teacher_reference/.venv_microrts032_reference/lib/site-packages/gym_microrts/envs/vec_env.py",
+      "how": [
+        "Extend JNIGridnetVecClient bridge to return full pre/post game state snapshots each step.",
+        "Populate step infos with state JSON (units/resources/queues/terminal details).",
+        "Add reset payload hook for initial state JSON before first action."
+      ]
+    }
+  },
+  "strict_load": true,
+  "strict_load_report": {
+    "checkpoint_path": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\week5_teacher_legacy032\\teacher_models\\legacy032_24x24_teacher_main_20260430T130208Z\\stage_003000000\\agent_final.pt",
+    "checkpoint_format": "weights_only_state_dict",
+    "strict": true,
+    "strict_load_status": "STRICT_LOAD_ENFORCED",
+    "missing_keys": [],
+    "unexpected_keys": []
+  },
+  "architecture_build_report": {
+    "architecture": "legacy032_resolution_aware_gridnet_v1",
+    "mapsize": 576,
+    "obs_shape": [
+      24,
+      24,
+      27
+    ],
+    "nvec": [
+      576,
+      6,
+      4,
+      4,
+      4,
+      4,
+      7,
+      49
+    ],
+    "fallback_architecture_used": false
+  },
+  "expected_architecture": "legacy032_resolution_aware_gridnet_v1",
+  "raw_action_nvec": [
+    576,
+    6,
+    4,
+    4,
+    4,
+    4,
+    7,
+    49
+  ],
+  "created_utc": "2026-05-10T01:35:20Z",
+  "notes": [
+    "No ML-Agents training/PPO/imitation/demo is run by this script.",
+    "Export includes teacher commands and contract diagnostics.",
+    "Authoritative runtime state is not faked when unavailable."
+  ]
+}

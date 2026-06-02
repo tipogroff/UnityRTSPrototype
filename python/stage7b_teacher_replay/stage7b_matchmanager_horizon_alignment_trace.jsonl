@@ -1,0 +1,4 @@
+{"timestamp_utc":"2026-05-11T16:10:00Z","event":"code_change_applied","file":"Assets/Scripts/MLAgents/Stage7B/MlAgentsTrainingBootstrap.cs","details":"stage7b runtime max-step override added, runtime GameConfig clone injected into MatchBootstrap"}
+{"timestamp_utc":"2026-05-11T16:11:00Z","event":"unity_menu_executed","menu_path":"RTS/Week7/Stage7B/Run Extended ONNX Inference Smoke 8D.1"}
+{"timestamp_utc":"2026-05-11T16:11:46.4475352Z","event":"evidence_report_written","file":"python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json"}
+{"timestamp_utc":"2026-05-11T16:11:46.4475352Z","event":"alignment_check","decision_cap_scene":6000,"match_max_steps_runtime":6000,"step_limit_reached_detected":false,"episode_terminal_reason":"EnemyBaseDestroyed"}

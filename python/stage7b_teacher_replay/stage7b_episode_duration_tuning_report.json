@@ -1,0 +1,151 @@
+{
+  "stage": "Stage7B Episode Duration Tuning",
+  "generated_at_utc": "2026-05-11T15:10:00Z",
+  "final_decision": "GO",
+  "goal": "Increase Stage7B/Week7 effective episode duration for smoke/evaluation interpretability without changing core runtime semantics.",
+  "exact_changed_files": [
+    "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+    "Assets/Scripts/MLAgents/Stage7B/Editor/Stage7BInferenceMode8CMenu.cs"
+  ],
+  "exact_generated_artifacts": [
+    "python/stage7b_teacher_replay/stage7b_episode_duration_tuning_report.json",
+    "python/stage7b_teacher_replay/stage7b_episode_duration_tuning_report.md",
+    "python/stage7b_teacher_replay/stage7b_episode_duration_tuning_trace.jsonl"
+  ],
+  "hard_constraints_respected": {
+    "stage6b3_baseline_untouched": true,
+    "stage6b3_checkpoint_unchanged": true,
+    "teacher_policy_unchanged": true,
+    "clean_demo_dataset_unchanged": true,
+    "reward_semantics_unchanged": true,
+    "action_applier_unchanged": true,
+    "match_manager_runtime_semantics_unchanged": true,
+    "mlagents_candidate_action_builder_unchanged": true,
+    "candidate_action_contract_unchanged": true,
+    "observation_action_semantics_unchanged": true,
+    "onnx_not_reexported": true,
+    "long_training_not_run": true,
+    "ppo_rerun_not_run_in_this_step": true,
+    "scripted_bot_not_idle": true,
+    "terminal_logic_not_disabled": true
+  },
+  "tuned_values": {
+    "stage7b_episode_decision_limit": {
+      "old": 256,
+      "new": 512,
+      "reason": "Avoid too-frequent episode truncation by stage7b_decision_limit and allow longer contiguous economic/production cycles.",
+      "scope": "Stage7B-only"
+    },
+    "stage7b_episode_step_limit": {
+      "old": 2000,
+      "new": 2000,
+      "reason": "Already sufficient and Stage7B-specific decision cap was the dominant early stopper.",
+      "scope": "Global constant consumed by Stage7B runtime"
+    },
+    "extended_inference_smoke_decisions_target": {
+      "old": 50,
+      "new": 300,
+      "reason": "Increase short smoke coverage so one run spans at least 250 decisions or real terminal.",
+      "scope": "Stage7B-only"
+    },
+    "extended_inference_smoke_timeout_seconds": {
+      "old": 900,
+      "new": 900,
+      "reason": "Timeout already ample for the longer decisions target.",
+      "scope": "Stage7B-only"
+    },
+    "ppo_smoke_trainer_max_steps": {
+      "old": 2000,
+      "new": 2000,
+      "reason": "No change in this step; episode duration tuning done on Unity side.",
+      "scope": "Stage7B PPO smoke config"
+    }
+  },
+  "diagnostics_before_after": {
+    "before": {
+      "source": "python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.json",
+      "episode_terminal_reason": "stage7b_decision_limit",
+      "on_action_received_count": 1678,
+      "runtime_apply_attempted": 1678,
+      "runtime_apply_accepted": 1678,
+      "duplicate_spawn_detected": false
+    },
+    "after": {
+      "source": "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json",
+      "episode_terminal_reason": "none",
+      "episode_terminal_reached": false,
+      "on_action_received_count": 300,
+      "runtime_apply_attempted": 300,
+      "runtime_apply_accepted": 300,
+      "runtime_apply_rejected": 0,
+      "on_episode_begin_count": 1,
+      "duplicate_spawn_detected": false
+    }
+  },
+  "episode_duration_assessment": {
+    "stage7b_episode_duration_increased": true,
+    "terminal_reason_no_longer_dominated_by_too_short_decision_limit_in_short_smoke": true,
+    "episode_lasts_at_least_250_decisions_or_real_terminal": true,
+    "decisions_completed_after": 300
+  },
+  "inference_path_health": {
+    "source": "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json",
+    "behavior_type_runtime": "InferenceOnly",
+    "heuristic_call_count": 0,
+    "padding_warning_false": true,
+    "collect_observations_writes_15552": true,
+    "write_discrete_action_mask_gt_zero": true,
+    "on_action_received_gt_zero": true,
+    "runtime_apply_attempted_gt_zero": true,
+    "runtime_apply_accepted_gt_zero": true
+  },
+  "scripted_bot_pacing_health": {
+    "source": "python/stage7b_teacher_replay/stage7b_week7_scripted_bot_throttle_report.json",
+    "scripted_bot_decisions_or_actions_gt_zero": true,
+    "scripted_bot_decision_executed_count": 37,
+    "scripted_bot_actions_attempted_after": 37,
+    "actions_per_100_student_steps_current": 14.45,
+    "actions_per_100_student_steps_pre_tuning_baseline": 33.51,
+    "actions_per_100_still_lower_than_pre_tuning": true,
+    "accepted_bot_attack_actions": 0,
+    "opening_grace_worked": true
+  },
+  "student_action_breakdown_after": {
+    "noop": 17,
+    "move": 251,
+    "harvest": 9,
+    "return": 0,
+    "produce": 21,
+    "attack": 2
+  },
+  "scripted_action_breakdown_reference": {
+    "move": 846,
+    "harvest": 20,
+    "return": 6,
+    "produce": 42,
+    "attack": 0,
+    "noop": 0,
+    "other": 0
+  },
+  "unity_console": {
+    "errors": 0,
+    "warnings": 0,
+    "warnings_classification": "none"
+  },
+  "acceptance_checks": {
+    "compile_clean": true,
+    "week7_scene_opens_and_playmode_starts": true,
+    "episode_duration_increased": true,
+    "terminal_reason_not_dominated_by_too_short_decision_limit_in_short_smoke": true,
+    "episode_length_at_least_250_or_real_terminal": true,
+    "inference_path_healthy": true,
+    "scripted_bot_active_but_paced": true,
+    "duplicate_spawn_detected_false": true,
+    "unity_console_errors_zero": true,
+    "warnings_zero_or_benign": true
+  },
+  "notes": [
+    "Dominant short-episode truncation root cause was Stage7B decision cap (256), not MatchManager step limit (2000).",
+    "PPO trainer max_steps kept unchanged in this step; objective was extending per-episode Unity runtime, not long training."
+  ]
+}

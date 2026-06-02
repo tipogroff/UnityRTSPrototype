@@ -1,0 +1,25 @@
+{
+  "status": "partial_pass",
+  "gather_context_menu_opened": null,
+  "issue_harvest_loop_invoked": true,
+  "worker_moved_to_resource": null,
+  "harvest_submitted": true,
+  "worker_carried_resources_increased": true,
+  "worker_moved_to_base": true,
+  "return_submitted": true,
+  "player_resources_increased": true,
+  "loop_repeated": true,
+  "cancel_pass": true,
+  "direct_movement_bypass_present": false,
+  "direct_resource_mutation_present": false,
+  "action_decoder_changed": false,
+  "action_applier_changed": false,
+  "week7_baseline_changed": false,
+  "python_training_changed": false,
+  "manual_game_view_validation_required": true,
+  "notes": [
+    "RMB resource -> Gather menu and existing RMB empty-cell Move require manual Game View acceptance.",
+    "Auxiliary runtime probe verified far adjacent-path lookup, Harvest, Return, Player2 resource increase, loop repeat, and Cancel before manual-only validation was requested.",
+    "A pre-existing SelectionBoxView teardown MissingReferenceException was observed on Play Mode exit and was not modified."
+  ]
+}
