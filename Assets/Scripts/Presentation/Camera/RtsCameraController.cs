@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
+using RTS.Presentation.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -48,10 +49,22 @@ namespace RTS.Presentation.CameraControls
         private Vector2 _lastMousePosition;
         private bool _dragging;
         private Coroutine _focusCoroutine;
+        private HumanPlayCanvasController _humanPlayCanvasController;
 
         private void Awake()
         {
-            _camera ??= GetComponent<Camera>();
+            if (_camera == null)
+            {
+                _camera = GetComponent<Camera>();
+            }
+
+            if (_camera == null)
+            {
+                Debug.LogError("[RtsCameraController] Camera component is missing.", this);
+                enabled = false;
+                return;
+            }
+
             _camera.orthographic = true;
             transform.rotation = Quaternion.Euler(_isometricRotation);
             ResolveMapBounds();
@@ -174,7 +187,7 @@ namespace RTS.Presentation.CameraControls
 
         private void ReadMovement()
         {
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 return;
             }
@@ -199,12 +212,12 @@ namespace RTS.Presentation.CameraControls
 
         private void ReadZoom()
         {
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 return;
             }
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (IsPointerOverInteractiveUi())
             {
                 return;
             }
@@ -225,13 +238,13 @@ namespace RTS.Presentation.CameraControls
                 return;
             }
 
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 _dragging = false;
                 return;
             }
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (IsPointerOverInteractiveUi())
             {
                 _dragging = false;
                 return;
@@ -428,6 +441,38 @@ namespace RTS.Presentation.CameraControls
             }
 
             return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
+        }
+
+        private bool IsCameraInputBlocked()
+        {
+            _humanPlayCanvasController ??= FindFirstObjectByType<HumanPlayCanvasController>();
+            return _humanPlayCanvasController != null && _humanPlayCanvasController.IsCameraInputBlocked;
+        }
+
+        private static bool IsPointerOverInteractiveUi()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                return false;
+            }
+
+            PointerEventData pointer = new PointerEventData(eventSystem)
+            {
+                position = GetPointerPosition(),
+            };
+            List<RaycastResult> results = new List<RaycastResult>();
+            eventSystem.RaycastAll(pointer, results);
+            for (int i = 0; i < results.Count; i++)
+            {
+                GameObject hit = results[i].gameObject;
+                if (hit != null && hit.GetComponentInParent<Selectable>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

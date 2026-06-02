@@ -85,6 +85,11 @@ namespace RTS.Presentation.UI
         private float _nextRefresh;
         private ResourceNode _hoveredResource;
 
+        public bool IsCameraInputBlocked =>
+            (_pauseMenu != null && _pauseMenu.gameObject.activeSelf)
+            || (_settingsPanel != null && _settingsPanel.gameObject.activeSelf)
+            || (_contextMenu != null && _contextMenu.IsOpen);
+
         private void Awake()
         {
             ResolveReferences();
