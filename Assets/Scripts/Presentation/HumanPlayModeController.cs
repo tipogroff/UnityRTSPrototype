@@ -26,6 +26,7 @@ namespace RTS.Presentation
         [Header("Menu")]
         [SerializeField] private bool _loadMenuSceneOnReturn = false;
         [SerializeField] private string _menuSceneName = "Bootstrap";
+        [SerializeField] private bool _redirectToMainMenuWhenNoLaunchMode = true;
 
         [Header("Startup")]
         [SerializeField] private HumanPlayMode _initialMode = HumanPlayMode.AIvsAI;
@@ -290,6 +291,12 @@ namespace RTS.Presentation
                 yield break;
             }
 
+            if (!DemoLaunchOptions.HasExplicitMode)
+            {
+                HandleMissingLaunchMode();
+                yield break;
+            }
+
             float timeout = Mathf.Max(0.25f, _autoStartRuntimeReadyTimeoutSeconds);
             float start = Time.realtimeSinceStartup;
             while (!AreRuntimeServicesReady(out string missing))
@@ -307,18 +314,29 @@ namespace RTS.Presentation
             _initialAutoStartCompleted = true;
             LogStartupDiagnostics("InitialAutoStart.ready");
 
-            if (DemoLaunchOptions.HasExplicitMode)
-            {
-                DemoLaunchMode requestedMode = DemoLaunchOptions.RequestedMode;
-                DemoLaunchOptions.Clear();
-                StartRequestedDemoMode(requestedMode);
-            }
-            else
-            {
-                StartConfiguredInitialMode();
-            }
+            DemoLaunchMode requestedMode = DemoLaunchOptions.RequestedMode;
+            DemoLaunchOptions.Clear();
+            StartRequestedDemoMode(requestedMode);
 
             _startupCoroutine = null;
+        }
+
+        private void HandleMissingLaunchMode()
+        {
+            _initialAutoStartCompleted = true;
+            _startupCoroutine = null;
+
+            if (_redirectToMainMenuWhenNoLaunchMode
+                && !string.IsNullOrWhiteSpace(_menuSceneName)
+                && SceneManager.GetActiveScene().name != _menuSceneName)
+            {
+                EmitDiagnostic("No explicit demo launch mode. Redirecting to main menu.");
+                Time.timeScale = 1f;
+                SceneManager.LoadScene(_menuSceneName);
+                return;
+            }
+
+            SetState(HumanPlayMode.PausedDemo, false, Owner.Neutral, "No explicit demo launch mode. Demo remains idle.");
         }
 
         private void StartRequestedDemoMode(DemoLaunchMode requestedMode)
@@ -333,26 +351,6 @@ namespace RTS.Presentation
                     break;
                 default:
                     StartAIvsPlayer2();
-                    break;
-            }
-        }
-
-        private void StartConfiguredInitialMode()
-        {
-            switch (_initialMode)
-            {
-                case HumanPlayMode.Player1vsAI:
-                case HumanPlayMode.Player1vsScriptedOrHeuristic:
-                    StartPlayer1VsAI();
-                    break;
-                case HumanPlayMode.AIvsPlayer2:
-                    StartAIvsPlayer2();
-                    break;
-                case HumanPlayMode.AIvsBot:
-                    StartAIvsBot();
-                    break;
-                default:
-                    StartAIvsAI();
                     break;
             }
         }
