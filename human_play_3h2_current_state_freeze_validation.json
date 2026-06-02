@@ -1,0 +1,84 @@
+{
+  "task": "HumanPlay-3H.2 Current Project State Freeze",
+  "timestamp": "2026-06-02",
+  "result": "full_pass",
+  "artifacts": {
+    "current_project_state_md": true,
+    "current_project_state_json": true,
+    "human_play_feature_matrix_md": true,
+    "current_pipeline_overview_md": true,
+    "human_play_current_handoff_md": true,
+    "freeze_report_md": true,
+    "freeze_validation_json": true
+  },
+  "paths": {
+    "current_project_state_md": "CURRENT_PROJECT_STATE.md",
+    "current_project_state_json": "CURRENT_PROJECT_STATE.json",
+    "human_play_feature_matrix_md": "HUMAN_PLAY_FEATURE_MATRIX.md",
+    "current_pipeline_overview_md": "CURRENT_PIPELINE_OVERVIEW.md",
+    "human_play_current_handoff_md": "HUMAN_PLAY_CURRENT_HANDOFF.md",
+    "freeze_report_md": "HUMAN_PLAY_3H2_CURRENT_STATE_FREEZE_REPORT.md",
+    "freeze_validation_json": "human_play_3h2_current_state_freeze_validation.json"
+  },
+  "current_state": {
+    "main_menu_scene": "Assets/Scenes/MainMenu.unity",
+    "current_demo_scene": "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+    "week7_baseline_scene": "Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity",
+    "build_order": [
+      "Assets/Scenes/MainMenu.unity",
+      "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity",
+      "Assets/Scenes/SampleScene.unity"
+    ],
+    "ai_behavior_name": "Stage7B_RTS_Student",
+    "ai_model_path": "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx",
+    "ai_model_guid": "6d127165551f3de4d97e97652c4979c5",
+    "human_side": "Player2",
+    "ai_side": "Player1",
+    "bootstrap_runtime_mode": "InferenceOnly"
+  },
+  "forbidden_change_checks": {
+    "scene_changes": false,
+    "prefab_changes": false,
+    "gameplay_script_semantic_changes": false,
+    "python_training_changes": false,
+    "model_or_checkpoint_changes": false,
+    "action_decoder_changes": false,
+    "action_applier_changes": false,
+    "week7_baseline_scene_changes": false,
+    "humanplay_demo_scene_changes": false,
+    "main_menu_scene_changes": false
+  },
+  "runtime_route_assertions": {
+    "human_input_routes_through_orders": true,
+    "orders_route_through_player_command_controller": true,
+    "submission_routes_through_action_applier": true,
+    "application_routes_through_match_manager": true,
+    "no_ui_direct_runtime_mutation_bypass": true
+  },
+  "production_index_assertions": {
+    "worker_build_barracks": 2,
+    "base_worker": 3,
+    "barracks_light": 4,
+    "barracks_heavy": 5,
+    "barracks_ranged": 6
+  },
+  "known_limitations": {
+    "group_attack_not_full_formation_system": true,
+    "group_orders_fanout_not_runtime_group_primitive": true,
+    "dense_engagement_replan_possible": true,
+    "no_aoe_damage": true,
+    "no_attack_move_command": true,
+    "spawn_reservation_not_implemented": true
+  },
+  "quality_checks": {
+    "unity_compile_errors": 0,
+    "documentation_consistency_check": true,
+    "artifact_presence_check": true,
+    "preexisting_dirty_workspace_path_detected": "python/week5_teacher_legacy032/third_party/gym_microrts_legacy032_source"
+  },
+  "notes": [
+    "This is a documentation freeze snapshot only.",
+    "BehaviorParameters serialized behavior type may appear Default in scene YAML while runtime bootstrap enforces inference configuration.",
+    "HumanPlayCanvas is prefab/runtime-driven; many UI elements are generated at runtime by controller code."
+  ]
+}
