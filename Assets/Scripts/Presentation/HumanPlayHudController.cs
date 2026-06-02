@@ -265,7 +265,7 @@ namespace RTS.Presentation
             }
 
             GUILayout.Label("Paused: " + _gameSpeedController.IsPaused);
-            GUILayout.Label("Current speed: " + _gameSpeedController.CurrentSpeed.ToString("0.00"));
+            GUILayout.Label("Match speed: " + _gameSpeedController.CurrentStepsPerSecond.ToString("0.##") + " steps/sec");
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Pause/Resume"))
@@ -281,21 +281,21 @@ namespace RTS.Presentation
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("1x"))
+            if (GUILayout.Button("Normal"))
             {
-                InvokeSafe(() => _gameSpeedController.SetSpeed(1f), "Speed set to 1x.", "GameSpeedController missing");
+                InvokeSafe(() => _gameSpeedController.SetTargetStepsPerSecond(5f), "Speed set to normal.", "GameSpeedController missing");
             }
-            if (GUILayout.Button("0.5x"))
+            if (GUILayout.Button("Slow"))
             {
-                InvokeSafe(() => _gameSpeedController.SetSpeed(0.5f), "Speed set to 0.5x.", "GameSpeedController missing");
+                InvokeSafe(() => _gameSpeedController.SetTargetStepsPerSecond(2f), "Speed set to slow.", "GameSpeedController missing");
             }
-            if (GUILayout.Button("0.25x"))
+            if (GUILayout.Button("Fast"))
             {
-                InvokeSafe(() => _gameSpeedController.SetSpeed(0.25f), "Speed set to 0.25x.", "GameSpeedController missing");
+                InvokeSafe(() => _gameSpeedController.SetTargetStepsPerSecond(10f), "Speed set to fast.", "GameSpeedController missing");
             }
-            if (GUILayout.Button("0.1x"))
+            if (GUILayout.Button("Debug"))
             {
-                InvokeSafe(() => _gameSpeedController.SetSpeed(0.1f), "Speed set to 0.1x.", "GameSpeedController missing");
+                InvokeSafe(() => _gameSpeedController.SetTargetStepsPerSecond(20f), "Speed set to debug.", "GameSpeedController missing");
             }
             GUILayout.EndHorizontal();
         }

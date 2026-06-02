@@ -1,12 +1,12 @@
 ﻿{
-    "generated_at_utc": "2026-06-01T23:41:58.7128292Z",
+    "generated_at_utc": "2026-06-02T18:25:04.5567087Z",
     "all_agent_components": [
         {
             "component_type": "RTS.MLAgents.Stage7B.StudentMlAgent",
-            "instance_id": 55510,
+            "instance_id": 89700,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
-            "component_enabled": true,
+            "component_enabled": false,
             "behavior_name": "Stage7B_RTS_Student",
             "behavior_type": "InferenceOnly",
             "model_assigned": true,
@@ -16,7 +16,7 @@
     "all_behavior_parameters": [
         {
             "component_type": "BehaviorParameters",
-            "instance_id": 55514,
+            "instance_id": 89704,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,
@@ -29,10 +29,10 @@
     "behavior_name_stage7b_rts_student": [
         {
             "component_type": "RTS.MLAgents.Stage7B.StudentMlAgent",
-            "instance_id": 55510,
+            "instance_id": 89700,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
-            "component_enabled": true,
+            "component_enabled": false,
             "behavior_name": "Stage7B_RTS_Student",
             "behavior_type": "InferenceOnly",
             "model_assigned": true,
@@ -40,7 +40,7 @@
         },
         {
             "component_type": "BehaviorParameters",
-            "instance_id": 55514,
+            "instance_id": 89704,
             "gameobject_path": "Stage7B_StudentMlAgent",
             "gameobject_active": true,
             "component_enabled": true,

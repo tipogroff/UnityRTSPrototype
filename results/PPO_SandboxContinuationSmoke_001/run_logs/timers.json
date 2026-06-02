@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1780362449",
+        "python_version": "3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42) [MSC v.1929 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Projects\\UnityRTSPrototype\\UnityRTSPrototype\\python\\stage7b_mlagents\\.venv_mlagents\\lib\\site-packages\\mlagents\\trainers\\learn.py config/stage7b_ppo_finetune_smoke.yaml --run-id PPO_SandboxContinuationSmoke_001 --initialize-from Stage7B_ImitationSmoke_010_PostKickConfirm",
+        "mlagents_version": "0.30.0",
+        "mlagents_envs_version": "0.30.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cpu",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1780362513"
+    },
+    "total": 63.241769,
+    "count": 1,
+    "self": 0.0035048999999887087,
+    "children": {
+        "run_training.setup": {
+            "total": 0.17817250000000007,
+            "count": 1,
+            "self": 0.17817250000000007
+        },
+        "TrainerController.start_learning": {
+            "total": 63.06009160000001,
+            "count": 1,
+            "self": 6.840000001773205e-05,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 63.0600101,
+                    "count": 1,
+                    "self": 63.0600101
+                },
+                "TrainerController._save_models": {
+                    "total": 1.3099999989663047e-05,
+                    "count": 1,
+                    "self": 1.3099999989663047e-05
+                }
+            }
+        }
+    }
+}

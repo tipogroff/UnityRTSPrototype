@@ -54,6 +54,8 @@ namespace RTS.Gameplay
         [SerializeField] private bool _autoStepInFixedUpdate = true;
         [Tooltip("Minimum wall-clock simulation interval for automatic decisions. 0 keeps the historical every-FixedUpdate behavior.")]
         [SerializeField] private float _decisionTickIntervalSeconds = 0f;
+        [Tooltip("Maximum number of automatic simulation steps processed in one FixedUpdate catch-up pass.")]
+        [SerializeField] private int _maxAutomaticStepsPerFixedUpdate = 3;
         [SerializeField] private bool _useHeuristicAI = true;
         [SerializeField] private HeuristicExecutionPath _heuristicExecutionPath = HeuristicExecutionPath.Day5PolicyPipeline;
         [SerializeField] private bool _logLifecycleEvents;
@@ -76,6 +78,7 @@ namespace RTS.Gameplay
         private MlPolicyPipelineFacade _policyPipelineFacade;
         private RlLoopCoordinator _rlLoopCoordinator;
         private float _decisionTickAccumulatorSeconds;
+        private bool _automaticSteppingPaused;
 
         public RewardStepTrace LastRewardStepTrace { get; private set; }
         public RewardBreakdown LastRewardBreakdown { get; private set; }
@@ -101,6 +104,9 @@ namespace RTS.Gameplay
                 _decisionTickAccumulatorSeconds = 0f;
             }
         }
+        public float TargetStepsPerSecond =>
+            _decisionTickIntervalSeconds > 0f ? 1f / _decisionTickIntervalSeconds : 0f;
+        public bool IsAutomaticSteppingPaused => _automaticSteppingPaused;
         public bool EnableWeek6StudentMatchControl => _enableWeek6StudentMatchControl;
         public Week6PlayerControlMode Player1DecisionMode => _player1DecisionMode;
         public Week6PlayerControlMode Player2DecisionMode => _player2DecisionMode;
@@ -160,18 +166,53 @@ namespace RTS.Gameplay
                 return;
             }
 
+            if (_automaticSteppingPaused)
+            {
+                _decisionTickAccumulatorSeconds = 0f;
+                return;
+            }
+
             if (_decisionTickIntervalSeconds > 0f)
             {
-                _decisionTickAccumulatorSeconds += Time.fixedDeltaTime;
+                _decisionTickAccumulatorSeconds += Time.unscaledDeltaTime;
                 if (_decisionTickAccumulatorSeconds + 0.0001f < _decisionTickIntervalSeconds)
                 {
                     return;
                 }
 
-                _decisionTickAccumulatorSeconds = 0f;
+                int stepsThisUpdate = 0;
+                int maxSteps = Mathf.Max(1, _maxAutomaticStepsPerFixedUpdate);
+                while (_decisionTickAccumulatorSeconds + 0.0001f >= _decisionTickIntervalSeconds
+                    && stepsThisUpdate < maxSteps)
+                {
+                    _decisionTickAccumulatorSeconds -= _decisionTickIntervalSeconds;
+                    stepsThisUpdate++;
+
+                    if (!StepMatchWithHeuristics())
+                    {
+                        _decisionTickAccumulatorSeconds = 0f;
+                        break;
+                    }
+                }
+
+                _decisionTickAccumulatorSeconds = Mathf.Min(
+                    _decisionTickAccumulatorSeconds,
+                    _decisionTickIntervalSeconds * maxSteps);
+                return;
             }
 
             StepMatchWithHeuristics();
+        }
+
+        public void SetTargetStepsPerSecond(float stepsPerSecond)
+        {
+            DecisionTickIntervalSeconds = stepsPerSecond > 0f ? 1f / stepsPerSecond : 0f;
+        }
+
+        public void SetAutomaticSteppingPaused(bool paused)
+        {
+            _automaticSteppingPaused = paused;
+            _decisionTickAccumulatorSeconds = 0f;
         }
 
         public void StartNewEpisode()

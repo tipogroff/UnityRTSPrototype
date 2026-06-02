@@ -1,5 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
+using RTS.Presentation.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -31,17 +34,37 @@ namespace RTS.Presentation.CameraControls
         [Header("View")]
         [SerializeField] private Vector3 _isometricRotation = new Vector3(58f, 45f, 0f);
 
-        private Camera _camera;
+        [Header("Match Start Focus")]
+        [SerializeField] private Camera _camera;
+        [SerializeField] private float _height = 14f;
+        [SerializeField] private float _zOffset;
+        [SerializeField] private float _xOffset;
+        [SerializeField] private Vector3 _fallbackCenter = new Vector3(11.5f, 0f, 11.5f);
+        [SerializeField] private bool _focusOnMatchStart = true;
+
         private Vector3 _targetPosition;
         private Vector3 _moveVelocity;
         private float _targetZoom;
         private float _zoomVelocity;
         private Vector2 _lastMousePosition;
         private bool _dragging;
+        private Coroutine _focusCoroutine;
+        private HumanPlayCanvasController _humanPlayCanvasController;
 
         private void Awake()
         {
-            _camera = GetComponent<Camera>();
+            if (_camera == null)
+            {
+                _camera = GetComponent<Camera>();
+            }
+
+            if (_camera == null)
+            {
+                Debug.LogError("[RtsCameraController] Camera component is missing.", this);
+                enabled = false;
+                return;
+            }
+
             _camera.orthographic = true;
             transform.rotation = Quaternion.Euler(_isometricRotation);
             ResolveMapBounds();
@@ -80,9 +103,91 @@ namespace RTS.Presentation.CameraControls
             transform.position = _targetPosition;
         }
 
+        public void FocusOnOwnerAfterMatchStart(Owner owner)
+        {
+            StartMatchFocus(owner, focusCenter: false);
+        }
+
+        public void FocusOnCenterAfterMatchStart()
+        {
+            StartMatchFocus(Owner.Neutral, focusCenter: true);
+        }
+
+        private void StartMatchFocus(Owner owner, bool focusCenter)
+        {
+            if (!_focusOnMatchStart)
+            {
+                return;
+            }
+
+            if (_focusCoroutine != null)
+            {
+                StopCoroutine(_focusCoroutine);
+            }
+
+            _focusCoroutine = StartCoroutine(FocusAfterMatchStart(owner, focusCenter));
+        }
+
+        private IEnumerator FocusAfterMatchStart(Owner owner, bool focusCenter)
+        {
+            yield return null;
+
+            Vector3 groundPoint = focusCenter ? GetFallbackCenter() : ResolveOwnerFocusPoint(owner);
+            ApplyGroundFocus(groundPoint);
+            _focusCoroutine = null;
+        }
+
+        private Vector3 ResolveOwnerFocusPoint(Owner owner)
+        {
+            UnitRegistry registry = UnitRegistry.Instance != null
+                ? UnitRegistry.Instance
+                : FindFirstObjectByType<UnitRegistry>();
+            if (registry == null)
+            {
+                return GetFallbackCenter();
+            }
+
+            List<UnitRuntime> units = registry.GetUnitsByOwner(owner);
+            UnitRuntime firstAlive = null;
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                firstAlive ??= unit;
+                if (unit.Type == UnitType.Base)
+                {
+                    return unit.transform.position;
+                }
+            }
+
+            return firstAlive != null ? firstAlive.transform.position : GetFallbackCenter();
+        }
+
+        private void ApplyGroundFocus(Vector3 groundPoint)
+        {
+            ResolveMapBounds();
+            groundPoint.y = 0f;
+            float distance = Mathf.Max(1f, _height / Mathf.Max(0.1f, -transform.forward.y));
+            Vector3 cameraPosition = groundPoint - transform.forward * distance;
+            cameraPosition.x += _xOffset;
+            cameraPosition.z += _zOffset;
+            _targetPosition = cameraPosition;
+            transform.position = _targetPosition;
+            _moveVelocity = Vector3.zero;
+        }
+
+        private Vector3 GetFallbackCenter()
+        {
+            return _fallbackCenter == Vector3.zero ? GetMapCenter() : _fallbackCenter;
+        }
+
         private void ReadMovement()
         {
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 return;
             }
@@ -107,12 +212,12 @@ namespace RTS.Presentation.CameraControls
 
         private void ReadZoom()
         {
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 return;
             }
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (IsPointerOverInteractiveUi())
             {
                 return;
             }
@@ -133,13 +238,13 @@ namespace RTS.Presentation.CameraControls
                 return;
             }
 
-            if (IsTextInputFocused())
+            if (IsCameraInputBlocked() || IsTextInputFocused())
             {
                 _dragging = false;
                 return;
             }
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (IsPointerOverInteractiveUi())
             {
                 _dragging = false;
                 return;
@@ -336,6 +441,38 @@ namespace RTS.Presentation.CameraControls
             }
 
             return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
+        }
+
+        private bool IsCameraInputBlocked()
+        {
+            _humanPlayCanvasController ??= FindFirstObjectByType<HumanPlayCanvasController>();
+            return _humanPlayCanvasController != null && _humanPlayCanvasController.IsCameraInputBlocked;
+        }
+
+        private static bool IsPointerOverInteractiveUi()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                return false;
+            }
+
+            PointerEventData pointer = new PointerEventData(eventSystem)
+            {
+                position = GetPointerPosition(),
+            };
+            List<RaycastResult> results = new List<RaycastResult>();
+            eventSystem.RaycastAll(pointer, results);
+            for (int i = 0; i < results.Count; i++)
+            {
+                GameObject hit = results[i].gameObject;
+                if (hit != null && hit.GetComponentInParent<Selectable>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

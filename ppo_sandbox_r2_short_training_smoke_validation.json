@@ -1,0 +1,41 @@
+{
+  "result": "GO",
+  "run_id": "PPO_SandboxContinuationSmoke_002",
+  "sandbox_scene": "Assets/Scenes/PPO_TrainingSandbox_Player1AI_vs_ScriptedBot.unity",
+  "config_path": "config/stage7b_ppo_finetune_smoke.yaml",
+  "initialize_from": "Stage7B_ImitationSmoke_010_PostKickConfirm",
+  "max_steps": 2000,
+  "steps_collected": 2000,
+  "trainer_exit_code": 0,
+  "unity_connected": true,
+  "checkpoint_initialized": true,
+  "observation_size": 15552,
+  "candidate_action_branch_size": 128,
+  "attack_target_contract_49": true,
+  "scripted_opponent_enabled": true,
+  "duplicate_agent_found": false,
+  "padding_warnings": 0,
+  "runtime_exceptions": 0,
+  "console_errors": 0,
+  "exported_checkpoint_paths": [
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student/checkpoint.pt",
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student/Stage7B_RTS_Student-1975.pt",
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student/Stage7B_RTS_Student-2039.pt"
+  ],
+  "exported_onnx_paths": [
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student.onnx",
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student/Stage7B_RTS_Student-1975.onnx",
+    "results/PPO_SandboxContinuationSmoke_002/Stage7B_RTS_Student/Stage7B_RTS_Student-2039.onnx"
+  ],
+  "main_menu_unchanged": true,
+  "humanplay_demo_unchanged": true,
+  "week7_baseline_unchanged": true,
+  "current_demo_model_unchanged": true,
+  "existing_checkpoints_unchanged": true,
+  "action_decoder_unchanged": true,
+  "action_applier_unchanged": true,
+  "match_manager_unchanged": true,
+  "python_training_scripts_unchanged": true,
+  "ppo_smoke_model_safe_for_evaluation": true,
+  "blockers": []
+}

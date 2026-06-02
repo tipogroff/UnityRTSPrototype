@@ -73,8 +73,22 @@ namespace RTS.Presentation.UI
         private SceneFlowController _sceneFlowController;
         private MatchManager _matchManager;
         private Button _stopButton;
+        private Text _gridSettingValue;
+        private Text _unitMarkersSettingValue;
+        private Text _controlHintsSettingValue;
+        private Text _graphicsQualitySettingValue;
+        private Text _cameraHeightSettingValue;
+        private Text _interfaceScaleSettingValue;
+        private Text _settingsStatus;
+        private bool _hasObservedManualUiMode;
+        private bool _wasPlayer2ManualMode;
         private float _nextRefresh;
         private ResourceNode _hoveredResource;
+
+        public bool IsCameraInputBlocked =>
+            (_pauseMenu != null && _pauseMenu.gameObject.activeSelf)
+            || (_settingsPanel != null && _settingsPanel.gameObject.activeSelf)
+            || (_contextMenu != null && _contextMenu.IsOpen);
 
         private void Awake()
         {
@@ -86,6 +100,13 @@ namespace RTS.Presentation.UI
 
         private void OnDestroy()
         {
+            if (_selectionManager != null)
+            {
+                _selectionManager.ClearSelectionBoxView(_selectionBoxView);
+            }
+
+            _selectionBoxView = null;
+
             if (_commandController != null)
             {
                 _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
@@ -127,6 +148,11 @@ namespace RTS.Presentation.UI
             else if (_speedController != null && _speedController.IsPaused)
             {
                 _speedController.Resume();
+            }
+
+            if (!visible)
+            {
+                HideHudSettings();
             }
         }
 
@@ -345,7 +371,7 @@ namespace RTS.Presentation.UI
             CreateHeader(_pauseMenu, "Paused");
             CreateVerticalButton(_pauseMenu, "Continue", 96f, Continue);
             CreateVerticalButton(_pauseMenu, "Restart Match", 154f, RestartMatch);
-            CreateVerticalButton(_pauseMenu, "Settings", 212f, () => _settingsPanel?.gameObject.SetActive(true), _gearIcon);
+            CreateVerticalButton(_pauseMenu, "Settings", 212f, ShowHudSettings, _gearIcon);
             CreateVerticalButton(_pauseMenu, "Toggle Metrics", 270f, () => _metricsVisibility?.Toggle());
             CreateVerticalButton(_pauseMenu, "Main Menu", 328f, ReturnToMainMenu, _homeIcon);
             CreateVerticalButton(_pauseMenu, "Quit", 386f, Quit);
@@ -353,23 +379,77 @@ namespace RTS.Presentation.UI
 
         private void BuildSettingsPanel(RectTransform root)
         {
-            _settingsPanel = CreatePanel("HudSettingsPanel", root, new Vector2(430f, 300f));
+            _settingsPanel = CreatePanel("HudSettingsPanel", root, new Vector2(700f, 560f));
             _settingsPanel.anchorMin = new Vector2(0.5f, 0.5f);
             _settingsPanel.anchorMax = new Vector2(0.5f, 0.5f);
             _settingsPanel.anchoredPosition = new Vector2(0f, 20f);
             _settingsPanel.gameObject.SetActive(false);
-            CreateHeader(_settingsPanel, "Settings");
+            CreateHeader(_settingsPanel, "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438");
 
-            Toggle fullscreen = CreateToggle(_settingsPanel, "Fullscreen", new Vector2(-120f, -100f), Screen.fullScreen);
-            fullscreen.onValueChanged.AddListener(value => Screen.fullScreen = value);
+            _gridSettingValue = CreateHudSettingsRow("GridRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0441\u0435\u0442\u043a\u0443", 84f, DemoVisualSettings.ToggleGrid);
+            _unitMarkersSettingValue = CreateHudSettingsRow("UnitMarkersRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043c\u0430\u0440\u043a\u0435\u0440\u044b \u044e\u043d\u0438\u0442\u043e\u0432", 132f, DemoVisualSettings.ToggleUnitMarkers);
+            _controlHintsSettingValue = CreateHudSettingsRow("ControlHintsRow", "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u0438 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f", 180f, DemoVisualSettings.ToggleControlHints);
+            _graphicsQualitySettingValue = CreateHudSettingsRow("GraphicsQualityRow", "\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0433\u0440\u0430\u0444\u0438\u043a\u0438", 228f, DemoVisualSettings.CycleGraphicsQuality);
+            _cameraHeightSettingValue = CreateHudSettingsRow("CameraHeightRow", "\u0412\u044b\u0441\u043e\u0442\u0430 \u043a\u0430\u043c\u0435\u0440\u044b", 276f, DemoVisualSettings.CycleCameraHeight);
+            _interfaceScaleSettingValue = CreateHudSettingsRow("InterfaceScaleRow", "\u041c\u0430\u0441\u0448\u0442\u0430\u0431 \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430", 324f, DemoVisualSettings.CycleInterfaceScale);
 
-            Text volumeLabel = CreateLabel("VolumeLabel", _settingsPanel, 18, FontStyle.Normal, TextAnchor.MiddleLeft);
-            volumeLabel.text = "Volume";
-            SetRect(volumeLabel.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(104f, -154f), new Vector2(130f, 32f));
+            _settingsStatus = CreateLabel("SettingsStatus", _settingsPanel, 18, FontStyle.Bold, TextAnchor.MiddleCenter);
+            SetRect(_settingsStatus.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -374f), new Vector2(620f, 32f));
+            CreateVerticalButton(_settingsPanel, "\u041f\u0440\u0438\u043c\u0435\u043d\u0438\u0442\u044c", 426f, ApplyHudSettings);
+            CreateVerticalButton(_settingsPanel, "\u041d\u0430\u0437\u0430\u0434", 484f, HideHudSettings);
+            RefreshHudSettingsLabels();
+        }
 
-            Slider volume = CreateSlider(_settingsPanel, new Vector2(88f, -154f), AudioListener.volume);
-            volume.onValueChanged.AddListener(value => AudioListener.volume = value);
-            CreateVerticalButton(_settingsPanel, "Back", 232f, () => _settingsPanel.gameObject.SetActive(false));
+        private Text CreateHudSettingsRow(string name, string label, float yFromTop, System.Action update)
+        {
+            RectTransform row = CreateRect(name, _settingsPanel);
+            SetRect(row, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20f, -yFromTop), new Vector2(-40f, 44f));
+            Text settingLabel = CreateLabel("Label", row, 18, FontStyle.Normal, TextAnchor.MiddleLeft);
+            settingLabel.text = label;
+            SetRect(settingLabel.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(230f, 0f), new Vector2(440f, 38f));
+            Button valueButton = CreateButton("ValueButton", row, string.Empty, null, () =>
+            {
+                update?.Invoke();
+                RefreshHudSettingsLabels();
+                _settingsStatus.text = string.Empty;
+            });
+            SetRect(valueButton.transform as RectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-108f, 0f), new Vector2(190f, 42f));
+            return valueButton.GetComponentInChildren<Text>();
+        }
+
+        private void ShowHudSettings()
+        {
+            if (_settingsPanel == null)
+            {
+                return;
+            }
+
+            RefreshHudSettingsLabels();
+            _settingsStatus.text = string.Empty;
+            _settingsPanel.gameObject.SetActive(true);
+        }
+
+        private void HideHudSettings()
+        {
+            _settingsPanel?.gameObject.SetActive(false);
+        }
+
+        private void ApplyHudSettings()
+        {
+            if (_settingsStatus != null)
+            {
+                _settingsStatus.text = "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u043f\u0440\u0438\u043c\u0435\u043d\u0435\u043d\u044b";
+            }
+        }
+
+        private void RefreshHudSettingsLabels()
+        {
+            SetText(_gridSettingValue, DemoVisualSettings.FormatToggle(DemoVisualSettings.ShowGrid));
+            SetText(_unitMarkersSettingValue, DemoVisualSettings.FormatToggle(DemoVisualSettings.ShowUnitMarkers));
+            SetText(_controlHintsSettingValue, DemoVisualSettings.FormatToggle(DemoVisualSettings.ShowControlHints));
+            SetText(_graphicsQualitySettingValue, DemoVisualSettings.GraphicsQuality.ToString());
+            SetText(_cameraHeightSettingValue, DemoVisualSettings.CameraHeight.ToString());
+            SetText(_interfaceScaleSettingValue, DemoVisualSettings.InterfaceScale.ToString());
         }
 
         private void Refresh(bool force)
@@ -381,15 +461,36 @@ namespace RTS.Presentation.UI
                 ? _selectionManager.SelectedUnits
                 : _selectionController != null ? _selectionController.SelectedUnits : null;
             int selectionCount = selectedUnits != null ? selectedUnits.Count : (selected != null ? 1 : 0);
+            bool hasPlayer2ManualMode = HasPlayer2ManualMode();
             _topResourceBar?.Refresh(_matchManager);
             UpdateHoveredResource();
             _selectionInfo?.Refresh(selectedUnits, selected);
-            _commandPanel?.Refresh(_commandController, selectedUnits, selected, _hoveredResource);
-            _productionPanel?.Refresh(selected, selectionCount, _commandController);
+            _commandPanel?.Refresh(_commandController, selectedUnits, selected, _hoveredResource, _modeController, _humanPlayerController);
+            if (hasPlayer2ManualMode)
+            {
+                _productionPanel?.Refresh(selected, selectionCount, _commandController);
+            }
+
+            if (!_hasObservedManualUiMode || _wasPlayer2ManualMode != hasPlayer2ManualMode)
+            {
+                _selectionVisibility?.SetVisible(hasPlayer2ManualMode);
+                _wasPlayer2ManualMode = hasPlayer2ManualMode;
+                _hasObservedManualUiMode = true;
+            }
+
+            _productionVisibility?.SetVisible(hasPlayer2ManualMode && _productionPanel != null && _productionPanel.gameObject.activeSelf);
+            if (!hasPlayer2ManualMode)
+            {
+                _contextMenu?.Hide();
+            }
+
             _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
             if (_stopButton != null)
             {
-                _stopButton.interactable = selectionCount > 0;
+                _stopButton.interactable = hasPlayer2ManualMode
+                    && _humanPlayerController != null
+                    && _humanPlayerController.IsHumanControlActive
+                    && selectionCount > 0;
             }
         }
 
@@ -402,13 +503,19 @@ namespace RTS.Presentation.UI
 
             if (WasKeyPressed(KeyCode.Escape))
             {
+                if (_settingsPanel != null && _settingsPanel.gameObject.activeSelf)
+                {
+                    HideHudSettings();
+                    return;
+                }
+
                 if (_contextMenu != null && _contextMenu.IsOpen)
                 {
                     _contextMenu.Hide();
                     return;
                 }
 
-                SetPauseMenuVisible(true);
+                TogglePauseMenu();
             }
 
             if (WasKeyPressed(KeyCode.F1))
@@ -423,13 +530,27 @@ namespace RTS.Presentation.UI
 
             if (WasKeyPressed(KeyCode.F3))
             {
-                _selectionVisibility?.Toggle();
+                if (HasPlayer2ManualMode())
+                {
+                    _selectionVisibility?.Toggle();
+                }
             }
 
             if (WasKeyPressed(KeyCode.F4))
             {
-                _productionVisibility?.Toggle();
+                if (HasPlayer2ManualMode())
+                {
+                    _productionVisibility?.Toggle();
+                }
             }
+        }
+
+        private bool HasPlayer2ManualMode()
+        {
+            return _modeController != null
+                && _modeController.CurrentMode == HumanPlayMode.AIvsPlayer2
+                && _modeController.HasHumanSide
+                && _modeController.HumanSide == Owner.Player2;
         }
 
         private void ResolveReferences()
@@ -503,6 +624,11 @@ namespace RTS.Presentation.UI
 
         private void HandleMoveContextRequested(GridPosition targetCell, Vector2 screenPosition)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             Debug.Log($"[HumanMove3G1R] Canvas HandleMoveContextRequested target={targetCell} screen={screenPosition} selected={DescribeUnit(selected)} selectedCount={_selectionController?.SelectedUnits.Count ?? 0}");
             if (_selectionController != null && _selectionController.HasMultiSelection)
@@ -540,6 +666,11 @@ namespace RTS.Presentation.UI
 
         private void IssueGroupMoveOrder(GridPosition targetCell)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             string reason = "Group move order controller is unavailable.";
             int issued = _orderController != null
                 ? _orderController.IssueGroupMove(GetSelectedUnits(), targetCell, out reason)
@@ -550,6 +681,11 @@ namespace RTS.Presentation.UI
 
         private void IssueMoveOrder(GridPosition targetCell)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             Debug.Log($"[HumanMove3G1R] Canvas IssueMove target={targetCell} selected={DescribeUnit(selected)}");
             bool accepted = _orderController != null && _orderController.IssueMove(selected, targetCell);
@@ -560,6 +696,11 @@ namespace RTS.Presentation.UI
 
         private void IssueBuildBarracksOrder(GridPosition buildCell)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             string reason = "Build Barracks order controller is unavailable.";
             bool accepted = _orderController != null && _orderController.IssueBuildBarracks(selected, buildCell, out reason);
@@ -571,6 +712,11 @@ namespace RTS.Presentation.UI
 
         private void HandleGatherContextRequested(ResourceNode resource, Vector2 screenPosition)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             if (_selectionController != null && _selectionController.HasMultiSelection)
             {
@@ -600,6 +746,11 @@ namespace RTS.Presentation.UI
 
         private void IssueHarvestLoop(ResourceNode resource)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             string reason = "Gather order controller is unavailable.";
             bool accepted = _orderController != null && _orderController.IssueHarvestLoop(selected, resource, out reason);
@@ -611,6 +762,11 @@ namespace RTS.Presentation.UI
 
         private void HandleAttackContextRequested(UnitRuntime target, Vector2 screenPosition)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             if (target == null)
             {
                 _commandController?.PublishHumanOrderStatus("No enemy target in attack area.", false);
@@ -622,6 +778,11 @@ namespace RTS.Presentation.UI
 
         private void IssueAttackOrder(UnitRuntime target)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             UnitRuntime selected = _selectionController != null ? _selectionController.SelectedUnit : null;
             string reason = "Attack order controller is unavailable.";
             bool accepted = _orderController != null && _orderController.IssueAttack(selected, target, out reason);
@@ -633,6 +794,11 @@ namespace RTS.Presentation.UI
 
         private void HandleAttackAreaContextRequested(GridPosition areaCell, Vector2 screenPosition)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             IReadOnlyList<UnitRuntime> selectedUnits = GetSelectedUnits();
             int attackCapableCount = CountAttackCapableUnits(selectedUnits);
             if (attackCapableCount <= 0)
@@ -675,6 +841,11 @@ namespace RTS.Presentation.UI
 
         private void IssueAttackAreaOrder(GridPosition areaCell)
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             IReadOnlyList<UnitRuntime> selectedUnits = GetSelectedUnits();
             string reason = "Attack order controller is unavailable.";
             int issued = _orderController != null
@@ -722,9 +893,28 @@ namespace RTS.Presentation.UI
 
         private void CancelPrimaryOrder()
         {
+            if (!EnsurePlayer2ManualCommandsAvailable())
+            {
+                return;
+            }
+
             int cancelled = _orderController != null ? _orderController.CancelAllSelectedOrders() : 0;
             _commandController?.PublishHumanOrderStatus($"Cancelled orders: {cancelled}", true);
             Refresh(force: true);
+        }
+
+        private bool EnsurePlayer2ManualCommandsAvailable()
+        {
+            if (HasPlayer2ManualMode())
+            {
+                return true;
+            }
+
+            _contextMenu?.Hide();
+            _commandController?.PublishHumanOrderStatus(
+                "\u0420\u0443\u0447\u043d\u043e\u0435 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0432 \u0440\u0435\u0436\u0438\u043c\u0435 AI \u043f\u0440\u043e\u0442\u0438\u0432 \u0438\u0433\u0440\u043e\u043a\u0430",
+                false);
+            return false;
         }
 
         private static string DescribeUnit(UnitRuntime unit)
@@ -975,6 +1165,14 @@ namespace RTS.Presentation.UI
             if (preferredHeight >= 0f)
             {
                 layout.preferredHeight = preferredHeight;
+            }
+        }
+
+        private static void SetText(Text label, string value)
+        {
+            if (label != null)
+            {
+                label.text = value;
             }
         }
 

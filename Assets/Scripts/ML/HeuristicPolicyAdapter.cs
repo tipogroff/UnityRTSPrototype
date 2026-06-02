@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using RTS.Core;
 using RTS.Gameplay;
@@ -146,10 +148,11 @@ namespace RTS.ML
     internal enum ScriptedGoalType
     {
         None = 0,
-        Resource = 1,
-        Base = 2,
-        Enemy = 3,
-        EnemyBase = 4
+        CenterArea = 1,
+        Resource = 2,
+        Base = 3,
+        Enemy = 4,
+        EnemyBase = 5
     }
 
     internal struct ScriptedUnitMoveMemory
@@ -227,6 +230,12 @@ namespace RTS.ML
     {
         Idle = 0,
         Heuristic = 1
+    }
+
+    public enum ScriptedOpponentTacticProfile
+    {
+        Legacy = 0,
+        CenterPressure = 1,
     }
 
     internal readonly struct DebugActionSelection
@@ -337,6 +346,31 @@ namespace RTS.ML
         [SerializeField] private bool _enablePlayer2BfsDetour = true;
         [SerializeField] private int _player2BfsMaxDepth = 4;
 
+        [Header("Sandbox Scripted Opponent Profile")]
+        [SerializeField] private ScriptedOpponentTacticProfile _player2TacticProfile = ScriptedOpponentTacticProfile.Legacy;
+        [SerializeField, Min(0)] private int _centerPressureOpeningNoAttackDecisionSteps = 18;
+        [SerializeField, Min(1)] private int _centerPressureAttackTimeoutDecisionSteps = 52;
+        [SerializeField, Min(1)] private int _centerPressureCenterRadius = 2;
+        [SerializeField, Min(1)] private int _centerPressureCorridorRadius = 5;
+        [SerializeField, Min(0)] private int _centerPressureEdgeThreshold = 2;
+        [SerializeField, Min(1)] private int _centerPressureBaseIdleDistance = 3;
+        [SerializeField, Min(1)] private int _centerPressurePermanentIdleThreshold = 18;
+        [SerializeField, Min(1)] private int _centerPressureWorkerSoftCap = 4;
+        [SerializeField, Min(1)] private int _centerPressureWorkerHardCap = 5;
+        [SerializeField, Min(1)] private int _centerPressureLightHardCap = 4;
+        [SerializeField, Min(1)] private int _centerPressureHeavyHardCap = 2;
+        [SerializeField, Min(1)] private int _centerPressureRangedHardCap = 3;
+        [SerializeField, Min(1)] private int _centerPressureCombatUnitCap = 5;
+        [SerializeField, Min(1)] private int _centerPressureTotalArmyCap = 9;
+        [SerializeField, Min(1)] private int _centerPressureMinWorkersBeforeBarracksPriority = 2;
+        [SerializeField, Min(1)] private int _centerPressureMinCombatBeforeFullAttack = 2;
+        [SerializeField, Min(1)] private int _centerPressureAttackWaveMinUnits = 3;
+        [SerializeField, Min(1)] private int _centerPressureAttackWaveMaxUnits = 5;
+        [SerializeField, Min(1)] private int _centerPressureHeavyProduceCooldownDecisions = 10;
+        [SerializeField, Min(1)] private int _centerPressureProductionWindowDecisions = 6;
+        [SerializeField, Min(1)] private int _centerPressureMaxProductionActionsPerWindow = 2;
+        [SerializeField] private string _centerPressureMetricsRelativePath = "python/stage7b_teacher_replay/stage7b_center_pressure_runtime_metrics.json";
+
         private MlPolicyPipelineFacade _policyPipeline;
         private readonly Dictionary<Owner, int> _decisionCycleByPlayer = new Dictionary<Owner, int>(2);
 
@@ -348,10 +382,177 @@ namespace RTS.ML
         private readonly HashSet<GridPosition> _player2ReservedTargetsScratch = new HashSet<GridPosition>();
         private readonly Queue<Player2BfsNode> _player2BfsQueueScratch = new Queue<Player2BfsNode>();
         private readonly HashSet<GridPosition> _player2BfsVisitedScratch = new HashSet<GridPosition>();
+        private readonly List<int> _centerPressureRecentProductionActions = new List<int>(16);
+
+        private int _centerPressureDecisionsExecuted;
+        private int _centerPressureActionsAttempted;
+        private int _centerPressureCommandsAccepted;
+        private int _centerPressureCommandsRejected;
+        private int _centerPressureCenterRallyMoves;
+        private int _centerPressureCenterAreaVisits;
+        private int _centerPressureEdgeLaneMoves;
+        private int _centerPressureBaseIdleSteps;
+        private int _centerPressureFirstCenterMoveStep = -1;
+        private int _centerPressureFirstAttackStep = -1;
+        private int _centerPressureConsecutiveBaseIdleSteps;
+        private bool _centerPressurePermanentBaseIdle;
+        private float _centerPressureCombatDistanceSum;
+        private int _centerPressureCombatDistanceSamples;
+        private int _centerPressureWorkerCountMin;
+        private int _centerPressureWorkerCountMax;
+        private int _centerPressureWorkerCountFinal;
+        private int _centerPressureWorkerProduceAttempts;
+        private int _centerPressureWorkerProduceBlockedByCap;
+        private int _centerPressureBarracksCount;
+        private int _centerPressureBarracksBuildAttempts;
+        private int _centerPressureBarracksBuildAccepted;
+        private int _centerPressureCombatCountMin;
+        private int _centerPressureCombatCountMax;
+        private int _centerPressureCombatCountFinal;
+        private int _centerPressureCombatProduceAttempts;
+        private int _centerPressureCombatProduceAccepted;
+        private int _centerPressureLightProduceAttempts;
+        private int _centerPressureHeavyProduceAttempts;
+        private int _centerPressureRangedProduceAttempts;
+        private int _centerPressureLightCountMax;
+        private int _centerPressureHeavyCountMax;
+        private int _centerPressureRangedCountMax;
+        private int _centerPressureTotalArmyCountMax;
+        private int _centerPressureHeavyProduceAccepted;
+        private int _centerPressureHeavyProduceBlockedByCap;
+        private int _centerPressureHeavyProduceBlockedByCooldown;
+        private int _centerPressureConsecutiveHeavyProduceAttempts;
+        private int _centerPressureAttackWaveSizeMin;
+        private int _centerPressureAttackWaveSizeMax;
+        private int _centerPressureAttackWaveSizeAtFirstAttack = -1;
+        private int _centerPressureCombatUnitsSentToCenter;
+        private int _centerPressureCombatUnitsKeptNearBase;
+        private int _centerPressureOverArmyCapSteps;
+        private int _centerPressureLastHeavyProduceAcceptedDecision = -100000;
+        private int _centerPressureWorkerIdleSteps;
+        private int _centerPressureWorkerGatherAttempts;
+        private int _centerPressureWorkerBuildAttempts;
+        private int _centerPressureCenterToEnemyApproachMoves;
+        private int _centerPressureAttackIntentCount;
+        private int _centerPressureAttackSubmitCount;
+        private int _centerPressureAcceptedAttackCount;
+        private int _centerPressureFirstAttackIntentStep = -1;
+        private int _centerPressureFirstAttackSubmitStep = -1;
+        private int _centerPressureFirstAcceptedAttackStep = -1;
+        private int _centerPressureCenterAttackIntentCount;
+        private int _centerPressureCenterAttackSubmitCount;
+        private int _centerPressureCenterAcceptedAttackCount;
+        private int _centerPressureCentralCorridorSteps;
+        private int _centerPressureCenterAreaSteps;
+        private int _centerPressureEdgeLaneSteps;
+        private int _centerPressureBaseAreaSteps;
+        private int _centerPressureCenterCrossingCount;
+        private bool _centerPressureWaveCrossedCenter;
+        private int _centerPressureCenterCrossingStep = -1;
+        private bool _centerPressureAttackAfterCenterCrossing;
+        private int _centerPressureFirstAttackAfterCenterCrossingStep = -1;
+        private int _centerPressureEdgeAttackCount;
+        private int _centerPressureCentralApproachMoves;
+        private int _centerPressureEdgeApproachMoves;
 
         public event Action<HeuristicActionEvaluation> OnActionEvaluated;
         public event Action<HeuristicDecisionCycleEvaluation> OnDecisionCycleEvaluated;
         public Func<Owner, UnitActionType, bool> ActionSelectionFilter { get; set; }
+
+        public ScriptedOpponentTacticProfile Player2TacticProfile => _player2TacticProfile;
+        public bool CenterPressureEnabled => _player2TacticProfile == ScriptedOpponentTacticProfile.CenterPressure;
+        public int CenterPressureDecisionsExecuted => _centerPressureDecisionsExecuted;
+        public int CenterPressureActionsAttempted => _centerPressureActionsAttempted;
+        public int CenterPressureCommandsAccepted => _centerPressureCommandsAccepted;
+        public int CenterPressureCommandsRejected => _centerPressureCommandsRejected;
+        public int CenterPressureCenterRallyMoves => _centerPressureCenterRallyMoves;
+        public int CenterPressureCenterAreaVisits => _centerPressureCenterAreaVisits;
+        public int CenterPressureEdgeLaneMoves => _centerPressureEdgeLaneMoves;
+        public int CenterPressureBaseIdleSteps => _centerPressureBaseIdleSteps;
+        public int CenterPressureFirstCenterMoveStep => _centerPressureFirstCenterMoveStep;
+        public int CenterPressureFirstAttackStep => _centerPressureFirstAttackStep;
+        public bool CenterPressurePermanentBaseIdle => _centerPressurePermanentBaseIdle;
+        public bool CenterPressureObserved => CenterPressureWaveCrossedCenter
+                                            && _centerPressureCentralCorridorSteps > 0
+                                            && _centerPressureAttackAfterCenterCrossing;
+        public float CenterPressureAverageCombatDistanceToCenter => _centerPressureCombatDistanceSamples > 0
+            ? _centerPressureCombatDistanceSum / _centerPressureCombatDistanceSamples
+            : 0f;
+        public int CenterPressureWorkerSoftCap => Mathf.Max(1, _centerPressureWorkerSoftCap);
+        public int CenterPressureWorkerHardCap => Mathf.Max(CenterPressureWorkerSoftCap, _centerPressureWorkerHardCap);
+        public int CenterPressureLightHardCap => Mathf.Max(1, _centerPressureLightHardCap);
+        public int CenterPressureHeavyHardCap => Mathf.Max(1, _centerPressureHeavyHardCap);
+        public int CenterPressureRangedHardCap => Mathf.Max(1, _centerPressureRangedHardCap);
+        public int CenterPressureCombatUnitCap => Mathf.Max(1, _centerPressureCombatUnitCap);
+        public int CenterPressureTotalArmyCap => Mathf.Max(CenterPressureCombatUnitCap, _centerPressureTotalArmyCap);
+        public int CenterPressureWorkerCountMin => _centerPressureWorkerCountMin == int.MaxValue ? 0 : _centerPressureWorkerCountMin;
+        public int CenterPressureWorkerCountMax => _centerPressureWorkerCountMax;
+        public int CenterPressureWorkerCountFinal => _centerPressureWorkerCountFinal;
+        public int CenterPressureWorkerProduceAttempts => _centerPressureWorkerProduceAttempts;
+        public int CenterPressureWorkerProduceBlockedByCap => _centerPressureWorkerProduceBlockedByCap;
+        public int CenterPressureBarracksCount => _centerPressureBarracksCount;
+        public int CenterPressureBarracksBuildAttempts => _centerPressureBarracksBuildAttempts;
+        public int CenterPressureBarracksBuildAccepted => _centerPressureBarracksBuildAccepted;
+        public int CenterPressureCombatCountMin => _centerPressureCombatCountMin == int.MaxValue ? 0 : _centerPressureCombatCountMin;
+        public int CenterPressureCombatCountMax => _centerPressureCombatCountMax;
+        public int CenterPressureCombatCountFinal => _centerPressureCombatCountFinal;
+        public int CenterPressureCombatProduceAttempts => _centerPressureCombatProduceAttempts;
+        public int CenterPressureCombatProduceAccepted => _centerPressureCombatProduceAccepted;
+        public int CenterPressureLightProduceAttempts => _centerPressureLightProduceAttempts;
+        public int CenterPressureHeavyProduceAttempts => _centerPressureHeavyProduceAttempts;
+        public int CenterPressureHeavyProduceAccepted => _centerPressureHeavyProduceAccepted;
+        public int CenterPressureHeavyProduceBlockedByCap => _centerPressureHeavyProduceBlockedByCap;
+        public int CenterPressureHeavyProduceBlockedByCooldown => _centerPressureHeavyProduceBlockedByCooldown;
+        public int CenterPressureConsecutiveHeavyProduceAttempts => _centerPressureConsecutiveHeavyProduceAttempts;
+        public int CenterPressureRangedProduceAttempts => _centerPressureRangedProduceAttempts;
+        public int CenterPressureLightCountMax => _centerPressureLightCountMax;
+        public int CenterPressureHeavyCountMax => _centerPressureHeavyCountMax;
+        public int CenterPressureRangedCountMax => _centerPressureRangedCountMax;
+        public int CenterPressureTotalArmyCountMax => _centerPressureTotalArmyCountMax;
+        public int CenterPressureAttackWaveSizeMin => _centerPressureAttackWaveSizeMin == int.MaxValue ? 0 : _centerPressureAttackWaveSizeMin;
+        public int CenterPressureAttackWaveSizeMax => _centerPressureAttackWaveSizeMax;
+        public int CenterPressureAttackWaveSizeAtFirstAttack => _centerPressureAttackWaveSizeAtFirstAttack;
+        public int CenterPressureCombatUnitsSentToCenter => _centerPressureCombatUnitsSentToCenter;
+        public int CenterPressureCombatUnitsKeptNearBase => _centerPressureCombatUnitsKeptNearBase;
+        public int CenterPressureOverArmyCapSteps => _centerPressureOverArmyCapSteps;
+        public int CenterPressureWorkerIdleSteps => _centerPressureWorkerIdleSteps;
+        public int CenterPressureWorkerGatherAttempts => _centerPressureWorkerGatherAttempts;
+        public int CenterPressureWorkerBuildAttempts => _centerPressureWorkerBuildAttempts;
+        public int CenterPressureCenterToEnemyApproachMoves => _centerPressureCenterToEnemyApproachMoves;
+        public int CenterPressureAttackIntentCount => _centerPressureAttackIntentCount;
+        public int CenterPressureAttackSubmitCount => _centerPressureAttackSubmitCount;
+        public int CenterPressureAcceptedAttackCount => _centerPressureAcceptedAttackCount;
+        public int CenterPressureFirstAttackIntentStep => _centerPressureFirstAttackIntentStep;
+        public int CenterPressureFirstAttackSubmitStep => _centerPressureFirstAttackSubmitStep;
+        public int CenterPressureFirstAcceptedAttackStep => _centerPressureFirstAcceptedAttackStep;
+        public int CenterPressureCenterAttackIntentCount => _centerPressureCenterAttackIntentCount;
+        public int CenterPressureCenterAttackSubmitCount => _centerPressureCenterAttackSubmitCount;
+        public int CenterPressureCenterAcceptedAttackCount => _centerPressureCenterAcceptedAttackCount;
+        public int CenterPressureCentralCorridorSteps => _centerPressureCentralCorridorSteps;
+        public int CenterPressureCenterAreaSteps => _centerPressureCenterAreaSteps;
+        public int CenterPressureEdgeLaneSteps => _centerPressureEdgeLaneSteps;
+        public int CenterPressureBaseAreaSteps => _centerPressureBaseAreaSteps;
+        public int CenterPressureCenterCrossingCount => _centerPressureCenterCrossingCount;
+        public bool CenterPressureWaveCrossedCenter => _centerPressureCenterCrossingCount > 0;
+        public int CenterPressureCenterCrossingStep => _centerPressureCenterCrossingStep;
+        public bool CenterPressureAttackAfterCenterCrossing => _centerPressureAttackAfterCenterCrossing;
+        public int CenterPressureFirstAttackAfterCenterCrossingStep => _centerPressureFirstAttackAfterCenterCrossingStep;
+        public bool CenterPressureEdgeAttackDetected => _centerPressureEdgeAttackCount > 0;
+        public int CenterPressureEdgeAttackCount => _centerPressureEdgeAttackCount;
+        public int CenterPressureCentralApproachMoves => _centerPressureCentralApproachMoves;
+        public int CenterPressureEdgeApproachMoves => _centerPressureEdgeApproachMoves;
+        public float CenterPressureCentralRouteRatio => _centerPressureCentralCorridorSteps
+            / (float)Mathf.Max(1, _centerPressureCentralCorridorSteps + _centerPressureEdgeLaneSteps);
+        public float CenterPressureEdgeRouteRatio => _centerPressureEdgeLaneSteps
+            / (float)Mathf.Max(1, _centerPressureCentralCorridorSteps + _centerPressureEdgeLaneSteps);
+        public bool CenterPressureRouteDominant => CenterPressureCentralRouteRatio > CenterPressureEdgeRouteRatio;
+        public bool CenterPressureEconomyCompositionHealthy => CenterPressureWorkerCountMax <= CenterPressureWorkerHardCap
+                                       && CenterPressureHeavyCountMax <= CenterPressureHeavyHardCap
+                                       && CenterPressureCombatCountMax <= CenterPressureCombatUnitCap
+                                       && CenterPressureTotalArmyCountMax <= CenterPressureTotalArmyCap
+                                       && (_centerPressureBarracksBuildAttempts > 0 || _centerPressureBarracksCount > 0)
+                                       && (_centerPressureCombatProduceAttempts > 0 || CenterPressureCombatCountMax >= 2)
+                                       && (_centerPressureHeavyProduceBlockedByCap > 0 || CenterPressureHeavyCountMax < CenterPressureHeavyHardCap);
 
         // Diagnostic counter: incremented each time a player falls through to the residual
         // obs/mask rebuild path because useCanonicalStepInput was true but stepInput.Perspective
@@ -387,6 +588,28 @@ namespace RTS.ML
             // Reserved for future deterministic stateful heuristics.
             _decisionCycleByPlayer.Clear();
             _player2MoveMemoryByUnitKey.Clear();
+            if (CenterPressureEnabled)
+            {
+                ResetCenterPressurePolicyState();
+            }
+            else
+            {
+                ResetCenterPressureDiagnostics();
+            }
+        }
+
+        public void SetScriptedOpponentProfile(ScriptedOpponentTacticProfile profile)
+        {
+            bool profileChanged = _player2TacticProfile != profile;
+            _player2TacticProfile = profile;
+            if (profileChanged || !CenterPressureEnabled)
+            {
+                ResetCenterPressureDiagnostics();
+            }
+            else
+            {
+                ResetCenterPressurePolicyState();
+            }
         }
 
         /// <summary>
@@ -689,10 +912,18 @@ namespace RTS.ML
             float moveScoreSelected = 0f;
             float moveScoreSecondBest = 0f;
             string moveSelectionReason = "none";
+            bool centerPressureProfile = playerId == Owner.Player2 && CenterPressureEnabled;
 
             if (playerId == Owner.Player2)
             {
                 _player2ReservedTargetsScratch.Clear();
+            }
+
+            if (centerPressureProfile)
+            {
+                _centerPressureDecisionsExecuted++;
+                BeginCenterPressureDecisionWindow();
+                SampleCenterPressureUnitState();
             }
 
             for (int actorIndex = 0; actorIndex < ActionContract.TotalCells; actorIndex++)
@@ -738,6 +969,12 @@ namespace RTS.ML
                 }
 
                 emittedNonNoOp++;
+
+                if (centerPressureProfile)
+                {
+                    _centerPressureActionsAttempted++;
+                    RecordCenterPressureSelectedAction(actor, selection);
+                }
 
                 if (playerId == Owner.Player2 && moveTelemetry.MoveSelected)
                 {
@@ -803,10 +1040,19 @@ namespace RTS.ML
                 if (actionAccepted)
                 {
                     accepted++;
+                    if (centerPressureProfile)
+                    {
+                        _centerPressureCommandsAccepted++;
+                        RecordCenterPressureAcceptedSelection(actor, selection, reason, decoded);
+                    }
                 }
                 else
                 {
                     rejected++;
+                    if (centerPressureProfile)
+                    {
+                        _centerPressureCommandsRejected++;
+                    }
                 }
 
                 OnActionEvaluated?.Invoke(new HeuristicActionEvaluation(
@@ -1191,6 +1437,8 @@ namespace RTS.ML
                 return false;
             }
 
+            bool centerProfileWorker = CenterPressureEnabled && worker.Owner == Owner.Player2;
+
             if (worker.CarriedResources > 0)
             {
                 if (actorMask.IsActionTypeEnabled(UnitActionType.Return) &&
@@ -1249,6 +1497,10 @@ namespace RTS.ML
                     HeuristicV2ActionDefaults.WorkerProduceIndex,
                     HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "worker:harvest-adjacent";
+                if (centerProfileWorker)
+                {
+                    _centerPressureWorkerGatherAttempts++;
+                }
                 ClearPlayer2MoveMemory(worker);
                 return true;
             }
@@ -1263,6 +1515,10 @@ namespace RTS.ML
                     HeuristicV2ActionDefaults.WorkerProduceIndex,
                     HeuristicV2ActionDefaults.AttackCenterIndex);
                 reason = "worker:move-to-resource";
+                if (centerProfileWorker)
+                {
+                    _centerPressureWorkerGatherAttempts++;
+                }
                 return true;
             }
 
@@ -1316,6 +1572,8 @@ namespace RTS.ML
             hasGoal = false;
             switch (goalType)
             {
+                case ScriptedGoalType.CenterArea:
+                    return TryGetCenterPressureRallyPosition(from, out hasGoal);
                 case ScriptedGoalType.Base:
                     return TryGetNearestBasePosition(owner, from, out hasGoal);
                 case ScriptedGoalType.Resource:
@@ -1691,6 +1949,8 @@ namespace RTS.ML
                         UnitRuntime occupant = _gridManager.GetOccupant(goal);
                         return occupant != null && occupant.IsAlive && occupant.Owner != owner && occupant.Owner != Owner.Neutral;
                     }
+                case ScriptedGoalType.CenterArea:
+                    return _gridManager != null && _gridManager.IsInside(goal) && IsInsideCenterArea(goal);
                 default:
                     return true;
             }
@@ -2154,7 +2414,7 @@ namespace RTS.ML
                 return false;
             }
 
-            if (!TryChooseAffordableProduceType(building.Owner, actorMask.ProduceUnitTypeMask, out int produceTypeIndex))
+            if (!TryChooseAffordableProduceType(building, actorMask.ProduceUnitTypeMask, out int produceTypeIndex))
             {
                 return false;
             }
@@ -2172,9 +2432,10 @@ namespace RTS.ML
             return true;
         }
 
-        private bool TryChooseAffordableProduceType(Owner owner, bool[] produceTypeMask, out int produceTypeIndex)
+        private bool TryChooseAffordableProduceType(UnitRuntime producer, bool[] produceTypeMask, out int produceTypeIndex)
         {
             produceTypeIndex = HeuristicV2ActionDefaults.WorkerProduceIndex;
+            Owner owner = producer != null ? producer.Owner : Owner.Neutral;
             GameConfig config = _matchBootstrap != null ? _matchBootstrap.GetConfig() : null;
             if (produceTypeMask == null || produceTypeMask.Length == 0 || _matchManager == null || config == null)
             {
@@ -2187,24 +2448,66 @@ namespace RTS.ML
                 return false;
             }
 
-            int workerCount = 0;
-            IReadOnlyList<UnitRuntime> ownUnits = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
-            if (ownUnits != null)
+            CountOwnedArmyComposition(
+                owner,
+                out int workerCount,
+                out int lightCount,
+                out int heavyCount,
+                out int rangedCount,
+                out int combatCount,
+                out int totalArmyCount);
+
+            bool centerProfile = owner == Owner.Player2 && CenterPressureEnabled;
+            bool hasBarracks = PlayerHasBarracks(owner);
+            bool hasGatherCapableWorker = workerCount > 0;
+            int softCap = CenterPressureWorkerSoftCap;
+            int hardCap = CenterPressureWorkerHardCap;
+            int lightHardCap = CenterPressureLightHardCap;
+            int heavyHardCap = CenterPressureHeavyHardCap;
+            int rangedHardCap = CenterPressureRangedHardCap;
+            int combatCap = CenterPressureCombatUnitCap;
+            int armyCap = CenterPressureTotalArmyCap;
+            int minWorkersForBarracks = Mathf.Max(1, _centerPressureMinWorkersBeforeBarracksPriority);
+
+            if (producer != null && producer.IsBuilding && !HasAnyFreeAdjacentCell(producer.GridPos))
             {
-                for (int i = 0; i < ownUnits.Count; i++)
-                {
-                    UnitRuntime unit = ownUnits[i];
-                    if (unit != null && unit.IsAlive && unit.Type == UnitType.Worker)
-                    {
-                        workerCount++;
-                    }
-                }
+                return false;
             }
 
-            // Prevent infinite worker-only loops that often lead to timeout-only traces.
-            int[] preference = workerCount < _maxWorkerLimit
-                ? new[] { 3, 4, 5, 6 }
-                : new[] { 4, 5, 6, 3 };
+            if (centerProfile && !CanIssueCenterPressureProductionAction())
+            {
+                return false;
+            }
+
+            int[] preference;
+            if (centerProfile)
+            {
+                if (producer != null && producer.Type == UnitType.Barracks)
+                {
+                    preference = combatCount <= 0
+                        ? new[] { 6, 4, 5, 3 }
+                        : heavyCount <= 0
+                            ? new[] { 5, 6, 4, 3 }
+                            : new[] { 6, 4, 5, 3 };
+                }
+                else if (!hasBarracks)
+                {
+                    preference = workerCount < minWorkersForBarracks
+                        ? new[] { 3, 4, 5, 6 }
+                        : new[] { 4, 5, 6, 3 };
+                }
+                else
+                {
+                    preference = new[] { 6, 5, 4, 3 };
+                }
+            }
+            else
+            {
+                // Prevent infinite worker-only loops that often lead to timeout-only traces.
+                preference = workerCount < _maxWorkerLimit
+                    ? new[] { 3, 4, 5, 6 }
+                    : new[] { 4, 5, 6, 3 };
+            }
 
             for (int i = 0; i < preference.Length; i++)
             {
@@ -2217,6 +2520,77 @@ namespace RTS.ML
                 if (!ActionContractMappings.TryMapV2ProduceIndexToUnitType(idx, out UnitType unitType))
                 {
                     continue;
+                }
+
+                if (centerProfile && totalArmyCount >= armyCap)
+                {
+                    if (unitType == UnitType.Heavy)
+                    {
+                        _centerPressureHeavyProduceBlockedByCap++;
+                    }
+
+                    continue;
+                }
+
+                if (centerProfile && unitType == UnitType.Worker)
+                {
+                    bool hardBlocked = workerCount >= hardCap;
+                    bool softBlocked = workerCount >= softCap && hasGatherCapableWorker;
+                    bool compositionBlocked = hasBarracks && workerCount >= softCap;
+                    if (hardBlocked || softBlocked || compositionBlocked)
+                    {
+                        _centerPressureWorkerProduceBlockedByCap++;
+                        continue;
+                    }
+                }
+
+                if (centerProfile && IsCombatUnitType(unitType))
+                {
+                    if (combatCount >= combatCap)
+                    {
+                        if (unitType == UnitType.Heavy)
+                        {
+                            _centerPressureHeavyProduceBlockedByCap++;
+                        }
+
+                        continue;
+                    }
+
+                    if (unitType == UnitType.Light && lightCount >= lightHardCap)
+                    {
+                        continue;
+                    }
+
+                    if (unitType == UnitType.Ranged && rangedCount >= rangedHardCap)
+                    {
+                        continue;
+                    }
+
+                    if (unitType == UnitType.Heavy)
+                    {
+                        bool blockedByCap = heavyCount >= heavyHardCap;
+                        bool blockedByCooldown = (_centerPressureDecisionsExecuted - _centerPressureLastHeavyProduceAcceptedDecision)
+                                                < Mathf.Max(0, _centerPressureHeavyProduceCooldownDecisions);
+                        bool blockedByComposition = heavyCount >= 1 && (lightCount + rangedCount) < 1;
+
+                        if (blockedByCap || blockedByComposition)
+                        {
+                            _centerPressureHeavyProduceBlockedByCap++;
+                            continue;
+                        }
+
+                        if (combatCount <= 0 && HasAnyAffordableNonHeavyCombatOption(playerState, config, produceTypeMask, lightCount, rangedCount, combatCount, totalArmyCount))
+                        {
+                            _centerPressureHeavyProduceBlockedByCap++;
+                            continue;
+                        }
+
+                        if (blockedByCooldown)
+                        {
+                            _centerPressureHeavyProduceBlockedByCooldown++;
+                            continue;
+                        }
+                    }
                 }
 
                 UnitDefinition definition = config.GetDefinition(unitType);
@@ -2239,6 +2613,103 @@ namespace RTS.ML
             return false;
         }
 
+        private bool CanIssueCenterPressureProductionAction()
+        {
+            int maxActions = Mathf.Max(1, _centerPressureMaxProductionActionsPerWindow);
+            int producedInWindow = 0;
+            for (int i = 0; i < _centerPressureRecentProductionActions.Count; i++)
+            {
+                producedInWindow += Mathf.Max(0, _centerPressureRecentProductionActions[i]);
+            }
+
+            return producedInWindow < maxActions;
+        }
+
+        private void BeginCenterPressureDecisionWindow()
+        {
+            int window = Mathf.Max(1, _centerPressureProductionWindowDecisions);
+            _centerPressureRecentProductionActions.Add(0);
+            while (_centerPressureRecentProductionActions.Count > window)
+            {
+                _centerPressureRecentProductionActions.RemoveAt(0);
+            }
+        }
+
+        private void RegisterCenterPressureProductionActionAttempt()
+        {
+            if (_centerPressureRecentProductionActions.Count <= 0)
+            {
+                return;
+            }
+
+            int last = _centerPressureRecentProductionActions.Count - 1;
+            _centerPressureRecentProductionActions[last] = Mathf.Max(0, _centerPressureRecentProductionActions[last]) + 1;
+        }
+
+        private bool HasAnyFreeAdjacentCell(GridPosition center)
+        {
+            if (_gridManager == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
+            {
+                GridPosition neighbor = center.Neighbour((Direction)i);
+                if (!_gridManager.IsInside(neighbor))
+                {
+                    continue;
+                }
+
+                if (_gridManager.GetOccupant(neighbor) == null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool HasAnyAffordableNonHeavyCombatOption(
+            PlayerState playerState,
+            GameConfig config,
+            bool[] produceTypeMask,
+            int lightCount,
+            int rangedCount,
+            int combatCount,
+            int totalArmyCount)
+        {
+            if (playerState == null || config == null || produceTypeMask == null)
+            {
+                return false;
+            }
+
+            if (combatCount >= CenterPressureCombatUnitCap || totalArmyCount >= CenterPressureTotalArmyCap)
+            {
+                return false;
+            }
+
+            if (lightCount < CenterPressureLightHardCap && 4 < produceTypeMask.Length && produceTypeMask[4])
+            {
+                UnitDefinition lightDef = config.GetDefinition(UnitType.Light);
+                if (lightDef != null && playerState.CanAfford(lightDef.productionCost))
+                {
+                    return true;
+                }
+            }
+
+            if (rangedCount < CenterPressureRangedHardCap && 6 < produceTypeMask.Length && produceTypeMask[6])
+            {
+                UnitDefinition rangedDef = config.GetDefinition(UnitType.Ranged);
+                if (rangedDef != null && playerState.CanAfford(rangedDef.productionCost))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private bool TrySelectCombatAction(
             Owner playerId,
             int actorIndex,
@@ -2255,11 +2726,38 @@ namespace RTS.ML
                 return false;
             }
 
+            bool useCenterPressure = playerId == Owner.Player2 && CenterPressureEnabled;
+            int combatCount = useCenterPressure ? CountCombatUnits(playerId) : 0;
+            int waveMax = Mathf.Max(Mathf.Max(1, _centerPressureAttackWaveMinUnits), Mathf.Max(1, _centerPressureAttackWaveMaxUnits));
+            bool holdBackNearBase = useCenterPressure && combatCount > waveMax && IsCombatUnitNearOwnBase(combatUnit);
+            bool allowCenterAttack = !useCenterPressure || (!holdBackNearBase && ShouldAllowCenterPressureAttack(combatUnit));
+
+            if (useCenterPressure
+                && actorMask.IsActionTypeEnabled(UnitActionType.Move)
+                && ShouldRallyCombatUnitToCenter(combatUnit, allowCenterAttack)
+                && TryChooseMoveDirection(combatUnit, actorMask.MoveDirectionMask, ScriptedGoalType.CenterArea, out Direction centerRallyMove, out _))
+            {
+                selection = new DebugActionSelection(
+                    actorIndex,
+                    ActionContract.ACTION_MOVE,
+                    (int)centerRallyMove,
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
+                reason = "combat:center-rally";
+                return true;
+            }
+
             if (actorMask.IsActionTypeEnabled(UnitActionType.Attack)
+                && allowCenterAttack
                 && IsActionAllowed(playerId, UnitActionType.Attack)
                 &&
                 TryChooseAttackTargetLocal(playerId, combatUnit.GridPos, actorMask.AttackTargetLocalMask, out int attackLocal))
             {
+                if (useCenterPressure)
+                {
+                    RegisterCenterPressureAttackIntent(combatUnit);
+                }
+
                 selection = new DebugActionSelection(
                     actorIndex,
                     ActionContract.ACTION_ATTACK,
@@ -2268,6 +2766,22 @@ namespace RTS.ML
                     attackLocal);
                 reason = $"combat:attack local={attackLocal}";
                 ClearPlayer2MoveMemory(combatUnit);
+                return true;
+            }
+
+            if (useCenterPressure
+                && actorMask.IsActionTypeEnabled(UnitActionType.Move)
+                && TryChooseCenterPressureApproachDirection(combatUnit.GridPos, actorMask.MoveDirectionMask, out Direction centralApproach))
+            {
+                selection = new DebugActionSelection(
+                    actorIndex,
+                    ActionContract.ACTION_MOVE,
+                    (int)centralApproach,
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
+                reason = IsEdgeCell(combatUnit.GridPos.Neighbour(centralApproach))
+                    ? "combat:center-edge-fallback"
+                    : "combat:center-approach";
                 return true;
             }
 
@@ -2280,7 +2794,7 @@ namespace RTS.ML
                     (int)moveToEnemy,
                     HeuristicV2ActionDefaults.WorkerProduceIndex,
                     HeuristicV2ActionDefaults.AttackCenterIndex);
-                reason = "combat:move-to-enemy";
+                reason = useCenterPressure ? "combat:center-attack-advance" : "combat:move-to-enemy";
                 return true;
             }
 
@@ -2298,6 +2812,49 @@ namespace RTS.ML
             }
 
             return false;
+        }
+
+        private bool TryChooseCenterPressureApproachDirection(GridPosition from, bool[] moveMask, out Direction direction)
+        {
+            direction = Direction.North;
+            GridPosition enemyBase = TryGetNearestEnemyBasePosition(Owner.Player2, from, out bool hasEnemyBase);
+            if (!hasEnemyBase || moveMask == null)
+            {
+                return false;
+            }
+
+            int currentDistance = from.ManhattanDistance(enemyBase);
+            int bestScore = int.MinValue;
+            bool found = false;
+            for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
+            {
+                if (i >= moveMask.Length || !moveMask[i])
+                {
+                    continue;
+                }
+
+                Direction candidateDirection = (Direction)i;
+                GridPosition target = from.Neighbour(candidateDirection);
+                int score = (currentDistance - target.ManhattanDistance(enemyBase)) * 100;
+                if (IsInsideCentralCorridor(target))
+                {
+                    score += 60;
+                }
+
+                if (IsEdgeCell(target))
+                {
+                    score -= 1000;
+                }
+
+                if (!found || score > bestScore)
+                {
+                    bestScore = score;
+                    direction = candidateDirection;
+                    found = true;
+                }
+            }
+
+            return found;
         }
 
         private bool IsActionAllowed(Owner owner, UnitActionType actionType)
@@ -2711,6 +3268,838 @@ namespace RTS.ML
         private void EmitDecisionCycleEvaluation(HeuristicDecisionCycleEvaluation evaluation)
         {
             OnDecisionCycleEvaluated?.Invoke(evaluation);
+        }
+
+        private void OnDisable()
+        {
+            TryWriteCenterPressureMetricsSnapshot();
+        }
+
+        private void ResetCenterPressureDiagnostics()
+        {
+            _centerPressureDecisionsExecuted = 0;
+            _centerPressureActionsAttempted = 0;
+            _centerPressureCommandsAccepted = 0;
+            _centerPressureCommandsRejected = 0;
+            _centerPressureCenterRallyMoves = 0;
+            _centerPressureCenterAreaVisits = 0;
+            _centerPressureEdgeLaneMoves = 0;
+            _centerPressureBaseIdleSteps = 0;
+            _centerPressureFirstCenterMoveStep = -1;
+            _centerPressureFirstAttackStep = -1;
+            _centerPressureConsecutiveBaseIdleSteps = 0;
+            _centerPressurePermanentBaseIdle = false;
+            _centerPressureCombatDistanceSum = 0f;
+            _centerPressureCombatDistanceSamples = 0;
+            _centerPressureWorkerCountMin = int.MaxValue;
+            _centerPressureWorkerCountMax = 0;
+            _centerPressureWorkerCountFinal = 0;
+            _centerPressureWorkerProduceAttempts = 0;
+            _centerPressureWorkerProduceBlockedByCap = 0;
+            _centerPressureBarracksCount = 0;
+            _centerPressureBarracksBuildAttempts = 0;
+            _centerPressureBarracksBuildAccepted = 0;
+            _centerPressureCombatCountMin = int.MaxValue;
+            _centerPressureCombatCountMax = 0;
+            _centerPressureCombatCountFinal = 0;
+            _centerPressureCombatProduceAttempts = 0;
+            _centerPressureCombatProduceAccepted = 0;
+            _centerPressureLightProduceAttempts = 0;
+            _centerPressureHeavyProduceAttempts = 0;
+            _centerPressureRangedProduceAttempts = 0;
+            _centerPressureLightCountMax = 0;
+            _centerPressureHeavyCountMax = 0;
+            _centerPressureRangedCountMax = 0;
+            _centerPressureTotalArmyCountMax = 0;
+            _centerPressureHeavyProduceAccepted = 0;
+            _centerPressureHeavyProduceBlockedByCap = 0;
+            _centerPressureHeavyProduceBlockedByCooldown = 0;
+            _centerPressureConsecutiveHeavyProduceAttempts = 0;
+            _centerPressureAttackWaveSizeMin = int.MaxValue;
+            _centerPressureAttackWaveSizeMax = 0;
+            _centerPressureAttackWaveSizeAtFirstAttack = -1;
+            _centerPressureCombatUnitsSentToCenter = 0;
+            _centerPressureCombatUnitsKeptNearBase = 0;
+            _centerPressureOverArmyCapSteps = 0;
+            _centerPressureLastHeavyProduceAcceptedDecision = -100000;
+            _centerPressureWorkerIdleSteps = 0;
+            _centerPressureWorkerGatherAttempts = 0;
+            _centerPressureWorkerBuildAttempts = 0;
+            _centerPressureRecentProductionActions.Clear();
+            _centerPressureCenterToEnemyApproachMoves = 0;
+            _centerPressureAttackIntentCount = 0;
+            _centerPressureAttackSubmitCount = 0;
+            _centerPressureAcceptedAttackCount = 0;
+            _centerPressureFirstAttackIntentStep = -1;
+            _centerPressureFirstAttackSubmitStep = -1;
+            _centerPressureFirstAcceptedAttackStep = -1;
+            _centerPressureCenterAttackIntentCount = 0;
+            _centerPressureCenterAttackSubmitCount = 0;
+            _centerPressureCenterAcceptedAttackCount = 0;
+            _centerPressureCentralCorridorSteps = 0;
+            _centerPressureCenterAreaSteps = 0;
+            _centerPressureEdgeLaneSteps = 0;
+            _centerPressureBaseAreaSteps = 0;
+            _centerPressureCenterCrossingCount = 0;
+            _centerPressureWaveCrossedCenter = false;
+            _centerPressureCenterCrossingStep = -1;
+            _centerPressureAttackAfterCenterCrossing = false;
+            _centerPressureFirstAttackAfterCenterCrossingStep = -1;
+            _centerPressureEdgeAttackCount = 0;
+            _centerPressureCentralApproachMoves = 0;
+            _centerPressureEdgeApproachMoves = 0;
+        }
+
+        private void ResetCenterPressurePolicyState()
+        {
+            _centerPressureRecentProductionActions.Clear();
+            _centerPressureLastHeavyProduceAcceptedDecision = -100000;
+            _centerPressureConsecutiveHeavyProduceAttempts = 0;
+            _centerPressureConsecutiveBaseIdleSteps = 0;
+            _centerPressureWaveCrossedCenter = false;
+        }
+
+        private bool ShouldAllowCenterPressureAttack(UnitRuntime combatUnit)
+        {
+            if (!CenterPressureEnabled)
+            {
+                return true;
+            }
+
+            if (_centerPressureDecisionsExecuted <= Mathf.Max(0, _centerPressureOpeningNoAttackDecisionSteps))
+            {
+                return false;
+            }
+
+            return _centerPressureWaveCrossedCenter;
+        }
+
+        private void RegisterCenterPressureAttackIntent(UnitRuntime actor)
+        {
+            if (!CenterPressureEnabled || actor == null)
+            {
+                return;
+            }
+
+            _centerPressureAttackIntentCount++;
+            int waveSize = CountCombatUnits(actor.Owner);
+            _centerPressureAttackWaveSizeMin = Math.Min(_centerPressureAttackWaveSizeMin, waveSize);
+            _centerPressureAttackWaveSizeMax = Math.Max(_centerPressureAttackWaveSizeMax, waveSize);
+            if (_centerPressureAttackWaveSizeAtFirstAttack < 0)
+            {
+                _centerPressureAttackWaveSizeAtFirstAttack = waveSize;
+            }
+            if (_centerPressureFirstAttackIntentStep < 0)
+            {
+                _centerPressureFirstAttackIntentStep = _centerPressureDecisionsExecuted;
+            }
+
+            if (IsInsideCenterArea(actor.GridPos))
+            {
+                _centerPressureCenterAttackIntentCount++;
+            }
+        }
+
+        private void RecordCenterPressureSelectedAction(UnitRuntime actor, DebugActionSelection selection)
+        {
+            if (!CenterPressureEnabled || actor == null)
+            {
+                return;
+            }
+
+            if (selection.ActionType == ActionContract.ACTION_ATTACK)
+            {
+                _centerPressureAttackSubmitCount++;
+                if (_centerPressureFirstAttackSubmitStep < 0)
+                {
+                    _centerPressureFirstAttackSubmitStep = _centerPressureDecisionsExecuted;
+                }
+
+                if (IsInsideCenterArea(actor.GridPos))
+                {
+                    _centerPressureCenterAttackSubmitCount++;
+                }
+
+                return;
+            }
+
+            if (selection.ActionType != ActionContract.ACTION_PRODUCE)
+            {
+                return;
+            }
+
+            RegisterCenterPressureProductionActionAttempt();
+
+            if (!TryMapSelectionProduceToUnitType(selection, out UnitType producedUnitType))
+            {
+                return;
+            }
+
+            if (actor.Type == UnitType.Worker && producedUnitType == UnitType.Barracks)
+            {
+                _centerPressureBarracksBuildAttempts++;
+                _centerPressureWorkerBuildAttempts++;
+                return;
+            }
+
+            if (producedUnitType == UnitType.Worker)
+            {
+                _centerPressureWorkerProduceAttempts++;
+                _centerPressureConsecutiveHeavyProduceAttempts = 0;
+                return;
+            }
+
+            if (IsCombatUnitType(producedUnitType))
+            {
+                _centerPressureCombatProduceAttempts++;
+                switch (producedUnitType)
+                {
+                    case UnitType.Light:
+                        _centerPressureLightProduceAttempts++;
+                        break;
+                    case UnitType.Heavy:
+                        _centerPressureHeavyProduceAttempts++;
+                        _centerPressureConsecutiveHeavyProduceAttempts++;
+                        break;
+                    case UnitType.Ranged:
+                        _centerPressureRangedProduceAttempts++;
+                        _centerPressureConsecutiveHeavyProduceAttempts = 0;
+                        break;
+                    default:
+                        _centerPressureConsecutiveHeavyProduceAttempts = 0;
+                        break;
+                }
+            }
+        }
+
+        private bool ShouldRallyCombatUnitToCenter(UnitRuntime combatUnit, bool allowAttack)
+        {
+            if (!CenterPressureEnabled || combatUnit == null)
+            {
+                return false;
+            }
+
+            bool insideCenter = IsInsideCenterArea(combatUnit.GridPos);
+            if (!allowAttack)
+            {
+                return !insideCenter;
+            }
+
+            if (!_centerPressureWaveCrossedCenter)
+            {
+                return !insideCenter;
+            }
+
+            if (IsEdgeCell(combatUnit.GridPos))
+            {
+                return true;
+            }
+
+            if (_centerPressureConsecutiveBaseIdleSteps >= Mathf.Max(1, _centerPressurePermanentIdleThreshold / 2))
+            {
+                return true;
+            }
+
+            if (IsCombatUnitNearOwnBase(combatUnit))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsCombatUnitNearOwnBase(UnitRuntime combatUnit)
+        {
+            if (combatUnit == null)
+            {
+                return false;
+            }
+
+            GridPosition nearestBase = TryGetNearestBasePosition(combatUnit.Owner, combatUnit.GridPos, out bool hasBase);
+            if (!hasBase)
+            {
+                return false;
+            }
+
+            return combatUnit.GridPos.ManhattanDistance(nearestBase) <= Mathf.Max(1, _centerPressureBaseIdleDistance + 1);
+        }
+
+        private void RecordCenterPressureAcceptedSelection(UnitRuntime actor, DebugActionSelection selection, string reason, AgentAction decoded)
+        {
+            if (actor == null)
+            {
+                return;
+            }
+
+            if (selection.ActionType == ActionContract.ACTION_ATTACK || decoded.ActionType == UnitActionType.Attack)
+            {
+                _centerPressureAcceptedAttackCount++;
+                if (_centerPressureFirstAcceptedAttackStep < 0)
+                {
+                    _centerPressureFirstAcceptedAttackStep = _centerPressureDecisionsExecuted;
+                }
+
+                _centerPressureFirstAttackStep = _centerPressureFirstAcceptedAttackStep;
+
+                if (_centerPressureWaveCrossedCenter)
+                {
+                    _centerPressureAttackAfterCenterCrossing = true;
+                    if (_centerPressureFirstAttackAfterCenterCrossingStep < 0)
+                    {
+                        _centerPressureFirstAttackAfterCenterCrossingStep = _centerPressureDecisionsExecuted;
+                    }
+                }
+
+                if (IsEdgeCell(actor.GridPos))
+                {
+                    _centerPressureEdgeAttackCount++;
+                }
+
+                if (IsInsideCenterArea(actor.GridPos))
+                {
+                    _centerPressureCenterAcceptedAttackCount++;
+                }
+
+                if (_centerPressureAttackIntentCount <= 0)
+                {
+                    _centerPressureAttackIntentCount = 1;
+                    _centerPressureFirstAttackIntentStep = _centerPressureDecisionsExecuted;
+                }
+
+                return;
+            }
+
+            if (selection.ActionType == ActionContract.ACTION_PRODUCE)
+            {
+                if (TryMapSelectionProduceToUnitType(selection, out UnitType producedUnitType))
+                {
+                    if (actor.Type == UnitType.Worker && producedUnitType == UnitType.Barracks)
+                    {
+                        _centerPressureBarracksBuildAccepted++;
+                    }
+                    else if (IsCombatUnitType(producedUnitType))
+                    {
+                        _centerPressureCombatProduceAccepted++;
+                        if (producedUnitType == UnitType.Heavy)
+                        {
+                            _centerPressureHeavyProduceAccepted++;
+                            _centerPressureLastHeavyProduceAcceptedDecision = _centerPressureDecisionsExecuted;
+                        }
+                        else
+                        {
+                            _centerPressureConsecutiveHeavyProduceAttempts = 0;
+                        }
+                    }
+                }
+            }
+
+            if (selection.ActionType != ActionContract.ACTION_MOVE)
+            {
+                return;
+            }
+
+            if (actor.Type != UnitType.Light && actor.Type != UnitType.Heavy && actor.Type != UnitType.Ranged)
+            {
+                return;
+            }
+
+            GridPosition target = actor.GridPos.Neighbour((Direction)selection.Direction);
+            if (IsInsideCenterArea(target))
+            {
+                _centerPressureCenterRallyMoves++;
+                _centerPressureCombatUnitsSentToCenter++;
+                if (_centerPressureFirstCenterMoveStep < 0)
+                {
+                    _centerPressureFirstCenterMoveStep = _centerPressureDecisionsExecuted;
+                }
+            }
+            else if (string.Equals(reason, "combat:center-attack-advance", StringComparison.Ordinal))
+            {
+                _centerPressureCenterToEnemyApproachMoves++;
+            }
+
+            if (string.Equals(reason, "combat:center-approach", StringComparison.Ordinal))
+            {
+                _centerPressureCentralApproachMoves++;
+            }
+            else if (string.Equals(reason, "combat:center-edge-fallback", StringComparison.Ordinal))
+            {
+                _centerPressureEdgeApproachMoves++;
+            }
+
+            if (IsEdgeCell(target))
+            {
+                _centerPressureEdgeLaneMoves++;
+            }
+        }
+
+        private void SampleCenterPressureUnitState()
+        {
+            if (_unitRegistry == null)
+            {
+                return;
+            }
+
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(Owner.Player2);
+            if (units == null || units.Count == 0)
+            {
+                _centerPressureBaseIdleSteps++;
+                _centerPressureConsecutiveBaseIdleSteps++;
+                return;
+            }
+
+            bool anyCombat = false;
+            bool anyCenter = false;
+            bool allCombatNearBase = true;
+            int workerCount = 0;
+            int lightCount = 0;
+            int heavyCount = 0;
+            int rangedCount = 0;
+            int combatCount = 0;
+            int barracksCount = 0;
+
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                if (unit.Type == UnitType.Worker)
+                {
+                    workerCount++;
+
+                    GridPosition workerBasePos = TryGetNearestBasePosition(Owner.Player2, unit.GridPos, out bool hasBaseForWorker);
+                    bool nearBase = hasBaseForWorker
+                                    && unit.GridPos.ManhattanDistance(workerBasePos) <= Mathf.Max(1, _centerPressureBaseIdleDistance);
+                    bool workerLikelyIdle = nearBase && unit.CarriedResources <= 0 && !HasAdjacentResourceNode(unit.GridPos);
+                    if (workerLikelyIdle)
+                    {
+                        _centerPressureWorkerIdleSteps++;
+                    }
+                }
+
+                if (unit.Type == UnitType.Barracks)
+                {
+                    barracksCount++;
+                }
+
+                if (unit.Type != UnitType.Light && unit.Type != UnitType.Heavy && unit.Type != UnitType.Ranged)
+                {
+                    continue;
+                }
+
+                anyCombat = true;
+                combatCount++;
+                if (unit.Type == UnitType.Light)
+                {
+                    lightCount++;
+                }
+                else if (unit.Type == UnitType.Heavy)
+                {
+                    heavyCount++;
+                }
+                else if (unit.Type == UnitType.Ranged)
+                {
+                    rangedCount++;
+                }
+                int centerDistance = unit.GridPos.ManhattanDistance(GetCenterCell());
+                _centerPressureCombatDistanceSum += centerDistance;
+                _centerPressureCombatDistanceSamples++;
+
+                bool insideCorridor = IsInsideCentralCorridor(unit.GridPos);
+                bool insideCenter = IsInsideCenterArea(unit.GridPos);
+                if (insideCenter)
+                {
+                    anyCenter = true;
+                    _centerPressureCenterAreaSteps++;
+                }
+
+                if (insideCorridor)
+                {
+                    _centerPressureCentralCorridorSteps++;
+                    if (insideCenter && !_centerPressureWaveCrossedCenter)
+                    {
+                        _centerPressureWaveCrossedCenter = true;
+                        _centerPressureCenterCrossingCount++;
+                        if (_centerPressureCenterCrossingStep < 0)
+                        {
+                            _centerPressureCenterCrossingStep = _centerPressureDecisionsExecuted;
+                        }
+                    }
+                }
+
+                GridPosition basePos = TryGetNearestBasePosition(Owner.Player2, unit.GridPos, out bool hasBase);
+                if (!hasBase)
+                {
+                    allCombatNearBase = false;
+                    continue;
+                }
+
+                if (unit.GridPos.ManhattanDistance(basePos) > Mathf.Max(1, _centerPressureBaseIdleDistance))
+                {
+                    allCombatNearBase = false;
+                }
+                else
+                {
+                    _centerPressureBaseAreaSteps++;
+                }
+
+                    bool insideOwnBaseArea = unit.GridPos.ManhattanDistance(basePos) <= Mathf.Max(1, _centerPressureBaseIdleDistance + 3);
+                    GridPosition enemyBasePos = TryGetNearestBasePosition(Owner.Player1, unit.GridPos, out bool hasEnemyBase);
+                    bool insideEnemyBaseArea = hasEnemyBase
+                                               && unit.GridPos.ManhattanDistance(enemyBasePos) <= Mathf.Max(1, _centerPressureBaseIdleDistance + 3);
+                    if (IsEdgeCell(unit.GridPos) && !insideOwnBaseArea && !insideEnemyBaseArea)
+                {
+                    _centerPressureEdgeLaneSteps++;
+                }
+            }
+
+            if (anyCenter)
+            {
+                _centerPressureCenterAreaVisits++;
+            }
+
+            _centerPressureWorkerCountFinal = workerCount;
+            _centerPressureWorkerCountMin = Math.Min(_centerPressureWorkerCountMin, workerCount);
+            _centerPressureWorkerCountMax = Math.Max(_centerPressureWorkerCountMax, workerCount);
+            _centerPressureLightCountMax = Math.Max(_centerPressureLightCountMax, lightCount);
+            _centerPressureHeavyCountMax = Math.Max(_centerPressureHeavyCountMax, heavyCount);
+            _centerPressureRangedCountMax = Math.Max(_centerPressureRangedCountMax, rangedCount);
+            _centerPressureCombatCountFinal = combatCount;
+            _centerPressureCombatCountMin = Math.Min(_centerPressureCombatCountMin, combatCount);
+            _centerPressureCombatCountMax = Math.Max(_centerPressureCombatCountMax, combatCount);
+            int totalArmyCount = workerCount + combatCount;
+            _centerPressureTotalArmyCountMax = Math.Max(_centerPressureTotalArmyCountMax, totalArmyCount);
+            _centerPressureBarracksCount = barracksCount;
+
+            if (totalArmyCount > CenterPressureTotalArmyCap)
+            {
+                _centerPressureOverArmyCapSteps++;
+            }
+
+            if (!anyCombat)
+            {
+                return;
+            }
+
+            if (allCombatNearBase)
+            {
+                _centerPressureBaseIdleSteps++;
+                _centerPressureConsecutiveBaseIdleSteps++;
+                _centerPressureCombatUnitsKeptNearBase += combatCount;
+                if (_centerPressureConsecutiveBaseIdleSteps >= Mathf.Max(1, _centerPressurePermanentIdleThreshold))
+                {
+                    _centerPressurePermanentBaseIdle = true;
+                }
+            }
+            else
+            {
+                _centerPressureConsecutiveBaseIdleSteps = 0;
+            }
+        }
+
+        private static bool IsCombatUnitType(UnitType unitType)
+        {
+            return unitType == UnitType.Light || unitType == UnitType.Heavy || unitType == UnitType.Ranged;
+        }
+
+        private static bool TryMapSelectionProduceToUnitType(DebugActionSelection selection, out UnitType producedUnitType)
+        {
+            return ActionContractMappings.TryMapV2ProduceIndexToUnitType(selection.ProduceUnitType, out producedUnitType);
+        }
+
+        private int CountCombatUnits(Owner owner)
+        {
+            int count = 0;
+            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
+            if (units == null)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                if (IsCombatUnitType(unit.Type))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private void CountOwnedArmyComposition(
+            Owner owner,
+            out int workerCount,
+            out int lightCount,
+            out int heavyCount,
+            out int rangedCount,
+            out int combatCount,
+            out int totalArmyCount)
+        {
+            workerCount = 0;
+            lightCount = 0;
+            heavyCount = 0;
+            rangedCount = 0;
+            combatCount = 0;
+            totalArmyCount = 0;
+
+            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
+            if (units == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit == null || !unit.IsAlive)
+                {
+                    continue;
+                }
+
+                switch (unit.Type)
+                {
+                    case UnitType.Worker:
+                        workerCount++;
+                        totalArmyCount++;
+                        break;
+                    case UnitType.Light:
+                        lightCount++;
+                        combatCount++;
+                        totalArmyCount++;
+                        break;
+                    case UnitType.Heavy:
+                        heavyCount++;
+                        combatCount++;
+                        totalArmyCount++;
+                        break;
+                    case UnitType.Ranged:
+                        rangedCount++;
+                        combatCount++;
+                        totalArmyCount++;
+                        break;
+                }
+            }
+        }
+
+        private bool HasAdjacentResourceNode(GridPosition pos)
+        {
+            if (_resourceManager == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
+            {
+                GridPosition adjacent = pos.Neighbour((Direction)i);
+                ResourceNode node = _resourceManager.GetResourceNode(adjacent);
+                if (node != null && !node.IsExhausted)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private GridPosition TryGetCenterPressureRallyPosition(GridPosition from, out bool hasGoal)
+        {
+            hasGoal = false;
+            GridPosition center = GetCenterCell();
+            GridPosition[] rallyCells =
+            {
+                center,
+                new GridPosition(center.X - 1, center.Y),
+                new GridPosition(center.X + 1, center.Y),
+                new GridPosition(center.X, center.Y - 1),
+                new GridPosition(center.X, center.Y + 1),
+                new GridPosition(center.X - 1, center.Y - 1),
+                new GridPosition(center.X + 1, center.Y + 1),
+            };
+
+            GridPosition best = center;
+            int bestDistance = int.MaxValue;
+            for (int i = 0; i < rallyCells.Length; i++)
+            {
+                GridPosition candidate = rallyCells[i];
+                if (_gridManager != null && !_gridManager.IsInside(candidate))
+                {
+                    continue;
+                }
+
+                int dist = from.ManhattanDistance(candidate);
+                if (dist < bestDistance)
+                {
+                    bestDistance = dist;
+                    best = candidate;
+                    hasGoal = true;
+                }
+            }
+
+            return best;
+        }
+
+        private GridPosition GetCenterCell()
+        {
+            return new GridPosition(GameConstants.MapWidth / 2, GameConstants.MapHeight / 2);
+        }
+
+        private bool IsInsideCenterArea(GridPosition cell)
+        {
+            GridPosition center = GetCenterCell();
+            int radius = Mathf.Max(1, _centerPressureCenterRadius);
+            return Mathf.Abs(cell.X - center.X) <= radius && Mathf.Abs(cell.Y - center.Y) <= radius;
+        }
+
+        private bool IsInsideCentralCorridor(GridPosition cell)
+        {
+            GridPosition center = GetCenterCell();
+            int radius = Mathf.Max(Mathf.Max(1, _centerPressureCenterRadius), _centerPressureCorridorRadius);
+            return Mathf.Abs(cell.X - center.X) <= radius && Mathf.Abs(cell.Y - center.Y) <= radius;
+        }
+
+        private bool IsEdgeCell(GridPosition cell)
+        {
+            int edgeThreshold = Mathf.Max(0, _centerPressureEdgeThreshold);
+            int maxX = Mathf.Max(0, GameConstants.MapWidth - 1);
+            int maxY = Mathf.Max(0, GameConstants.MapHeight - 1);
+            return cell.X <= edgeThreshold
+                   || cell.Y <= edgeThreshold
+                   || cell.X >= maxX - edgeThreshold
+                   || cell.Y >= maxY - edgeThreshold;
+        }
+
+        private void TryWriteCenterPressureMetricsSnapshot()
+        {
+            if (!CenterPressureEnabled)
+            {
+                return;
+            }
+
+            try
+            {
+                string path = ResolveMetricsPath();
+                string dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                float avgDistance = CenterPressureAverageCombatDistanceToCenter;
+                var sb = new StringBuilder(1024);
+                sb.AppendLine("{");
+                sb.AppendLine("  \"center_pressure_enabled\": true,");
+                sb.Append("  \"bot_decisions_executed\": ").Append(_centerPressureDecisionsExecuted).AppendLine(",");
+                sb.Append("  \"bot_actions_attempted\": ").Append(_centerPressureActionsAttempted).AppendLine(",");
+                sb.Append("  \"bot_commands_accepted\": ").Append(_centerPressureCommandsAccepted).AppendLine(",");
+                sb.Append("  \"bot_commands_rejected\": ").Append(_centerPressureCommandsRejected).AppendLine(",");
+                sb.Append("  \"center_rally_moves\": ").Append(_centerPressureCenterRallyMoves).AppendLine(",");
+                sb.Append("  \"center_area_visits\": ").Append(_centerPressureCenterAreaVisits).AppendLine(",");
+                sb.Append("  \"center_to_enemy_approach_moves\": ").Append(_centerPressureCenterToEnemyApproachMoves).AppendLine(",");
+                sb.Append("  \"edge_lane_moves\": ").Append(_centerPressureEdgeLaneMoves).AppendLine(",");
+                sb.Append("  \"base_idle_steps\": ").Append(_centerPressureBaseIdleSteps).AppendLine(",");
+                sb.Append("  \"worker_count_min\": ").Append(CenterPressureWorkerCountMin).AppendLine(",");
+                sb.Append("  \"worker_count_max\": ").Append(_centerPressureWorkerCountMax).AppendLine(",");
+                sb.Append("  \"worker_count_final\": ").Append(_centerPressureWorkerCountFinal).AppendLine(",");
+                sb.Append("  \"worker_soft_cap\": ").Append(CenterPressureWorkerSoftCap).AppendLine(",");
+                sb.Append("  \"worker_hard_cap\": ").Append(CenterPressureWorkerHardCap).AppendLine(",");
+                sb.Append("  \"worker_produce_attempts\": ").Append(_centerPressureWorkerProduceAttempts).AppendLine(",");
+                sb.Append("  \"worker_produce_blocked_by_cap\": ").Append(_centerPressureWorkerProduceBlockedByCap).AppendLine(",");
+                sb.Append("  \"worker_idle_steps\": ").Append(_centerPressureWorkerIdleSteps).AppendLine(",");
+                sb.Append("  \"worker_gather_attempts\": ").Append(_centerPressureWorkerGatherAttempts).AppendLine(",");
+                sb.Append("  \"worker_build_attempts\": ").Append(_centerPressureWorkerBuildAttempts).AppendLine(",");
+                sb.Append("  \"barracks_count\": ").Append(_centerPressureBarracksCount).AppendLine(",");
+                sb.Append("  \"barracks_build_attempts\": ").Append(_centerPressureBarracksBuildAttempts).AppendLine(",");
+                sb.Append("  \"barracks_build_accepted\": ").Append(_centerPressureBarracksBuildAccepted).AppendLine(",");
+                sb.Append("  \"combat_unit_count_min\": ").Append(CenterPressureCombatCountMin).AppendLine(",");
+                sb.Append("  \"combat_unit_count_max\": ").Append(_centerPressureCombatCountMax).AppendLine(",");
+                sb.Append("  \"combat_unit_count_final\": ").Append(_centerPressureCombatCountFinal).AppendLine(",");
+                sb.Append("  \"combat_unit_produce_attempts\": ").Append(_centerPressureCombatProduceAttempts).AppendLine(",");
+                sb.Append("  \"combat_unit_produce_accepted\": ").Append(_centerPressureCombatProduceAccepted).AppendLine(",");
+                sb.Append("  \"light_produce_attempts\": ").Append(_centerPressureLightProduceAttempts).AppendLine(",");
+                sb.Append("  \"heavy_produce_attempts\": ").Append(_centerPressureHeavyProduceAttempts).AppendLine(",");
+                sb.Append("  \"heavy_produce_accepted\": ").Append(_centerPressureHeavyProduceAccepted).AppendLine(",");
+                sb.Append("  \"heavy_produce_blocked_by_cap\": ").Append(_centerPressureHeavyProduceBlockedByCap).AppendLine(",");
+                sb.Append("  \"heavy_produce_blocked_by_cooldown\": ").Append(_centerPressureHeavyProduceBlockedByCooldown).AppendLine(",");
+                sb.Append("  \"consecutive_heavy_produce_attempts\": ").Append(_centerPressureConsecutiveHeavyProduceAttempts).AppendLine(",");
+                sb.Append("  \"ranged_produce_attempts\": ").Append(_centerPressureRangedProduceAttempts).AppendLine(",");
+                sb.Append("  \"light_count_max\": ").Append(_centerPressureLightCountMax).AppendLine(",");
+                sb.Append("  \"heavy_count_max\": ").Append(_centerPressureHeavyCountMax).AppendLine(",");
+                sb.Append("  \"ranged_count_max\": ").Append(_centerPressureRangedCountMax).AppendLine(",");
+                sb.Append("  \"total_army_count_max\": ").Append(_centerPressureTotalArmyCountMax).AppendLine(",");
+                sb.Append("  \"light_hard_cap\": ").Append(CenterPressureLightHardCap).AppendLine(",");
+                sb.Append("  \"heavy_hard_cap\": ").Append(CenterPressureHeavyHardCap).AppendLine(",");
+                sb.Append("  \"ranged_hard_cap\": ").Append(CenterPressureRangedHardCap).AppendLine(",");
+                sb.Append("  \"combat_unit_cap\": ").Append(CenterPressureCombatUnitCap).AppendLine(",");
+                sb.Append("  \"total_army_cap\": ").Append(CenterPressureTotalArmyCap).AppendLine(",");
+                sb.Append("  \"first_center_move_step\": ").Append(_centerPressureFirstCenterMoveStep).AppendLine(",");
+                sb.Append("  \"first_attack_step\": ").Append(_centerPressureFirstAttackStep).AppendLine(",");
+                sb.Append("  \"attack_intent_count\": ").Append(_centerPressureAttackIntentCount).AppendLine(",");
+                sb.Append("  \"attack_submit_count\": ").Append(_centerPressureAttackSubmitCount).AppendLine(",");
+                sb.Append("  \"accepted_attack_count\": ").Append(_centerPressureAcceptedAttackCount).AppendLine(",");
+                sb.Append("  \"attack_wave_size_min\": ").Append(CenterPressureAttackWaveSizeMin).AppendLine(",");
+                sb.Append("  \"attack_wave_size_max\": ").Append(_centerPressureAttackWaveSizeMax).AppendLine(",");
+                sb.Append("  \"attack_wave_size_at_first_attack\": ").Append(_centerPressureAttackWaveSizeAtFirstAttack).AppendLine(",");
+                sb.Append("  \"first_attack_intent_step\": ").Append(_centerPressureFirstAttackIntentStep).AppendLine(",");
+                sb.Append("  \"first_attack_submit_step\": ").Append(_centerPressureFirstAttackSubmitStep).AppendLine(",");
+                sb.Append("  \"first_accepted_attack_step\": ").Append(_centerPressureFirstAcceptedAttackStep).AppendLine(",");
+                sb.Append("  \"center_attack_intent_count\": ").Append(_centerPressureCenterAttackIntentCount).AppendLine(",");
+                sb.Append("  \"center_attack_submit_count\": ").Append(_centerPressureCenterAttackSubmitCount).AppendLine(",");
+                sb.Append("  \"center_accepted_attack_count\": ").Append(_centerPressureCenterAcceptedAttackCount).AppendLine(",");
+                sb.Append("  \"combat_units_sent_to_center\": ").Append(_centerPressureCombatUnitsSentToCenter).AppendLine(",");
+                sb.Append("  \"combat_units_kept_near_base\": ").Append(_centerPressureCombatUnitsKeptNearBase).AppendLine(",");
+                sb.Append("  \"over_army_cap_steps\": ").Append(_centerPressureOverArmyCapSteps).AppendLine(",");
+                sb.Append("  \"central_corridor_steps\": ").Append(_centerPressureCentralCorridorSteps).AppendLine(",");
+                sb.Append("  \"center_area_steps\": ").Append(_centerPressureCenterAreaSteps).AppendLine(",");
+                sb.Append("  \"edge_lane_steps\": ").Append(_centerPressureEdgeLaneSteps).AppendLine(",");
+                sb.Append("  \"base_area_steps\": ").Append(_centerPressureBaseAreaSteps).AppendLine(",");
+                sb.Append("  \"center_crossing_count\": ").Append(_centerPressureCenterCrossingCount).AppendLine(",");
+            sb.Append("  \"wave_crossed_center\": ").Append(CenterPressureWaveCrossedCenter ? "true" : "false").AppendLine(",");
+                sb.Append("  \"center_crossing_step\": ").Append(_centerPressureCenterCrossingStep).AppendLine(",");
+                sb.Append("  \"attack_after_center_crossing\": ").Append(_centerPressureAttackAfterCenterCrossing ? "true" : "false").AppendLine(",");
+                sb.Append("  \"first_attack_after_center_crossing_step\": ").Append(_centerPressureFirstAttackAfterCenterCrossingStep).AppendLine(",");
+                sb.Append("  \"edge_attack_detected\": ").Append(_centerPressureEdgeAttackCount > 0 ? "true" : "false").AppendLine(",");
+                sb.Append("  \"edge_attack_count\": ").Append(_centerPressureEdgeAttackCount).AppendLine(",");
+                sb.Append("  \"central_approach_moves\": ").Append(_centerPressureCentralApproachMoves).AppendLine(",");
+                sb.Append("  \"edge_approach_moves\": ").Append(_centerPressureEdgeApproachMoves).AppendLine(",");
+                sb.Append("  \"central_route_ratio\": ").Append(CenterPressureCentralRouteRatio.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
+                sb.Append("  \"edge_route_ratio\": ").Append(CenterPressureEdgeRouteRatio.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
+                sb.Append("  \"center_route_dominant\": ").Append(CenterPressureRouteDominant ? "true" : "false").AppendLine(",");
+                sb.Append("  \"avg_combat_distance_to_center\": ").Append(avgDistance.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
+                sb.Append("  \"permanent_base_idle\": ").Append(_centerPressurePermanentBaseIdle ? "true" : "false").AppendLine(",");
+                sb.Append("  \"center_pressure_observed\": ").Append(CenterPressureObserved ? "true" : "false").AppendLine(",");
+                sb.Append("  \"economy_composition_healthy\": ").Append(CenterPressureEconomyCompositionHealthy ? "true" : "false").AppendLine();
+                sb.AppendLine("}");
+                File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[HeuristicPolicyAdapter] Failed to write center-pressure metrics: " + ex.Message);
+            }
+        }
+
+        private string ResolveMetricsPath()
+        {
+            string relative = string.IsNullOrWhiteSpace(_centerPressureMetricsRelativePath)
+                ? "python/stage7b_teacher_replay/stage7b_center_pressure_runtime_metrics.json"
+                : _centerPressureMetricsRelativePath.Replace('\\', '/');
+
+            if (Path.IsPathRooted(relative))
+            {
+                return relative;
+            }
+
+            string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Application.dataPath;
+            return Path.Combine(projectRoot, relative.Replace('/', Path.DirectorySeparatorChar));
         }
     }
 }

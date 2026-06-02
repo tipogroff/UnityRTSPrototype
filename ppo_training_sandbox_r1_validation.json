@@ -1,0 +1,23 @@
+{
+  "result": "GO",
+  "sandbox_scene_created": true,
+  "source_scene_unchanged": true,
+  "main_menu_unchanged": true,
+  "humanplay_demo_unchanged": true,
+  "week7_baseline_unchanged": true,
+  "action_decoder_unchanged": true,
+  "action_applier_unchanged": true,
+  "match_manager_unchanged": true,
+  "model_assets_unchanged": true,
+  "checkpoints_unchanged": true,
+  "python_training_unchanged": true,
+  "duplicate_agent_found": false,
+  "observation_size": 15552,
+  "candidate_action_branch_size": 128,
+  "behavior_name": "Stage7B_RTS_Student",
+  "runtime_mode": "TrainerControlled",
+  "scripted_opponent_enabled": true,
+  "smoke_passed": true,
+  "ppo_continuation_allowed": true,
+  "blockers": []
+}

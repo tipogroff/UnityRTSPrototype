@@ -155,7 +155,7 @@ namespace RTS.Presentation.Selection
                 _dragActive = true;
                 _dragStartScreen = GetPointerPosition();
                 _dragCurrentScreen = _dragStartScreen;
-                _selectionBoxView?.Hide();
+                HideSelectionBox();
                 return;
             }
 
@@ -168,7 +168,7 @@ namespace RTS.Presentation.Selection
             bool isDrag = IsCurrentDragAboveThreshold();
             if (IsLeftMouseHeld() && isDrag)
             {
-                _selectionBoxView?.Show(_dragStartScreen, _dragCurrentScreen);
+                ShowSelectionBox(_dragStartScreen, _dragCurrentScreen);
             }
 
             if (WasLeftMouseReleased())
@@ -465,6 +465,14 @@ namespace RTS.Presentation.Selection
             _selectionBoxView = selectionBoxView;
         }
 
+        public void ClearSelectionBoxView(SelectionBoxView selectionBoxView)
+        {
+            if (_selectionBoxView == null || _selectionBoxView == selectionBoxView)
+            {
+                _selectionBoxView = null;
+            }
+        }
+
         private void NotifySelectionChanged()
         {
             UpdatePresentation();
@@ -524,7 +532,29 @@ namespace RTS.Presentation.Selection
         {
             _dragActive = false;
             _dragStartedOverUi = false;
-            _selectionBoxView?.Hide();
+            HideSelectionBox();
+        }
+
+        private void ShowSelectionBox(Vector2 startScreen, Vector2 currentScreen)
+        {
+            if (_selectionBoxView == null)
+            {
+                _selectionBoxView = null;
+                return;
+            }
+
+            _selectionBoxView.Show(startScreen, currentScreen);
+        }
+
+        private void HideSelectionBox()
+        {
+            if (_selectionBoxView == null)
+            {
+                _selectionBoxView = null;
+                return;
+            }
+
+            _selectionBoxView.Hide();
         }
 
         private static Rect BuildScreenRect(Vector2 a, Vector2 b)

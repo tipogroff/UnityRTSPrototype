@@ -38,6 +38,7 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private int _startResources = 60;
         [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
         [SerializeField] private bool _forceTrainerControlledMode;
+        [SerializeField] private ScriptedOpponentTacticProfile _scriptedOpponentTacticProfile = ScriptedOpponentTacticProfile.Legacy;
 
         [Header("Demo/Interactive Mode")]
         [SerializeField] private bool _autoStartEpisodeOnStart = true;
@@ -53,6 +54,7 @@ namespace RTS.MLAgents.Stage7B
         public bool StepScriptedOpponent => _stepScriptedOpponent;
         public Owner StudentPlayer => _studentPlayer;
         public Owner ScriptedOpponent => _scriptedOpponent;
+        public int ConfiguredStartResources => Mathf.Max(0, _startResources);
         public bool DuplicateSpawnDetected { get; private set; }
         public bool HasRuntimeEpisodeStarted => _hasRuntimeEpisodeStarted;
         public bool IsStartingEpisode => _isStartingEpisode;
@@ -489,6 +491,7 @@ namespace RTS.MLAgents.Stage7B
 
             ScriptedOpponentAdapter.Initialize(GridManager, UnitRegistry, ResourceManager, MatchManager, MatchBootstrap);
             ScriptedOpponentAdapter.ResetHeuristicState();
+            ScriptedOpponentAdapter.SetScriptedOpponentProfile(_scriptedOpponentTacticProfile);
             ScriptedOpponentAdapter.SetPlayerControlModes(
                 _studentPlayer == Owner.Player1 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic,
                 _studentPlayer == Owner.Player2 ? HeuristicControlMode.Idle : HeuristicControlMode.Heuristic);
