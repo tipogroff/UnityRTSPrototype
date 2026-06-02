@@ -32,6 +32,17 @@ namespace RTS.Presentation.UI
             UnitRuntime primary,
             ResourceNode hoveredResource = null)
         {
+            Refresh(commandController, selectedUnits, primary, hoveredResource, null, null);
+        }
+
+        public void Refresh(
+            PlayerCommandController commandController,
+            IReadOnlyList<UnitRuntime> selectedUnits,
+            UnitRuntime primary,
+            ResourceNode hoveredResource,
+            HumanPlayModeController modeController,
+            HumanPlayerController humanPlayerController)
+        {
             if (commandController != null)
             {
                 _commandController = commandController;
@@ -56,8 +67,18 @@ namespace RTS.Presentation.UI
             string resourceLine = hoveredResource != null
                 ? "Hover resource: " + hoveredResource.CurrentResources + " remaining (" + (hoveredResource.IsExhausted ? "Exhausted" : "Active") + ")"
                 : "Hover resource: none";
-            _status.text = BuildContextLine(selectionCount, primary)
-                + "\nMode: " + _commandController.CurrentMode
+            string modeStatus = BuildModeStatus(modeController, humanPlayerController);
+            if (!HasPlayer2ManualMode(modeController))
+            {
+                _status.text = modeStatus
+                    + "\nHuman control inactive"
+                    + "\n\u0420\u0443\u0447\u043d\u043e\u0435 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0432 \u0440\u0435\u0436\u0438\u043c\u0435 AI \u043f\u0440\u043e\u0442\u0438\u0432 \u0438\u0433\u0440\u043e\u043a\u0430"
+                    + "\n" + resourceLine;
+                return;
+            }
+
+            _status.text = modeStatus
+                + "\n" + BuildContextLine(selectionCount, primary)
                 + "\nLast: " + _commandController.LastCommandStatus
                 + "\nResult: " + result
                 + "\n" + orderLine
@@ -65,11 +86,45 @@ namespace RTS.Presentation.UI
                 + "\n" + BuildControlHints(selectionCount);
         }
 
+        private static string BuildModeStatus(HumanPlayModeController modeController, HumanPlayerController humanPlayerController)
+        {
+            if (modeController == null)
+            {
+                return "\u0420\u0435\u0436\u0438\u043c: \u043d\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0451\u043d";
+            }
+
+            return modeController.CurrentMode switch
+            {
+                HumanPlayMode.AIvsPlayer2 =>
+                    "\u0420\u0435\u0436\u0438\u043c: AI \u043f\u0440\u043e\u0442\u0438\u0432 \u0438\u0433\u0440\u043e\u043a\u0430"
+                    + "\n\u0418\u0433\u0440\u043e\u043a: Player2"
+                    + "\n\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435: "
+                    + (humanPlayerController != null && humanPlayerController.IsHumanControlActive
+                        ? "\u0430\u043a\u0442\u0438\u0432\u043d\u043e"
+                        : "\u043e\u0436\u0438\u0434\u0430\u043d\u0438\u0435 \u0441\u0442\u0430\u0440\u0442\u0430 \u043c\u0430\u0442\u0447\u0430"),
+                HumanPlayMode.AIvsBot =>
+                    "\u0420\u0435\u0436\u0438\u043c: AI \u043f\u0440\u043e\u0442\u0438\u0432 \u0431\u043e\u0442\u0430"
+                    + "\n\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435: \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
+                HumanPlayMode.AIvsAI =>
+                    "\u0420\u0435\u0436\u0438\u043c: AI \u043f\u0440\u043e\u0442\u0438\u0432 AI"
+                    + "\n\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435: \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
+                _ => "\u0420\u0435\u0436\u0438\u043c: " + modeController.CurrentMode,
+            };
+        }
+
+        private static bool HasPlayer2ManualMode(HumanPlayModeController modeController)
+        {
+            return modeController != null
+                && modeController.CurrentMode == HumanPlayMode.AIvsPlayer2
+                && modeController.HasHumanSide
+                && modeController.HumanSide == Owner.Player2;
+        }
+
         private static string BuildContextLine(int selectionCount, UnitRuntime primary)
         {
             if (selectionCount <= 0 || primary == null)
             {
-                return "Select a unit or building.";
+                return "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u044e\u043d\u0438\u0442 Player2 \u0434\u043b\u044f \u043e\u0442\u0434\u0430\u0447\u0438 \u043f\u0440\u0438\u043a\u0430\u0437\u0430";
             }
 
             if (selectionCount > 1)

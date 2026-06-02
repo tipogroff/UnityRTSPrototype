@@ -9,6 +9,7 @@ namespace RTS.Presentation
         AIvsPlayer2 = 2,
         Player1vsScriptedOrHeuristic = 3,
         PausedDemo = 4,
+        AIvsBot = 5,
     }
 
     public readonly struct HumanPlayModeState

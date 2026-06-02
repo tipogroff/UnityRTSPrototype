@@ -14,11 +14,32 @@ namespace RTS.Presentation.UI
 
         public void LoadDemo()
         {
+            if (!DemoLaunchOptions.HasExplicitMode)
+            {
+                DemoLaunchOptions.SetMode(DemoLaunchMode.AIvsPlayer);
+            }
+
             LoadScene(_demoSceneName);
+        }
+
+        public void LoadDemoAIvsPlayer()
+        {
+            LoadDemoWithMode(DemoLaunchMode.AIvsPlayer);
+        }
+
+        public void LoadDemoAIvsBot()
+        {
+            LoadDemoWithMode(DemoLaunchMode.AIvsBot);
+        }
+
+        public void LoadDemoAIvsAI()
+        {
+            LoadDemoWithMode(DemoLaunchMode.AIvsAI);
         }
 
         public void LoadMainMenu()
         {
+            DemoLaunchOptions.Clear();
             LoadScene(_mainMenuSceneName);
         }
 
@@ -38,6 +59,12 @@ namespace RTS.Presentation.UI
 #else
             Application.Quit();
 #endif
+        }
+
+        private void LoadDemoWithMode(DemoLaunchMode mode)
+        {
+            DemoLaunchOptions.SetMode(mode);
+            LoadDemo();
         }
 
         private static void LoadScene(string sceneName)

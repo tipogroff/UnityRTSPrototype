@@ -4,6 +4,7 @@ using RTS.Core;
 using RTS.Gameplay;
 using RTS.ML;
 using RTS.MLAgents.Stage7B;
+using RTS.Presentation.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -118,6 +119,43 @@ namespace RTS.Presentation
             SetState(HumanPlayMode.AIvsAI, false, Owner.Neutral, "AI vs AI started.");
         }
 
+        public void StartAIvsBot()
+        {
+            ResolveReferences();
+
+            if (IsTrainerControlled)
+            {
+                SetState(HumanPlayMode.AIvsBot, false, Owner.Neutral, "AI vs Bot mode is disabled in TrainerControlled runtime mode.");
+                return;
+            }
+
+            if (_episodeController == null)
+            {
+                SetState(HumanPlayMode.AIvsBot, false, Owner.Neutral, "EpisodeController is missing. AI vs Bot mode was not started.");
+                return;
+            }
+
+            Week6PlayerControlMode aiMode = ResolveAiControlMode();
+            if (aiMode == Week6PlayerControlMode.StudentInference)
+            {
+                _episodeController.ConfigureWeek6PlayerControlModes(
+                    enableStudentMatchControl: true,
+                    player1Mode: Week6PlayerControlMode.StudentInference,
+                    player2Mode: Week6PlayerControlMode.HeuristicBaseline);
+            }
+            else
+            {
+                _episodeController.ConfigureWeek6PlayerControlModes(
+                    enableStudentMatchControl: false,
+                    player1Mode: Week6PlayerControlMode.Idle,
+                    player2Mode: Week6PlayerControlMode.Idle);
+            }
+
+            HumanPlayCommandSourceDiagnostics.ResetHistory();
+            _episodeController.StartNewEpisode();
+            SetState(HumanPlayMode.AIvsBot, false, Owner.Neutral, $"AI vs Bot started. Player1 AI mode: {aiMode}.");
+        }
+
         public void RestartMatch()
         {
             ResolveReferences();
@@ -131,6 +169,12 @@ namespace RTS.Presentation
             if (_state.Mode == HumanPlayMode.Player1vsAI || _state.Mode == HumanPlayMode.Player1vsScriptedOrHeuristic)
             {
                 StartPlayer1VsAI();
+                return;
+            }
+
+            if (_state.Mode == HumanPlayMode.AIvsBot)
+            {
+                StartAIvsBot();
                 return;
             }
 
@@ -252,6 +296,38 @@ namespace RTS.Presentation
             _initialAutoStartCompleted = true;
             LogStartupDiagnostics("InitialAutoStart.ready");
 
+            if (DemoLaunchOptions.HasExplicitMode)
+            {
+                DemoLaunchMode requestedMode = DemoLaunchOptions.RequestedMode;
+                DemoLaunchOptions.Clear();
+                StartRequestedDemoMode(requestedMode);
+            }
+            else
+            {
+                StartConfiguredInitialMode();
+            }
+
+            _startupCoroutine = null;
+        }
+
+        private void StartRequestedDemoMode(DemoLaunchMode requestedMode)
+        {
+            switch (requestedMode)
+            {
+                case DemoLaunchMode.AIvsAI:
+                    StartAIvsAI();
+                    break;
+                case DemoLaunchMode.AIvsBot:
+                    StartAIvsBot();
+                    break;
+                default:
+                    StartAIvsPlayer2();
+                    break;
+            }
+        }
+
+        private void StartConfiguredInitialMode()
+        {
             switch (_initialMode)
             {
                 case HumanPlayMode.Player1vsAI:
@@ -261,12 +337,13 @@ namespace RTS.Presentation
                 case HumanPlayMode.AIvsPlayer2:
                     StartAIvsPlayer2();
                     break;
+                case HumanPlayMode.AIvsBot:
+                    StartAIvsBot();
+                    break;
                 default:
                     StartAIvsAI();
                     break;
             }
-
-            _startupCoroutine = null;
         }
 
         private bool AreRuntimeServicesReady(out string missing)

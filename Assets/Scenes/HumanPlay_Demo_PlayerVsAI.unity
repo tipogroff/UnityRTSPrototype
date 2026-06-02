@@ -335,7 +335,7 @@ MonoBehaviour:
   _unitRegistry: {fileID: 0}
   _resourceManager: {fileID: 0}
   _trainingBootstrap: {fileID: 1539652541}
-  _showHud: 1
+  _showHud: 0
   _leftPanelPosition: {x: 10, y: 90}
   _rightPanelPosition: {x: 500, y: 90}
   _panelWidth: 460
