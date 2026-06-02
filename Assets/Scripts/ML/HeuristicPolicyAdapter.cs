@@ -351,6 +351,7 @@ namespace RTS.ML
         [SerializeField, Min(0)] private int _centerPressureOpeningNoAttackDecisionSteps = 18;
         [SerializeField, Min(1)] private int _centerPressureAttackTimeoutDecisionSteps = 52;
         [SerializeField, Min(1)] private int _centerPressureCenterRadius = 2;
+        [SerializeField, Min(1)] private int _centerPressureCorridorRadius = 5;
         [SerializeField, Min(0)] private int _centerPressureEdgeThreshold = 2;
         [SerializeField, Min(1)] private int _centerPressureBaseIdleDistance = 3;
         [SerializeField, Min(1)] private int _centerPressurePermanentIdleThreshold = 18;
@@ -441,6 +442,18 @@ namespace RTS.ML
         private int _centerPressureCenterAttackIntentCount;
         private int _centerPressureCenterAttackSubmitCount;
         private int _centerPressureCenterAcceptedAttackCount;
+        private int _centerPressureCentralCorridorSteps;
+        private int _centerPressureCenterAreaSteps;
+        private int _centerPressureEdgeLaneSteps;
+        private int _centerPressureBaseAreaSteps;
+        private int _centerPressureCenterCrossingCount;
+        private bool _centerPressureWaveCrossedCenter;
+        private int _centerPressureCenterCrossingStep = -1;
+        private bool _centerPressureAttackAfterCenterCrossing;
+        private int _centerPressureFirstAttackAfterCenterCrossingStep = -1;
+        private int _centerPressureEdgeAttackCount;
+        private int _centerPressureCentralApproachMoves;
+        private int _centerPressureEdgeApproachMoves;
 
         public event Action<HeuristicActionEvaluation> OnActionEvaluated;
         public event Action<HeuristicDecisionCycleEvaluation> OnDecisionCycleEvaluated;
@@ -459,9 +472,9 @@ namespace RTS.ML
         public int CenterPressureFirstCenterMoveStep => _centerPressureFirstCenterMoveStep;
         public int CenterPressureFirstAttackStep => _centerPressureFirstAttackStep;
         public bool CenterPressurePermanentBaseIdle => _centerPressurePermanentBaseIdle;
-        public bool CenterPressureObserved => _centerPressureCenterRallyMoves > 0
-                                            && _centerPressureCenterAreaVisits > 0
-                                            && _centerPressureAttackSubmitCount > 0;
+        public bool CenterPressureObserved => CenterPressureWaveCrossedCenter
+                                            && _centerPressureCentralCorridorSteps > 0
+                                            && _centerPressureAttackAfterCenterCrossing;
         public float CenterPressureAverageCombatDistanceToCenter => _centerPressureCombatDistanceSamples > 0
             ? _centerPressureCombatDistanceSum / _centerPressureCombatDistanceSamples
             : 0f;
@@ -515,6 +528,24 @@ namespace RTS.ML
         public int CenterPressureCenterAttackIntentCount => _centerPressureCenterAttackIntentCount;
         public int CenterPressureCenterAttackSubmitCount => _centerPressureCenterAttackSubmitCount;
         public int CenterPressureCenterAcceptedAttackCount => _centerPressureCenterAcceptedAttackCount;
+        public int CenterPressureCentralCorridorSteps => _centerPressureCentralCorridorSteps;
+        public int CenterPressureCenterAreaSteps => _centerPressureCenterAreaSteps;
+        public int CenterPressureEdgeLaneSteps => _centerPressureEdgeLaneSteps;
+        public int CenterPressureBaseAreaSteps => _centerPressureBaseAreaSteps;
+        public int CenterPressureCenterCrossingCount => _centerPressureCenterCrossingCount;
+        public bool CenterPressureWaveCrossedCenter => _centerPressureCenterCrossingCount > 0;
+        public int CenterPressureCenterCrossingStep => _centerPressureCenterCrossingStep;
+        public bool CenterPressureAttackAfterCenterCrossing => _centerPressureAttackAfterCenterCrossing;
+        public int CenterPressureFirstAttackAfterCenterCrossingStep => _centerPressureFirstAttackAfterCenterCrossingStep;
+        public bool CenterPressureEdgeAttackDetected => _centerPressureEdgeAttackCount > 0;
+        public int CenterPressureEdgeAttackCount => _centerPressureEdgeAttackCount;
+        public int CenterPressureCentralApproachMoves => _centerPressureCentralApproachMoves;
+        public int CenterPressureEdgeApproachMoves => _centerPressureEdgeApproachMoves;
+        public float CenterPressureCentralRouteRatio => _centerPressureCentralCorridorSteps
+            / (float)Mathf.Max(1, _centerPressureCentralCorridorSteps + _centerPressureEdgeLaneSteps);
+        public float CenterPressureEdgeRouteRatio => _centerPressureEdgeLaneSteps
+            / (float)Mathf.Max(1, _centerPressureCentralCorridorSteps + _centerPressureEdgeLaneSteps);
+        public bool CenterPressureRouteDominant => CenterPressureCentralRouteRatio > CenterPressureEdgeRouteRatio;
         public bool CenterPressureEconomyCompositionHealthy => CenterPressureWorkerCountMax <= CenterPressureWorkerHardCap
                                        && CenterPressureHeavyCountMax <= CenterPressureHeavyHardCap
                                        && CenterPressureCombatCountMax <= CenterPressureCombatUnitCap
@@ -1919,7 +1950,7 @@ namespace RTS.ML
                         return occupant != null && occupant.IsAlive && occupant.Owner != owner && occupant.Owner != Owner.Neutral;
                     }
                 case ScriptedGoalType.CenterArea:
-                    return _gridManager != null && _gridManager.IsInside(goal);
+                    return _gridManager != null && _gridManager.IsInside(goal) && IsInsideCenterArea(goal);
                 default:
                     return true;
             }
@@ -2738,6 +2769,22 @@ namespace RTS.ML
                 return true;
             }
 
+            if (useCenterPressure
+                && actorMask.IsActionTypeEnabled(UnitActionType.Move)
+                && TryChooseCenterPressureApproachDirection(combatUnit.GridPos, actorMask.MoveDirectionMask, out Direction centralApproach))
+            {
+                selection = new DebugActionSelection(
+                    actorIndex,
+                    ActionContract.ACTION_MOVE,
+                    (int)centralApproach,
+                    HeuristicV2ActionDefaults.WorkerProduceIndex,
+                    HeuristicV2ActionDefaults.AttackCenterIndex);
+                reason = IsEdgeCell(combatUnit.GridPos.Neighbour(centralApproach))
+                    ? "combat:center-edge-fallback"
+                    : "combat:center-approach";
+                return true;
+            }
+
             if (actorMask.IsActionTypeEnabled(UnitActionType.Move) &&
                 TryChooseMoveDirectionToNearestEnemy(playerId, combatUnit.GridPos, actorMask.MoveDirectionMask, out Direction moveToEnemy))
             {
@@ -2765,6 +2812,49 @@ namespace RTS.ML
             }
 
             return false;
+        }
+
+        private bool TryChooseCenterPressureApproachDirection(GridPosition from, bool[] moveMask, out Direction direction)
+        {
+            direction = Direction.North;
+            GridPosition enemyBase = TryGetNearestEnemyBasePosition(Owner.Player2, from, out bool hasEnemyBase);
+            if (!hasEnemyBase || moveMask == null)
+            {
+                return false;
+            }
+
+            int currentDistance = from.ManhattanDistance(enemyBase);
+            int bestScore = int.MinValue;
+            bool found = false;
+            for (int i = 0; i < ActionContract.SIZE_DIRECTION; i++)
+            {
+                if (i >= moveMask.Length || !moveMask[i])
+                {
+                    continue;
+                }
+
+                Direction candidateDirection = (Direction)i;
+                GridPosition target = from.Neighbour(candidateDirection);
+                int score = (currentDistance - target.ManhattanDistance(enemyBase)) * 100;
+                if (IsInsideCentralCorridor(target))
+                {
+                    score += 60;
+                }
+
+                if (IsEdgeCell(target))
+                {
+                    score -= 1000;
+                }
+
+                if (!found || score > bestScore)
+                {
+                    bestScore = score;
+                    direction = candidateDirection;
+                    found = true;
+                }
+            }
+
+            return found;
         }
 
         private bool IsActionAllowed(Owner owner, UnitActionType actionType)
@@ -3246,6 +3336,18 @@ namespace RTS.ML
             _centerPressureCenterAttackIntentCount = 0;
             _centerPressureCenterAttackSubmitCount = 0;
             _centerPressureCenterAcceptedAttackCount = 0;
+            _centerPressureCentralCorridorSteps = 0;
+            _centerPressureCenterAreaSteps = 0;
+            _centerPressureEdgeLaneSteps = 0;
+            _centerPressureBaseAreaSteps = 0;
+            _centerPressureCenterCrossingCount = 0;
+            _centerPressureWaveCrossedCenter = false;
+            _centerPressureCenterCrossingStep = -1;
+            _centerPressureAttackAfterCenterCrossing = false;
+            _centerPressureFirstAttackAfterCenterCrossingStep = -1;
+            _centerPressureEdgeAttackCount = 0;
+            _centerPressureCentralApproachMoves = 0;
+            _centerPressureEdgeApproachMoves = 0;
         }
 
         private void ResetCenterPressurePolicyState()
@@ -3254,6 +3356,7 @@ namespace RTS.ML
             _centerPressureLastHeavyProduceAcceptedDecision = -100000;
             _centerPressureConsecutiveHeavyProduceAttempts = 0;
             _centerPressureConsecutiveBaseIdleSteps = 0;
+            _centerPressureWaveCrossedCenter = false;
         }
 
         private bool ShouldAllowCenterPressureAttack(UnitRuntime combatUnit)
@@ -3268,29 +3371,7 @@ namespace RTS.ML
                 return false;
             }
 
-            if (_centerPressureCenterAreaVisits > 0)
-            {
-                return true;
-            }
-
-            if (combatUnit != null && IsInsideCenterArea(combatUnit.GridPos))
-            {
-                return true;
-            }
-
-            int combatCount = CountCombatUnits(Owner.Player2);
-            int waveMin = Mathf.Max(Mathf.Max(1, _centerPressureMinCombatBeforeFullAttack), Mathf.Max(1, _centerPressureAttackWaveMinUnits));
-            if (combatCount >= waveMin && _centerPressureCenterAreaVisits > 0)
-            {
-                return true;
-            }
-
-            if (combatCount < waveMin && _centerPressureDecisionsExecuted < Mathf.Max(1, _centerPressureAttackTimeoutDecisionSteps))
-            {
-                return false;
-            }
-
-            return _centerPressureDecisionsExecuted >= Mathf.Max(1, _centerPressureAttackTimeoutDecisionSteps);
+            return _centerPressureWaveCrossedCenter;
         }
 
         private void RegisterCenterPressureAttackIntent(UnitRuntime actor)
@@ -3404,9 +3485,14 @@ namespace RTS.ML
                 return !insideCenter;
             }
 
-            if (_centerPressureCenterAreaVisits <= 0)
+            if (!_centerPressureWaveCrossedCenter)
             {
                 return !insideCenter;
+            }
+
+            if (IsEdgeCell(combatUnit.GridPos))
+            {
+                return true;
             }
 
             if (_centerPressureConsecutiveBaseIdleSteps >= Mathf.Max(1, _centerPressurePermanentIdleThreshold / 2))
@@ -3454,6 +3540,20 @@ namespace RTS.ML
                 }
 
                 _centerPressureFirstAttackStep = _centerPressureFirstAcceptedAttackStep;
+
+                if (_centerPressureWaveCrossedCenter)
+                {
+                    _centerPressureAttackAfterCenterCrossing = true;
+                    if (_centerPressureFirstAttackAfterCenterCrossingStep < 0)
+                    {
+                        _centerPressureFirstAttackAfterCenterCrossingStep = _centerPressureDecisionsExecuted;
+                    }
+                }
+
+                if (IsEdgeCell(actor.GridPos))
+                {
+                    _centerPressureEdgeAttackCount++;
+                }
 
                 if (IsInsideCenterArea(actor.GridPos))
                 {
@@ -3516,6 +3616,15 @@ namespace RTS.ML
             else if (string.Equals(reason, "combat:center-attack-advance", StringComparison.Ordinal))
             {
                 _centerPressureCenterToEnemyApproachMoves++;
+            }
+
+            if (string.Equals(reason, "combat:center-approach", StringComparison.Ordinal))
+            {
+                _centerPressureCentralApproachMoves++;
+            }
+            else if (string.Equals(reason, "combat:center-edge-fallback", StringComparison.Ordinal))
+            {
+                _centerPressureEdgeApproachMoves++;
             }
 
             if (IsEdgeCell(target))
@@ -3599,9 +3708,26 @@ namespace RTS.ML
                 _centerPressureCombatDistanceSum += centerDistance;
                 _centerPressureCombatDistanceSamples++;
 
-                if (IsInsideCenterArea(unit.GridPos))
+                bool insideCorridor = IsInsideCentralCorridor(unit.GridPos);
+                bool insideCenter = IsInsideCenterArea(unit.GridPos);
+                if (insideCenter)
                 {
                     anyCenter = true;
+                    _centerPressureCenterAreaSteps++;
+                }
+
+                if (insideCorridor)
+                {
+                    _centerPressureCentralCorridorSteps++;
+                    if (insideCenter && !_centerPressureWaveCrossedCenter)
+                    {
+                        _centerPressureWaveCrossedCenter = true;
+                        _centerPressureCenterCrossingCount++;
+                        if (_centerPressureCenterCrossingStep < 0)
+                        {
+                            _centerPressureCenterCrossingStep = _centerPressureDecisionsExecuted;
+                        }
+                    }
                 }
 
                 GridPosition basePos = TryGetNearestBasePosition(Owner.Player2, unit.GridPos, out bool hasBase);
@@ -3614,6 +3740,19 @@ namespace RTS.ML
                 if (unit.GridPos.ManhattanDistance(basePos) > Mathf.Max(1, _centerPressureBaseIdleDistance))
                 {
                     allCombatNearBase = false;
+                }
+                else
+                {
+                    _centerPressureBaseAreaSteps++;
+                }
+
+                    bool insideOwnBaseArea = unit.GridPos.ManhattanDistance(basePos) <= Mathf.Max(1, _centerPressureBaseIdleDistance + 3);
+                    GridPosition enemyBasePos = TryGetNearestBasePosition(Owner.Player1, unit.GridPos, out bool hasEnemyBase);
+                    bool insideEnemyBaseArea = hasEnemyBase
+                                               && unit.GridPos.ManhattanDistance(enemyBasePos) <= Mathf.Max(1, _centerPressureBaseIdleDistance + 3);
+                    if (IsEdgeCell(unit.GridPos) && !insideOwnBaseArea && !insideEnemyBaseArea)
+                {
+                    _centerPressureEdgeLaneSteps++;
                 }
             }
 
@@ -3821,6 +3960,13 @@ namespace RTS.ML
             return Mathf.Abs(cell.X - center.X) <= radius && Mathf.Abs(cell.Y - center.Y) <= radius;
         }
 
+        private bool IsInsideCentralCorridor(GridPosition cell)
+        {
+            GridPosition center = GetCenterCell();
+            int radius = Mathf.Max(Mathf.Max(1, _centerPressureCenterRadius), _centerPressureCorridorRadius);
+            return Mathf.Abs(cell.X - center.X) <= radius && Mathf.Abs(cell.Y - center.Y) <= radius;
+        }
+
         private bool IsEdgeCell(GridPosition cell)
         {
             int edgeThreshold = Mathf.Max(0, _centerPressureEdgeThreshold);
@@ -3912,6 +4058,22 @@ namespace RTS.ML
                 sb.Append("  \"combat_units_sent_to_center\": ").Append(_centerPressureCombatUnitsSentToCenter).AppendLine(",");
                 sb.Append("  \"combat_units_kept_near_base\": ").Append(_centerPressureCombatUnitsKeptNearBase).AppendLine(",");
                 sb.Append("  \"over_army_cap_steps\": ").Append(_centerPressureOverArmyCapSteps).AppendLine(",");
+                sb.Append("  \"central_corridor_steps\": ").Append(_centerPressureCentralCorridorSteps).AppendLine(",");
+                sb.Append("  \"center_area_steps\": ").Append(_centerPressureCenterAreaSteps).AppendLine(",");
+                sb.Append("  \"edge_lane_steps\": ").Append(_centerPressureEdgeLaneSteps).AppendLine(",");
+                sb.Append("  \"base_area_steps\": ").Append(_centerPressureBaseAreaSteps).AppendLine(",");
+                sb.Append("  \"center_crossing_count\": ").Append(_centerPressureCenterCrossingCount).AppendLine(",");
+            sb.Append("  \"wave_crossed_center\": ").Append(CenterPressureWaveCrossedCenter ? "true" : "false").AppendLine(",");
+                sb.Append("  \"center_crossing_step\": ").Append(_centerPressureCenterCrossingStep).AppendLine(",");
+                sb.Append("  \"attack_after_center_crossing\": ").Append(_centerPressureAttackAfterCenterCrossing ? "true" : "false").AppendLine(",");
+                sb.Append("  \"first_attack_after_center_crossing_step\": ").Append(_centerPressureFirstAttackAfterCenterCrossingStep).AppendLine(",");
+                sb.Append("  \"edge_attack_detected\": ").Append(_centerPressureEdgeAttackCount > 0 ? "true" : "false").AppendLine(",");
+                sb.Append("  \"edge_attack_count\": ").Append(_centerPressureEdgeAttackCount).AppendLine(",");
+                sb.Append("  \"central_approach_moves\": ").Append(_centerPressureCentralApproachMoves).AppendLine(",");
+                sb.Append("  \"edge_approach_moves\": ").Append(_centerPressureEdgeApproachMoves).AppendLine(",");
+                sb.Append("  \"central_route_ratio\": ").Append(CenterPressureCentralRouteRatio.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
+                sb.Append("  \"edge_route_ratio\": ").Append(CenterPressureEdgeRouteRatio.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
+                sb.Append("  \"center_route_dominant\": ").Append(CenterPressureRouteDominant ? "true" : "false").AppendLine(",");
                 sb.Append("  \"avg_combat_distance_to_center\": ").Append(avgDistance.ToString("0.###", CultureInfo.InvariantCulture)).AppendLine(",");
                 sb.Append("  \"permanent_base_idle\": ").Append(_centerPressurePermanentBaseIdle ? "true" : "false").AppendLine(",");
                 sb.Append("  \"center_pressure_observed\": ").Append(CenterPressureObserved ? "true" : "false").AppendLine(",");

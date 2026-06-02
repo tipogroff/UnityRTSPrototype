@@ -2,8 +2,8 @@
 
 final_decision: NO_GO
 ready_for_stage7b_8d_or_9: false
-blocker_code: B
-blocker_reason: Behavior configuration mismatch for inference mode
+blocker_code: C
+blocker_reason: CollectObservations did not provide full real observation without padding
 
 ## Model
 - onnx_source_path: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
@@ -12,7 +12,7 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - unity_import_succeeded: true
 - model_assigned: true
 - model_asset_path_runtime: Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx
-- behavior_type_runtime: Default
+- behavior_type_runtime: InferenceOnly
 - behavior_name_runtime: Stage7B_RTS_Student
 
 ## Observations
@@ -26,31 +26,31 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - actual_collect_all_expected_values: true
 - zero_fallback_used: false
 - defensive_pre_ready_observation_count: 0
-- defensive_pre_ready_observation_used_after_runtime_ready: false
+- defensive_pre_ready_observation_used_after_runtime_ready: true
 - warning_padding_first_frame: -1
 - warning_padding_first_academy_step: -1
 
 ## Lifecycle
-- initialize_count: 2
-- on_episode_begin_count: 1
-- collect_observations_count: 806
-- write_discrete_action_mask_count: 805
-- on_action_received_count: 805
+- initialize_count: 3
+- on_episode_begin_count: 3
+- collect_observations_count: 129
+- write_discrete_action_mask_count: 127
+- on_action_received_count: 127
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 0
-- inference_runtime_ready_observed: false
-- inference_first_ready_frame: -1
-- inference_first_ready_fixed_tick: -1
+- inference_kick_decision_request_count: 1
+- inference_runtime_ready_observed: true
+- inference_first_ready_frame: 10156
+- inference_first_ready_fixed_tick: 1
 - decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: 14
+- candidate_action_index_last: 5
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 1610
-- action_adapter_success_count: 805
-- runtime_apply_attempted: 805
-- runtime_apply_accepted: 805
+- candidate_builder_success_count: 254
+- action_adapter_success_count: 127
+- runtime_apply_attempted: 127
+- runtime_apply_accepted: 127
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -62,7 +62,7 @@ blocker_reason: Behavior configuration mismatch for inference mode
 
 ## Console
 - unity_console_errors: 0
-- unity_console_warnings: 3
+- unity_console_warnings: 2
 - warning_fewer_observations_0_detected: false
 - warning_heuristic_not_implemented_detected: false
 - timeout_error_log_count: 0
@@ -75,4 +75,4 @@ blocker_reason: Behavior configuration mismatch for inference mode
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-06-02T02:07:35.8964037Z
+generated_at_utc: 2026-06-02T10:05:53.3497565Z
