@@ -249,10 +249,10 @@ MonoBehaviour:
   _trainingBootstrap: {fileID: 1539652541}
   _showDiagnostics: 1
   _hotkeysEnabled: 1
-  _defaultSpeed: 1
-  _speedHalf: 0.5
-  _speedQuarter: 0.25
-  _speedTenth: 0.1
+  _normalStepsPerSecond: 5
+  _slowStepsPerSecond: 2
+  _fastStepsPerSecond: 10
+  _debugStepsPerSecond: 20
   _pauseKey: 32
   _speed1xKey: 49
   _speedHalfKey: 50
@@ -1947,7 +1947,8 @@ MonoBehaviour:
   _logRlLoopDiagnostics: 0
   _autoStartOnPlay: 0
   _autoStepInFixedUpdate: 1
-  _decisionTickIntervalSeconds: 0
+  _decisionTickIntervalSeconds: 0.2
+  _maxAutomaticStepsPerFixedUpdate: 3
   _useHeuristicAI: 1
   _heuristicExecutionPath: 1
   _logLifecycleEvents: 0

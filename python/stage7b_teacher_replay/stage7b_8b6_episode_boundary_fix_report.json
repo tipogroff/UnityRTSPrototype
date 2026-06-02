@@ -10,7 +10,7 @@
     "decision_requester_enabled": false,
     "decision_period": 0,
     "take_actions_between_decisions": false,
-    "teacher_replay_orchestrator_present": false,
+    "teacher_replay_orchestrator_present": true,
     "teacher_replay_orchestrator_enabled": false,
     "student_teacher_replay_orchestrator_is_null": true,
     "manual_loop_enabled": false,
@@ -66,12 +66,12 @@
     "trainer_controlled_kick_decision_request_count": 0,
     "application_is_playing": true,
     "time_scale": 1.0,
-    "academy_step_count": 298,
+    "academy_step_count": 0,
     "current_decision_source": "unknown",
     "decision_requester_disabled_by_stage7b": false,
     "suspected_blocker": "agent_not_participating_decision_requester_disabled",
     "timeout_phase_classification": "before_unity_connect_before_on_episode_begin",
-    "last_lifecycle_event": "StudentMlAgent.CollectObservations.exit",
+    "last_lifecycle_event": "MlAgentsTrainingBootstrap.Awake.exit",
     "lifecycle_trace_path": "python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl",
-    "generated_utc": "2026-06-02T17:53:48.8837835Z"
+    "generated_utc": "2026-06-02T18:25:04.5652337Z"
 }

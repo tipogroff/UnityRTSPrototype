@@ -6,7 +6,7 @@ trainer_connected: false
 behavior_name_runtime: unknown
 behavior_type_runtime: unknown
 decision_requester_enabled: false
-teacher_replay_orchestrator_present: false
+teacher_replay_orchestrator_present: true
 teacher_replay_orchestrator_enabled: false
 student_teacher_replay_orchestrator_is_null: true
 
@@ -41,7 +41,7 @@ student_teacher_replay_orchestrator_is_null: true
 
 ## Timeout Classification
 - timeout_phase_classification: before_unity_connect_before_on_episode_begin
-- last_lifecycle_event: StudentMlAgent.CollectObservations.exit
+- last_lifecycle_event: MlAgentsTrainingBootstrap.Awake.exit
 - lifecycle_trace_path: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
 
 ## Runtime Services
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: unknown
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-06-02T17:53:48.8837835Z
+generated_utc: 2026-06-02T18:25:04.5652337Z

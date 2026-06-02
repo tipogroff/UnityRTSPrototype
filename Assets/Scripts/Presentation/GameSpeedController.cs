@@ -33,11 +33,11 @@ namespace RTS.Presentation
         [SerializeField] private bool _showDiagnostics = true;
         [SerializeField] private bool _hotkeysEnabled = true;
 
-        [Header("Speed Presets")]
-        [SerializeField] private float _defaultSpeed = 1f;
-        [SerializeField] private float _speedHalf = 0.5f;
-        [SerializeField] private float _speedQuarter = 0.25f;
-        [SerializeField] private float _speedTenth = 0.1f;
+        [Header("Simulation Step Presets")]
+        [SerializeField] private float _normalStepsPerSecond = 5f;
+        [SerializeField] private float _slowStepsPerSecond = 2f;
+        [SerializeField] private float _fastStepsPerSecond = 10f;
+        [SerializeField] private float _debugStepsPerSecond = 20f;
 
         [Header("Input")]
         [SerializeField] private KeyCode _pauseKey = KeyCode.Space;
@@ -53,9 +53,7 @@ namespace RTS.Presentation
 
         private EpisodeController _episodeController;
         private bool _isPaused;
-        private float _activeSpeed = 1f;
-        private float _baseTimeScale = 1f;
-        private float _baseFixedDeltaTime = 0.02f;
+        private float _activeStepsPerSecond = 5f;
         private bool _isActiveForCurrentMode = true;
         private bool _inputPollingActive;
         private string _lastHotkey = "none";
@@ -69,7 +67,8 @@ namespace RTS.Presentation
         private bool _keyboardCurrentExists;
         private bool _legacyInputUnavailable;
 
-        public float CurrentSpeed => _isPaused ? 0f : _activeSpeed;
+        public float CurrentSpeed => _isPaused ? 0f : _activeStepsPerSecond / Mathf.Max(0.01f, _normalStepsPerSecond);
+        public float CurrentStepsPerSecond => _isPaused ? 0f : _activeStepsPerSecond;
         public bool IsPaused => _isPaused;
         public bool HotkeysEnabled => _hotkeysEnabled;
         public bool OverlayEnabled => _showOverlay;
@@ -83,8 +82,6 @@ namespace RTS.Presentation
 
         private void Awake()
         {
-            _baseTimeScale = Mathf.Max(0f, Time.timeScale);
-            _baseFixedDeltaTime = Time.fixedDeltaTime;
             _inputBackendMode = DetectInputBackendMode();
             _inputBackendDescription = DescribeInputBackend(_inputBackendMode);
 
@@ -99,7 +96,7 @@ namespace RTS.Presentation
                 _episodeController = FindFirstObjectByType<EpisodeController>();
             }
 
-            _activeSpeed = Mathf.Max(0.01f, _defaultSpeed);
+            _activeStepsPerSecond = Mathf.Max(0.01f, _normalStepsPerSecond);
             _isActiveForCurrentMode = EvaluateModeGate();
             _legacyPollingEnabled = _inputBackendMode == InputBackendMode.LegacyOnly || _inputBackendMode == InputBackendMode.Both;
             _newInputPollingEnabled = _inputBackendMode == InputBackendMode.NewInputOnly || _inputBackendMode == InputBackendMode.Both;
@@ -107,7 +104,7 @@ namespace RTS.Presentation
 
             if (_isActiveForCurrentMode)
             {
-                ApplySpeed(_activeSpeed);
+                ApplyStepsPerSecond(_activeStepsPerSecond);
             }
             else
             {
@@ -124,11 +121,11 @@ namespace RTS.Presentation
 
             if (_isPaused)
             {
-                ApplyPauseTimeScale();
+                ApplySimulationPause();
                 return;
             }
 
-            ApplySpeed(_activeSpeed);
+            ApplyStepsPerSecond(_activeStepsPerSecond);
         }
 
         private void Update()
@@ -151,25 +148,25 @@ namespace RTS.Presentation
             if (WasKeyPressed(_speed1xKey) || WasKeyPressed(KeyCode.Keypad1))
             {
                 _lastHotkey = "1";
-                SetSpeed(_defaultSpeed);
+                SetTargetStepsPerSecond(_normalStepsPerSecond);
             }
 
             if (WasKeyPressed(_speedHalfKey) || WasKeyPressed(KeyCode.Keypad2))
             {
                 _lastHotkey = "2";
-                SetSpeed(_speedHalf);
+                SetTargetStepsPerSecond(_slowStepsPerSecond);
             }
 
             if (WasKeyPressed(_speedQuarterKey) || WasKeyPressed(KeyCode.Keypad3))
             {
                 _lastHotkey = "3";
-                SetSpeed(_speedQuarter);
+                SetTargetStepsPerSecond(_fastStepsPerSecond);
             }
 
             if (WasKeyPressed(_speedTenthKey) || WasKeyPressed(KeyCode.Keypad4))
             {
                 _lastHotkey = "4";
-                SetSpeed(_speedTenth);
+                SetTargetStepsPerSecond(_debugStepsPerSecond);
             }
 
             if (WasKeyPressed(_stepKey))
@@ -191,14 +188,19 @@ namespace RTS.Presentation
 
         public void SetSpeed(float speed)
         {
+            SetTargetStepsPerSecond(_normalStepsPerSecond * Mathf.Max(0.01f, speed));
+        }
+
+        public void SetTargetStepsPerSecond(float stepsPerSecond)
+        {
             if (!_isActiveForCurrentMode)
             {
                 return;
             }
 
-            _activeSpeed = Mathf.Max(0.01f, speed);
+            _activeStepsPerSecond = Mathf.Max(0.01f, stepsPerSecond);
             _isPaused = false;
-            ApplySpeed(_activeSpeed);
+            ApplyStepsPerSecond(_activeStepsPerSecond);
         }
 
         public void Pause()
@@ -209,7 +211,7 @@ namespace RTS.Presentation
             }
 
             _isPaused = true;
-            ApplyPauseTimeScale();
+            ApplySimulationPause();
         }
 
         public void Resume()
@@ -220,7 +222,7 @@ namespace RTS.Presentation
             }
 
             _isPaused = false;
-            ApplySpeed(_activeSpeed);
+            ApplyStepsPerSecond(_activeStepsPerSecond);
         }
 
         public void TogglePause()
@@ -262,12 +264,12 @@ namespace RTS.Presentation
 
         public void ResetSpeed()
         {
-            _activeSpeed = Mathf.Max(0.01f, _defaultSpeed);
+            _activeStepsPerSecond = Mathf.Max(0.01f, _normalStepsPerSecond);
             _isPaused = false;
 
             if (_isActiveForCurrentMode)
             {
-                ApplySpeed(_activeSpeed);
+                ApplyStepsPerSecond(_activeStepsPerSecond);
             }
             else
             {
@@ -524,23 +526,35 @@ namespace RTS.Presentation
             }
         }
 
-        private void ApplySpeed(float speed)
+        private void ApplyStepsPerSecond(float stepsPerSecond)
         {
-            float clamped = Mathf.Max(0.01f, speed);
-            Time.timeScale = clamped;
-            Time.fixedDeltaTime = _baseFixedDeltaTime * clamped;
+            ResolveEpisodeController();
+            _episodeController?.SetAutomaticSteppingPaused(false);
+            _episodeController?.SetTargetStepsPerSecond(Mathf.Max(0.01f, stepsPerSecond));
         }
 
-        private void ApplyPauseTimeScale()
+        private void ApplySimulationPause()
         {
-            Time.timeScale = 0f;
-            Time.fixedDeltaTime = _baseFixedDeltaTime * 0.01f;
+            ResolveEpisodeController();
+            _episodeController?.SetAutomaticSteppingPaused(true);
         }
 
         private void RestoreTimeDefaults()
         {
-            Time.timeScale = 1f;
-            Time.fixedDeltaTime = _baseFixedDeltaTime;
+            ResolveEpisodeController();
+            _episodeController?.SetAutomaticSteppingPaused(false);
+        }
+
+        private void ResolveEpisodeController()
+        {
+            if (_episodeController == null)
+            {
+                _episodeController = EpisodeController.Instance;
+                if (_episodeController == null)
+                {
+                    _episodeController = FindFirstObjectByType<EpisodeController>();
+                }
+            }
         }
 
         private void RefreshInputDiagnostics()
@@ -567,7 +581,7 @@ namespace RTS.Presentation
             });
 
             string mode = _isActiveForCurrentMode ? "Enabled" : "Disabled (TrainerControlled mode)";
-            string speedLabel = _isPaused ? "0.00x" : _activeSpeed.ToString("0.00") + "x";
+            string speedLabel = _isPaused ? "Paused" : _activeStepsPerSecond.ToString("0.##") + " steps/sec";
             GUILayout.Label("Mode: " + mode);
             GUILayout.Label("Controller enabled: " + enabled);
             GUILayout.Label("Input polling active: " + _inputPollingActive);
@@ -583,41 +597,40 @@ namespace RTS.Presentation
             GUILayout.Label("Input backend: " + _inputBackendDescription);
             GUILayout.Label("Update called: " + (_updateCount > 0) + " (ticks=" + _updateCount + ")");
             GUILayout.Label("Last update realtime: " + _lastUpdateRealtime.ToString("0.00"));
-            GUILayout.Label("Base timeScale@Awake: " + _baseTimeScale.ToString("0.00"));
             GUILayout.Label("Current timeScale: " + Time.timeScale.ToString("0.00"));
             GUILayout.Label("Current fixedDeltaTime: " + Time.fixedDeltaTime.ToString("0.0000"));
-            GUILayout.Label("Game speed: " + speedLabel);
+            GUILayout.Label("Simulation speed: " + speedLabel);
             GUILayout.Label("Paused: " + _isPaused);
             GUILayout.Label("Controls: Space pause/resume, 1/2/3/4 speed, N step (paused only)");
             GUILayout.Space(6f);
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("1x", GUILayout.Height(28f)))
+            if (GUILayout.Button("Normal", GUILayout.Height(28f)))
             {
-                _lastHotkey = "mouse:1x";
+                _lastHotkey = "mouse:normal";
                 _lastInputSource = "GUI";
-                SetSpeed(1f);
+                SetTargetStepsPerSecond(_normalStepsPerSecond);
             }
 
-            if (GUILayout.Button("0.5x", GUILayout.Height(28f)))
+            if (GUILayout.Button("Slow", GUILayout.Height(28f)))
             {
-                _lastHotkey = "mouse:0.5x";
+                _lastHotkey = "mouse:slow";
                 _lastInputSource = "GUI";
-                SetSpeed(_speedHalf);
+                SetTargetStepsPerSecond(_slowStepsPerSecond);
             }
 
-            if (GUILayout.Button("0.25x", GUILayout.Height(28f)))
+            if (GUILayout.Button("Fast", GUILayout.Height(28f)))
             {
-                _lastHotkey = "mouse:0.25x";
+                _lastHotkey = "mouse:fast";
                 _lastInputSource = "GUI";
-                SetSpeed(_speedQuarter);
+                SetTargetStepsPerSecond(_fastStepsPerSecond);
             }
 
-            if (GUILayout.Button("0.1x", GUILayout.Height(28f)))
+            if (GUILayout.Button("Debug", GUILayout.Height(28f)))
             {
-                _lastHotkey = "mouse:0.1x";
+                _lastHotkey = "mouse:debug";
                 _lastInputSource = "GUI";
-                SetSpeed(_speedTenth);
+                SetTargetStepsPerSecond(_debugStepsPerSecond);
             }
             GUILayout.EndHorizontal();
 

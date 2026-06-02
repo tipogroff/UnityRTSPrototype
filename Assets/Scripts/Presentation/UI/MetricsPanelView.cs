@@ -28,7 +28,7 @@ namespace RTS.Presentation.UI
             string mode = modeController != null ? modeController.CurrentMode.ToString() : "n/a";
             string humanSide = modeController != null && modeController.HasHumanSide ? modeController.HumanSide.ToString() : Owner.Neutral.ToString();
             string control = humanPlayerController != null && humanPlayerController.IsHumanControlActive ? "active" : "inactive";
-            string speed = speedController != null ? (speedController.IsPaused ? "paused" : speedController.CurrentSpeed.ToString("0.00") + "x") : "n/a";
+            string speed = speedController != null ? (speedController.IsPaused ? "paused" : speedController.CurrentStepsPerSecond.ToString("0.##") + " steps/sec") : "n/a";
             string status = commandController != null ? commandController.LastCommandStatus : "PlayerCommandController missing.";
             string rejection = commandController != null && !string.IsNullOrWhiteSpace(commandController.LastCommandRejectedReason)
                 ? commandController.LastCommandRejectedReason
