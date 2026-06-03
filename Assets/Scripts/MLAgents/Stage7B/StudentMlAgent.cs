@@ -49,6 +49,8 @@ namespace RTS.MLAgents.Stage7B
 [SerializeField] private string _decisionSchedulerTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl";
         [SerializeField] private int _stage7BMaxDecisionsPerEpisode = 256;
         [SerializeField] private bool _logRejectedActions;
+        [SerializeField] private bool _disableDecisionRequesterInInferenceOnly = true;
+        [SerializeField] private float _minInferenceDecisionIntervalSeconds = 0.2f;
 
         private MlAgentsTrainingBootstrap _bootstrap;
         private ObservationBuilder _observationBuilder;
@@ -123,6 +125,13 @@ private MlAgentsCandidateActionList _currentCandidates;
         private bool _pendingInferenceContinuousRequest;
         private int _fixedUpdatesSinceLastOnActionReceived;
         private int _lastContinuousRequestFixedTick = -1;
+        private float _lastInferenceDecisionRequestRealtime = -1000f;
+        private EpisodeController _cachedEpisodeController;
+        private bool _episodeControllerLookupAttempted;
+        private GridManager _actionApplierGrid;
+        private UnitRegistry _actionApplierRegistry;
+        private MatchManager _actionApplierMatch;
+        private ResourceManager _actionApplierResources;
         private readonly Dictionary<string, int> _runtimeRejectReasonHistogram = new Dictionary<string, int>();
         private readonly Dictionary<string, int> _schedulerSkipReasonHistogram = new Dictionary<string, int>();
         private readonly Dictionary<int, int> _candidateActionIndexHistogram = new Dictionary<int, int>();
@@ -271,6 +280,7 @@ public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
             _pendingInferenceContinuousRequest = false;
             _fixedUpdatesSinceLastOnActionReceived = 0;
             _lastContinuousRequestFixedTick = -1;
+            _lastInferenceDecisionRequestRealtime = -1000f;
             _schedulerSkipReasonHistogram.Clear();
             ClearActualCollectTraceFile();
             ClearTraceFile(_actionTraceRelativePath);
@@ -351,6 +361,7 @@ public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
             _pendingInferenceContinuousRequest = false;
             _fixedUpdatesSinceLastOnActionReceived = 0;
             _lastContinuousRequestFixedTick = -1;
+            _lastInferenceDecisionRequestRealtime = -1000f;
             _collectObservedSinceLastEpisodeBegin = false;
             Trace.RecordReset(_bootstrap != null && _bootstrap.DuplicateSpawnDetected);
             _currentCandidates = null;
@@ -545,6 +556,7 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             ApplyDecisionSourcePolicy();
             if (IsSimulationPauseActive("on_action_received_enter"))
             {
+                _pendingInferenceContinuousRequest = false;
                 _currentCandidates = null;
                 timer.Stop();
                 Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnActionReceived.paused", this, _bootstrap);
@@ -820,30 +832,25 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             return !IsSimulationPauseActive(source);
         }
 
-        private bool IsSimulationPauseActive(string source)
+private bool IsSimulationPauseActive(string source)
         {
             EpisodeController episodeController = EpisodeController.Instance;
             if (episodeController == null)
             {
-                episodeController = FindFirstObjectByType<EpisodeController>();
-            }
+                if (_cachedEpisodeController == null && !_episodeControllerLookupAttempted)
+                {
+                    _cachedEpisodeController = FindFirstObjectByType<EpisodeController>();
+                    _episodeControllerLookupAttempted = true;
+                }
 
-            if (episodeController == null || !episodeController.IsAutomaticSteppingPaused)
+                episodeController = _cachedEpisodeController;
+            }
+            else
             {
-                return false;
+                _cachedEpisodeController = episodeController;
             }
 
-            if (Time.unscaledTime - _lastPauseGateLogRealtime >= 1f)
-            {
-                _lastPauseGateLogRealtime = Time.unscaledTime;
-                int step = _bootstrap != null && _bootstrap.MatchManager != null ? _bootstrap.MatchManager.Step : -1;
-                Debug.Log(
-                    $"[PauseGate] Blocked StudentMlAgent source={source} step={step} "
-                    + $"episodeController={episodeController.GetInstanceID()} "
-                    + $"isAutomaticSteppingPaused={episodeController.IsAutomaticSteppingPaused}");
-            }
-
-            return true;
+            return episodeController != null && episodeController.IsAutomaticSteppingPaused;
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -878,7 +885,7 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.Heuristic.exit", this, _bootstrap);
         }
 
-        private void ResolveDependencies()
+private void ResolveDependencies()
         {
             if (_applicationIsQuitting
                 || !Application.isPlaying
@@ -911,7 +918,19 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
                 _candidateBuilder = new MlAgentsCandidateActionBuilder(maskBuilder);
             }
 
-            _actionApplier = new ActionApplier(grid, registry, match, resources);
+            if (_actionApplier == null
+                || _actionApplierGrid != grid
+                || _actionApplierRegistry != registry
+                || _actionApplierMatch != match
+                || _actionApplierResources != resources)
+            {
+                _actionApplier = new ActionApplier(grid, registry, match, resources);
+                _actionApplierGrid = grid;
+                _actionApplierRegistry = registry;
+                _actionApplierMatch = match;
+                _actionApplierResources = resources;
+            }
+
             _rewardCollector ??= new RuntimeRewardCollector(RewardConfig.CreateV1Defaults(), RewardCollectorOptions.CreateDefaults());
         }
 
@@ -1010,10 +1029,16 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             Trace.RecordDecisionSource(_currentDecisionSource);
         }
 
-        private bool TryActivateInferenceDecisionKick()
+private bool TryActivateInferenceDecisionKick()
         {
             if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
             {
+                return false;
+            }
+
+            if (IsSimulationPauseActive("inference_kick"))
+            {
+                _pendingInferenceContinuousRequest = false;
                 return false;
             }
 
@@ -1043,7 +1068,7 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             return true;
         }
 
-        private bool TryRequestInferenceContinuousDecision()
+private bool TryRequestInferenceContinuousDecision()
         {
             if (!_pendingInferenceContinuousRequest)
             {
@@ -1053,6 +1078,13 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
             {
                 RecordSchedulerSkip("not_inference_mode", false);
+                _pendingInferenceContinuousRequest = false;
+                return false;
+            }
+
+            if (IsSimulationPauseActive("inference_continuous"))
+            {
+                RecordSchedulerSkip("simulation_paused", false);
                 _pendingInferenceContinuousRequest = false;
                 return false;
             }
@@ -1127,7 +1159,7 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             return true;
         }
 
-        private void UpdateInferenceContinuousScheduleAfterAction(bool accepted)
+private void UpdateInferenceContinuousScheduleAfterAction(bool accepted)
         {
             if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
             {
@@ -1135,7 +1167,9 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
                 return;
             }
 
-            bool canSchedule = _bootstrap.MatchManager != null
+            bool paused = IsSimulationPauseActive("post_action_schedule_update");
+            bool canSchedule = !paused
+                && _bootstrap.MatchManager != null
                 && _bootstrap.MatchManager.Phase == MatchPhase.Running
                 && _terminalCount == 0
                 && !(TeacherReplayOrchestrator != null && TeacherReplayOrchestrator.IsActive)
@@ -1145,7 +1179,7 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             _pendingInferenceContinuousRequest = canSchedule;
             AppendDecisionSchedulerTrace(
                 "post_action_schedule_update",
-                canSchedule ? "none" : "post_action_not_schedulable",
+                canSchedule ? "none" : paused ? "simulation_paused" : "post_action_not_schedulable",
                 accepted,
                 requestedDecisionNow: false,
                 scheduledNextDecision: _pendingInferenceContinuousRequest,
@@ -1159,11 +1193,33 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
                 return true;
             }
 
-            return false;
+            return !_disableDecisionRequesterInInferenceOnly && !ShouldSuppressDecisionRequesterForInference();
         }
 
-        private void RequestDecisionWithTracking(string reason, bool schedulerRequest)
+private void RequestDecisionWithTracking(string reason, bool schedulerRequest)
         {
+            if (IsSimulationPauseActive(reason))
+            {
+                _pendingInferenceContinuousRequest = false;
+                return;
+            }
+
+            if (_bootstrap != null
+                && _bootstrap.RuntimeMode == Stage7BRuntimeMode.InferenceOnly
+                && _minInferenceDecisionIntervalSeconds > 0f)
+            {
+                float now = Time.realtimeSinceStartup;
+                if (_lastInferenceDecisionRequestRealtime > -999f
+                    && now - _lastInferenceDecisionRequestRealtime < _minInferenceDecisionIntervalSeconds)
+                {
+                    _pendingInferenceContinuousRequest = false;
+                    RecordSchedulerSkip("inference_throttled", _lastActionAccepted);
+                    return;
+                }
+
+                _lastInferenceDecisionRequestRealtime = now;
+            }
+
             using var marker = RequestDecisionMarker.Auto();
             _requestDecisionCount++;
             AppendDecisionSchedulerTrace(
@@ -1256,6 +1312,11 @@ public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
             if (_bootstrap == null || _bootstrap.RuntimeMode != Stage7BRuntimeMode.InferenceOnly)
             {
                 return false;
+            }
+
+            if (_disableDecisionRequesterInInferenceOnly)
+            {
+                return true;
             }
 
             return !_bootstrap.HasRuntimeEpisodeStarted

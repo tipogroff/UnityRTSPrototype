@@ -32,25 +32,25 @@ blocker_reason: CollectObservations did not provide full real observation withou
 
 ## Lifecycle
 - initialize_count: 3
-- on_episode_begin_count: 3
-- collect_observations_count: 4688
-- write_discrete_action_mask_count: 4684
-- on_action_received_count: 4684
+- on_episode_begin_count: 2
+- collect_observations_count: 1968
+- write_discrete_action_mask_count: 1965
+- on_action_received_count: 1965
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 3
+- inference_kick_decision_request_count: 2
 - inference_runtime_ready_observed: true
-- inference_first_ready_frame: 263
+- inference_first_ready_frame: 379
 - inference_first_ready_fixed_tick: 2
-- decision_requester_enabled_runtime: true
+- decision_requester_enabled_runtime: false
 
 ## Action Cycle
-- candidate_action_index_last: 16
+- candidate_action_index_last: 79
 - candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 4684
-- action_adapter_success_count: 4684
-- runtime_apply_attempted: 4684
-- runtime_apply_accepted: 4684
+- candidate_builder_success_count: 1965
+- action_adapter_success_count: 1965
+- runtime_apply_attempted: 1965
+- runtime_apply_accepted: 1965
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -75,4 +75,4 @@ blocker_reason: CollectObservations did not provide full real observation withou
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-06-03T20:19:29.4398514Z
+generated_at_utc: 2026-06-03T20:50:53.9866852Z
