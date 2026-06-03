@@ -96,7 +96,9 @@ namespace RTS.MLAgents.Stage7B.Editor
                 SerializedObject diagnosticsSerialized = new SerializedObject(diagnostics);
                 diagnosticsSerialized.FindProperty("_diagnosticJsonRelativePath")?.SetValue(TrainingDiagnosticJsonPath);
                 diagnosticsSerialized.FindProperty("_diagnosticMdRelativePath")?.SetValue(TrainingDiagnosticMdPath);
+                diagnosticsSerialized.FindProperty("_enableRuntimeTrainingFlowDiagnostics")?.SetValue(true);
                 diagnosticsSerialized.ApplyModifiedPropertiesWithoutUndo();
+                diagnostics.enabled = true;
                 EditorUtility.SetDirty(diagnostics);
             }
 

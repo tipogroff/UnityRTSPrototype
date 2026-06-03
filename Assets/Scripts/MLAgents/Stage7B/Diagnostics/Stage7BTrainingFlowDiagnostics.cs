@@ -16,6 +16,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         [SerializeField] private string _diagnosticJsonRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.json";
         [SerializeField] private string _diagnosticMdRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_episode_boundary_fix_report.md";
         [SerializeField] private float _writeIntervalSeconds = 1f;
+        [SerializeField] private bool _enableRuntimeTrainingFlowDiagnostics = false;
 
         private float _nextWriteTime;
         private bool _isShuttingDown;
@@ -98,13 +99,23 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             public string generated_utc;
         }
 
-        private void Start()
+private void Start()
         {
+            if (!_enableRuntimeTrainingFlowDiagnostics)
+            {
+                return;
+            }
+
             WriteSnapshot();
         }
 
-        private void Update()
+private void Update()
         {
+            if (!_enableRuntimeTrainingFlowDiagnostics)
+            {
+                return;
+            }
+
             if (Time.unscaledTime < _nextWriteTime)
             {
                 return;
@@ -114,8 +125,13 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             WriteSnapshot();
         }
 
-        private void OnDisable()
+private void OnDisable()
         {
+            if (!_enableRuntimeTrainingFlowDiagnostics)
+            {
+                return;
+            }
+
             if (_isShuttingDown || !Application.isPlaying)
             {
                 return;
@@ -132,6 +148,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private void WriteSnapshot()
         {
+            if (!_enableRuntimeTrainingFlowDiagnostics)
+            {
+                return;
+            }
+
             Snapshot snapshot = BuildSnapshot();
             if (snapshot == null)
             {

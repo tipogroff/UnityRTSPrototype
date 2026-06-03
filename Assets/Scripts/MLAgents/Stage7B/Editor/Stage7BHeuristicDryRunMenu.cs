@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using RTS.MLAgents.Stage7B.Diagnostics;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -46,6 +47,8 @@ namespace RTS.MLAgents.Stage7B.Editor
                 Debug.LogError("[Stage7B] Failed to open Week7 ML-Agents scene.");
                 return;
             }
+
+            EnableDryRunLoggerForExplicitRun();
 
             string artifactPath = GetArtifactPath();
             if (File.Exists(artifactPath))
@@ -175,6 +178,26 @@ namespace RTS.MLAgents.Stage7B.Editor
             value = string.Empty;
             return false;
         }
-    }
+    
+
+private static void EnableDryRunLoggerForExplicitRun()
+        {
+            Stage7BHeuristicDryRunLogger logger = UnityEngine.Object.FindFirstObjectByType<Stage7BHeuristicDryRunLogger>(FindObjectsInactive.Include);
+            if (logger == null)
+            {
+                var host = new GameObject("Stage7B_HeuristicDryRunLogger");
+                logger = host.AddComponent<Stage7BHeuristicDryRunLogger>();
+            }
+
+            logger.enabled = true;
+            SerializedObject serialized = new SerializedObject(logger);
+            SerializedProperty writes = serialized.FindProperty("_enableRuntimeArtifactWrites");
+            if (writes != null)
+            {
+                writes.boolValue = true;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+}
 }
 #endif

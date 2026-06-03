@@ -23,6 +23,7 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField, Min(1)] private int _aggressionWindowSteps = 100;
         [SerializeField, Min(0)] private int _maxAggressiveActionsPerWindow = 2;
         [SerializeField] private string _reportRelativePath = "python/stage7b_teacher_replay/stage7b_week7_scripted_bot_throttle_report.json";
+        [SerializeField] private bool _enableRuntimeReportWrite = false;
 
         private int _decisionAttemptCounter;
         private int _decisionExecutedCounter;
@@ -310,7 +311,7 @@ namespace RTS.MLAgents.Stage7B
             _recentAggressiveActionCount = writeIndex;
         }
 
-        public void FinalizeEpisodeAndWriteReport(string terminalReason)
+public void FinalizeEpisodeAndWriteReport(string terminalReason)
         {
             _terminalReason = string.IsNullOrWhiteSpace(terminalReason) ? "unknown" : terminalReason;
             if (_reportWrittenThisEpisode)
@@ -319,11 +320,21 @@ namespace RTS.MLAgents.Stage7B
             }
 
             _reportWrittenThisEpisode = true;
+            if (!_enableRuntimeReportWrite)
+            {
+                return;
+            }
+
             WriteReport();
         }
 
         private void WriteReport()
         {
+            if (!_enableRuntimeReportWrite)
+            {
+                return;
+            }
+
             try
             {
                 string fullPath = ResolveReportPath();

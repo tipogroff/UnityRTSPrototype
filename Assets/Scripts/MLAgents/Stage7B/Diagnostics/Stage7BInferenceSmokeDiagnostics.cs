@@ -28,6 +28,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
         [SerializeField] private string _unityModelAssetPath = "Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx";
         [SerializeField] private bool _modelCopiedIntoAssets;
         [SerializeField] private bool _modelImportSucceeded;
+        [SerializeField] private bool _enableRuntimeSmokeDiagnostics = false;
 
         private float _nextWriteTime;
         private bool _isShuttingDown;
@@ -193,23 +194,43 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             _modelImportSucceeded = importSucceeded;
         }
 
-        public void ForceWriteSnapshot()
+public void ForceWriteSnapshot()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             WriteSnapshot();
         }
 
-        private void OnEnable()
+private void OnEnable()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             Application.logMessageReceived += OnLogMessage;
         }
 
-        private void Start()
+private void Start()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             WriteSnapshot();
         }
 
-        private void Update()
+private void Update()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             if (Time.unscaledTime < _nextWriteTime)
             {
                 return;
@@ -219,8 +240,13 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             WriteSnapshot();
         }
 
-        private void OnDisable()
+private void OnDisable()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             Application.logMessageReceived -= OnLogMessage;
             if (_isShuttingDown || !Application.isPlaying)
             {
@@ -276,6 +302,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private void WriteSnapshot()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             Snapshot snapshot = BuildSnapshot();
             if (snapshot == null)
             {
@@ -632,6 +663,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private void SyncLifecycleTrace()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             string sourcePath = ResolveProjectPath(_sourceTraceRelativePath);
             string targetPath = ResolveProjectPath(_traceJsonlRelativePath);
             if (!File.Exists(sourcePath))
@@ -690,6 +726,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
 
         private void WriteAgentInventory()
         {
+            if (!_enableRuntimeSmokeDiagnostics)
+            {
+                return;
+            }
+
             AgentInventory inventory = BuildAgentInventory();
             string inventoryPath = ResolveProjectPath(_agentInventoryRelativePath);
             File.WriteAllText(inventoryPath, JsonUtility.ToJson(inventory, true), Encoding.UTF8);

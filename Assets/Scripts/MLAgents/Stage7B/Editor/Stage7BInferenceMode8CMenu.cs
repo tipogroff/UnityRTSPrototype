@@ -471,35 +471,54 @@ namespace RTS.MLAgents.Stage7B.Editor
             return (DateTime.UtcNow - started).TotalSeconds >= minSeconds;
         }
 
-        private static Stage7BInferenceSmokeDiagnostics EnsureDiagnosticsComponent(
+private static Stage7BInferenceSmokeDiagnostics EnsureDiagnosticsComponent(
             MlAgentsTrainingBootstrap bootstrap,
             StudentMlAgent student)
         {
+            Stage7BInferenceSmokeDiagnostics diagnostics = null;
             if (bootstrap != null)
             {
-                Stage7BInferenceSmokeDiagnostics onBootstrap = bootstrap.GetComponent<Stage7BInferenceSmokeDiagnostics>();
-                if (onBootstrap != null)
+                diagnostics = bootstrap.GetComponent<Stage7BInferenceSmokeDiagnostics>();
+                if (diagnostics == null)
                 {
-                    return onBootstrap;
+                    diagnostics = bootstrap.gameObject.AddComponent<Stage7BInferenceSmokeDiagnostics>();
                 }
-
-                return bootstrap.gameObject.AddComponent<Stage7BInferenceSmokeDiagnostics>();
             }
-
-            if (student != null)
+            else if (student != null)
             {
-                Stage7BInferenceSmokeDiagnostics onStudent = student.GetComponent<Stage7BInferenceSmokeDiagnostics>();
-                if (onStudent != null)
+                diagnostics = student.GetComponent<Stage7BInferenceSmokeDiagnostics>();
+                if (diagnostics == null)
                 {
-                    return onStudent;
+                    diagnostics = student.gameObject.AddComponent<Stage7BInferenceSmokeDiagnostics>();
                 }
-
-                return student.gameObject.AddComponent<Stage7BInferenceSmokeDiagnostics>();
+            }
+            else
+            {
+                var host = new GameObject("Stage7B_InferenceSmokeDiagnostics");
+                diagnostics = host.AddComponent<Stage7BInferenceSmokeDiagnostics>();
             }
 
-            var host = new GameObject("Stage7B_InferenceSmokeDiagnostics");
-            return host.AddComponent<Stage7BInferenceSmokeDiagnostics>();
+            EnableSmokeDiagnosticsForExplicitRun(diagnostics);
+            return diagnostics;
         }
+
+private static void EnableSmokeDiagnosticsForExplicitRun(Stage7BInferenceSmokeDiagnostics diagnostics)
+        {
+            if (diagnostics == null)
+            {
+                return;
+            }
+
+            diagnostics.enabled = true;
+            SerializedObject serialized = new SerializedObject(diagnostics);
+            SerializedProperty enabledProperty = serialized.FindProperty("_enableRuntimeSmokeDiagnostics");
+            if (enabledProperty != null)
+            {
+                enabledProperty.boolValue = true;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
 
         private static void AssignModelAsset(BehaviorParameters behavior, string assetPath)
         {

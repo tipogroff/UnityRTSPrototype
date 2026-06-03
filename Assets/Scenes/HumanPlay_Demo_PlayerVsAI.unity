@@ -3299,7 +3299,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 467106698}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9abe878bc6136e46b2db0a99fb7e263, type: 3}
   m_Name: 
@@ -3608,9 +3608,12 @@ MonoBehaviour:
   _actualCollectTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_actual_collect_observations_trace.jsonl
   _actionTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_action_trace.jsonl
   _runtimeApplyTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_runtime_apply_trace.jsonl
+  _enableRuntimeTraceFiles: 0
   _decisionSchedulerTraceRelativePath: python/stage7b_teacher_replay/stage7b_9_decision_scheduler_trace.jsonl
   _stage7BMaxDecisionsPerEpisode: 6000
   _logRejectedActions: 0
+  _disableDecisionRequesterInInferenceOnly: 1
+  _minInferenceDecisionIntervalSeconds: 0.2
 --- !u!114 &477664551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11078,6 +11081,7 @@ MonoBehaviour:
   _scenarioPreset: 3
   _startResources: 60
   _stage7BRuntimeMode: 3
+  _enableResetTimeoutTrace: 0
   _forceTrainerControlledMode: 0
   _scriptedOpponentTacticProfile: 0
   _autoStartEpisodeOnStart: 0
@@ -11103,7 +11107,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539652540}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e270efbe8f08e0c498b5d9c215b0f1b1, type: 3}
   m_Name: 

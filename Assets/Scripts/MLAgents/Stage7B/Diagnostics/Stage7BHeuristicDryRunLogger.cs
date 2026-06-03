@@ -12,6 +12,7 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
     {
         [SerializeField] private string _artifactFileName = "stage7b_mlagents_heuristic_dryrun.json";
         [SerializeField] private float _writeIntervalSeconds = 2f;
+        [SerializeField] private bool _enableRuntimeArtifactWrites = false;
 
         private StudentMlAgent _agent;
         private float _timer;
@@ -21,14 +22,24 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             _agent = FindFirstObjectByType<StudentMlAgent>();
         }
 
-        private void Start()
+private void Start()
         {
+            if (!_enableRuntimeArtifactWrites)
+            {
+                return;
+            }
+
             RefreshEnvironmentVersions();
             WriteArtifact();
         }
 
-        private void Update()
+private void Update()
         {
+            if (!_enableRuntimeArtifactWrites)
+            {
+                return;
+            }
+
             _timer += Time.unscaledDeltaTime;
             if (_timer >= _writeIntervalSeconds)
             {
@@ -37,13 +48,23 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             }
         }
 
-        private void OnDisable()
+private void OnDisable()
         {
+            if (!_enableRuntimeArtifactWrites)
+            {
+                return;
+            }
+
             WriteArtifact();
         }
 
-        public void WriteArtifact()
+public void WriteArtifact()
         {
+            if (!_enableRuntimeArtifactWrites)
+            {
+                return;
+            }
+
             if (_agent == null)
             {
                 _agent = FindFirstObjectByType<StudentMlAgent>();
@@ -67,9 +88,9 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             File.WriteAllText(path, _agent.Trace.ToJson());
         }
 
-        private void RefreshEnvironmentVersions()
+private void RefreshEnvironmentVersions()
         {
-            if (_agent == null)
+            if (!_enableRuntimeArtifactWrites || _agent == null)
             {
                 return;
             }
