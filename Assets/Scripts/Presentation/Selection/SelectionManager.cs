@@ -306,7 +306,7 @@ namespace RTS.Presentation.Selection
             ResolveReferences();
             if (_unitRegistry != null)
             {
-                return _unitRegistry.GetUnitsByOwner(_humanSide);
+                return _unitRegistry.GetUnitsByOwnerReadOnly(_humanSide);
             }
 
             return FindObjectsByType<UnitRuntime>(FindObjectsSortMode.InstanceID);

@@ -16,8 +16,16 @@ namespace RTS.Presentation.UI
         private Button _heavyButton;
         private Button _rangedButton;
         private ProductionQueue _lastQueue;
+        private UnitRuntime _lastSelected;
+        private BuildingRuntime _lastBuilding;
         private bool _wasProducing;
         private string _completionStatus = string.Empty;
+        private string _lastTitle = string.Empty;
+        private string _lastStatus = string.Empty;
+        private bool _lastVisible;
+        private bool _lastBaseGroupVisible;
+        private bool _lastBarracksGroupVisible;
+        private bool _lastInteractable = true;
 
         public void Initialize(
             Text title,
@@ -55,7 +63,7 @@ namespace RTS.Presentation.UI
             bool isBase = single && selected.Type == UnitType.Base;
             bool isBarracks = single && selected.Type == UnitType.Barracks;
             bool visible = isBase || isBarracks;
-            gameObject.SetActive(visible);
+            SetActiveIfChanged(gameObject, visible, ref _lastVisible);
             if (!visible)
             {
                 return;
@@ -63,20 +71,20 @@ namespace RTS.Presentation.UI
 
             if (_title != null)
             {
-                _title.text = isBase ? "Base Production" : isBarracks ? "Barracks Production" : "Production";
+                SetTitle(isBase ? "Base Production" : isBarracks ? "Barracks Production" : "Production");
             }
 
             if (_baseGroup != null)
             {
-                _baseGroup.SetActive(isBase);
+                SetActiveIfChanged(_baseGroup, isBase, ref _lastBaseGroupVisible);
             }
 
             if (_barracksGroup != null)
             {
-                _barracksGroup.SetActive(isBarracks);
+                SetActiveIfChanged(_barracksGroup, isBarracks, ref _lastBarracksGroupVisible);
             }
 
-            BuildingRuntime building = selected.GetComponent<BuildingRuntime>();
+            BuildingRuntime building = GetSelectedBuilding(selected);
             ProductionQueue queue = building != null ? building.GetProductionQueue() : null;
             bool producing = queue != null && queue.IsProducing;
             if (_lastQueue == queue && _wasProducing && !producing)
@@ -90,7 +98,7 @@ namespace RTS.Presentation.UI
 
             _lastQueue = queue;
             _wasProducing = producing;
-            SetInteractable(!producing);
+            SetInteractableIfChanged(!producing);
 
             if (_status != null)
             {
@@ -105,10 +113,64 @@ namespace RTS.Presentation.UI
                 string commandStatus = !string.IsNullOrEmpty(_completionStatus)
                     ? _completionStatus
                     : commandController != null ? commandController.LastProductionCommandStatus : "No production command submitted yet.";
-                _status.text =
+                SetStatus(
                     "Resources: " + resources
                     + "\nQueue: " + queueStatus
-                    + "\nLast: " + commandStatus;
+                    + "\nLast: " + commandStatus);
+            }
+        }
+
+        private BuildingRuntime GetSelectedBuilding(UnitRuntime selected)
+        {
+            if (_lastSelected != selected)
+            {
+                _lastSelected = selected;
+                _lastBuilding = selected != null ? selected.GetComponent<BuildingRuntime>() : null;
+            }
+
+            return _lastBuilding;
+        }
+
+        private void SetTitle(string value)
+        {
+            if (_title != null && _lastTitle != value)
+            {
+                _lastTitle = value;
+                _title.text = value;
+            }
+        }
+
+        private void SetStatus(string value)
+        {
+            if (_status != null && _lastStatus != value)
+            {
+                _lastStatus = value;
+                _status.text = value;
+            }
+        }
+
+        private void SetInteractableIfChanged(bool interactable)
+        {
+            if (_lastInteractable == interactable)
+            {
+                return;
+            }
+
+            _lastInteractable = interactable;
+            SetInteractable(interactable);
+        }
+
+        private static void SetActiveIfChanged(GameObject target, bool active, ref bool lastValue)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            lastValue = active;
+            if (target.activeSelf != active)
+            {
+                target.SetActive(active);
             }
         }
 

@@ -33,7 +33,7 @@ namespace RTS.Presentation.Orders
             }
 
             int radius = Mathf.Max(0, searchRadius);
-            List<UnitRuntime> units = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetAllUnitsReadOnly();
             for (int i = 0; i < units.Count; i++)
             {
                 UnitRuntime candidate = units[i];

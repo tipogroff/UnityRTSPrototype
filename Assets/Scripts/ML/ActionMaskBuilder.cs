@@ -4,6 +4,7 @@ using System.Text;
 using RTS.Core;
 using RTS.Gameplay;
 using UnityEngine;
+using Unity.Profiling;
 
 namespace RTS.ML
 {
@@ -261,6 +262,8 @@ namespace RTS.ML
         private readonly UnitRegistry _unitRegistry;
         private readonly MatchBootstrap _matchBootstrap;
 
+        private static readonly ProfilerMarker BuildTransferCompatibleMaskMarker = new ProfilerMarker("ActionMaskBuilder.BuildMask");
+
         public ActionMaskBuilder(
             MatchManager matchManager,
             GridManager gridManager,
@@ -290,6 +293,7 @@ namespace RTS.ML
         /// </summary>
         public ActionMaskSet BuildTransferCompatibleMask(Owner playerId, bool noOpOnlyWhenNotRunning = true)
         {
+            using var marker = BuildTransferCompatibleMaskMarker.Auto();
             long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.LegalMaskBuild);
             var maskSet = new ActionMaskSet(playerId)
             {
@@ -573,7 +577,7 @@ namespace RTS.ML
 
         private bool HasAliveBarracks(Owner owner)
         {
-            var units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             for (int i = 0; i < units.Count; i++)
             {
                 UnitRuntime unit = units[i];

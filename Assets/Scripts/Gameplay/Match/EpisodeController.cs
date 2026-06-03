@@ -11,6 +11,7 @@ using UnityEngine;
 using RTS.Core;
 using RTS.Logging;
 using RTS.ML;
+using Unity.Profiling;
 
 namespace RTS.Gameplay
 {
@@ -77,8 +78,20 @@ namespace RTS.Gameplay
         private RuntimeRewardCollector _runtimeRewardCollector;
         private MlPolicyPipelineFacade _policyPipelineFacade;
         private RlLoopCoordinator _rlLoopCoordinator;
+        private IDecisionSource _cachedDecisionSource;
+        private HeuristicPolicyAdapter _cachedDecisionHeuristicAdapter;
+        private HeuristicDriver _cachedDecisionHeuristicDriver;
+        private Week6StudentPolicyAdapter _cachedDecisionStudentAdapter;
+        private bool _cachedEnableWeek6StudentMatchControl;
+        private Week6PlayerControlMode _cachedPlayer1DecisionMode;
+        private Week6PlayerControlMode _cachedPlayer2DecisionMode;
+        private bool _cachedUseHeuristicAI;
+        private HeuristicExecutionPath _cachedHeuristicExecutionPath;
         private float _decisionTickAccumulatorSeconds;
         private bool _automaticSteppingPaused;
+
+        private static readonly ProfilerMarker FixedUpdateMarker = new ProfilerMarker("EpisodeController.FixedUpdate");
+        private static readonly ProfilerMarker StepMatchWithHeuristicsMarker = new ProfilerMarker("EpisodeController.StepMatchWithHeuristics");
 
         public RewardStepTrace LastRewardStepTrace { get; private set; }
         public RewardBreakdown LastRewardBreakdown { get; private set; }
@@ -156,6 +169,7 @@ namespace RTS.Gameplay
 
         private void FixedUpdate()
         {
+            using var marker = FixedUpdateMarker.Auto();
             if (!_autoStepInFixedUpdate || !_episodeRunning)
             {
                 return;
@@ -339,6 +353,7 @@ namespace RTS.Gameplay
         /// </summary>
         private bool StepMatchWithHeuristics()
         {
+            using var marker = StepMatchWithHeuristicsMarker.Auto();
             if (_matchManager == null)
             {
                 return false;
@@ -411,11 +426,22 @@ namespace RTS.Gameplay
         {
             if (_enableWeek6StudentMatchControl)
             {
-                return new Week6ConfiguredDecisionSource(
-                    _heuristicPolicyAdapter,
-                    _week6StudentPolicyAdapter,
-                    _player1DecisionMode,
-                    _player2DecisionMode);
+                if (_cachedDecisionSource == null
+                    || !_cachedEnableWeek6StudentMatchControl
+                    || _cachedDecisionHeuristicAdapter != _heuristicPolicyAdapter
+                    || _cachedDecisionStudentAdapter != _week6StudentPolicyAdapter
+                    || _cachedPlayer1DecisionMode != _player1DecisionMode
+                    || _cachedPlayer2DecisionMode != _player2DecisionMode)
+                {
+                    _cachedDecisionSource = new Week6ConfiguredDecisionSource(
+                        _heuristicPolicyAdapter,
+                        _week6StudentPolicyAdapter,
+                        _player1DecisionMode,
+                        _player2DecisionMode);
+                    CaptureDecisionSourceCacheKey();
+                }
+
+                return _cachedDecisionSource;
             }
 
             if (!_useHeuristicAI)
@@ -428,18 +454,56 @@ namespace RTS.Gameplay
                 case HeuristicExecutionPath.Day5PolicyPipeline:
                     if (_heuristicPolicyAdapter != null)
                     {
-                        return new BaselineDecisionSource(_heuristicPolicyAdapter);
+                        if (_cachedDecisionSource == null
+                            || _cachedEnableWeek6StudentMatchControl
+                            || _cachedUseHeuristicAI != _useHeuristicAI
+                            || _cachedHeuristicExecutionPath != _heuristicExecutionPath
+                            || _cachedDecisionHeuristicAdapter != _heuristicPolicyAdapter)
+                        {
+                            _cachedDecisionSource = new BaselineDecisionSource(_heuristicPolicyAdapter);
+                            CaptureDecisionSourceCacheKey();
+                        }
+
+                        return _cachedDecisionSource;
                     }
                     // Fallback: adapter not wired, use legacy driver to keep Play Mode usable.
-                    return _heuristicDriver != null
-                        ? (IDecisionSource)new LegacyDecisionSource(_heuristicDriver)
-                        : IdleDecisionSource.Instance;
+                    return GetLegacyDecisionSourceOrIdle();
 
                 default:
-                    return _heuristicDriver != null
-                        ? (IDecisionSource)new LegacyDecisionSource(_heuristicDriver)
-                        : IdleDecisionSource.Instance;
+                    return GetLegacyDecisionSourceOrIdle();
             }
+        }
+
+        private IDecisionSource GetLegacyDecisionSourceOrIdle()
+        {
+            if (_heuristicDriver == null)
+            {
+                return IdleDecisionSource.Instance;
+            }
+
+            if (_cachedDecisionSource == null
+                || _cachedEnableWeek6StudentMatchControl
+                || _cachedUseHeuristicAI != _useHeuristicAI
+                || _cachedHeuristicExecutionPath != _heuristicExecutionPath
+                || _cachedDecisionHeuristicDriver != _heuristicDriver)
+            {
+                _cachedDecisionSource = new LegacyDecisionSource(_heuristicDriver);
+                CaptureDecisionSourceCacheKey();
+            }
+
+            return _cachedDecisionSource;
+        }
+
+        private void CaptureDecisionSourceCacheKey()
+        {
+            _cachedDecisionHeuristicAdapter = _heuristicPolicyAdapter;
+            _cachedDecisionHeuristicDriver = _heuristicDriver;
+            _cachedDecisionStudentAdapter = _week6StudentPolicyAdapter;
+            _cachedEnableWeek6StudentMatchControl = _enableWeek6StudentMatchControl;
+            _cachedPlayer1DecisionMode = _player1DecisionMode;
+            _cachedPlayer2DecisionMode = _player2DecisionMode;
+            _cachedUseHeuristicAI = _useHeuristicAI;
+            _cachedHeuristicExecutionPath = _heuristicExecutionPath;
         }
 
         public bool ApplyCommand(MatchCommand command)
@@ -468,6 +532,7 @@ namespace RTS.Gameplay
             _enableWeek6StudentMatchControl = enableStudentMatchControl;
             _player1DecisionMode = player1Mode;
             _player2DecisionMode = player2Mode;
+            _cachedDecisionSource = null;
 
             if (!ValidateWeek6ControlConfiguration(out string week6ConfigError))
             {
@@ -727,6 +792,7 @@ namespace RTS.Gameplay
             {
                 _policyPipelineFacade = null;
                 _rlLoopCoordinator = null;
+                _cachedDecisionSource = null;
             }
 
             if (_experimentLogger == null)

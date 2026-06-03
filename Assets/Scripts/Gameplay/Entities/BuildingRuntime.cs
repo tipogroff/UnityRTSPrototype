@@ -21,6 +21,7 @@ namespace RTS.Gameplay
 
         [Header("Production")]
         [SerializeField] private bool _canProduce = true;
+        [SerializeField] private bool _logProductionEvents;
 
         // ── Events ──────────────────────────────────────────────────────────────
 
@@ -73,7 +74,7 @@ namespace RTS.Gameplay
             var definition = config.GetDefinition(unitType);
             if (definition == null)
             {
-                Debug.LogWarning($"[BuildingRuntime] UnitDefinition не найден для {unitType}");
+                LogProductionWarning($"[BuildingRuntime] UnitDefinition не найден для {unitType}");
                 return false;
             }
 
@@ -81,13 +82,16 @@ namespace RTS.Gameplay
             var playerState = MatchManager.Instance?.GetPlayerState(_unitRuntime.Owner);
             if (playerState == null)
             {
-                Debug.LogWarning($"[BuildingRuntime] PlayerState не найден для {_unitRuntime.Owner}");
+                LogProductionWarning($"[BuildingRuntime] PlayerState не найден для {_unitRuntime.Owner}");
                 return false;
             }
 
             if (!playerState.CanAfford(definition.productionCost))
             {
-                Debug.Log($"[BuildingRuntime] Недостаточно ресурсов для {unitType} (нужно {definition.productionCost})");
+                if (_logProductionEvents)
+                {
+                    Debug.Log($"[BuildingRuntime] insufficient resources for {unitType} (cost {definition.productionCost})");
+                }
                 playerState.OnInsufficientResources?.Invoke(definition.productionCost);
                 return false;
             }
@@ -100,7 +104,10 @@ namespace RTS.Gameplay
             playerState.SpendResources(definition.productionCost);
             _productionQueue.StartProduction(unitType, definition);
 
-            Debug.Log($"[BuildingRuntime] {_unitRuntime.Owner} начинает производство {unitType} (время: {definition.productionTime} тиков)");
+            if (_logProductionEvents)
+            {
+                Debug.Log($"[BuildingRuntime] {_unitRuntime.Owner} starts producing {unitType} ({definition.productionTime} ticks)");
+            }
             return true;
         }
 
@@ -140,7 +147,7 @@ namespace RTS.Gameplay
             var neighborPos = FindFreeNeighborCell(buildingPos);
             if (!neighborPos.HasValue)
             {
-                Debug.LogWarning($"[BuildingRuntime] Нет свободной ячейки рядом с {buildingPos} для спавна {producedType}");
+                LogProductionWarning($"[BuildingRuntime] Нет свободной ячейки рядом с {buildingPos} для спавна {producedType}");
                 return;
             }
 
@@ -158,7 +165,7 @@ namespace RTS.Gameplay
             var spawnedUnit = factory.Spawn(producedType, _unitRuntime.Owner, neighborPos.Value);
             if (spawnedUnit == null)
             {
-                Debug.LogWarning($"[BuildingRuntime] Не удалось заспавнить {producedType} в {neighborPos.Value}");
+                LogProductionWarning($"[BuildingRuntime] Не удалось заспавнить {producedType} в {neighborPos.Value}");
                 return;
             }
             
@@ -170,7 +177,10 @@ namespace RTS.Gameplay
             }
 
             OnUnitProduced?.Invoke(producedType);
-            Debug.Log($"[BuildingRuntime] {_unitRuntime.Owner}: {producedType} произведён в {neighborPos.Value}");
+            if (_logProductionEvents)
+            {
+                Debug.Log($"[BuildingRuntime] {_unitRuntime.Owner}: produced {producedType} at {neighborPos.Value}");
+            }
         }
 
         /// <summary>
@@ -226,6 +236,14 @@ namespace RTS.Gameplay
             }
 
             return true;
+        }
+
+        private void LogProductionWarning(string message)
+        {
+            if (_logProductionEvents)
+            {
+                Debug.LogWarning(message);
+            }
         }
     }
 }

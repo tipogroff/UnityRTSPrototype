@@ -19,6 +19,7 @@ namespace RTS.Presentation.Orders
         [SerializeField] private AttackTargetAcquisitionService _attackTargets;
         [SerializeField] private GroupOrderPlanner _groupPlanner;
         [SerializeField] private GroupOrderReservationService _reservations;
+        [SerializeField] private bool _logOrderDiagnostics;
 
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _activeOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
         private readonly Dictionary<UnitRuntime, HumanUnitOrder> _visibleTerminalOrders = new Dictionary<UnitRuntime, HumanUnitOrder>();
@@ -60,26 +61,26 @@ namespace RTS.Presentation.Orders
         public bool IssueMove(UnitRuntime unit, GridPosition targetCell)
         {
             ResolveReferences();
-            Debug.Log($"[HumanMove3G1R] IssueMove invoked unit={DescribeUnit(unit)} target={targetCell} matchPhase={_matchManager?.Phase}");
+            LogOrderDiagnostic($"[HumanMove3G1R] IssueMove invoked unit={DescribeUnit(unit)} target={targetCell} matchPhase={_matchManager?.Phase}");
             if (!CanIssueMove(unit, targetCell, out string reason))
             {
-                Debug.LogWarning($"[HumanMove3G1R] IssueMove rejected reason={reason}");
+                LogOrderWarning($"[HumanMove3G1R] IssueMove rejected reason={reason}");
                 PublishFailure(unit, reason);
                 return false;
             }
 
             bool cancelledPrevious = unit != null && _activeOrders.ContainsKey(unit);
             CancelOrder(unit);
-            Debug.Log($"[HumanMove3G1R] IssueMove previous order cancelled={cancelledPrevious}");
+            LogOrderDiagnostic($"[HumanMove3G1R] IssueMove previous order cancelled={cancelledPrevious}");
             _visibleTerminalOrders.Remove(unit);
             var order = new MoveOrder(unit, Owner.Player2, targetCell, _pathfinding, _commandController, _matchManager, _reservations);
             _activeOrders[unit] = order;
             OnOrderStatusChanged?.Invoke(unit, order);
-            Debug.Log("[HumanMove3G1R] IssueMove order created; immediate prime attempted=true");
+            LogOrderDiagnostic("[HumanMove3G1R] IssueMove order created; immediate prime attempted=true");
             bool primed = order.TryPrime();
             OnOrderStatusChanged?.Invoke(unit, order);
             PublishAndRetainTerminal(unit, order);
-            Debug.Log($"[HumanMove3G1R] IssueMove prime result={primed} status={order.Status} text={order.StatusText}");
+            LogOrderDiagnostic($"[HumanMove3G1R] IssueMove prime result={primed} status={order.Status} text={order.StatusText}");
             return primed;
         }
 
@@ -118,11 +119,11 @@ namespace RTS.Presentation.Orders
         {
             ResolveReferences();
             bool cancelledPrevious = worker != null && _activeOrders.ContainsKey(worker);
-            Debug.Log($"[HumanHarvest3G2R] IssueHarvestLoop worker={DescribeUnit(worker)} carry={worker?.CarriedResources ?? 0} resourceGrid={(resource != null ? resource.GridPosition.ToString() : "<null>")} resourceAmount={resource?.CurrentResources ?? 0} previousOrderCancelled={cancelledPrevious}");
+            LogOrderDiagnostic($"[HumanHarvest3G2R] IssueHarvestLoop worker={DescribeUnit(worker)} carry={worker?.CarriedResources ?? 0} resourceGrid={(resource != null ? resource.GridPosition.ToString() : "<null>")} resourceAmount={resource?.CurrentResources ?? 0} previousOrderCancelled={cancelledPrevious}");
             if (worker == null || !worker.IsAlive || worker.Owner != Owner.Player2 || worker.Type != UnitType.Worker)
             {
                 reason = "Gather requires a living Player2 Worker.";
-                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                LogOrderWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
                 PublishFailure(worker, reason);
                 return false;
             }
@@ -130,7 +131,7 @@ namespace RTS.Presentation.Orders
             if (resource == null)
             {
                 reason = "Resource is unavailable.";
-                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                LogOrderWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
                 PublishFailure(worker, reason);
                 return false;
             }
@@ -138,7 +139,7 @@ namespace RTS.Presentation.Orders
             if (resource.IsExhausted)
             {
                 reason = "Resource is exhausted.";
-                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                LogOrderWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
                 PublishFailure(worker, reason);
                 return false;
             }
@@ -146,7 +147,7 @@ namespace RTS.Presentation.Orders
             if (_pathfinding == null || _commandController == null || _matchManager == null || _unitRegistry == null)
             {
                 reason = "Gather order services are unavailable.";
-                Debug.LogWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
+                LogOrderWarning($"[HumanHarvest3G2R] IssueHarvestLoop rejected reason={reason}");
                 PublishFailure(worker, reason);
                 return false;
             }
@@ -160,7 +161,7 @@ namespace RTS.Presentation.Orders
             OnOrderStatusChanged?.Invoke(worker, order);
             PublishAndRetainTerminal(worker, order);
             reason = primed ? string.Empty : order.FailureReason;
-            Debug.Log($"[HumanHarvest3G2R] IssueHarvestLoop accepted={primed} reason={reason} status={order.Status} text={order.StatusText}");
+            LogOrderDiagnostic($"[HumanHarvest3G2R] IssueHarvestLoop accepted={primed} reason={reason} status={order.Status} text={order.StatusText}");
             return primed;
         }
 
@@ -277,7 +278,7 @@ namespace RTS.Presentation.Orders
                 }
             }
 
-            Debug.Log($"{GroupAttackLogPrefix} GroupAttackIssue selectedUnits={selectedCount} attackCapable={attackCapableCount} areaCenter={areaCenter} areaRadius={areaRadius} acquiredEnemies={targets.Count}");
+            LogOrderDiagnostic($"{GroupAttackLogPrefix} GroupAttackIssue selectedUnits={selectedCount} attackCapable={attackCapableCount} areaCenter={areaCenter} areaRadius={areaRadius} acquiredEnemies={targets.Count}");
             if (targets.Count == 0)
             {
                 reason = "No enemy target in attack area.";
@@ -307,7 +308,7 @@ namespace RTS.Presentation.Orders
             foreach (KeyValuePair<UnitRuntime, UnitRuntime> pair in assignedTargets)
             {
                 GridPosition? preferred = preferredAttackCells[pair.Key];
-                Debug.Log($"{GroupAttackLogPrefix} Assignment attacker={DescribeUnit(pair.Key)} assignedTarget={DescribeUnit(pair.Value)} preferredCell={(preferred.HasValue ? preferred.Value.ToString() : "<none>")} planningReason={planningReason}");
+                LogOrderDiagnostic($"{GroupAttackLogPrefix} Assignment attacker={DescribeUnit(pair.Key)} assignedTarget={DescribeUnit(pair.Value)} preferredCell={(preferred.HasValue ? preferred.Value.ToString() : "<none>")} planningReason={planningReason}");
                 if (IssueAttack(pair.Key, pair.Value, preferredAttackCells[pair.Key], out _))
                 {
                     issued++;
@@ -317,7 +318,7 @@ namespace RTS.Presentation.Orders
             reason = issued > 0
                 ? $"Group attack: {issued} attackers, {targets.Count} target(s)."
                 : "No attack orders could be issued.";
-            Debug.Log($"{GroupAttackLogPrefix} GroupAttackIssued issued={issued} selectedUnits={selectedCount} attackCapable={attackCapableCount} targets={targets.Count} reason={reason}");
+            LogOrderDiagnostic($"{GroupAttackLogPrefix} GroupAttackIssued issued={issued} selectedUnits={selectedCount} attackCapable={attackCapableCount} targets={targets.Count} reason={reason}");
             return issued;
         }
 
@@ -380,14 +381,14 @@ namespace RTS.Presentation.Orders
 
         private void HandleStepCompleted(MatchStateSnapshot snapshot)
         {
-            Debug.Log($"[HumanMove3G1R] OnStepCleanupCompleted step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
-            Debug.Log($"[HumanHarvest3G2R] Step cleanup step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
+            LogOrderDiagnostic($"[HumanMove3G1R] OnStepCleanupCompleted step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
+            LogOrderDiagnostic($"[HumanHarvest3G2R] Step cleanup step={snapshot.Step} activeOrders={_activeOrders.Count} pendingAfterCleanup={snapshot.PendingCommands}");
             TickActiveOrdersAfterCompletedStep();
         }
 
         private void TickActiveOrdersAfterCompletedStep()
         {
-            Debug.Log($"[HumanMove3G1R] Deferred post-step order tick activeOrders={_activeOrders.Count}");
+            LogOrderDiagnostic($"[HumanMove3G1R] Deferred post-step order tick activeOrders={_activeOrders.Count}");
             _reservations?.BeginTick();
             _scratchUnits.Clear();
             foreach (KeyValuePair<UnitRuntime, HumanUnitOrder> pair in _activeOrders)
@@ -510,6 +511,22 @@ namespace RTS.Presentation.Orders
             return unit == null
                 ? "<null>"
                 : $"{unit.name} owner={unit.Owner} type={unit.Type} grid={unit.GridPos} alive={unit.IsAlive}";
+        }
+
+        private void LogOrderDiagnostic(string message)
+        {
+            if (_logOrderDiagnostics)
+            {
+                Debug.Log(message);
+            }
+        }
+
+        private void LogOrderWarning(string message)
+        {
+            if (_logOrderDiagnostics)
+            {
+                Debug.LogWarning(message);
+            }
         }
 
         private sealed class RejectedHumanOrder : HumanUnitOrder

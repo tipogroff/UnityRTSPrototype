@@ -140,7 +140,7 @@ namespace RTS.Gameplay
                 return 0;
             }
 
-            return registry.GetBuildingsByOwner(owner).Count;
+            return registry.GetBuildingsByOwnerReadOnly(owner).Count;
         }
 
         public int GetBaseCount(Owner owner)
@@ -159,7 +159,7 @@ namespace RTS.Gameplay
 
         private static PlayerPresence GetPresence(UnitRegistry registry, Owner owner)
         {
-            List<UnitRuntime> units = registry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = registry.GetUnitsByOwnerReadOnly(owner);
             int unitCount = 0;
             int baseCount = 0;
 

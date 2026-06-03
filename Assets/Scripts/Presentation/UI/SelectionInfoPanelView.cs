@@ -12,6 +12,12 @@ namespace RTS.Presentation.UI
         private Text _title;
         private Text _body;
         private Text _status;
+        private readonly UnitRuntime[] _singleSelection = new UnitRuntime[1];
+        private readonly Dictionary<UnitType, int> _typeCounts = new Dictionary<UnitType, int>();
+        private readonly StringBuilder _builder = new StringBuilder(256);
+        private string _lastTitle = string.Empty;
+        private string _lastBody = string.Empty;
+        private string _lastStatus = string.Empty;
 
         public void Initialize(Text title, Text body)
         {
@@ -27,7 +33,8 @@ namespace RTS.Presentation.UI
 
         public void Refresh(UnitRuntime selected)
         {
-            Refresh(selected != null ? new[] { selected } : null, selected);
+            _singleSelection[0] = selected;
+            Refresh(selected != null ? _singleSelection : null, selected);
         }
 
         public void Refresh(IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary)
@@ -40,7 +47,7 @@ namespace RTS.Presentation.UI
             int selectedCount = selectedUnits != null ? selectedUnits.Count : 0;
             if (_title != null)
             {
-                _title.text = selectedCount <= 0 ? "Selection" : BuildTitle(selectedCount, primary);
+                SetTitle(selectedCount <= 0 ? "Selection" : BuildTitle(selectedCount, primary));
             }
 
             if (_body == null)
@@ -50,27 +57,27 @@ namespace RTS.Presentation.UI
 
             if (selectedCount <= 0 || primary == null)
             {
-                _body.text = "No unit selected";
+                SetBody("No unit selected");
                 SetCommandStatus(commandController, false);
                 return;
             }
 
             if (selectedCount > 1)
             {
-                _body.text = BuildMultiSelectionText(selectedUnits, primary);
+                SetBody(BuildMultiSelectionText(selectedUnits, primary));
                 SetCommandStatus(commandController, true);
                 return;
             }
 
             UnitRuntime selected = primary;
-            _body.text =
+            SetBody(
                 "Type: " + selected.Type
                 + "\nOwner: " + selected.Owner
                 + "\nHP: " + selected.HP + "/" + selected.MaxHP
                 + (selected.Type == UnitType.Worker ? "\nCarry: " + selected.CarriedResources : string.Empty)
                 + "\nCell: " + selected.GridPos
                 + "\nFacing: " + selected.Facing
-                + "\nState: " + (selected.IsAlive ? "Ready" : "Destroyed");
+                + "\nState: " + (selected.IsAlive ? "Ready" : "Destroyed"));
             SetCommandStatus(commandController, true);
         }
 
@@ -83,13 +90,13 @@ namespace RTS.Presentation.UI
 
             if (!hasSelection)
             {
-                _status.text = string.Empty;
+                SetStatus(string.Empty);
                 return;
             }
 
-            _status.text = commandController != null
+            SetStatus(commandController != null
                 ? "Last: " + commandController.LastCommandStatus
-                : "Orders unavailable";
+                : "Orders unavailable");
         }
 
         private static string BuildTitle(int selectedCount, UnitRuntime primary)
@@ -102,9 +109,9 @@ namespace RTS.Presentation.UI
             return "Selection (" + selectedCount + ")";
         }
 
-        private static string BuildMultiSelectionText(IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary)
+        private string BuildMultiSelectionText(IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary)
         {
-            Dictionary<UnitType, int> counts = new Dictionary<UnitType, int>();
+            _typeCounts.Clear();
             int mobileCount = 0;
             for (int i = 0; i < selectedUnits.Count; i++)
             {
@@ -114,8 +121,8 @@ namespace RTS.Presentation.UI
                     continue;
                 }
 
-                counts.TryGetValue(unit.Type, out int count);
-                counts[unit.Type] = count + 1;
+                _typeCounts.TryGetValue(unit.Type, out int count);
+                _typeCounts[unit.Type] = count + 1;
                 if (unit.IsBuilding)
                 {
                     continue;
@@ -124,18 +131,52 @@ namespace RTS.Presentation.UI
                 mobileCount++;
             }
 
-            StringBuilder builder = new StringBuilder();
-            builder.Append("Selected: ").Append(selectedUnits.Count);
-            builder.Append("\nMobile units: ").Append(mobileCount);
-            builder.Append("\nPrimary: ");
-            builder.Append(primary != null ? primary.Type + " " + primary.GridPos.ToString() : "None");
-            builder.Append("\nTypes:");
-            foreach (KeyValuePair<UnitType, int> pair in counts)
+            _builder.Clear();
+            _builder.Append("Selected: ").Append(selectedUnits.Count);
+            _builder.Append("\nMobile units: ").Append(mobileCount);
+            _builder.Append("\nPrimary: ");
+            if (primary != null)
             {
-                builder.Append("\n- ").Append(pair.Key).Append(": ").Append(pair.Value);
+                _builder.Append(primary.Type).Append(' ').Append(primary.GridPos);
+            }
+            else
+            {
+                _builder.Append("None");
+            }
+            _builder.Append("\nTypes:");
+            foreach (KeyValuePair<UnitType, int> pair in _typeCounts)
+            {
+                _builder.Append("\n- ").Append(pair.Key).Append(": ").Append(pair.Value);
             }
 
-            return builder.ToString();
+            return _builder.ToString();
+        }
+
+        private void SetTitle(string value)
+        {
+            if (_title != null && _lastTitle != value)
+            {
+                _lastTitle = value;
+                _title.text = value;
+            }
+        }
+
+        private void SetBody(string value)
+        {
+            if (_body != null && _lastBody != value)
+            {
+                _lastBody = value;
+                _body.text = value;
+            }
+        }
+
+        private void SetStatus(string value)
+        {
+            if (_status != null && _lastStatus != value)
+            {
+                _lastStatus = value;
+                _status.text = value;
+            }
         }
     }
 }

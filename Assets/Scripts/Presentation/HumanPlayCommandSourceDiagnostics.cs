@@ -50,6 +50,7 @@ namespace RTS.Presentation
         private const float RetentionWindowSeconds = 30f;
         private static readonly List<CommandRecord> Records = new List<CommandRecord>(128);
         private static readonly Stack<string> SourceStack = new Stack<string>(8);
+        private static bool s_logCommands;
 
         private readonly struct CommandRecord
         {
@@ -176,14 +177,17 @@ namespace RTS.Presentation
             string reasonSuffix = string.IsNullOrWhiteSpace(rejectionReason)
                 ? string.Empty
                 : $" rejectionReason={rejectionReason}";
-            Debug.Log(
-                "[HumanPlayCommandSourceDiagnostics] "
-                + outcome
-                + $" owner={command.Owner} action={command.ActionType} unit={command.UnitPosition}"
-                + $" source={source} frame={record.Frame} mode={currentMode} humanSide={humanSide}"
-                + $" humanControlActive={humanControlActive} enableStudentMatchControl={enableStudentMatchControl}"
-                + $" p1Mode={player1DecisionMode} p2Mode={player2DecisionMode}"
-                + reasonSuffix);
+            if (s_logCommands)
+            {
+                Debug.Log(
+                    "[HumanPlayCommandSourceDiagnostics] "
+                    + outcome
+                    + $" owner={command.Owner} action={command.ActionType} unit={command.UnitPosition}"
+                    + $" source={source} frame={record.Frame} mode={currentMode} humanSide={humanSide}"
+                    + $" humanControlActive={humanControlActive} enableStudentMatchControl={enableStudentMatchControl}"
+                    + $" p1Mode={player1DecisionMode} p2Mode={player2DecisionMode}"
+                    + reasonSuffix);
+            }
         }
 
         public static HumanPlayCommandDiagnosticsSnapshot GetSnapshot(float windowSeconds)

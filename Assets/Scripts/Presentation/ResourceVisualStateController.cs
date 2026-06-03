@@ -50,7 +50,7 @@ namespace RTS.Presentation
             }
 
             _scratchResources.Clear();
-            List<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             for (int i = 0; i < allUnits.Count; i++)
             {
                 UnitRuntime unit = allUnits[i];

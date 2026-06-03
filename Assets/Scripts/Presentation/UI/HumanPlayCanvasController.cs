@@ -7,6 +7,7 @@ using RTS.Presentation.Selection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Unity.Profiling;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -81,8 +82,11 @@ namespace RTS.Presentation.UI
         private Text _settingsStatus;
         private bool _hasObservedManualUiMode;
         private bool _wasPlayer2ManualMode;
+        private SelectionManager _selectionBoxBoundManager;
         private float _nextRefresh;
         private ResourceNode _hoveredResource;
+
+        private static readonly ProfilerMarker UpdateHudMarker = new ProfilerMarker("HumanPlayCanvasController.UpdateHud");
 
         public bool IsCameraInputBlocked =>
             (_pauseMenu != null && _pauseMenu.gameObject.activeSelf)
@@ -470,6 +474,7 @@ namespace RTS.Presentation.UI
 
         private void Refresh(bool force)
         {
+            using var marker = UpdateHudMarker.Auto();
             UnitRuntime selected = _selectionManager != null
                 ? _selectionManager.PrimarySelectedUnit
                 : _selectionController != null ? _selectionController.SelectedUnit : null;
@@ -574,9 +579,10 @@ namespace RTS.Presentation.UI
             _humanPlayerController ??= FindFirstObjectByType<HumanPlayerController>();
             _selectionController ??= FindFirstObjectByType<PlayerSelectionController>();
             _selectionManager ??= FindFirstObjectByType<SelectionManager>();
-            if (_selectionManager != null && _selectionBoxView != null)
+            if (_selectionManager != null && _selectionBoxView != null && _selectionBoxBoundManager != _selectionManager)
             {
                 _selectionManager.SetSelectionBoxView(_selectionBoxView);
+                _selectionBoxBoundManager = _selectionManager;
             }
 
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();

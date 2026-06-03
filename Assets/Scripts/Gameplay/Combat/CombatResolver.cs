@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
 using RTS.Presentation;
+using Unity.Profiling;
 
 namespace RTS.Gameplay
 {
@@ -25,17 +26,22 @@ namespace RTS.Gameplay
         private readonly UnitRegistry _unitRegistry;
         private readonly GridManager _gridManager;
         private readonly MatchManager _matchManager;
+        private readonly bool _logCombatEvents;
+
+        private static readonly ProfilerMarker ResolveCombatTickMarker = new ProfilerMarker("CombatResolver.ResolveCombatTick");
 
         public CombatResolver(
             GameConfig config,
             UnitRegistry unitRegistry,
             GridManager gridManager,
-            MatchManager matchManager)
+            MatchManager matchManager,
+            bool logCombatEvents = false)
         {
             _config = config;
             _unitRegistry = unitRegistry;
             _gridManager = gridManager;
             _matchManager = matchManager;
+            _logCombatEvents = logCombatEvents;
         }
 
         /// <summary>
@@ -44,9 +50,10 @@ namespace RTS.Gameplay
         /// </summary>
         public int ResolveCombatTick(ISet<UnitRuntime> skipAttackers = null)
         {
+            using var marker = ResolveCombatTickMarker.Auto();
             if (_config == null || _unitRegistry == null) return 0;
 
-            var unitsSnapshot = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> unitsSnapshot = _unitRegistry.GetAllUnitsReadOnly();
             int attacksResolved = 0;
 
             foreach (var attacker in unitsSnapshot)
@@ -98,7 +105,10 @@ namespace RTS.Gameplay
             var attackerDef = _config.GetDefinition(attacker.Type);
             if (attackerDef == null) return false;
 
-            Debug.Log($"[CombatResolver] {attacker.Owner}.{attacker.Type} атакует {target.Owner}.{target.Type} с уроном {attackerDef.attackDamage} на дистанции {GetDistance(attacker.GridPos, target.GridPos)}");
+            if (_logCombatEvents)
+            {
+                Debug.Log($"[CombatResolver] {attacker.Owner}.{attacker.Type} attacks {target.Owner}.{target.Type} damage={attackerDef.attackDamage} distance={GetDistance(attacker.GridPos, target.GridPos)}");
+            }
 
             TryGetVisualBridge(attacker)?.OnVisualAttack();
             TryGetVisualBridge(target)?.OnVisualHit();
@@ -112,7 +122,7 @@ namespace RTS.Gameplay
             return true;
         }
 
-        private UnitRuntime FindTargetInRange(UnitRuntime attacker, List<UnitRuntime> unitsSnapshot)
+        private UnitRuntime FindTargetInRange(UnitRuntime attacker, IReadOnlyList<UnitRuntime> unitsSnapshot)
         {
             var attackerDef = _config.GetDefinition(attacker.Type);
             if (attackerDef == null) return null;
@@ -166,7 +176,10 @@ namespace RTS.Gameplay
         {
             if (deadUnit == null) return;
 
-            Debug.Log($"[CombatResolver] {deadUnit.Owner}.{deadUnit.Type} уничтожен игроком {killerOwner} на клетке {deadUnit.GridPos}");
+            if (_logCombatEvents)
+            {
+                Debug.Log($"[CombatResolver] {deadUnit.Owner}.{deadUnit.Type} destroyed by {killerOwner} at {deadUnit.GridPos}");
+            }
 
             TryGetVisualBridge(deadUnit)?.OnVisualDeath();
             VisualDeathPlaybackSpawner.TrySpawn(deadUnit, out _, out _);

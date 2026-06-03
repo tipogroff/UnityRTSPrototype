@@ -15,6 +15,7 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using Unity.Profiling;
 
 namespace RTS.MLAgents.Stage7B
 {
@@ -29,6 +30,11 @@ namespace RTS.MLAgents.Stage7B
         private const string DecisionSourceDecisionRequesterWatchdogManualFallback = "decision_requester_watchdog_manual_fallback";
         private const string DecisionSourceNone = "none";
         private const int DecisionRequesterWatchdogFixedUpdateThreshold = 8;
+
+        private static readonly ProfilerMarker FixedUpdateMarker = new ProfilerMarker("StudentMlAgent.FixedUpdate");
+        private static readonly ProfilerMarker CollectObservationsMarker = new ProfilerMarker("StudentMlAgent.CollectObservations");
+        private static readonly ProfilerMarker OnActionReceivedMarker = new ProfilerMarker("StudentMlAgent.OnActionReceived");
+        private static readonly ProfilerMarker RequestDecisionMarker = new ProfilerMarker("StudentMlAgent.RequestDecision");
 
         [Header("Stage7B")]
         [SerializeField] private Owner _playerPerspective = Owner.Player1;
@@ -356,6 +362,7 @@ namespace RTS.MLAgents.Stage7B
 
         private void FixedUpdate()
         {
+            using var marker = FixedUpdateMarker.Auto();
             ApplyDecisionSourcePolicy();
             UpdateDecisionRequesterWatchdog();
             _fixedUpdatesSinceLastOnActionReceived++;
@@ -418,6 +425,7 @@ namespace RTS.MLAgents.Stage7B
 
         public override void CollectObservations(VectorSensor sensor)
         {
+            using var marker = CollectObservationsMarker.Auto();
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.CollectObservations.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
@@ -526,6 +534,7 @@ namespace RTS.MLAgents.Stage7B
 
         public override void OnActionReceived(ActionBuffers actions)
         {
+            using var marker = OnActionReceivedMarker.Auto();
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnActionReceived.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
@@ -1151,6 +1160,7 @@ namespace RTS.MLAgents.Stage7B
 
         private void RequestDecisionWithTracking(string reason, bool schedulerRequest)
         {
+            using var marker = RequestDecisionMarker.Auto();
             _requestDecisionCount++;
             AppendDecisionSchedulerTrace(
                 "request_decision_called",

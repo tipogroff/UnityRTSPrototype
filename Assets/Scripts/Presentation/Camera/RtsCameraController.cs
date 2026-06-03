@@ -147,7 +147,7 @@ namespace RTS.Presentation.CameraControls
                 return GetFallbackCenter();
             }
 
-            List<UnitRuntime> units = registry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = registry.GetUnitsByOwnerReadOnly(owner);
             UnitRuntime firstAlive = null;
             for (int i = 0; i < units.Count; i++)
             {

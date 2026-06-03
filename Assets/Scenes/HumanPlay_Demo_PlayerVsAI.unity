@@ -1686,6 +1686,7 @@ MonoBehaviour:
   _enableOnlyInManualPlayMode: 0
   _trainingBootstrap: {fileID: 1539652541}
   _showDiagnostics: 1
+  _logPauseDiagnostics: 1
   _hotkeysEnabled: 1
   _normalStepsPerSecond: 5
   _slowStepsPerSecond: 2
@@ -1815,6 +1816,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Presentation.HumanPlayModeController
   _episodeController: {fileID: 0}
+  _gameSpeedController: {fileID: 0}
   _trainingBootstrap: {fileID: 1539652541}
   _cameraController: {fileID: 0}
   _preferredAiMode: 2

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
 using RTS.Gameplay;
+using Unity.Profiling;
 
 namespace RTS.ML
 {
@@ -136,6 +137,8 @@ namespace RTS.ML
         private Dictionary<GridPosition, ResourceNode> _resourcesByPosition;
         private List<UnitRuntime> _allUnits;
 
+        private static readonly ProfilerMarker BuildObservationMarker = new ProfilerMarker("ObservationBuilder.BuildObservation");
+
         public ObservationBuilder(
             GridManager gridManager,
             UnitRegistry unitRegistry,
@@ -231,6 +234,7 @@ namespace RTS.ML
         /// </summary>
         public float[] BuildObservation(Owner playerId, ObservationMode mode = ObservationMode.LegacyGymCompatible)
         {
+            using var marker = BuildObservationMarker.Auto();
             long perfStart = Stage6B3PerformanceCounters.Begin(Stage6B3PerfMetric.ObservationBuild);
 
             if (playerId == Owner.Neutral)
@@ -653,7 +657,7 @@ namespace RTS.ML
             Dictionary<GridPosition, ResourceNode> outResourcesByPos)
         {
             // Загрузить все юниты
-            outAllUnits.AddRange(_unitRegistry.GetAllUnits());
+            outAllUnits.AddRange(_unitRegistry.GetAllUnitsReadOnly());
 
             // Заполнить словарь юнитов по позициям
             foreach (var unit in outAllUnits)
