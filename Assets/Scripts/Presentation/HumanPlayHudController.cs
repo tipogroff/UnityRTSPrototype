@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
 using RTS.ML;
@@ -503,7 +504,7 @@ namespace RTS.Presentation
             }
 
             int count = 0;
-            var units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             for (int i = 0; i < units.Count; i++)
             {
                 UnitRuntime unit = units[i];

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
 using RTS.Presentation;
+using Unity.Profiling;
 
 namespace RTS.Gameplay
 {
@@ -352,6 +353,9 @@ namespace RTS.Gameplay
 
         [Header("Debug")]
         [SerializeField] private bool _logStepEvents;
+        [SerializeField] private bool _logHumanMoveDiagnostics;
+        [SerializeField] private bool _logProductionDiagnostics;
+        [SerializeField] private bool _logLifecycleDiagnostics;
 
         public MatchPhase Phase { get; private set; } = MatchPhase.Idle;
         public int Step { get; private set; }
@@ -374,10 +378,18 @@ namespace RTS.Gameplay
         private readonly List<ResolvedCommand> _productionCommands = new List<ResolvedCommand>(64);
         private readonly List<ResolvedCommand> _combatCommands = new List<ResolvedCommand>(64);
         private readonly Dictionary<UnitRuntime, MatchCommand> _lastAppliedCommandByUnit = new Dictionary<UnitRuntime, MatchCommand>(128);
+        private readonly HashSet<UnitRuntime> _assignedUnitsScratch = new HashSet<UnitRuntime>();
+        private readonly HashSet<UnitRuntime> _commandedAttackersScratch = new HashSet<UnitRuntime>();
 
         private int _acceptedCommandsThisStep;
         private int _invalidCommandsThisStep;
         private CombatResolver _combatResolver;
+
+        private static readonly ProfilerMarker StepMatchMarker = new ProfilerMarker("MatchManager.StepMatch");
+        private static readonly ProfilerMarker ProcessCommandPhaseMarker = new ProfilerMarker("MatchManager.ProcessCommandPhase");
+        private static readonly ProfilerMarker MovementPhaseMarker = new ProfilerMarker("MatchManager.ExecuteMovementPhase");
+        private static readonly ProfilerMarker ProductionPhaseMarker = new ProfilerMarker("MatchManager.ExecuteProductionPhase");
+        private static readonly ProfilerMarker CombatPhaseMarker = new ProfilerMarker("MatchManager.ExecuteCombatPhase");
 
         public System.Action<Owner> OnMatchEnded;
         public System.Action<MatchResolution> OnMatchResolved;
@@ -478,6 +490,7 @@ namespace RTS.Gameplay
                 return false;
             }
 
+            using var stepMarker = StepMatchMarker.Auto();
             ResolveReferences();
             LogPendingHumanMoves("StepMatch begin");
 
@@ -561,7 +574,7 @@ namespace RTS.Gameplay
             }
 
             _pendingCommands.Add(command);
-            if (command.Owner == Owner.Player2 && command.ActionType == UnitActionType.Move)
+            if (_logHumanMoveDiagnostics && command.Owner == Owner.Player2 && command.ActionType == UnitActionType.Move)
             {
                 Debug.Log($"[HumanMove3G1R] MatchManager queued Player2 Move actor={command.UnitPosition} direction={command.Direction} pendingCount={_pendingCommands.Count}");
             }
@@ -570,6 +583,11 @@ namespace RTS.Gameplay
 
         private void LogPendingHumanMoves(string stage)
         {
+            if (!_logHumanMoveDiagnostics)
+            {
+                return;
+            }
+
             for (int i = 0; i < _pendingCommands.Count; i++)
             {
                 MatchCommand command = _pendingCommands[i];
@@ -584,6 +602,11 @@ namespace RTS.Gameplay
 
         private void LogPendingHumanMoveResults()
         {
+            if (!_logHumanMoveDiagnostics)
+            {
+                return;
+            }
+
             for (int i = 0; i < _movementCommands.Count; i++)
             {
                 ResolvedCommand resolved = _movementCommands[i];
@@ -719,13 +742,14 @@ namespace RTS.Gameplay
 
             MatchResolution resolution = new MatchResolution(true, winner, reason, Step, EndReasonDetails);
 
-            Debug.Log($"[MatchManager] Match ended. Winner={winner}, Reason={reason}, Step={Step}");
+            LogLifecycleDiagnostic($"[MatchManager] Match ended. Winner={winner}, Reason={reason}, Step={Step}");
             OnMatchResolved?.Invoke(resolution);
             OnMatchEnded?.Invoke(winner);
         }
 
         private void ProcessCommandPhase()
         {
+            using var marker = ProcessCommandPhaseMarker.Auto();
             ClearPhaseCommandBuffers();
 
             if (_pendingCommands.Count == 0)
@@ -733,7 +757,7 @@ namespace RTS.Gameplay
                 return;
             }
 
-            var assignedUnits = new HashSet<UnitRuntime>();
+            _assignedUnitsScratch.Clear();
 
             for (int i = 0; i < _pendingCommands.Count; i++)
             {
@@ -744,7 +768,7 @@ namespace RTS.Gameplay
                     continue;
                 }
 
-                if (!assignedUnits.Add(unit))
+                if (!_assignedUnitsScratch.Add(unit))
                 {
                     RejectCommand(command, "Unit already has a command this step.");
                     continue;
@@ -846,6 +870,7 @@ namespace RTS.Gameplay
 
         private void ExecuteMovementPhase()
         {
+            using var marker = MovementPhaseMarker.Auto();
             if (_gridManager == null || _movementCommands.Count == 0)
             {
                 return;
@@ -1064,6 +1089,7 @@ namespace RTS.Gameplay
 
         private void ExecuteProductionPhase()
         {
+            using var marker = ProductionPhaseMarker.Auto();
             GameConfig config = GetActiveConfig();
 
             for (int i = 0; i < _productionCommands.Count; i++)
@@ -1080,7 +1106,7 @@ namespace RTS.Gameplay
                 return;
             }
 
-            List<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             for (int i = 0; i < allUnits.Count; i++)
             {
                 UnitRuntime unit = allUnits[i];
@@ -1130,7 +1156,7 @@ namespace RTS.Gameplay
             // Authoritative production rule: Base→Worker, Barracks→Light/Heavy/Ranged
             if (!IsBuildingAllowedToProduceUnit(buildingUnit.Type, command.Command.ProduceUnitType))
             {
-                Debug.LogWarning($"[MatchManager] {buildingUnit.Type} cannot produce {command.Command.ProduceUnitType} " +
+                LogProductionWarning($"[MatchManager] {buildingUnit.Type} cannot produce {command.Command.ProduceUnitType} " +
                                  "(production rule: Base→Worker, Barracks→Light/Heavy/Ranged)");
                 return false;
             }
@@ -1163,7 +1189,7 @@ namespace RTS.Gameplay
         {
             if (CountAliveBarracks(worker.Owner) > 0)
             {
-                Debug.LogWarning($"[MatchManager] Worker build Barracks: {worker.Owner} already has a living Barracks");
+                LogProductionWarning($"[MatchManager] Worker build Barracks: {worker.Owner} already has a living Barracks");
                 return false;
             }
 
@@ -1171,27 +1197,27 @@ namespace RTS.Gameplay
 
             if (!_gridManager.IsInside(targetCell))
             {
-                Debug.LogWarning($"[MatchManager] Worker build Barracks: target {targetCell} out of bounds");
+                LogProductionWarning($"[MatchManager] Worker build Barracks: target {targetCell} out of bounds");
                 return false;
             }
 
             if (_gridManager.IsCellOccupied(targetCell))
             {
-                Debug.LogWarning($"[MatchManager] Worker build Barracks: target {targetCell} is occupied");
+                LogProductionWarning($"[MatchManager] Worker build Barracks: target {targetCell} is occupied");
                 return false;
             }
 
             var barracksDefinition = config.GetDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
             {
-                Debug.LogWarning("[MatchManager] Worker build Barracks: UnitDef_Barracks not configured in GameConfig");
+                LogProductionWarning("[MatchManager] Worker build Barracks: UnitDef_Barracks not configured in GameConfig");
                 return false;
             }
 
             int cost = barracksDefinition.productionCost;
             if (!CanAfford(worker.Owner, cost))
             {
-                Debug.LogWarning($"[MatchManager] Worker build Barracks: insufficient resources (need {cost})");
+                LogProductionWarning($"[MatchManager] Worker build Barracks: insufficient resources (need {cost})");
                 return false;
             }
 
@@ -1204,16 +1230,17 @@ namespace RTS.Gameplay
             {
                 // Refund on failed spawn
                 AddResources(worker.Owner, cost);
-                Debug.LogWarning($"[MatchManager] Worker build Barracks: UnitFactory spawn failed at {targetCell}");
+                LogProductionWarning($"[MatchManager] Worker build Barracks: UnitFactory spawn failed at {targetCell}");
                 return false;
             }
 
-            Debug.Log($"[MatchManager] {worker.Owner} Worker built Barracks at {targetCell} (cost: {cost})");
+            LogProductionDiagnostic($"[MatchManager] {worker.Owner} Worker built Barracks at {targetCell} (cost: {cost})");
             return true;
         }
 
         private void ExecuteCombatPhase()
         {
+            using var marker = CombatPhaseMarker.Auto();
             if (!EnsureCombatResolverReady())
             {
                 return;
@@ -1222,7 +1249,8 @@ namespace RTS.Gameplay
             HashSet<UnitRuntime> commandedAttackers = null;
             if (_combatCommands.Count > 0)
             {
-                commandedAttackers = new HashSet<UnitRuntime>(_combatCommands.Count);
+                _commandedAttackersScratch.Clear();
+                commandedAttackers = _commandedAttackersScratch;
                 for (int i = 0; i < _combatCommands.Count; i++)
                 {
                     ResolvedCommand command = _combatCommands[i];
@@ -1345,6 +1373,30 @@ namespace RTS.Gameplay
             }
 
             return true;
+        }
+
+        private void LogProductionDiagnostic(string message)
+        {
+            if (_logProductionDiagnostics)
+            {
+                Debug.Log(message);
+            }
+        }
+
+        private void LogProductionWarning(string message)
+        {
+            if (_logProductionDiagnostics)
+            {
+                Debug.LogWarning(message);
+            }
+        }
+
+        private void LogLifecycleDiagnostic(string message)
+        {
+            if (_logLifecycleDiagnostics)
+            {
+                Debug.Log(message);
+            }
         }
 
         private void RejectCommand(MatchCommand command, string reason, MatchCommandRejectionDiagnostics diagnostics = default)
@@ -1613,7 +1665,7 @@ namespace RTS.Gameplay
                 return;
             }
 
-            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             for (int i = 0; i < units.Count; i++)
             {
                 UnitRuntime unit = units[i];
@@ -1640,7 +1692,7 @@ namespace RTS.Gameplay
                 return 0;
             }
 
-            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             int aliveCount = 0;
             for (int i = 0; i < units.Count; i++)
             {
@@ -1660,7 +1712,7 @@ namespace RTS.Gameplay
                 return 0;
             }
 
-            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             int baseCount = 0;
             for (int i = 0; i < units.Count; i++)
             {
@@ -1681,7 +1733,7 @@ namespace RTS.Gameplay
                 return 0;
             }
 
-            List<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             int barracksCount = 0;
             for (int i = 0; i < units.Count; i++)
             {

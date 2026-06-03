@@ -16,6 +16,7 @@ namespace RTS.Presentation
     {
         [Header("References")]
         [SerializeField] private EpisodeController _episodeController;
+        [SerializeField] private GameSpeedController _gameSpeedController;
         [SerializeField] private MlAgentsTrainingBootstrap _trainingBootstrap;
         [SerializeField] private RtsCameraController _cameraController;
 
@@ -105,6 +106,7 @@ namespace RTS.Presentation
         public void StartAIvsAI()
         {
             ResolveReferences();
+            ClearPauseForModeTransition("StartAIvsAI");
 
             if (_episodeController == null)
             {
@@ -126,6 +128,7 @@ namespace RTS.Presentation
         public void StartAIvsBot()
         {
             ResolveReferences();
+            ClearPauseForModeTransition("StartAIvsBot");
 
             if (IsTrainerControlled)
             {
@@ -164,6 +167,7 @@ namespace RTS.Presentation
         public void RestartMatch()
         {
             ResolveReferences();
+            ClearPauseForModeTransition("RestartMatch");
 
             if (_state.Mode == HumanPlayMode.AIvsPlayer2)
             {
@@ -212,6 +216,9 @@ namespace RTS.Presentation
 
         public void ReturnToMenu()
         {
+            ResolveReferences();
+            ClearPauseForModeTransition("ReturnToMenu");
+
             if (_loadMenuSceneOnReturn && !string.IsNullOrWhiteSpace(_menuSceneName))
             {
                 SceneManager.LoadScene(_menuSceneName);
@@ -233,6 +240,7 @@ namespace RTS.Presentation
         private void StartHumanVsAi(Owner humanSide, HumanPlayMode mode)
         {
             ResolveReferences();
+            ClearPauseForModeTransition("StartHumanVsAi." + mode);
             LogStartupDiagnostics("StartHumanVsAi.before_configure");
 
             if (IsTrainerControlled)
@@ -331,6 +339,7 @@ namespace RTS.Presentation
                 && SceneManager.GetActiveScene().name != _menuSceneName)
             {
                 EmitDiagnostic("No explicit demo launch mode. Redirecting to main menu.");
+                ClearPauseForModeTransition("HandleMissingLaunchMode.RedirectToMainMenu");
                 Time.timeScale = 1f;
                 SceneManager.LoadScene(_menuSceneName);
                 return;
@@ -418,10 +427,25 @@ namespace RTS.Presentation
                 _trainingBootstrap = FindFirstObjectByType<MlAgentsTrainingBootstrap>();
             }
 
+            if (_gameSpeedController == null)
+            {
+                _gameSpeedController = FindFirstObjectByType<GameSpeedController>();
+            }
+
             if (_cameraController == null)
             {
                 _cameraController = FindFirstObjectByType<RtsCameraController>();
             }
+        }
+
+        private void ClearPauseForModeTransition(string source)
+        {
+            if (_gameSpeedController == null)
+            {
+                _gameSpeedController = FindFirstObjectByType<GameSpeedController>();
+            }
+
+            _gameSpeedController?.ClearAllPauseReasons(source);
         }
 
         private void FocusCameraForMode(HumanPlayMode mode, Owner humanSide)

@@ -2,24 +2,24 @@
 
 final_decision: NO_GO
 ready_for_stage7b_8d_or_9: false
-blocker_code: E
-blocker_reason: Model output or candidate mapping did not complete action-cycle contract
+blocker_code: A
+blocker_reason: Model not assigned or import failed
 
 ## Model
 - onnx_source_path: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
 - unity_model_asset_path: Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx
 - model_copied_into_assets: true
 - unity_import_succeeded: true
-- model_assigned: true
-- model_asset_path_runtime: Assets/MLAgents/Models/Stage7B_RTS_Student_ImitationSmoke_010.onnx
-- behavior_type_runtime: InferenceOnly
-- behavior_name_runtime: Stage7B_RTS_Student
+- model_assigned: false
+- model_asset_path_runtime: 
+- behavior_type_runtime: missing
+- behavior_name_runtime: missing
 
 ## Observations
 - observation_length_expected: 15552
-- observation_values_written_by_agent: 15552
+- observation_values_written_by_agent: 0
 - observation_nan_count: 0
-- observation_source: ObservationBuilder/runtime_state
+- observation_source: missing_agent
 - observation_zero_padding_warning_detected: false
 - actual_collect_trace_path: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - actual_collect_calls: 6206
@@ -31,9 +31,9 @@ blocker_reason: Model output or candidate mapping did not complete action-cycle 
 - warning_padding_first_academy_step: -1
 
 ## Lifecycle
-- initialize_count: 2
+- initialize_count: 0
 - on_episode_begin_count: 0
-- collect_observations_count: 2
+- collect_observations_count: 0
 - write_discrete_action_mask_count: 0
 - on_action_received_count: 0
 - heuristic_call_count: 0
@@ -75,4 +75,4 @@ blocker_reason: Model output or candidate mapping did not complete action-cycle 
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-06-02T18:25:04.5527014Z
+generated_at_utc: 2026-06-03T17:38:54.2610834Z

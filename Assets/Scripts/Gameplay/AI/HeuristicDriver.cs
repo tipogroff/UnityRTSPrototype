@@ -84,7 +84,7 @@ namespace RTS.Gameplay
             if (_gridManager == null || _unitRegistry == null || _matchManager == null || _config == null)
                 return;
 
-            var allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             foreach (var unit in allUnits)
             {
                 if (unit == null || !unit.Model.IsAlive)
@@ -178,7 +178,7 @@ namespace RTS.Gameplay
                 return;
 
             // Проверяем текущий лимит рабочих
-            var myUnits = _unitRegistry.GetUnitsByOwner(baseUnit.Owner);
+            IReadOnlyList<UnitRuntime> myUnits = _unitRegistry.GetUnitsByOwnerReadOnly(baseUnit.Owner);
             int currentWorkerCount = 0;
             foreach (var u in myUnits)
             {
@@ -231,7 +231,7 @@ namespace RTS.Gameplay
         /// </summary>
         private UnitRuntime FindNearestBase(GridPosition from, Owner owner)
         {
-            var buildings = _unitRegistry.GetBuildingsByOwner(owner);
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry.GetBuildingsByOwnerReadOnly(owner);
             if (buildings == null || buildings.Count == 0)
                 return null;
 
@@ -287,7 +287,7 @@ namespace RTS.Gameplay
         /// </summary>
         private UnitRuntime FindNearestEnemyInRange(GridPosition from, Owner owner, int attackRange)
         {
-            var allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             if (allUnits == null || allUnits.Count == 0)
                 return null;
 
@@ -315,7 +315,7 @@ namespace RTS.Gameplay
         /// </summary>
         private UnitRuntime FindNearestEnemy(GridPosition from, Owner owner)
         {
-            var allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             if (allUnits == null || allUnits.Count == 0)
                 return null;
 

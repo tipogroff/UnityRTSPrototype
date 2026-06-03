@@ -378,6 +378,7 @@ namespace RTS.ML
         private readonly StringBuilder _logBuilder = new StringBuilder(256);
         private readonly Dictionary<int, ScriptedUnitMoveMemory> _player2MoveMemoryByUnitKey =
             new Dictionary<int, ScriptedUnitMoveMemory>();
+        private readonly List<int> _player2MoveMemoryKeysScratch = new List<int>(64);
         private readonly HashSet<int> _activePlayer2UnitKeysScratch = new HashSet<int>();
         private readonly HashSet<GridPosition> _player2ReservedTargetsScratch = new HashSet<GridPosition>();
         private readonly Queue<Player2BfsNode> _player2BfsQueueScratch = new Queue<Player2BfsNode>();
@@ -2195,7 +2196,7 @@ namespace RTS.ML
 
             if (_unitRegistry != null)
             {
-                IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(Owner.Player2);
+                IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(Owner.Player2);
                 if (units != null)
                 {
                     for (int i = 0; i < units.Count; i++)
@@ -2216,11 +2217,15 @@ namespace RTS.ML
                 return;
             }
 
-            _unitsScratch.Clear();
-            var keys = new List<int>(_player2MoveMemoryByUnitKey.Keys);
-            for (int i = 0; i < keys.Count; i++)
+            _player2MoveMemoryKeysScratch.Clear();
+            foreach (int key in _player2MoveMemoryByUnitKey.Keys)
             {
-                int key = keys[i];
+                _player2MoveMemoryKeysScratch.Add(key);
+            }
+
+            for (int i = 0; i < _player2MoveMemoryKeysScratch.Count; i++)
+            {
+                int key = _player2MoveMemoryKeysScratch[i];
                 if (!_activePlayer2UnitKeysScratch.Contains(key))
                 {
                     _player2MoveMemoryByUnitKey.Remove(key);
@@ -2263,14 +2268,13 @@ namespace RTS.ML
         private GridPosition TryGetNearestBasePosition(Owner owner, GridPosition from, out bool hasGoal)
         {
             hasGoal = false;
-            _unitsScratch.Clear();
-            _unitsScratch.AddRange(_unitRegistry.GetBuildingsByOwner(owner));
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry.GetBuildingsByOwnerReadOnly(owner);
 
             GridPosition nearestBasePos = from;
             int bestDistance = int.MaxValue;
-            for (int i = 0; i < _unitsScratch.Count; i++)
+            for (int i = 0; i < buildings.Count; i++)
             {
-                UnitRuntime building = _unitsScratch[i];
+                UnitRuntime building = buildings[i];
                 if (building == null || !building.IsAlive || building.Type != UnitType.Base)
                 {
                     continue;
@@ -2322,7 +2326,7 @@ namespace RTS.ML
         {
             hasGoal = false;
             GridPosition nearestEnemyPos = from;
-            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             if (allUnits == null || allUnits.Count == 0)
             {
                 return nearestEnemyPos;
@@ -2365,13 +2369,12 @@ namespace RTS.ML
                 return nearestEnemyBase;
             }
 
-            _unitsScratch.Clear();
-            _unitsScratch.AddRange(_unitRegistry.GetBuildingsByOwner(enemyOwner));
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry.GetBuildingsByOwnerReadOnly(enemyOwner);
 
             int bestDistance = int.MaxValue;
-            for (int i = 0; i < _unitsScratch.Count; i++)
+            for (int i = 0; i < buildings.Count; i++)
             {
-                UnitRuntime building = _unitsScratch[i];
+                UnitRuntime building = buildings[i];
                 if (building == null || !building.IsAlive || building.Type != UnitType.Base)
                 {
                     continue;
@@ -2927,14 +2930,13 @@ namespace RTS.ML
         private bool TryChooseMoveDirectionToNearestBase(Owner owner, GridPosition from, bool[] moveMask, out Direction direction)
         {
             direction = Direction.North;
-            _unitsScratch.Clear();
-            _unitsScratch.AddRange(_unitRegistry.GetBuildingsByOwner(owner));
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry.GetBuildingsByOwnerReadOnly(owner);
 
             GridPosition? nearestBasePos = null;
             int bestBaseDistance = int.MaxValue;
-            for (int i = 0; i < _unitsScratch.Count; i++)
+            for (int i = 0; i < buildings.Count; i++)
             {
-                UnitRuntime building = _unitsScratch[i];
+                UnitRuntime building = buildings[i];
                 if (building == null || building.Type != UnitType.Base)
                 {
                     continue;
@@ -2993,7 +2995,7 @@ namespace RTS.ML
         private bool TryChooseMoveDirectionToNearestEnemy(Owner owner, GridPosition from, bool[] moveMask, out Direction direction)
         {
             direction = Direction.North;
-            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnits();
+            IReadOnlyList<UnitRuntime> allUnits = _unitRegistry.GetAllUnitsReadOnly();
             if (allUnits == null || allUnits.Count == 0)
             {
                 return TryChooseDirection(moveMask, out direction);
@@ -3039,14 +3041,13 @@ namespace RTS.ML
                 return TryChooseDirection(moveMask, out direction);
             }
 
-            _unitsScratch.Clear();
-            _unitsScratch.AddRange(_unitRegistry.GetBuildingsByOwner(enemyOwner));
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry.GetBuildingsByOwnerReadOnly(enemyOwner);
 
             GridPosition? nearestEnemyBase = null;
             int bestDistance = int.MaxValue;
-            for (int i = 0; i < _unitsScratch.Count; i++)
+            for (int i = 0; i < buildings.Count; i++)
             {
-                UnitRuntime building = _unitsScratch[i];
+                UnitRuntime building = buildings[i];
                 if (building == null || !building.IsAlive || building.Type != UnitType.Base)
                 {
                     continue;
@@ -3217,7 +3218,7 @@ namespace RTS.ML
         /// </summary>
         private bool PlayerHasBarracks(Owner owner)
         {
-            List<UnitRuntime> buildings = _unitRegistry?.GetBuildingsByOwner(owner);
+            IReadOnlyList<UnitRuntime> buildings = _unitRegistry?.GetBuildingsByOwnerReadOnly(owner);
             if (buildings == null)
                 return false;
             for (int i = 0; i < buildings.Count; i++)
@@ -3640,7 +3641,7 @@ namespace RTS.ML
                 return;
             }
 
-            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwner(Owner.Player2);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(Owner.Player2);
             if (units == null || units.Count == 0)
             {
                 _centerPressureBaseIdleSteps++;
@@ -3813,7 +3814,7 @@ namespace RTS.ML
         private int CountCombatUnits(Owner owner)
         {
             int count = 0;
-            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
+            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwnerReadOnly(owner) : null;
             if (units == null)
             {
                 return 0;
@@ -3852,7 +3853,7 @@ namespace RTS.ML
             combatCount = 0;
             totalArmyCount = 0;
 
-            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwner(owner) : null;
+            IReadOnlyList<UnitRuntime> units = _unitRegistry != null ? _unitRegistry.GetUnitsByOwnerReadOnly(owner) : null;
             if (units == null)
             {
                 return;

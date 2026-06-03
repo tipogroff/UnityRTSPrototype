@@ -128,6 +128,7 @@ namespace RTS.ML
         public int RejectedActionsLastStep { get; private set; }
         public IReadOnlyList<string> RejectionReasonsLastStep => _rejectionReasonsLastStep;
         public InvalidActionAttemptLog? LastInvalidAttempt { get; private set; }
+        public bool LogInvalidAttempts { get; set; }
 
         public event System.Action<InvalidActionAttemptLog> OnInvalidActionAttempt;
 
@@ -647,7 +648,7 @@ namespace RTS.ML
 
         private bool HasAliveBarracks(Owner owner)
         {
-            var units = _unitRegistry.GetUnitsByOwner(owner);
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
             for (int i = 0; i < units.Count; i++)
             {
                 UnitRuntime unit = units[i];
@@ -785,7 +786,10 @@ namespace RTS.ML
 
             LastInvalidAttempt = logEntry;
             OnInvalidActionAttempt?.Invoke(logEntry);
-            Debug.LogWarning($"[ActionApplier][InvalidAttempt] {logEntry.ToCompactString()}");
+            if (LogInvalidAttempts)
+            {
+                Debug.LogWarning($"[ActionApplier][InvalidAttempt] {logEntry.ToCompactString()}");
+            }
         }
 
         private string ResolveSourceFormat(AgentAction action, string sourceActionFormat)

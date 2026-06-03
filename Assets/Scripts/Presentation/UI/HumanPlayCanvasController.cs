@@ -7,6 +7,7 @@ using RTS.Presentation.Selection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Unity.Profiling;
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -35,9 +36,9 @@ namespace RTS.Presentation.UI
         [SerializeField, Min(0)] private int _attackAreaRadius = 4;
 
         [Header("Colors")]
-        [SerializeField] private Color _panelColor = new Color(0.08f, 0.09f, 0.08f, 0.88f);
+        [SerializeField] private Color _panelColor = Color.white;
         [SerializeField] private Color _buttonColor = new Color(0.78f, 0.67f, 0.48f, 1f);
-        [SerializeField] private Color _textColor = new Color(0.96f, 0.92f, 0.82f, 1f);
+        [SerializeField] private Color _textColor = new Color(0.25f, 0.19f, 0.1f, 1f);
 
         private Canvas _canvas;
         private RectTransform _hudRoot;
@@ -46,7 +47,6 @@ namespace RTS.Presentation.UI
         private RectTransform _settingsPanel;
         private TopResourceBarView _topResourceBar;
         private SelectionInfoPanelView _selectionInfo;
-        private CommandPanelView _commandPanel;
         private ProductionPanelView _productionPanel;
         private MetricsPanelView _metricsPanel;
         private SelectionBoxView _selectionBoxView;
@@ -82,8 +82,11 @@ namespace RTS.Presentation.UI
         private Text _settingsStatus;
         private bool _hasObservedManualUiMode;
         private bool _wasPlayer2ManualMode;
+        private SelectionManager _selectionBoxBoundManager;
         private float _nextRefresh;
         private ResourceNode _hoveredResource;
+
+        private static readonly ProfilerMarker UpdateHudMarker = new ProfilerMarker("HumanPlayCanvasController.UpdateHud");
 
         public bool IsCameraInputBlocked =>
             (_pauseMenu != null && _pauseMenu.gameObject.activeSelf)
@@ -93,6 +96,7 @@ namespace RTS.Presentation.UI
         private void Awake()
         {
             ResolveReferences();
+            LoadDefaultKenneySprites();
             EnsureEventSystem();
             BuildHud();
             Refresh(force: true);
@@ -136,6 +140,8 @@ namespace RTS.Presentation.UI
 
         public void SetPauseMenuVisible(bool visible)
         {
+            ResolveReferences();
+
             if (_pauseMenu != null)
             {
                 _pauseMenu.gameObject.SetActive(visible);
@@ -143,11 +149,11 @@ namespace RTS.Presentation.UI
 
             if (visible)
             {
-                _speedController?.Pause();
+                PauseSimulation();
             }
-            else if (_speedController != null && _speedController.IsPaused)
+            else
             {
-                _speedController.Resume();
+                ResumeSimulation();
             }
 
             if (!visible)
@@ -161,8 +167,23 @@ namespace RTS.Presentation.UI
             SetPauseMenuVisible(false);
         }
 
+        public void StepPausedSimulation()
+        {
+            ResolveReferences();
+
+            if (_speedController != null)
+            {
+                _speedController.StepOnce();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Step skipped: GameSpeedController is missing.");
+        }
+
         public void RestartMatch()
         {
+            ResolveSimulationControllers();
+            _speedController?.ClearAllPauseReasons("HumanPlayCanvasController.RestartMatch");
             Time.timeScale = 1f;
             if (_modeController != null)
             {
@@ -178,6 +199,8 @@ namespace RTS.Presentation.UI
 
         public void ReturnToMainMenu()
         {
+            ResolveSimulationControllers();
+            _speedController?.ClearAllPauseReasons("HumanPlayCanvasController.ReturnToMainMenu");
             Time.timeScale = 1f;
             if (_sceneFlowController != null)
             {
@@ -231,100 +254,96 @@ namespace RTS.Presentation.UI
 
         private void BuildTopBar(RectTransform parent)
         {
-            RectTransform bar = CreatePanel("TopResourceBar", parent, new Vector2(0f, 58f));
-            bar.anchorMin = new Vector2(0f, 1f);
+            RectTransform bar = CreatePanel("StatusSpeedPanel", parent, new Vector2(392f, 132f));
+            bar.anchorMin = new Vector2(1f, 1f);
             bar.anchorMax = new Vector2(1f, 1f);
-            bar.offsetMin = new Vector2(16f, -72f);
-            bar.offsetMax = new Vector2(-16f, -14f);
+            bar.anchoredPosition = new Vector2(-220f, -86f);
 
-            HorizontalLayoutGroup layout = bar.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.padding = new RectOffset(14, 14, 8, 8);
-            layout.spacing = 14f;
+            VerticalLayoutGroup layout = bar.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(16, 16, 12, 12);
+            layout.spacing = 8f;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
-            layout.childForceExpandWidth = false;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
 
-            Text p1 = CreateLabel("P1", bar, 18, FontStyle.Bold, TextAnchor.MiddleLeft);
-            AddLayout(p1.gameObject, 180f, -1f);
-            Text p2 = CreateLabel("P2", bar, 18, FontStyle.Bold, TextAnchor.MiddleLeft);
-            AddLayout(p2.gameObject, 200f, -1f);
-            Text phase = CreateLabel("Phase", bar, 18, FontStyle.Normal, TextAnchor.MiddleLeft);
-            AddLayout(phase.gameObject, 210f, -1f);
-            Text step = CreateLabel("Step", bar, 18, FontStyle.Normal, TextAnchor.MiddleLeft);
-            AddLayout(step.gameObject, 260f, -1f);
+            RectTransform statusRow = CreateRect("StatusRow", bar);
+            HorizontalLayoutGroup statusLayout = statusRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            statusLayout.spacing = 10f;
+            statusLayout.childControlWidth = true;
+            statusLayout.childControlHeight = true;
+            statusLayout.childForceExpandWidth = false;
+            AddLayout(statusRow.gameObject, -1f, 34f);
 
-            GameObject spacer = new GameObject("Spacer", typeof(RectTransform), typeof(LayoutElement));
-            spacer.transform.SetParent(bar, false);
-            spacer.GetComponent<LayoutElement>().flexibleWidth = 1f;
+            Text step = CreateLabel("Step", statusRow, 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+            AddLayout(step.gameObject, 158f, -1f);
+            Text phase = CreateLabel("State", statusRow, 18, FontStyle.Bold, TextAnchor.MiddleLeft);
+            AddLayout(phase.gameObject, 96f, -1f);
+            Button menu = CreateButton("CompactMenuButton", statusRow, "Menu", _gearIcon ?? _pauseIcon, TogglePauseMenu);
+            AddLayout(menu.gameObject, 82f, 34f);
 
-            Button start = CreateButton("StartAIvsPlayer2Button", bar, "Start AI vs P2", _targetIcon, () => _modeController?.StartAIvsPlayer2());
-            AddLayout(start.gameObject, 190f, 42f);
-            Button pause = CreateButton("PauseButton", bar, "Menu", _pauseIcon, TogglePauseMenu);
-            AddLayout(pause.gameObject, 120f, 42f);
+            RectTransform speedRow = CreateRect("SpeedRow", bar);
+            HorizontalLayoutGroup speedLayout = speedRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            speedLayout.spacing = 8f;
+            speedLayout.childControlWidth = true;
+            speedLayout.childControlHeight = true;
+            speedLayout.childForceExpandWidth = false;
+            AddLayout(speedRow.gameObject, -1f, 42f);
+
+            Text speed = CreateLabel("Speed", speedRow, 17, FontStyle.Bold, TextAnchor.MiddleLeft);
+            AddLayout(speed.gameObject, 82f, -1f);
+            AddLayout(CreateButton("SpeedHalfButton", speedRow, "x0.5", null, () => _speedController?.SetSpeed(0.5f)).gameObject, 58f, 36f);
+            AddLayout(CreateButton("SpeedOneButton", speedRow, "x1", null, () => _speedController?.SetSpeed(1f)).gameObject, 50f, 36f);
+            AddLayout(CreateButton("SpeedTwoButton", speedRow, "x2", null, () => _speedController?.SetSpeed(2f)).gameObject, 50f, 36f);
+            AddLayout(CreateButton("SpeedFourButton", speedRow, "x4", null, () => _speedController?.SetSpeed(4f)).gameObject, 50f, 36f);
 
             _topResourceBar = bar.gameObject.AddComponent<TopResourceBarView>();
-            _topResourceBar.Initialize(p1, p2, phase, step);
+            _topResourceBar.Initialize(step, phase, speed);
         }
 
         private void BuildBottomPanels(RectTransform parent)
         {
-            _bottomRoot = CreateRect("BottomCommandPanel", parent);
-            _bottomRoot.anchorMin = new Vector2(0f, 0f);
-            _bottomRoot.anchorMax = new Vector2(1f, 0f);
-            _bottomRoot.offsetMin = new Vector2(16f, 16f);
-            _bottomRoot.offsetMax = new Vector2(-16f, 244f);
+            _bottomRoot = CreateRect("BottomHudAnchors", parent);
+            Stretch(_bottomRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            HorizontalLayoutGroup layout = _bottomRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 12f;
-            layout.childControlHeight = true;
-            layout.childForceExpandHeight = true;
-
-            RectTransform selection = CreatePanel("SelectionInfoPanel", _bottomRoot, new Vector2(300f, 0f));
-            AddLayout(selection.gameObject, 320f, -1f);
+            RectTransform selection = CreatePanel("SelectedObjectPanel", _bottomRoot, new Vector2(360f, 186f));
+            selection.anchorMin = new Vector2(0f, 0f);
+            selection.anchorMax = new Vector2(0f, 0f);
+            selection.anchoredPosition = new Vector2(196f, 110f);
             Text selectionTitle = CreateHeader(selection, "Selection");
             Text selectionBody = CreateBody(selection, "No unit selected");
+            Stretch(selectionBody.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 72f), new Vector2(-14f, -54f));
+            Text selectionStatus = CreateLabel("CommandStatus", selection, 14, FontStyle.Normal, TextAnchor.UpperLeft);
+            selectionStatus.color = new Color(0.25f, 0.19f, 0.1f, 1f);
+            SetRect(selectionStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(14f, 52f), new Vector2(-108f, 40f));
+            _stopButton = CreateButton("StopButton", selection, "Stop", null, CancelPrimaryOrder);
+            SetRect(_stopButton.transform as RectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-54f, 34f), new Vector2(82f, 36f));
             _selectionInfo = selection.gameObject.AddComponent<SelectionInfoPanelView>();
-            _selectionInfo.Initialize(selectionTitle, selectionBody);
+            _selectionInfo.Initialize(selectionTitle, selectionBody, selectionStatus);
             _selectionVisibility = selection.gameObject.AddComponent<PanelVisibilityController>();
             _selectionVisibility.Initialize(selection.gameObject, true);
 
-            RectTransform commands = CreatePanel("CommandPanel", _bottomRoot, new Vector2(610f, 0f));
-            AddLayout(commands.gameObject, 650f, -1f);
-            CreateHeader(commands, "Commands");
-            BuildCommandButtons(commands);
-            Text commandStatus = CreateBody(commands, "No command submitted.");
-            SetRect(commandStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 44f), new Vector2(-24f, 70f));
-            _commandPanel = commands.gameObject.AddComponent<CommandPanelView>();
-            _commandPanel.Initialize(commandStatus, _commandController, _orderController);
-
-            RectTransform production = CreatePanel("ProductionPanel", _bottomRoot, new Vector2(360f, 0f));
-            AddLayout(production.gameObject, 380f, -1f);
+            RectTransform production = CreatePanel("ProductionPanel", _bottomRoot, new Vector2(376f, 176f));
+            production.anchorMin = new Vector2(1f, 0f);
+            production.anchorMax = new Vector2(1f, 0f);
+            production.anchoredPosition = new Vector2(-204f, 104f);
             Text productionTitle = CreateHeader(production, "Production");
-            GameObject baseGroup = CreateButtonRow(production, "BaseGroup", 88f);
+            GameObject baseGroup = CreateButtonRow(production, "BaseGroup", 70f);
             Button worker = CreateButton("WorkerButton", baseGroup.transform as RectTransform, "Worker", null, () => _commandController?.TryProduceWorker());
-            AddLayout(worker.gameObject, 160f, 44f);
-            GameObject barracksGroup = CreateButtonRow(production, "BarracksGroup", 88f);
+            AddLayout(worker.gameObject, 150f, 40f);
+            GameObject barracksGroup = CreateButtonRow(production, "BarracksGroup", 70f);
             Button light = CreateButton("LightButton", barracksGroup.transform as RectTransform, "Light", null, () => _commandController?.TryProduceLight());
             Button heavy = CreateButton("HeavyButton", barracksGroup.transform as RectTransform, "Heavy", null, () => _commandController?.TryProduceHeavy());
             Button ranged = CreateButton("RangedButton", barracksGroup.transform as RectTransform, "Ranged", null, () => _commandController?.TryProduceRanged());
-            AddLayout(light.gameObject, 105f, 44f);
-            AddLayout(heavy.gameObject, 110f, 44f);
-            AddLayout(ranged.gameObject, 120f, 44f);
+            AddLayout(light.gameObject, 96f, 40f);
+            AddLayout(heavy.gameObject, 96f, 40f);
+            AddLayout(ranged.gameObject, 104f, 40f);
             Text productionStatus = CreateBody(production, string.Empty);
-            SetRect(productionStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 12f), new Vector2(-24f, 92f));
+            SetRect(productionStatus.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(14f, 42f), new Vector2(-28f, 56f));
             _productionPanel = production.gameObject.AddComponent<ProductionPanelView>();
             _productionPanel.Initialize(productionTitle, baseGroup, barracksGroup, productionStatus, worker, light, heavy, ranged);
             _productionVisibility = production.gameObject.AddComponent<PanelVisibilityController>();
             _productionVisibility.Initialize(production.gameObject, true);
-        }
-
-        private void BuildCommandButtons(RectTransform commands)
-        {
-            GameObject row2 = CreateButtonRow(commands, "Row2", 58f);
-            _stopButton = CreateButton("StopButton", row2.transform as RectTransform, "Stop", null, CancelPrimaryOrder);
-            AddLayout(_stopButton.gameObject, 90f, 42f);
-            AddLayout(CreateButton("RestartButton", row2.transform as RectTransform, "Restart", null, RestartMatch).gameObject, 120f, 42f);
-            AddLayout(CreateButton("MainMenuButton", row2.transform as RectTransform, "Main Menu", _homeIcon, ReturnToMainMenu).gameObject, 150f, 42f);
         }
 
         private void BuildContextMenu()
@@ -370,11 +389,12 @@ namespace RTS.Presentation.UI
 
             CreateHeader(_pauseMenu, "Paused");
             CreateVerticalButton(_pauseMenu, "Continue", 96f, Continue);
-            CreateVerticalButton(_pauseMenu, "Restart Match", 154f, RestartMatch);
-            CreateVerticalButton(_pauseMenu, "Settings", 212f, ShowHudSettings, _gearIcon);
-            CreateVerticalButton(_pauseMenu, "Toggle Metrics", 270f, () => _metricsVisibility?.Toggle());
-            CreateVerticalButton(_pauseMenu, "Main Menu", 328f, ReturnToMainMenu, _homeIcon);
-            CreateVerticalButton(_pauseMenu, "Quit", 386f, Quit);
+            CreateVerticalButton(_pauseMenu, "Step", 154f, StepPausedSimulation);
+            CreateVerticalButton(_pauseMenu, "Restart Match", 212f, RestartMatch);
+            CreateVerticalButton(_pauseMenu, "Settings", 270f, ShowHudSettings, _gearIcon);
+            CreateVerticalButton(_pauseMenu, "Toggle Metrics", 328f, () => _metricsVisibility?.Toggle());
+            CreateVerticalButton(_pauseMenu, "Main Menu", 386f, ReturnToMainMenu, _homeIcon);
+            CreateVerticalButton(_pauseMenu, "Quit", 444f, Quit);
         }
 
         private void BuildSettingsPanel(RectTransform root)
@@ -454,6 +474,7 @@ namespace RTS.Presentation.UI
 
         private void Refresh(bool force)
         {
+            using var marker = UpdateHudMarker.Auto();
             UnitRuntime selected = _selectionManager != null
                 ? _selectionManager.PrimarySelectedUnit
                 : _selectionController != null ? _selectionController.SelectedUnit : null;
@@ -462,10 +483,9 @@ namespace RTS.Presentation.UI
                 : _selectionController != null ? _selectionController.SelectedUnits : null;
             int selectionCount = selectedUnits != null ? selectedUnits.Count : (selected != null ? 1 : 0);
             bool hasPlayer2ManualMode = HasPlayer2ManualMode();
-            _topResourceBar?.Refresh(_matchManager);
+            _topResourceBar?.Refresh(_matchManager, _speedController);
             UpdateHoveredResource();
-            _selectionInfo?.Refresh(selectedUnits, selected);
-            _commandPanel?.Refresh(_commandController, selectedUnits, selected, _hoveredResource, _modeController, _humanPlayerController);
+            _selectionInfo?.Refresh(selectedUnits, selected, _commandController);
             if (hasPlayer2ManualMode)
             {
                 _productionPanel?.Refresh(selected, selectionCount, _commandController);
@@ -559,9 +579,10 @@ namespace RTS.Presentation.UI
             _humanPlayerController ??= FindFirstObjectByType<HumanPlayerController>();
             _selectionController ??= FindFirstObjectByType<PlayerSelectionController>();
             _selectionManager ??= FindFirstObjectByType<SelectionManager>();
-            if (_selectionManager != null && _selectionBoxView != null)
+            if (_selectionManager != null && _selectionBoxView != null && _selectionBoxBoundManager != _selectionManager)
             {
                 _selectionManager.SetSelectionBoxView(_selectionBoxView);
+                _selectionBoxBoundManager = _selectionManager;
             }
 
             _commandController ??= FindFirstObjectByType<PlayerCommandController>();
@@ -620,6 +641,35 @@ namespace RTS.Presentation.UI
                 _commandController.OnAttackAreaContextRequested += HandleAttackAreaContextRequested;
                 _commandController.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
             }
+        }
+
+        private void PauseSimulation()
+        {
+            ResolveSimulationControllers();
+            if (_speedController != null)
+            {
+                _speedController.PauseFromMenu();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Pause skipped: GameSpeedController is missing.");
+        }
+
+        private void ResumeSimulation()
+        {
+            ResolveSimulationControllers();
+            if (_speedController != null)
+            {
+                _speedController.ResumeFromMenu();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Resume skipped: GameSpeedController is missing.");
+        }
+
+        private void ResolveSimulationControllers()
+        {
+            _speedController ??= FindFirstObjectByType<GameSpeedController>();
         }
 
         private void HandleMoveContextRequested(GridPosition targetCell, Vector2 screenPosition)
@@ -1000,6 +1050,29 @@ namespace RTS.Presentation.UI
             return false;
         }
 
+        private void LoadDefaultKenneySprites()
+        {
+#if UNITY_EDITOR
+            Sprite kenneyPanel = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/panel_brown.png");
+            if (kenneyPanel != null)
+            {
+                _panelSprite = kenneyPanel;
+            }
+
+            _buttonSprite ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/buttonLong_beige.png");
+            _buttonPressedSprite ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/buttonLong_beige_pressed.png");
+            _gearIcon ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/Game_Icons/PNG/Black/1x/gear.png");
+            _homeIcon ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/Game_Icons/PNG/Black/1x/home.png");
+#endif
+            _panelColor = Color.white;
+            _textColor = new Color(0.25f, 0.19f, 0.1f, 1f);
+        }
+
         private Button CreateVerticalButton(RectTransform parent, string label, float yFromTop, UnityEngine.Events.UnityAction onClick, Sprite icon = null)
         {
             Button button = CreateButton(label.Replace(" ", string.Empty) + "Button", parent, label, icon, onClick);
@@ -1065,13 +1138,13 @@ namespace RTS.Presentation.UI
             if (icon != null)
             {
                 Image iconImage = CreateIcon(go.transform as RectTransform, icon);
-                SetRect(iconImage.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(25f, 0f), new Vector2(22f, 22f));
+                SetRect(iconImage.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(18f, 18f));
             }
 
             Text text = CreateLabel("Text", go.transform as RectTransform, 16, FontStyle.Bold, TextAnchor.MiddleCenter);
             text.text = label;
             text.color = new Color(0.12f, 0.09f, 0.05f, 1f);
-            Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(8f, 0f), new Vector2(-8f, 0f));
+            Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(icon != null ? 28f : 8f, 0f), new Vector2(-6f, 0f));
             return button;
         }
 
@@ -1225,8 +1298,15 @@ namespace RTS.Presentation.UI
             }
 #endif
 
-#if ENABLE_LEGACY_INPUT_MANAGER && !ENABLE_INPUT_SYSTEM
-            return Input.GetKeyDown(key);
+#if ENABLE_LEGACY_INPUT_MANAGER
+            try
+            {
+                return Input.GetKeyDown(key);
+            }
+            catch (System.InvalidOperationException)
+            {
+                return false;
+            }
 #else
             return false;
 #endif

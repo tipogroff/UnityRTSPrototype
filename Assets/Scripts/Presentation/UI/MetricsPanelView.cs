@@ -8,6 +8,7 @@ namespace RTS.Presentation.UI
     public sealed class MetricsPanelView : MonoBehaviour
     {
         private Text _body;
+        private string _lastBody = string.Empty;
 
         public void Initialize(Text body)
         {
@@ -35,12 +36,17 @@ namespace RTS.Presentation.UI
                 : "n/a";
             string diagnostics = modeController != null ? modeController.LastDiagnostics : "HumanPlayModeController missing.";
 
-            _body.text = "Mode: " + mode
+            string body = "Mode: " + mode
                 + "\nHuman side: " + humanSide + " (" + control + ")"
                 + "\nAI/fallback: " + diagnostics
                 + "\nSpeed: " + speed
                 + "\nLast command: " + status
                 + "\nLast rejection: " + rejection;
+            if (_lastBody != body)
+            {
+                _lastBody = body;
+                _body.text = body;
+            }
         }
     }
 }

@@ -224,7 +224,7 @@ namespace RTS.ML
 
             if (unitRegistry != null)
             {
-                List<UnitRuntime> units = unitRegistry.GetAllUnits();
+                IReadOnlyList<UnitRuntime> units = unitRegistry.GetAllUnitsReadOnly();
                 for (int i = 0; i < units.Count; i++)
                 {
                     UnitRuntime unit = units[i];
