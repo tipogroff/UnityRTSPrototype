@@ -10,12 +10,20 @@ namespace RTS.Presentation
 
         public static GameObject LastSpawnedClone { get; private set; }
         public static string LastSpawnedCloneId { get; private set; } = string.Empty;
-        public static string LastSpawnDiagnostic { get; private set; } = string.Empty;
+                public static bool Enabled { get; set; } = false;
+public static string LastSpawnDiagnostic { get; private set; } = string.Empty;
 
         public static bool TrySpawn(UnitRuntime deadUnit, out GameObject clone, out string diagnostic, float deathPlaybackSeconds = DefaultDeathPlaybackSeconds)
         {
             clone = null;
-            diagnostic = string.Empty;
+                        if (!Enabled)
+            {
+                diagnostic = "Visual death playback disabled.";
+                LastSpawnDiagnostic = diagnostic;
+                return false;
+            }
+
+diagnostic = string.Empty;
 
             if (deadUnit == null || deadUnit.gameObject == null)
             {

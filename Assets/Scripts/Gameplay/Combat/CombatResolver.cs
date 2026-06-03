@@ -28,7 +28,10 @@ namespace RTS.Gameplay
         private readonly MatchManager _matchManager;
         private readonly bool _logCombatEvents;
 
-        private static readonly ProfilerMarker ResolveCombatTickMarker = new ProfilerMarker("CombatResolver.ResolveCombatTick");
+        
+        public int LastAttackersEvaluated { get; private set; }
+        public int LastTargetCellChecks { get; private set; }
+private static readonly ProfilerMarker ResolveCombatTickMarker = new ProfilerMarker("CombatResolver.ResolveCombatTick");
 
         public CombatResolver(
             GameConfig config,
@@ -48,9 +51,11 @@ namespace RTS.Gameplay
         /// Выполняет боевую фазу одного тика.
         /// Каждый атакующий юнит может нанести один удар.
         /// </summary>
-        public int ResolveCombatTick(ISet<UnitRuntime> skipAttackers = null)
+public int ResolveCombatTick(ISet<UnitRuntime> skipAttackers = null)
         {
             using var marker = ResolveCombatTickMarker.Auto();
+            LastAttackersEvaluated = 0;
+            LastTargetCellChecks = 0;
             if (_config == null || _unitRegistry == null) return 0;
 
             IReadOnlyList<UnitRuntime> unitsSnapshot = _unitRegistry.GetAllUnitsReadOnly();
@@ -59,9 +64,10 @@ namespace RTS.Gameplay
             foreach (var attacker in unitsSnapshot)
             {
                 if (!CanActAsAttacker(attacker)) continue;
-            if (skipAttackers != null && skipAttackers.Contains(attacker)) continue;
+                if (skipAttackers != null && skipAttackers.Contains(attacker)) continue;
 
-                var target = FindTargetInRange(attacker, unitsSnapshot);
+                LastAttackersEvaluated++;
+                var target = FindTargetInRange(attacker);
                 if (target == null) continue;
 
                 if (TryAttack(attacker, target))
@@ -122,27 +128,44 @@ namespace RTS.Gameplay
             return true;
         }
 
-        private UnitRuntime FindTargetInRange(UnitRuntime attacker, IReadOnlyList<UnitRuntime> unitsSnapshot)
+private UnitRuntime FindTargetInRange(UnitRuntime attacker)
         {
             var attackerDef = _config.GetDefinition(attacker.Type);
-            if (attackerDef == null) return null;
+            if (attackerDef == null || _gridManager == null) return null;
 
+            int range = attackerDef.attackRange;
+            GridPosition origin = attacker.GridPos;
             UnitRuntime bestTarget = null;
             int bestDistance = int.MaxValue;
             int bestHp = int.MaxValue;
 
-            foreach (var candidate in unitsSnapshot)
+            int minX = Mathf.Max(0, origin.X - range);
+            int maxX = Mathf.Min(_gridManager.Width - 1, origin.X + range);
+            int minY = Mathf.Max(0, origin.Y - range);
+            int maxY = Mathf.Min(_gridManager.Height - 1, origin.Y + range);
+
+            for (int y = minY; y <= maxY; y++)
             {
-                if (!CanBeTarget(attacker, candidate)) continue;
-
-                int distance = GetDistance(attacker.GridPos, candidate.GridPos);
-                if (distance > attackerDef.attackRange) continue;
-
-                if (distance < bestDistance || (distance == bestDistance && candidate.HP < bestHp))
+                for (int x = minX; x <= maxX; x++)
                 {
-                    bestTarget = candidate;
-                    bestDistance = distance;
-                    bestHp = candidate.HP;
+                    LastTargetCellChecks++;
+                    GridPosition pos = new GridPosition(x, y);
+                    if (!_gridManager.TryGetOccupant(pos, out UnitRuntime candidate))
+                    {
+                        continue;
+                    }
+
+                    if (!CanBeTarget(attacker, candidate)) continue;
+
+                    int distance = GetDistance(origin, candidate.GridPos);
+                    if (distance > range) continue;
+
+                    if (distance < bestDistance || (distance == bestDistance && candidate.HP < bestHp))
+                    {
+                        bestTarget = candidate;
+                        bestDistance = distance;
+                        bestHp = candidate.HP;
+                    }
                 }
             }
 

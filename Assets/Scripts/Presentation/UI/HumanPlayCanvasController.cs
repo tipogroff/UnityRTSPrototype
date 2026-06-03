@@ -84,7 +84,10 @@ namespace RTS.Presentation.UI
         private bool _wasPlayer2ManualMode;
         private SelectionManager _selectionBoxBoundManager;
         private float _nextRefresh;
-        private ResourceNode _hoveredResource;
+                private PlayerCommandController _boundCommandController;
+        private float _nextReferenceRetryTime;
+        private const float ReferenceRetrySeconds = 0.5f;
+private ResourceNode _hoveredResource;
 
         private static readonly ProfilerMarker UpdateHudMarker = new ProfilerMarker("HumanPlayCanvasController.UpdateHud");
 
@@ -120,9 +123,9 @@ namespace RTS.Presentation.UI
             }
         }
 
-        private void Update()
+private void Update()
         {
-            ResolveReferences();
+            ResolveReferencesIfNeeded();
             HandleHotkeys();
 
             if (Time.unscaledTime >= _nextRefresh)
@@ -629,19 +632,73 @@ namespace RTS.Presentation.UI
             _sceneFlowController ??= FindFirstObjectByType<SceneFlowController>();
             _matchManager ??= MatchManager.Instance != null ? MatchManager.Instance : FindFirstObjectByType<MatchManager>();
             _orderController.Configure(_pathfindingService, _commandController, _selectionController, _matchManager);
-            if (_commandController != null)
-            {
-                _commandController.OnMoveContextRequested -= HandleMoveContextRequested;
-                _commandController.OnMoveContextRequested += HandleMoveContextRequested;
-                _commandController.OnGatherContextRequested -= HandleGatherContextRequested;
-                _commandController.OnGatherContextRequested += HandleGatherContextRequested;
-                _commandController.OnAttackContextRequested -= HandleAttackContextRequested;
-                _commandController.OnAttackContextRequested += HandleAttackContextRequested;
-                _commandController.OnAttackAreaContextRequested -= HandleAttackAreaContextRequested;
-                _commandController.OnAttackAreaContextRequested += HandleAttackAreaContextRequested;
-                _commandController.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
-            }
+            BindCommandControllerEvents(_commandController);
         }
+
+private void ResolveReferencesIfNeeded()
+        {
+            if (!HasMissingReferences())
+            {
+                return;
+            }
+
+            if (Time.unscaledTime < _nextReferenceRetryTime)
+            {
+                return;
+            }
+
+            _nextReferenceRetryTime = Time.unscaledTime + ReferenceRetrySeconds;
+            ResolveReferences();
+        }
+
+        private bool HasMissingReferences()
+        {
+            return _modeController == null
+                || _humanPlayerController == null
+                || _selectionController == null
+                || _selectionManager == null
+                || _commandController == null
+                || _pathfindingService == null
+                || _orderController == null
+                || _attackTargets == null
+                || _groupPlanner == null
+                || _reservations == null
+                || _resourceManager == null
+                || _gridManager == null
+                || _commandCamera == null
+                || _speedController == null
+                || _matchManager == null;
+        }
+
+        private void BindCommandControllerEvents(PlayerCommandController controller)
+        {
+            if (_boundCommandController == controller)
+            {
+                controller?.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
+                return;
+            }
+
+            if (_boundCommandController != null)
+            {
+                _boundCommandController.OnMoveContextRequested -= HandleMoveContextRequested;
+                _boundCommandController.OnGatherContextRequested -= HandleGatherContextRequested;
+                _boundCommandController.OnAttackContextRequested -= HandleAttackContextRequested;
+                _boundCommandController.OnAttackAreaContextRequested -= HandleAttackAreaContextRequested;
+            }
+
+            _boundCommandController = controller;
+            if (_boundCommandController == null)
+            {
+                return;
+            }
+
+            _boundCommandController.OnMoveContextRequested += HandleMoveContextRequested;
+            _boundCommandController.OnGatherContextRequested += HandleGatherContextRequested;
+            _boundCommandController.OnAttackContextRequested += HandleAttackContextRequested;
+            _boundCommandController.OnAttackAreaContextRequested += HandleAttackAreaContextRequested;
+            _boundCommandController.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
+        }
+
 
         private void PauseSimulation()
         {

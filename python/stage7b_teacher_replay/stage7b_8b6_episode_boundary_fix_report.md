@@ -1,7 +1,7 @@
 ﻿# Stage7B-8B.6 Episode Boundary Fix Diagnostic
 
-status: DIAGNOSED
-suspected_blocker: runtime_services_missing_in_reset_path
+status: IN_PROGRESS
+suspected_blocker: unknown
 trainer_connected: false
 behavior_name_runtime: Stage7B_RTS_Student
 behavior_type_runtime: InferenceOnly
@@ -15,19 +15,19 @@ student_teacher_replay_orchestrator_is_null: true
 - awake_count: 1
 - start_count: 1
 - initialize_count: 3
-- on_episode_begin_count: 4
-- collect_observations_count: 7909
-- write_mask_count: 7906
+- on_episode_begin_count: 1
+- collect_observations_count: 4041
+- write_mask_count: 4039
 - heuristic_count: 0
-- on_action_received_count: 5996
-- end_episode_count: 1
-- first_write_mask_frame: 10887
-- first_write_mask_time: 123,8885
-- first_on_action_received_frame: 10887
-- first_on_action_received_time: 123,8942
+- on_action_received_count: 4039
+- end_episode_count: 0
+- first_write_mask_frame: 937
+- first_write_mask_time: 14,80771
+- first_on_action_received_frame: 937
+- first_on_action_received_time: 14,82787
 
 ## StartNewEpisode Boundary
-- bootstrap_start_new_episode_count: 4
+- bootstrap_start_new_episode_count: 1
 - bootstrap_start_new_episode_skipped_reentrant_count: 0
 - bootstrap_start_new_episode_reason: agent_on_episode_begin
 - bootstrap_start_new_episode_caller: StudentMlAgent.OnEpisodeBegin
@@ -41,13 +41,13 @@ student_teacher_replay_orchestrator_is_null: true
 
 ## Timeout Classification
 - timeout_phase_classification: before_communicator_after_on_action_received_or_later
-- last_lifecycle_event: StudentMlAgent.OnActionReceived.paused
+- last_lifecycle_event: StudentMlAgent.OnActionReceived.exit
 - lifecycle_trace_path: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
 
 ## Runtime Services
-- runtime_services_ready: false
-- missing_runtime_services: MatchBootstrap, MatchManager, UnitRegistry
-- match_state_after_reset: missing
+- runtime_services_ready: true
+- missing_runtime_services: none
+- match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-06-03T17:38:54.0648138Z
+generated_utc: 2026-06-03T19:03:40.8044705Z

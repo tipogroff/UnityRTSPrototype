@@ -9,7 +9,7 @@ namespace RTS.Presentation
     /// <summary>
     /// Development-only JSONL/Markdown trace for runtime animation events.
     /// </summary>
-    public static class Visual3EDRuntimeAnimationTrace
+public static class Visual3EDRuntimeAnimationTrace
     {
         private const string TraceJsonlFileName = "Visual3ED_RuntimeAnimationTrace.jsonl";
         private const string TraceMarkdownFileName = "Visual3ED_RuntimeAnimationTrace.md";
@@ -20,8 +20,15 @@ namespace RTS.Presentation
         private static int _successCount;
         private static int _failureCount;
 
+        public static bool Enabled { get; set; } = false;
+
         public static void Reset(string reason)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
             {
@@ -45,6 +52,11 @@ namespace RTS.Presentation
             string diagnostic,
             string cloneId = "")
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             Record(
                 unit != null ? unit.GetInstanceID().ToString() : "0",
                 unit != null ? unit.Type.ToString() : "Unknown",
@@ -70,6 +82,11 @@ namespace RTS.Presentation
             string diagnostic,
             string cloneId = "")
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
             {

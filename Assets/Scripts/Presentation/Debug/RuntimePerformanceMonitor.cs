@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System;
 using System.Text;
+using RTS.Core;
+using RTS.MLAgents.Stage7B;
 using RTS.Gameplay;
 using RTS.Presentation;
 using UnityEngine;
@@ -10,10 +13,10 @@ namespace RTS.Presentation.Diagnostics
     public sealed class RuntimePerformanceMonitor : MonoBehaviour
     {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        [SerializeField] private bool _showOverlay = true;
-        [SerializeField] private bool _logSpikes = true;
+        [SerializeField] private bool _showOverlay = false;
+        [SerializeField] private bool _logSpikes = false;
         [SerializeField] private float _overlayRefreshSeconds = 0.25f;
-        [SerializeField] private float _summaryIntervalSeconds = 60f;
+        [SerializeField] private float _summaryIntervalSeconds = 30f;
         [SerializeField] private float _warningFrameMs = 33f;
         [SerializeField] private float _severeFrameMs = 50f;
 
@@ -23,7 +26,8 @@ namespace RTS.Presentation.Diagnostics
         private UnitRegistry _unitRegistry;
         private ResourceManager _resourceManager;
         private GameSpeedController _speedController;
-        private HumanPlayModeController _modeController;
+                private StudentMlAgent _studentAgent;
+private HumanPlayModeController _modeController;
         private GUIStyle _style;
         private string _overlayText = string.Empty;
         private float _nextOverlayRefresh;
@@ -143,7 +147,7 @@ namespace RTS.Presentation.Diagnostics
             GUI.Box(new Rect(12f, 12f, 360f, 166f), _overlayText, _style);
         }
 
-        private void ResolveReferences(bool force)
+private void ResolveReferences(bool force)
         {
             if (!force && Time.unscaledTime < _nextReferenceRefresh)
             {
@@ -157,9 +161,10 @@ namespace RTS.Presentation.Diagnostics
             _resourceManager = ResourceManager.Instance != null ? ResourceManager.Instance : FindFirstObjectByType<ResourceManager>();
             _speedController = FindFirstObjectByType<GameSpeedController>();
             _modeController = FindFirstObjectByType<HumanPlayModeController>();
+            _studentAgent = FindFirstObjectByType<StudentMlAgent>();
         }
 
-        private void RebuildOverlayText(float frameMs, float fps, int gc0, int gc1, int gc2)
+private void RebuildOverlayText(float frameMs, float fps, int gc0, int gc1, int gc2)
         {
             _builder.Clear();
             _builder.Append("FPS ").Append(fps.ToString("0.0"))
@@ -169,7 +174,13 @@ namespace RTS.Presentation.Diagnostics
             _builder.Append("Mode ").Append(GetModeLabel())
                 .Append("  step ").Append(GetStep()).Append('\n');
             _builder.Append("Units ").Append(GetUnitCount())
+                .Append("  P1/P2 ").Append(GetAliveUnitCount(Owner.Player1)).Append('/').Append(GetAliveUnitCount(Owner.Player2))
                 .Append("  resources ").Append(GetResourceCount()).Append('\n');
+            _builder.Append("VisualBridge ").Append(GetVisualBridgeCount())
+                .Append("  ghosts ").Append(GetDeathGhostCount())
+                .Append("  candidates ").Append(GetLastCandidateCount()).Append('\n');
+            _builder.Append("Combat attackers/checks ").Append(GetCombatAttackers())
+                .Append('/').Append(GetCombatTargetChecks()).Append('\n');
             _builder.Append("Speed ").Append(GetSpeedLabel())
                 .Append("  paused ").Append(IsPaused() ? "yes" : "no").Append('\n');
             _builder.Append("GC ").Append(gc0 - _gc0Start)
@@ -180,13 +191,14 @@ namespace RTS.Presentation.Diagnostics
             _overlayText = _builder.ToString();
         }
 
-        private void LogSummary()
+private void LogSummary()
         {
+            ResolveReferences(force: false);
             float duration = Mathf.Max(0.001f, Time.unscaledTime - _summaryStartTime);
             float avgFrameMs = _sampleCount > 0 ? (float)(_frameMsTotal / _sampleCount) : 0f;
             float avgFps = avgFrameMs > 0f ? 1000f / avgFrameMs : 0f;
             UnityEngine.Debug.Log(
-                $"[Perf] Summary mode={GetModeLabel()} duration={duration:0.0}s frames={Time.frameCount - _summaryStartFrame} avgFps={avgFps:0.0} minFps={(_minFps < float.MaxValue ? _minFps : 0f):0.0} avgMs={avgFrameMs:0.0} worstMs={_worstFrameMs:0.0} spikes33={_spikesOver33} spikes50={_spikesOver50} gc0={GC.CollectionCount(0) - _gc0Start} gc1={GC.CollectionCount(1) - _gc1Start} gc2={GC.CollectionCount(2) - _gc2Start}");
+                $"[Perf] Summary mode={GetModeLabel()} duration={duration:0.0}s frames={Time.frameCount - _summaryStartFrame} step={GetStep()} avgFps={avgFps:0.0} minFps={(_minFps < float.MaxValue ? _minFps : 0f):0.0} avgMs={avgFrameMs:0.0} worstMs={_worstFrameMs:0.0} units={GetUnitCount()} p1Units={GetAliveUnitCount(Owner.Player1)} p2Units={GetAliveUnitCount(Owner.Player2)} visualBridges={GetVisualBridgeCount()} deathGhosts={GetDeathGhostCount()} candidates={GetLastCandidateCount()} combatAttackers={GetCombatAttackers()} combatChecks={GetCombatTargetChecks()} spikes33={_spikesOver33} spikes50={_spikesOver50} gc0={GC.CollectionCount(0) - _gc0Start} gc1={GC.CollectionCount(1) - _gc1Start} gc2={GC.CollectionCount(2) - _gc2Start}");
         }
 
         private void ResetSummaryWindow()
@@ -216,6 +228,43 @@ namespace RTS.Presentation.Diagnostics
 
         private int GetUnitCount()
             => _unitRegistry != null ? _unitRegistry.UnitCount : 0;
+
+private int GetAliveUnitCount(Owner owner)
+        {
+            if (_unitRegistry == null)
+            {
+                return 0;
+            }
+
+            IReadOnlyList<UnitRuntime> units = _unitRegistry.GetUnitsByOwnerReadOnly(owner);
+            int count = 0;
+            for (int i = 0; i < units.Count; i++)
+            {
+                UnitRuntime unit = units[i];
+                if (unit != null && unit.IsAlive)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int GetVisualBridgeCount()
+            => FindObjectsByType<VisualEventBridge>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
+
+        private int GetDeathGhostCount()
+            => FindObjectsByType<VisualDeathPlaybackGhost>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
+
+        private int GetLastCandidateCount()
+            => _studentAgent != null ? _studentAgent.LastCandidateCount : 0;
+
+        private int GetCombatAttackers()
+            => _matchManager != null ? _matchManager.LastCombatAttackersEvaluated : 0;
+
+        private int GetCombatTargetChecks()
+            => _matchManager != null ? _matchManager.LastCombatTargetCellChecks : 0;
+
 
         private int GetResourceCount()
             => _resourceManager != null ? _resourceManager.GetActiveResourceCount() : 0;

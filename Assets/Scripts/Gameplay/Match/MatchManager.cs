@@ -367,7 +367,9 @@ namespace RTS.Gameplay
         public int AcceptedCommandsLastStep => _acceptedCommandsThisStep;
         public int InvalidCommandsLastStep => _invalidCommandsThisStep;
         public int TotalAcceptedCommands { get; private set; }
-        public int TotalInvalidCommands { get; private set; }
+                public int LastCombatAttackersEvaluated => _combatResolver != null ? _combatResolver.LastAttackersEvaluated : 0;
+        public int LastCombatTargetCellChecks => _combatResolver != null ? _combatResolver.LastTargetCellChecks : 0;
+public int TotalInvalidCommands { get; private set; }
 
         private PlayerState[] _playerStates;
         private readonly int[] _resources = new int[2];
