@@ -106,10 +106,8 @@ namespace RTS.Presentation.UI
                     ? _completionStatus
                     : commandController != null ? commandController.LastProductionCommandStatus : "No production command submitted yet.";
                 _status.text =
-                    "Producer: " + selected.Type
-                    + "\nPlayer2 resources: " + resources
+                    "Resources: " + resources
                     + "\nQueue: " + queueStatus
-                    + (producing ? "\nProduction queue is busy." : string.Empty)
                     + "\nLast: " + commandStatus;
             }
         }

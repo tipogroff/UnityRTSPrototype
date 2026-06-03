@@ -11,11 +11,18 @@ namespace RTS.Presentation.UI
     {
         private Text _title;
         private Text _body;
+        private Text _status;
 
         public void Initialize(Text title, Text body)
         {
+            Initialize(title, body, null);
+        }
+
+        public void Initialize(Text title, Text body, Text status)
+        {
             _title = title;
             _body = body;
+            _status = status;
         }
 
         public void Refresh(UnitRuntime selected)
@@ -24,6 +31,11 @@ namespace RTS.Presentation.UI
         }
 
         public void Refresh(IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary)
+        {
+            Refresh(selectedUnits, primary, null);
+        }
+
+        public void Refresh(IReadOnlyList<UnitRuntime> selectedUnits, UnitRuntime primary, PlayerCommandController commandController)
         {
             int selectedCount = selectedUnits != null ? selectedUnits.Count : 0;
             if (_title != null)
@@ -39,12 +51,14 @@ namespace RTS.Presentation.UI
             if (selectedCount <= 0 || primary == null)
             {
                 _body.text = "No unit selected";
+                SetCommandStatus(commandController, false);
                 return;
             }
 
             if (selectedCount > 1)
             {
                 _body.text = BuildMultiSelectionText(selectedUnits, primary);
+                SetCommandStatus(commandController, true);
                 return;
             }
 
@@ -57,6 +71,25 @@ namespace RTS.Presentation.UI
                 + "\nCell: " + selected.GridPos
                 + "\nFacing: " + selected.Facing
                 + "\nState: " + (selected.IsAlive ? "Ready" : "Destroyed");
+            SetCommandStatus(commandController, true);
+        }
+
+        private void SetCommandStatus(PlayerCommandController commandController, bool hasSelection)
+        {
+            if (_status == null)
+            {
+                return;
+            }
+
+            if (!hasSelection)
+            {
+                _status.text = string.Empty;
+                return;
+            }
+
+            _status.text = commandController != null
+                ? "Last: " + commandController.LastCommandStatus
+                : "Orders unavailable";
         }
 
         private static string BuildTitle(int selectedCount, UnitRuntime primary)

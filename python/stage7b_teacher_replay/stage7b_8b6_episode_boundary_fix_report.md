@@ -15,19 +15,19 @@ student_teacher_replay_orchestrator_is_null: true
 - awake_count: 1
 - start_count: 1
 - initialize_count: 3
-- on_episode_begin_count: 2
-- collect_observations_count: 5076
-- write_mask_count: 5073
+- on_episode_begin_count: 4
+- collect_observations_count: 2962
+- write_mask_count: 2959
 - heuristic_count: 0
-- on_action_received_count: 2030
+- on_action_received_count: 493
 - end_episode_count: 1
-- first_write_mask_frame: 236
-- first_write_mask_time: 11,4862
-- first_on_action_received_frame: 236
-- first_on_action_received_time: 11,50966
+- first_write_mask_frame: 2750
+- first_write_mask_time: 31,39116
+- first_on_action_received_frame: 2750
+- first_on_action_received_time: 31,39797
 
 ## StartNewEpisode Boundary
-- bootstrap_start_new_episode_count: 2
+- bootstrap_start_new_episode_count: 4
 - bootstrap_start_new_episode_skipped_reentrant_count: 0
 - bootstrap_start_new_episode_reason: agent_on_episode_begin
 - bootstrap_start_new_episode_caller: StudentMlAgent.OnEpisodeBegin
@@ -41,7 +41,7 @@ student_teacher_replay_orchestrator_is_null: true
 
 ## Timeout Classification
 - timeout_phase_classification: before_communicator_after_on_action_received_or_later
-- last_lifecycle_event: StudentMlAgent.OnActionReceived.exit
+- last_lifecycle_event: StudentMlAgent.OnActionReceived.paused
 - lifecycle_trace_path: python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl
 
 ## Runtime Services
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-06-03T07:38:06.1062439Z
+generated_utc: 2026-06-03T08:06:17.9258062Z

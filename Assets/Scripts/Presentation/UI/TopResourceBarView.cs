@@ -1,5 +1,5 @@
-using RTS.Core;
 using RTS.Gameplay;
+using RTS.Presentation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,42 +7,39 @@ namespace RTS.Presentation.UI
 {
     public sealed class TopResourceBarView : MonoBehaviour
     {
-        private Text _player1;
-        private Text _player2;
-        private Text _phase;
         private Text _step;
+        private Text _state;
+        private Text _speed;
 
-        public void Initialize(Text player1, Text player2, Text phase, Text step)
+        public void Initialize(Text step, Text state, Text speed)
         {
-            _player1 = player1;
-            _player2 = player2;
-            _phase = phase;
             _step = step;
+            _state = state;
+            _speed = speed;
         }
 
         public void Refresh(MatchManager matchManager)
         {
-            if (_player1 != null)
-            {
-                int value = matchManager != null ? matchManager.GetResources(Owner.Player1) : 0;
-                _player1.text = "P1 AI: " + value;
-            }
+            Refresh(matchManager, null);
+        }
 
-            if (_player2 != null)
-            {
-                int value = matchManager != null ? matchManager.GetResources(Owner.Player2) : 0;
-                _player2.text = "P2 Human Resources: " + value;
-            }
-
-            if (_phase != null)
-            {
-                _phase.text = "Phase: " + (matchManager != null ? matchManager.Phase.ToString() : "n/a");
-            }
-
+        public void Refresh(MatchManager matchManager, GameSpeedController speedController)
+        {
             if (_step != null)
             {
                 string step = matchManager != null ? matchManager.Step + " / " + matchManager.MaxSteps : "n/a";
-                _step.text = "Step: " + step;
+                _step.text = "Step " + step;
+            }
+
+            if (_state != null)
+            {
+                _state.text = speedController != null && speedController.IsPaused ? "Paused" : "Running";
+            }
+
+            if (_speed != null)
+            {
+                float speed = speedController != null ? speedController.CurrentSpeed : 1f;
+                _speed.text = "Speed x" + speed.ToString("0.##");
             }
         }
     }
