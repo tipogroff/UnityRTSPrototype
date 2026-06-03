@@ -45,7 +45,8 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private string _actualCollectTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8c2_actual_collect_observations_trace.jsonl";
         [SerializeField] private string _actionTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_action_trace.jsonl";
         [SerializeField] private string _runtimeApplyTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_runtime_apply_trace.jsonl";
-        [SerializeField] private string _decisionSchedulerTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl";
+                [SerializeField] private bool _enableRuntimeTraceFiles = false;
+[SerializeField] private string _decisionSchedulerTraceRelativePath = "python/stage7b_teacher_replay/stage7b_8d1_decision_scheduler_trace.jsonl";
         [SerializeField] private int _stage7BMaxDecisionsPerEpisode = 256;
         [SerializeField] private bool _logRejectedActions;
 
@@ -54,7 +55,9 @@ namespace RTS.MLAgents.Stage7B
         private MlAgentsCandidateActionBuilder _candidateBuilder;
         private readonly MlAgentsMaskAdapter _maskAdapter = new MlAgentsMaskAdapter();
         private readonly MlAgentsActionAdapter _actionAdapter = new MlAgentsActionAdapter();
-        private MlAgentsCandidateActionList _currentCandidates;
+                private int _currentCandidatesMatchStep = int.MinValue;
+        private int _lastCandidateCount;
+private MlAgentsCandidateActionList _currentCandidates;
         private ActionApplier _actionApplier;
         private RuntimeRewardCollector _rewardCollector;
         private int _episodeDecisionCount;
@@ -150,7 +153,8 @@ namespace RTS.MLAgents.Stage7B
         private bool _defensivePreReadyObservationUsedAfterRuntimeReady;
 
         public Stage7BActionTrace Trace { get; } = new Stage7BActionTrace();
-        public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
+                public int LastCandidateCount => _lastCandidateCount;
+public MlAgentsCandidateActionList CurrentCandidates => _currentCandidates;
         public string CurrentDecisionSource => _currentDecisionSource;
         public bool ManualFixedUpdateDecisionRequestsEnabled => _manualFixedUpdateDecisionRequests;
         public bool DecisionRequesterWatchdogFallbackEnabled => _enableDecisionRequesterWatchdogFallback;
@@ -502,7 +506,7 @@ namespace RTS.MLAgents.Stage7B
                 observationNanCount: _lastObservationNanCount);
         }
 
-        public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
         {
             Stage7BResetTimeoutTrace.Record("StudentMlAgent.WriteDiscreteActionMask.enter", this, _bootstrap);
             Stopwatch timer = Stopwatch.StartNew();
@@ -1201,6 +1205,11 @@ namespace RTS.MLAgents.Stage7B
             bool scheduledNextDecision,
             bool decisionRequesterExpectedToDrive)
         {
+            if (!_enableRuntimeTraceFiles)
+            {
+                return;
+            }
+
             AppendJsonTraceLine(_decisionSchedulerTraceRelativePath, () =>
             {
                 _decisionSchedulerTraceIndex++;
@@ -1321,7 +1330,6 @@ namespace RTS.MLAgents.Stage7B
 
             return "runtime_services_not_ready";
         }
-
         private void AppendActualCollectObservationTrace(
             int callIndex,
             bool runtimeServicesReady,
@@ -1334,7 +1342,7 @@ namespace RTS.MLAgents.Stage7B
             bool firstCallAfterStart,
             bool firstCallAfterEpisodeBegin)
         {
-            if (!Application.isPlaying)
+            if (!_enableRuntimeTraceFiles || !Application.isPlaying)
             {
                 return;
             }
@@ -1388,9 +1396,13 @@ namespace RTS.MLAgents.Stage7B
                 Debug.LogWarning("[Stage7B][8C.2] Failed to append actual collect trace: " + ex.Message);
             }
         }
-
-        private void ClearActualCollectTraceFile()
+private void ClearActualCollectTraceFile()
         {
+            if (!_enableRuntimeTraceFiles)
+            {
+                return;
+            }
+
             try
             {
                 string path = ResolveProjectPath(_actualCollectTraceRelativePath);
@@ -1496,10 +1508,9 @@ namespace RTS.MLAgents.Stage7B
                 return sb.ToString();
             }, "runtime apply trace");
         }
-
-        private void AppendJsonTraceLine(string relativePath, Func<string> buildLine, string traceName)
+private void AppendJsonTraceLine(string relativePath, Func<string> buildLine, string traceName)
         {
-            if (!Application.isPlaying || string.IsNullOrWhiteSpace(relativePath) || buildLine == null)
+            if (!_enableRuntimeTraceFiles || !Application.isPlaying || string.IsNullOrWhiteSpace(relativePath) || buildLine == null)
             {
                 return;
             }
@@ -1529,10 +1540,9 @@ namespace RTS.MLAgents.Stage7B
                 Debug.LogWarning("[Stage7B] Failed to append " + traceName + ": " + ex.Message);
             }
         }
-
-        private void ClearTraceFile(string relativePath)
+private void ClearTraceFile(string relativePath)
         {
-            if (string.IsNullOrWhiteSpace(relativePath))
+            if (!_enableRuntimeTraceFiles || string.IsNullOrWhiteSpace(relativePath))
             {
                 return;
             }
@@ -1642,20 +1652,40 @@ namespace RTS.MLAgents.Stage7B
             Debug.LogWarning("[Stage7B] DecisionRequester stalled before producing actions. Switched to manual FixedUpdate decision requests via watchdog fallback.");
         }
 
-        private void BuildCandidates()
+private void BuildCandidates()
         {
+            int matchStep = GetCurrentMatchStep();
+            if (_currentCandidates != null && _currentCandidatesMatchStep == matchStep)
+            {
+                _lastCandidateCount = _currentCandidates.CandidateCount;
+                return;
+            }
+
             _candidateBuildCallCount++;
             if (_candidateBuilder == null)
             {
+                _currentCandidates = null;
+                _currentCandidatesMatchStep = int.MinValue;
+                _lastCandidateCount = 0;
                 return;
             }
 
             _currentCandidates = _candidateBuilder.Build(_playerPerspective);
+            _currentCandidatesMatchStep = matchStep;
+            _lastCandidateCount = _currentCandidates != null ? _currentCandidates.CandidateCount : 0;
             if (_currentCandidates != null && _currentCandidates.CandidateCount > 0)
             {
                 _candidateBuilderSuccessCount++;
             }
         }
+
+private int GetCurrentMatchStep()
+        {
+            return _bootstrap != null && _bootstrap.MatchManager != null
+                ? _bootstrap.MatchManager.Step
+                : -1;
+        }
+
 
         private void RecordSelectedActionType(UnitActionType actionType)
         {

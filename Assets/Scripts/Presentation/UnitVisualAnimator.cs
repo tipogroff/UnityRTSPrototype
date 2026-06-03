@@ -19,7 +19,8 @@ namespace RTS.Presentation
         private static readonly int HitHash = Animator.StringToHash("Hit");
 
         [Header("Animator")]
-        [SerializeField] private Animator animator;
+                [SerializeField] private bool _animationsDisabled = true;
+[SerializeField] private Animator animator;
 
         [Header("Owner Visuals")]
         [SerializeField] private Renderer[] materialRenderers;
@@ -52,7 +53,8 @@ namespace RTS.Presentation
         private static bool _warnedMissingHarvest;
         private static bool _warnedMissingDeath;
         private static bool _warnedMissingSpawn;
-        private static bool _warnedMissingHit;
+                private Renderer _cachedAuthoritativeTeamMarkerRenderer;
+private static bool _warnedMissingHit;
 
         private void Awake()
         {
@@ -82,9 +84,13 @@ namespace RTS.Presentation
             }
             return null;
         }
-
-        public void SetMoving(bool value)
+public void SetMoving(bool value)
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             if (!TryGetAnimator(out var a))
             {
                 return;
@@ -99,9 +105,13 @@ namespace RTS.Presentation
 
             WarnOnce(ref _warnedMissingIsMoving, "Animator parameter 'IsMoving' is missing.");
         }
-
-        public void SetCarrying(bool value)
+public void SetCarrying(bool value)
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             if (!TryGetAnimator(out var a))
             {
                 return;
@@ -117,32 +127,57 @@ namespace RTS.Presentation
             WarnOnce(ref _warnedMissingIsCarrying, "Animator parameter 'IsCarrying' is missing.");
         }
 
-        public void PlayAttack()
+public void PlayAttack()
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             Trigger(AttackHash);
             SpawnOptionalVfx(attackHitVfxPrefab);
         }
 
-        public void PlayHarvest()
+public void PlayHarvest()
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             Trigger(HarvestHash);
             SpawnOptionalVfx(harvestVfxPrefab);
         }
 
-        public void PlayDeath()
+public void PlayDeath()
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             Trigger(DeathHash);
             SpawnOptionalVfx(deathVfxPrefab);
         }
 
-        public void PlaySpawn()
+public void PlaySpawn()
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             Trigger(SpawnHash);
             SpawnOptionalVfx(spawnVfxPrefab);
         }
 
-        public void PlayHit()
+public void PlayHit()
         {
+            if (_animationsDisabled)
+            {
+                return;
+            }
+
             Trigger(HitHash);
             SpawnOptionalVfx(attackHitVfxPrefab);
         }
@@ -534,6 +569,17 @@ namespace RTS.Presentation
 
         private bool TryResolveAuthoritativeTeamMarkerRenderer(out Renderer renderer)
         {
+            if (_cachedAuthoritativeTeamMarkerRenderer != null)
+            {
+                renderer = _cachedAuthoritativeTeamMarkerRenderer;
+                if (materialRenderers == null || materialRenderers.Length != 1 || materialRenderers[0] != renderer)
+                {
+                    materialRenderers = new Renderer[] { renderer };
+                }
+
+                return true;
+            }
+
             renderer = null;
 
             var visualRoot = transform.Find("VisualRoot");
@@ -592,6 +638,7 @@ namespace RTS.Presentation
                 }
             }
 
+            _cachedAuthoritativeTeamMarkerRenderer = renderer;
             if (materialRenderers == null || materialRenderers.Length != 1 || materialRenderers[0] != renderer)
             {
                 materialRenderers = new Renderer[] { renderer };
@@ -636,10 +683,9 @@ namespace RTS.Presentation
 
             return path;
         }
-
         private void SpawnOptionalVfx(GameObject prefab)
         {
-            if (prefab == null)
+            if (_animationsDisabled || prefab == null)
             {
                 return;
             }

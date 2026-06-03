@@ -16,7 +16,9 @@ namespace RTS.Presentation
         [SerializeField] private float movementLatchSeconds = 0.15f;
         [SerializeField] private float maxMoveVisualSeconds = 1.5f;
         [SerializeField] private bool forceInitialSyncUntilSuccess = true;
-        [SerializeField] private bool enableRuntimeTrace;
+                [SerializeField] private bool _disableRuntimeAnimations = true;
+        [SerializeField] private float _missingReferenceRetrySeconds = 0.5f;
+[SerializeField] private bool enableRuntimeTrace;
 
         private Vector3 _lastObservedRootWorldPosition;
         private bool _hasObservedRootWorldPosition;
@@ -36,7 +38,8 @@ namespace RTS.Presentation
         private bool _idleLogged;
         private bool _movingPulseActive;
         private float _movingPulseRemaining;
-        private float _movingTrueElapsed;
+                private float _nextMissingReferenceRetryTime;
+private float _movingTrueElapsed;
 
         [SerializeField] private bool lastSetMovingValue;
         [SerializeField] private int lastSetMovingFrame = -1;
@@ -77,7 +80,7 @@ namespace RTS.Presentation
             ResetOwnerSyncState();
         }
 
-        private void Start()
+private void Start()
         {
             ResolveReferences();
             if (unitRuntime == null || unitVisualAnimator == null)
@@ -87,27 +90,41 @@ namespace RTS.Presentation
 
             TrySyncOwner("Start");
 
-            unitVisualAnimator.SetCarrying(unitRuntime.CarriedResources > 0);
-
             visualGridMovementInterpolator?.SnapToCurrent();
             _lastObservedRootWorldPosition = unitRuntime.transform.position;
             _hasObservedRootWorldPosition = true;
 
+            if (_disableRuntimeAnimations)
+            {
+                _idleLogged = true;
+                return;
+            }
+
+            unitVisualAnimator.SetCarrying(unitRuntime.CarriedResources > 0);
             unitVisualAnimator.PlaySpawn();
             SetMovingState(false, "VisualEventBridge.Start", "Default idle state initialized.");
             TraceEvent("Idle", "IsMoving=false", "VisualEventBridge.Start", true, "Default idle state initialized.");
             _idleLogged = true;
         }
 
-        private void Update()
+private void Update()
         {
-            ResolveReferences();
+            ResolveReferencesIfMissing();
             if (unitRuntime == null || unitVisualAnimator == null)
             {
                 return;
             }
 
-            TrySyncOwner("Update");
+            TrySyncOwnerIfNeeded("Update");
+
+            if (_disableRuntimeAnimations)
+            {
+                if (!unitRuntime.IsAlive)
+                {
+                    _deathPlayed = true;
+                }
+                return;
+            }
 
             if (!unitRuntime.IsAlive)
             {
@@ -212,9 +229,9 @@ namespace RTS.Presentation
             _wasMoving = interpolating;
         }
 
-        private void LateUpdate()
+private void LateUpdate()
         {
-            ResolveReferences();
+            ResolveReferencesIfMissing();
             if (!forceInitialSyncUntilSuccess)
             {
                 return;
@@ -233,7 +250,7 @@ namespace RTS.Presentation
             TrySyncOwner("LateUpdate");
         }
 
-        public void NotifyRuntimeInitialized()
+public void NotifyRuntimeInitialized()
         {
             ResolveReferences();
             _ownerVisualSynced = false;
@@ -247,6 +264,13 @@ namespace RTS.Presentation
             _movingPulseActive = false;
             _movingPulseRemaining = 0f;
             _movingTrueElapsed = 0f;
+
+            if (_disableRuntimeAnimations)
+            {
+                _idleLogged = true;
+                return;
+            }
+
             SetMovingState(false, "VisualEventBridge.NotifyRuntimeInitialized", "Reset to idle after runtime init.");
             if (unitRuntime != null)
             {
@@ -260,8 +284,13 @@ namespace RTS.Presentation
             enableRuntimeTrace = value;
         }
 
-        public void PulseMoving(float seconds = 0.2f)
+public void PulseMoving(float seconds = 0.2f)
         {
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             var pulse = Mathf.Max(0.01f, seconds);
             _movingPulseActive = true;
             _movingPulseRemaining = Mathf.Max(_movingPulseRemaining, pulse);
@@ -379,6 +408,23 @@ namespace RTS.Presentation
             return applied;
         }
 
+private void TrySyncOwnerIfNeeded(string reason)
+        {
+            if (unitRuntime == null || unitRuntime.Model == null || unitVisualAnimator == null)
+            {
+                return;
+            }
+
+            Owner currentOwner = unitRuntime.Owner;
+            _lastObservedOwner = currentOwner;
+            _lastObservedModelNull = false;
+            if (!_ownerVisualSynced || currentOwner != _lastSyncedOwner)
+            {
+                TrySyncOwner(reason);
+            }
+        }
+
+
         private void ResolveReferences()
         {
             if (unitRuntime == null)
@@ -422,6 +468,28 @@ namespace RTS.Presentation
             }
         }
 
+private void ResolveReferencesIfMissing()
+        {
+            if (!HasMissingReferences())
+            {
+                return;
+            }
+
+            if (Time.unscaledTime < _nextMissingReferenceRetryTime)
+            {
+                return;
+            }
+
+            _nextMissingReferenceRetryTime = Time.unscaledTime + Mathf.Max(0.05f, _missingReferenceRetrySeconds);
+            ResolveReferences();
+        }
+
+        private bool HasMissingReferences()
+        {
+            return unitRuntime == null || unitVisualAnimator == null || visualGridMovementInterpolator == null;
+        }
+
+
         private void ResetOwnerSyncState()
         {
             _ownerVisualSynced = false;
@@ -454,43 +522,69 @@ namespace RTS.Presentation
         }
 
         // Optional visual-only hooks for explicit wiring from gameplay call sites.
-        public void OnVisualAttack()
+public void OnVisualAttack()
         {
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             unitVisualAnimator?.PlayAttack();
             TraceEvent("Attack", "Attack trigger", "VisualEventBridge.OnVisualAttack", true, "Applied runtime attack visual notification.");
         }
 
-        public void OnVisualHarvest()
+public void OnVisualHarvest()
         {
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             unitVisualAnimator?.PlayHarvest();
             TraceEvent("Harvest", "Harvest trigger", "VisualEventBridge.OnVisualHarvest", true, "Applied runtime harvest visual notification.");
         }
 
-        public void OnVisualHit()
+public void OnVisualHit()
         {
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             unitVisualAnimator?.PlayHit();
             TraceEvent("Hit", "Hit trigger", "VisualEventBridge.OnVisualHit", true, "Applied runtime hit visual notification.");
         }
 
-        public void OnVisualSpawn()
+public void OnVisualSpawn()
         {
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             unitVisualAnimator?.PlaySpawn();
             TraceEvent("Idle", "Spawn trigger", "VisualEventBridge.OnVisualSpawn", true, "Spawn visual notification.");
         }
 
-        public void OnVisualDeath()
+public void OnVisualDeath()
         {
             _deathPlayed = true;
             _movingPulseActive = false;
             _movingPulseRemaining = 0f;
             _movingTrueElapsed = 0f;
+
+            if (_disableRuntimeAnimations)
+            {
+                return;
+            }
+
             SetMovingState(false, "VisualEventBridge.OnVisualDeath", "Death forces idle.");
             TraceEvent("DeathRuntime", "Death trigger", "VisualEventBridge.OnVisualDeath", true, "Runtime death reached gameplay destruction path.");
         }
 
-        private void SetMovingState(bool value, string source, string diagnostic)
+private void SetMovingState(bool value, string source, string diagnostic)
         {
-            if (unitVisualAnimator == null)
+            if (_disableRuntimeAnimations || unitVisualAnimator == null)
             {
                 return;
             }
@@ -517,11 +611,11 @@ namespace RTS.Presentation
             TraceEvent(value ? "MoveStateSetTrue" : "MoveStateSetFalse", value ? "IsMoving=true" : "IsMoving=false", source, true, diagnostic);
         }
 
-        private void TraceEvent(string visualEvent, string animatorParameter, string source, bool success, string diagnostic)
+private void TraceEvent(string visualEvent, string animatorParameter, string source, bool success, string diagnostic)
         {
             lastAnimationEvent = visualEvent;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (!enableRuntimeTrace)
+            if (_disableRuntimeAnimations || !enableRuntimeTrace)
             {
                 return;
             }

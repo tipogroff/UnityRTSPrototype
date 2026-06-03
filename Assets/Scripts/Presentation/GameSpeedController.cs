@@ -1,4 +1,5 @@
 using RTS.Gameplay;
+using RTS.Presentation.UI;
 using RTS.MLAgents.Stage7B;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,8 +40,8 @@ namespace RTS.Presentation
         [SerializeField] private MlAgentsTrainingBootstrap _trainingBootstrap;
 
         [Header("Diagnostics")]
-        [SerializeField] private bool _showDiagnostics = true;
-        [SerializeField] private bool _logPauseDiagnostics = true;
+        [SerializeField] private bool _showDiagnostics = false;
+        [SerializeField] private bool _logPauseDiagnostics = false;
         [SerializeField] private bool _hotkeysEnabled = true;
 
         [Header("Simulation Step Presets")]
@@ -58,7 +59,7 @@ namespace RTS.Presentation
         [SerializeField] private KeyCode _stepKey = KeyCode.N;
 
         [Header("Overlay")]
-        [SerializeField] private bool _showOverlay = true;
+        [SerializeField] private bool _showOverlay = false;
         [SerializeField] private Vector2 _overlayPosition = new Vector2(10f, 10f);
 
         private EpisodeController _episodeController;
@@ -71,7 +72,10 @@ namespace RTS.Presentation
         private int _updateCount;
         private float _lastUpdateRealtime;
         private string _inputBackendDescription = "unknown";
-        private InputBackendMode _inputBackendMode = InputBackendMode.Unknown;
+                private HumanPlayCanvasController _cachedHumanPlayCanvasController;
+        private float _nextHumanPlayCanvasRetryTime;
+        private const float HumanPlayCanvasRetrySeconds = 1f;
+private InputBackendMode _inputBackendMode = InputBackendMode.Unknown;
         private bool _legacyPollingEnabled;
         private bool _newInputPollingEnabled;
         private bool _keyboardCurrentExists;
@@ -492,19 +496,21 @@ namespace RTS.Presentation
             return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
         }
 
-        private static bool HasActiveHumanPlayCanvasController()
+private bool HasActiveHumanPlayCanvasController()
         {
-            MonoBehaviour[] behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            for (int i = 0; i < behaviours.Length; i++)
+            if (_cachedHumanPlayCanvasController != null && _cachedHumanPlayCanvasController.isActiveAndEnabled)
             {
-                MonoBehaviour behaviour = behaviours[i];
-                if (behaviour != null && behaviour.GetType().Name == "HumanPlayCanvasController")
-                {
-                    return true;
-                }
+                return true;
             }
 
-            return false;
+            if (Time.unscaledTime < _nextHumanPlayCanvasRetryTime)
+            {
+                return false;
+            }
+
+            _nextHumanPlayCanvasRetryTime = Time.unscaledTime + HumanPlayCanvasRetrySeconds;
+            _cachedHumanPlayCanvasController = FindFirstObjectByType<HumanPlayCanvasController>(FindObjectsInactive.Exclude);
+            return _cachedHumanPlayCanvasController != null && _cachedHumanPlayCanvasController.isActiveAndEnabled;
         }
 
 #if ENABLE_INPUT_SYSTEM
