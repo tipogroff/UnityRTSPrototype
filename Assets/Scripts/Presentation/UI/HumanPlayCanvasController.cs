@@ -35,9 +35,9 @@ namespace RTS.Presentation.UI
         [SerializeField, Min(0)] private int _attackAreaRadius = 4;
 
         [Header("Colors")]
-        [SerializeField] private Color _panelColor = new Color(0.08f, 0.09f, 0.08f, 0.88f);
+        [SerializeField] private Color _panelColor = Color.white;
         [SerializeField] private Color _buttonColor = new Color(0.78f, 0.67f, 0.48f, 1f);
-        [SerializeField] private Color _textColor = new Color(0.96f, 0.92f, 0.82f, 1f);
+        [SerializeField] private Color _textColor = new Color(0.25f, 0.19f, 0.1f, 1f);
 
         private Canvas _canvas;
         private RectTransform _hudRoot;
@@ -1047,8 +1047,13 @@ namespace RTS.Presentation.UI
         private void LoadDefaultKenneySprites()
         {
 #if UNITY_EDITOR
-            _panelSprite ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/panel_beige.png");
+            Sprite kenneyPanel = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+                "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/panel_brown.png");
+            if (kenneyPanel != null)
+            {
+                _panelSprite = kenneyPanel;
+            }
+
             _buttonSprite ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
                 "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion/PNG/buttonLong_beige.png");
             _buttonPressedSprite ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
@@ -1058,6 +1063,8 @@ namespace RTS.Presentation.UI
             _homeIcon ??= UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
                 "Assets/Art/UI/Kenney/Game_Icons/PNG/Black/1x/home.png");
 #endif
+            _panelColor = Color.white;
+            _textColor = new Color(0.25f, 0.19f, 0.1f, 1f);
         }
 
         private Button CreateVerticalButton(RectTransform parent, string label, float yFromTop, UnityEngine.Events.UnityAction onClick, Sprite icon = null)
@@ -1125,13 +1132,13 @@ namespace RTS.Presentation.UI
             if (icon != null)
             {
                 Image iconImage = CreateIcon(go.transform as RectTransform, icon);
-                SetRect(iconImage.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(25f, 0f), new Vector2(22f, 22f));
+                SetRect(iconImage.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(18f, 0f), new Vector2(18f, 18f));
             }
 
             Text text = CreateLabel("Text", go.transform as RectTransform, 16, FontStyle.Bold, TextAnchor.MiddleCenter);
             text.text = label;
             text.color = new Color(0.12f, 0.09f, 0.05f, 1f);
-            Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(icon != null ? 34f : 8f, 0f), new Vector2(-8f, 0f));
+            Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(icon != null ? 28f : 8f, 0f), new Vector2(-6f, 0f));
             return button;
         }
 
