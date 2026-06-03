@@ -25,7 +25,7 @@ namespace RTS.ML.Editor
             runner.RestartVisualInspectionMatch();
         }
 
-        [MenuItem("RTS/Week6/Visual Inspection/Step Once _RIGHT")]
+        [MenuItem("RTS/Week6/Visual Inspection/Step Once")]
         private static void StepOnce()
         {
             if (!EditorApplication.isPlaying)
@@ -44,7 +44,7 @@ namespace RTS.ML.Editor
             runner.StepManualOnce();
         }
 
-        [MenuItem("RTS/Week6/Visual Inspection/Toggle Pause _SPACE")]
+        [MenuItem("RTS/Week6/Visual Inspection/Toggle Pause")]
         private static void TogglePause()
         {
             if (!EditorApplication.isPlaying)
@@ -63,7 +63,7 @@ namespace RTS.ML.Editor
             runner.TogglePauseResume();
         }
 
-        [MenuItem("RTS/Week6/Visual Inspection/Dump Snapshot _L")]
+        [MenuItem("RTS/Week6/Visual Inspection/Dump Snapshot")]
         private static void DumpSnapshot()
         {
             if (!EditorApplication.isPlaying)

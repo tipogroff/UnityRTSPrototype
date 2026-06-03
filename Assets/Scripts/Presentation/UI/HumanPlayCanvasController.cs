@@ -136,6 +136,8 @@ namespace RTS.Presentation.UI
 
         public void SetPauseMenuVisible(bool visible)
         {
+            ResolveReferences();
+
             if (_pauseMenu != null)
             {
                 _pauseMenu.gameObject.SetActive(visible);
@@ -143,11 +145,11 @@ namespace RTS.Presentation.UI
 
             if (visible)
             {
-                _speedController?.Pause();
+                PauseSimulation();
             }
-            else if (_speedController != null && _speedController.IsPaused)
+            else
             {
-                _speedController.Resume();
+                ResumeSimulation();
             }
 
             if (!visible)
@@ -161,8 +163,23 @@ namespace RTS.Presentation.UI
             SetPauseMenuVisible(false);
         }
 
+        public void StepPausedSimulation()
+        {
+            ResolveReferences();
+
+            if (_speedController != null)
+            {
+                _speedController.StepOnce();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Step skipped: GameSpeedController is missing.");
+        }
+
         public void RestartMatch()
         {
+            ResolveSimulationControllers();
+            _speedController?.ClearAllPauseReasons("HumanPlayCanvasController.RestartMatch");
             Time.timeScale = 1f;
             if (_modeController != null)
             {
@@ -178,6 +195,8 @@ namespace RTS.Presentation.UI
 
         public void ReturnToMainMenu()
         {
+            ResolveSimulationControllers();
+            _speedController?.ClearAllPauseReasons("HumanPlayCanvasController.ReturnToMainMenu");
             Time.timeScale = 1f;
             if (_sceneFlowController != null)
             {
@@ -370,11 +389,12 @@ namespace RTS.Presentation.UI
 
             CreateHeader(_pauseMenu, "Paused");
             CreateVerticalButton(_pauseMenu, "Continue", 96f, Continue);
-            CreateVerticalButton(_pauseMenu, "Restart Match", 154f, RestartMatch);
-            CreateVerticalButton(_pauseMenu, "Settings", 212f, ShowHudSettings, _gearIcon);
-            CreateVerticalButton(_pauseMenu, "Toggle Metrics", 270f, () => _metricsVisibility?.Toggle());
-            CreateVerticalButton(_pauseMenu, "Main Menu", 328f, ReturnToMainMenu, _homeIcon);
-            CreateVerticalButton(_pauseMenu, "Quit", 386f, Quit);
+            CreateVerticalButton(_pauseMenu, "Step", 154f, StepPausedSimulation);
+            CreateVerticalButton(_pauseMenu, "Restart Match", 212f, RestartMatch);
+            CreateVerticalButton(_pauseMenu, "Settings", 270f, ShowHudSettings, _gearIcon);
+            CreateVerticalButton(_pauseMenu, "Toggle Metrics", 328f, () => _metricsVisibility?.Toggle());
+            CreateVerticalButton(_pauseMenu, "Main Menu", 386f, ReturnToMainMenu, _homeIcon);
+            CreateVerticalButton(_pauseMenu, "Quit", 444f, Quit);
         }
 
         private void BuildSettingsPanel(RectTransform root)
@@ -620,6 +640,35 @@ namespace RTS.Presentation.UI
                 _commandController.OnAttackAreaContextRequested += HandleAttackAreaContextRequested;
                 _commandController.SetAttackAcquireRadii(_attackClickAcquireRadius, _attackAreaRadius);
             }
+        }
+
+        private void PauseSimulation()
+        {
+            ResolveSimulationControllers();
+            if (_speedController != null)
+            {
+                _speedController.PauseFromMenu();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Pause skipped: GameSpeedController is missing.");
+        }
+
+        private void ResumeSimulation()
+        {
+            ResolveSimulationControllers();
+            if (_speedController != null)
+            {
+                _speedController.ResumeFromMenu();
+                return;
+            }
+
+            Debug.LogWarning("[HumanPlayCanvasController] Resume skipped: GameSpeedController is missing.");
+        }
+
+        private void ResolveSimulationControllers()
+        {
+            _speedController ??= FindFirstObjectByType<GameSpeedController>();
         }
 
         private void HandleMoveContextRequested(GridPosition targetCell, Vector2 screenPosition)
@@ -1225,8 +1274,15 @@ namespace RTS.Presentation.UI
             }
 #endif
 
-#if ENABLE_LEGACY_INPUT_MANAGER && !ENABLE_INPUT_SYSTEM
-            return Input.GetKeyDown(key);
+#if ENABLE_LEGACY_INPUT_MANAGER
+            try
+            {
+                return Input.GetKeyDown(key);
+            }
+            catch (System.InvalidOperationException)
+            {
+                return false;
+            }
 #else
             return false;
 #endif

@@ -97,6 +97,7 @@ namespace RTS.MLAgents.Stage7B
         private int _runtimeApplyRejectedCount;
         private int _requestDecisionCount;
         private int _inferenceContinuousRequestDecisionCount;
+        private float _lastPauseGateLogRealtime = -100f;
         private int _observationBuilderUsedCount;
         private int _observationFallbackCount;
         private int _selectedNoOpActionCount;
@@ -529,6 +530,21 @@ namespace RTS.MLAgents.Stage7B
             Stopwatch timer = Stopwatch.StartNew();
             ResolveDependencies();
             ApplyDecisionSourcePolicy();
+            if (IsSimulationPauseActive("on_action_received_enter"))
+            {
+                _currentCandidates = null;
+                timer.Stop();
+                Stage7BResetTimeoutTrace.Record("StudentMlAgent.OnActionReceived.paused", this, _bootstrap);
+                AppendDecisionSchedulerTrace(
+                    "on_action_received_paused",
+                    "simulation_paused",
+                    accepted: false,
+                    requestedDecisionNow: false,
+                    scheduledNextDecision: false,
+                    decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+                return;
+            }
+
             _bootstrap?.EnsureReadyForDecision();
             BuildCandidates();
 
@@ -591,7 +607,8 @@ namespace RTS.MLAgents.Stage7B
 
                 if (_bootstrap != null
                     && _bootstrap.MatchManager != null
-                    && _bootstrap.MatchManager.Phase == MatchPhase.Running)
+                    && _bootstrap.MatchManager.Phase == MatchPhase.Running
+                    && CanAdvanceMatchFromStudentAgent("demo_replay_stepmatch"))
                 {
                     _bootstrap.MatchManager.StepMatch();
                 }
@@ -700,7 +717,8 @@ namespace RTS.MLAgents.Stage7B
                 && _bootstrap.StepScriptedOpponent
                 && _bootstrap.ScriptedOpponentAdapter != null
                 && _bootstrap.MatchManager != null
-                && _bootstrap.MatchManager.Phase == MatchPhase.Running)
+                && _bootstrap.MatchManager.Phase == MatchPhase.Running
+                && CanAdvanceMatchFromStudentAgent("scripted_opponent_decision"))
             {
                 bool shouldRunScriptedOpponent = _bootstrap.ScriptedOpponentPacing == null
                     || _bootstrap.ScriptedOpponentPacing.ShouldExecuteBotDecisionStep(Time.time);
@@ -716,6 +734,7 @@ namespace RTS.MLAgents.Stage7B
 
             bool stillRunning = _bootstrap != null
                                 && _bootstrap.MatchManager != null
+                                && CanAdvanceMatchFromStudentAgent("student_on_action_stepmatch")
                                 && _bootstrap.MatchManager.StepMatch();
 
             if (collector != null && _bootstrap != null)
@@ -781,6 +800,37 @@ namespace RTS.MLAgents.Stage7B
                 requestedDecisionNow: false,
                 scheduledNextDecision: _pendingInferenceContinuousRequest,
                 decisionRequesterExpectedToDrive: ShouldDecisionRequesterDriveInference());
+        }
+
+        private bool CanAdvanceMatchFromStudentAgent(string source)
+        {
+            return !IsSimulationPauseActive(source);
+        }
+
+        private bool IsSimulationPauseActive(string source)
+        {
+            EpisodeController episodeController = EpisodeController.Instance;
+            if (episodeController == null)
+            {
+                episodeController = FindFirstObjectByType<EpisodeController>();
+            }
+
+            if (episodeController == null || !episodeController.IsAutomaticSteppingPaused)
+            {
+                return false;
+            }
+
+            if (Time.unscaledTime - _lastPauseGateLogRealtime >= 1f)
+            {
+                _lastPauseGateLogRealtime = Time.unscaledTime;
+                int step = _bootstrap != null && _bootstrap.MatchManager != null ? _bootstrap.MatchManager.Step : -1;
+                Debug.Log(
+                    $"[PauseGate] Blocked StudentMlAgent source={source} step={step} "
+                    + $"episodeController={episodeController.GetInstanceID()} "
+                    + $"isAutomaticSteppingPaused={episodeController.IsAutomaticSteppingPaused}");
+            }
+
+            return true;
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)

@@ -14,6 +14,15 @@ using System.Reflection;
 
 namespace RTS.Presentation
 {
+    [System.Flags]
+    public enum SimulationPauseReason
+    {
+        None = 0,
+        Hotkey = 1 << 0,
+        Menu = 1 << 1,
+        External = 1 << 2,
+    }
+
     [DisallowMultipleComponent]
     public sealed class GameSpeedController : MonoBehaviour
     {
@@ -31,6 +40,7 @@ namespace RTS.Presentation
 
         [Header("Diagnostics")]
         [SerializeField] private bool _showDiagnostics = true;
+        [SerializeField] private bool _logPauseDiagnostics = true;
         [SerializeField] private bool _hotkeysEnabled = true;
 
         [Header("Simulation Step Presets")]
@@ -52,7 +62,7 @@ namespace RTS.Presentation
         [SerializeField] private Vector2 _overlayPosition = new Vector2(10f, 10f);
 
         private EpisodeController _episodeController;
-        private bool _isPaused;
+        private SimulationPauseReason _pauseReasons;
         private float _activeStepsPerSecond = 5f;
         private bool _isActiveForCurrentMode = true;
         private bool _inputPollingActive;
@@ -67,9 +77,13 @@ namespace RTS.Presentation
         private bool _keyboardCurrentExists;
         private bool _legacyInputUnavailable;
 
-        public float CurrentSpeed => _isPaused ? 0f : _activeStepsPerSecond / Mathf.Max(0.01f, _normalStepsPerSecond);
-        public float CurrentStepsPerSecond => _isPaused ? 0f : _activeStepsPerSecond;
-        public bool IsPaused => _isPaused;
+        public float CurrentSpeed => IsPaused ? 0f : _activeStepsPerSecond / Mathf.Max(0.01f, _normalStepsPerSecond);
+        public float CurrentStepsPerSecond => IsPaused ? 0f : _activeStepsPerSecond;
+        public bool IsPaused => _pauseReasons != SimulationPauseReason.None;
+        public SimulationPauseReason ActiveReasons => _pauseReasons;
+        public bool IsPausedByMenu => (_pauseReasons & SimulationPauseReason.Menu) != 0;
+        public bool IsPausedByHotkey => (_pauseReasons & SimulationPauseReason.Hotkey) != 0;
+        public string PauseReasons => _pauseReasons.ToString();
         public bool HotkeysEnabled => _hotkeysEnabled;
         public bool OverlayEnabled => _showOverlay;
         public bool InputPollingActive => _inputPollingActive;
@@ -119,9 +133,9 @@ namespace RTS.Presentation
                 return;
             }
 
-            if (_isPaused)
+            if (IsPaused)
             {
-                ApplySimulationPause();
+                ApplyPauseStateToEpisode();
                 return;
             }
 
@@ -142,7 +156,15 @@ namespace RTS.Presentation
             if (WasKeyPressed(_pauseKey))
             {
                 _lastHotkey = "Space";
-                TogglePause();
+                TogglePauseFromHotkey();
+            }
+
+            if (_pauseKey != KeyCode.Escape
+                && !HasActiveHumanPlayCanvasController()
+                && WasKeyPressed(KeyCode.Escape))
+            {
+                _lastHotkey = "Escape";
+                TogglePauseFromHotkey();
             }
 
             if (WasKeyPressed(_speed1xKey) || WasKeyPressed(KeyCode.Keypad1))
@@ -199,48 +221,153 @@ namespace RTS.Presentation
             }
 
             _activeStepsPerSecond = Mathf.Max(0.01f, stepsPerSecond);
-            _isPaused = false;
+            if (IsPaused)
+            {
+                ApplySelectedStepsPerSecondWhilePaused();
+                return;
+            }
+
             ApplyStepsPerSecond(_activeStepsPerSecond);
         }
 
         public void Pause()
         {
-            if (!_isActiveForCurrentMode)
-            {
-                return;
-            }
-
-            _isPaused = true;
-            ApplySimulationPause();
+            RequestPause(SimulationPauseReason.External);
         }
 
         public void Resume()
         {
+            ReleasePause(SimulationPauseReason.External);
+        }
+
+        public void TogglePause()
+        {
+            TogglePauseFromHotkey();
+        }
+
+        public void TogglePauseFromHotkey()
+        {
+            if ((_pauseReasons & SimulationPauseReason.Hotkey) == 0)
+            {
+                RequestPause(SimulationPauseReason.Hotkey);
+            }
+            else
+            {
+                ReleasePause(SimulationPauseReason.Hotkey);
+            }
+        }
+
+        public void PauseFromMenu()
+        {
+            RequestPause(SimulationPauseReason.Menu);
+        }
+
+        public void ResumeFromMenu()
+        {
+            ReleasePause(SimulationPauseReason.Menu);
+        }
+
+        public void SetPausedFromExternal(bool paused)
+        {
+            if (paused)
+            {
+                RequestPause(SimulationPauseReason.External);
+            }
+            else
+            {
+                ReleasePause(SimulationPauseReason.External);
+            }
+        }
+
+        public void RequestPause(SimulationPauseReason reason)
+        {
+            SetPauseReason(reason, true);
+        }
+
+        public void ReleasePause(SimulationPauseReason reason)
+        {
+            SetPauseReason(reason, false);
+        }
+
+        public void ClearAllPauseReasons(string source = null)
+        {
+            if (!_isActiveForCurrentMode)
+            {
+                _pauseReasons = SimulationPauseReason.None;
+                return;
+            }
+
+            if (_pauseReasons == SimulationPauseReason.None)
+            {
+                ReapplyPauseState(source ?? "ClearAllPauseReasons.noop");
+                return;
+            }
+
+            SimulationPauseReason previousReasons = _pauseReasons;
+            _pauseReasons = SimulationPauseReason.None;
+            LogPauseDiagnostic($"ClearAllPauseReasons source={source ?? "unspecified"} previous={previousReasons}");
+            ReapplyPauseState(source ?? "ClearAllPauseReasons");
+        }
+
+        public void ReapplyPauseState(string source = null)
+        {
+            ResolveEpisodeController();
+            bool shouldPause = IsPaused;
+            if (_episodeController == null)
+            {
+                LogPauseDiagnostic($"Reapply skipped source={source ?? "unspecified"} active={_pauseReasons} isPaused={shouldPause} episodeController=<null>");
+                return;
+            }
+
+            _episodeController.SetAutomaticSteppingPaused(shouldPause);
+            if (!shouldPause)
+            {
+                _episodeController.SetTargetStepsPerSecond(Mathf.Max(0.01f, _activeStepsPerSecond));
+            }
+
+            LogPauseDiagnostic(
+                $"Reapply source={source ?? "unspecified"} active={_pauseReasons} isPaused={shouldPause} "
+                + $"episodeController={_episodeController.GetInstanceID()} stepsPerSecond={_activeStepsPerSecond:0.##}");
+        }
+
+        private void SetPauseReason(SimulationPauseReason reason, bool active)
+        {
             if (!_isActiveForCurrentMode)
             {
                 return;
             }
 
-            _isPaused = false;
-            ApplyStepsPerSecond(_activeStepsPerSecond);
-        }
-
-        public void TogglePause()
-        {
-            if (_isPaused)
+            if (reason == SimulationPauseReason.None)
             {
-                Resume();
+                return;
+            }
+
+            SimulationPauseReason previousReasons = _pauseReasons;
+            if (active)
+            {
+                _pauseReasons |= reason;
             }
             else
             {
-                Pause();
+                _pauseReasons &= ~reason;
             }
+
+            if (previousReasons == _pauseReasons)
+            {
+                LogPauseDiagnostic($"Request unchanged reason={reason} active={active} activeReasons={_pauseReasons} isPaused={IsPaused}");
+                ReapplyPauseState("unchanged");
+                return;
+            }
+
+            LogPauseDiagnostic($"Request reason={reason} active={active} activeReasons={_pauseReasons} isPaused={IsPaused}");
+            ReapplyPauseState(active ? "RequestPause" : "ReleasePause");
         }
 
         public bool StepOnce()
         {
-            if (!_isActiveForCurrentMode || !_isPaused)
+            if (!_isActiveForCurrentMode || !IsPaused)
             {
+                LogPauseDiagnostic($"StepOnce rejected: active={_isActiveForCurrentMode} isPaused={IsPaused} activeReasons={_pauseReasons}");
                 return false;
             }
 
@@ -259,13 +386,16 @@ namespace RTS.Presentation
                 return false;
             }
 
-            return _episodeController.StepEpisodeOnce();
+            bool stepped = _episodeController.StepEpisodeOnce();
+            LogPauseDiagnostic($"StepOnce {(stepped ? "accepted" : "rejected")} activeReasons={_pauseReasons}");
+            ReapplyPauseState("StepOnce");
+            return stepped;
         }
 
         public void ResetSpeed()
         {
             _activeStepsPerSecond = Mathf.Max(0.01f, _normalStepsPerSecond);
-            _isPaused = false;
+            ClearAllPauseReasons("ResetSpeed");
 
             if (_isActiveForCurrentMode)
             {
@@ -362,6 +492,21 @@ namespace RTS.Presentation
             return eventSystem.currentSelectedGameObject.GetComponent<InputField>() != null;
         }
 
+        private static bool HasActiveHumanPlayCanvasController()
+        {
+            MonoBehaviour[] behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour != null && behaviour.GetType().Name == "HumanPlayCanvasController")
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 #if ENABLE_INPUT_SYSTEM
         private static bool TryGetInputSystemKeyPressed(KeyCode key, out bool isPressed)
         {
@@ -398,6 +543,9 @@ namespace RTS.Presentation
                 case KeyCode.N:
                     isPressed = keyboard.nKey.wasPressedThisFrame;
                     return true;
+                case KeyCode.Escape:
+                    isPressed = keyboard.escapeKey.wasPressedThisFrame;
+                    return true;
                 default:
                     return false;
             }
@@ -432,7 +580,11 @@ namespace RTS.Presentation
             object value = ReadEditorInputBackendValue();
             if (value != null)
             {
-                return ConvertEditorInputBackendValue(value);
+                InputBackendMode editorMode = ConvertEditorInputBackendValue(value);
+                if (editorMode != InputBackendMode.Unknown)
+                {
+                    return editorMode;
+                }
             }
 #endif
 
@@ -529,19 +681,33 @@ namespace RTS.Presentation
         private void ApplyStepsPerSecond(float stepsPerSecond)
         {
             ResolveEpisodeController();
-            _episodeController?.SetAutomaticSteppingPaused(false);
+            if (_episodeController == null)
+            {
+                LogPauseDiagnostic($"ApplyStepsPerSecond skipped: EpisodeController missing stepsPerSecond={stepsPerSecond:0.##}");
+                return;
+            }
+
+            _episodeController.SetAutomaticSteppingPaused(false);
             _episodeController?.SetTargetStepsPerSecond(Mathf.Max(0.01f, stepsPerSecond));
+            LogPauseDiagnostic($"ApplyStepsPerSecond stepsPerSecond={stepsPerSecond:0.##}");
         }
 
-        private void ApplySimulationPause()
+        private void ApplySelectedStepsPerSecondWhilePaused()
         {
             ResolveEpisodeController();
-            _episodeController?.SetAutomaticSteppingPaused(true);
+            _episodeController?.SetTargetStepsPerSecond(Mathf.Max(0.01f, _activeStepsPerSecond));
+            ApplyPauseStateToEpisode();
+        }
+
+        private void ApplyPauseStateToEpisode()
+        {
+            ReapplyPauseState("ApplyPauseStateToEpisode");
         }
 
         private void RestoreTimeDefaults()
         {
             ResolveEpisodeController();
+            _pauseReasons = SimulationPauseReason.None;
             _episodeController?.SetAutomaticSteppingPaused(false);
         }
 
@@ -566,6 +732,14 @@ namespace RTS.Presentation
 #endif
         }
 
+        private void LogPauseDiagnostic(string message)
+        {
+            if (_logPauseDiagnostics)
+            {
+                Debug.Log("[Pause] " + message);
+            }
+        }
+
         private void OnGUI()
         {
             if (!_showOverlay)
@@ -581,7 +755,7 @@ namespace RTS.Presentation
             });
 
             string mode = _isActiveForCurrentMode ? "Enabled" : "Disabled (TrainerControlled mode)";
-            string speedLabel = _isPaused ? "Paused" : _activeStepsPerSecond.ToString("0.##") + " steps/sec";
+            string speedLabel = IsPaused ? "Paused" : _activeStepsPerSecond.ToString("0.##") + " steps/sec";
             GUILayout.Label("Mode: " + mode);
             GUILayout.Label("Controller enabled: " + enabled);
             GUILayout.Label("Input polling active: " + _inputPollingActive);
@@ -600,7 +774,8 @@ namespace RTS.Presentation
             GUILayout.Label("Current timeScale: " + Time.timeScale.ToString("0.00"));
             GUILayout.Label("Current fixedDeltaTime: " + Time.fixedDeltaTime.ToString("0.0000"));
             GUILayout.Label("Simulation speed: " + speedLabel);
-            GUILayout.Label("Paused: " + _isPaused);
+            GUILayout.Label("Paused: " + IsPaused);
+            GUILayout.Label("Pause reasons: " + _pauseReasons);
             GUILayout.Label("Controls: Space pause/resume, 1/2/3/4 speed, N step (paused only)");
             GUILayout.Space(6f);
 
@@ -635,14 +810,14 @@ namespace RTS.Presentation
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(_isPaused ? "Resume" : "Pause", GUILayout.Height(28f)))
+            if (GUILayout.Button(IsPaused ? "Resume" : "Pause", GUILayout.Height(28f)))
             {
                 _lastHotkey = "mouse:pause";
                 _lastInputSource = "GUI";
                 TogglePause();
             }
 
-            GUI.enabled = _isPaused;
+            GUI.enabled = IsPaused;
             if (GUILayout.Button("Step", GUILayout.Height(28f)))
             {
                 _lastHotkey = "mouse:step";

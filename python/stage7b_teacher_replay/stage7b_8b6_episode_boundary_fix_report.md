@@ -16,15 +16,15 @@ student_teacher_replay_orchestrator_is_null: true
 - start_count: 1
 - initialize_count: 3
 - on_episode_begin_count: 2
-- collect_observations_count: 1808
-- write_mask_count: 1805
+- collect_observations_count: 5076
+- write_mask_count: 5073
 - heuristic_count: 0
-- on_action_received_count: 1805
+- on_action_received_count: 2030
 - end_episode_count: 1
-- first_write_mask_frame: 1668
-- first_write_mask_time: 19,24314
-- first_on_action_received_frame: 1668
-- first_on_action_received_time: 19,26639
+- first_write_mask_frame: 236
+- first_write_mask_time: 11,4862
+- first_on_action_received_frame: 236
+- first_on_action_received_time: 11,50966
 
 ## StartNewEpisode Boundary
 - bootstrap_start_new_episode_count: 2
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-06-03T02:17:54.2195771Z
+generated_utc: 2026-06-03T07:38:06.1062439Z

@@ -669,29 +669,64 @@ namespace RTS.Gameplay
         {
             EnsureCoreRuntimeObjects();
 
-            if (_matchManager == null)
+            bool runtimeReferencesChanged = false;
+
+            MatchManager currentMatchManager = MatchManager.Instance != null
+                ? MatchManager.Instance
+                : FindFirstObjectByType<MatchManager>();
+            if (currentMatchManager != null && currentMatchManager != _matchManager)
             {
-                _matchManager = MatchManager.Instance;
+                if (_matchManager != null)
+                {
+                    _matchManager.OnMatchEnded -= HandleMatchEnded;
+                }
+
+                _matchManager = currentMatchManager;
+                _matchManager.OnMatchEnded -= HandleMatchEnded;
+                _matchManager.OnMatchEnded += HandleMatchEnded;
+                runtimeReferencesChanged = true;
             }
 
-            if (_matchBootstrap == null)
+            MatchBootstrap currentMatchBootstrap = MatchBootstrap.Instance != null
+                ? MatchBootstrap.Instance
+                : FindFirstObjectByType<MatchBootstrap>();
+            if (currentMatchBootstrap != null && currentMatchBootstrap != _matchBootstrap)
             {
-                _matchBootstrap = MatchBootstrap.Instance;
+                _matchBootstrap = currentMatchBootstrap;
+                runtimeReferencesChanged = true;
             }
 
-            if (_gridManager == null)
+            GridManager currentGridManager = GridManager.Instance != null
+                ? GridManager.Instance
+                : FindFirstObjectByType<GridManager>();
+            if (currentGridManager != null && currentGridManager != _gridManager)
             {
-                _gridManager = GridManager.Instance;
+                _gridManager = currentGridManager;
+                runtimeReferencesChanged = true;
             }
 
-            if (_unitRegistry == null)
+            UnitRegistry currentUnitRegistry = UnitRegistry.Instance != null
+                ? UnitRegistry.Instance
+                : FindFirstObjectByType<UnitRegistry>();
+            if (currentUnitRegistry != null && currentUnitRegistry != _unitRegistry)
             {
-                _unitRegistry = UnitRegistry.Instance;
+                _unitRegistry = currentUnitRegistry;
+                runtimeReferencesChanged = true;
             }
 
-            if (_resourceManager == null)
+            ResourceManager currentResourceManager = ResourceManager.Instance != null
+                ? ResourceManager.Instance
+                : FindFirstObjectByType<ResourceManager>();
+            if (currentResourceManager != null && currentResourceManager != _resourceManager)
             {
-                _resourceManager = ResourceManager.Instance;
+                _resourceManager = currentResourceManager;
+                runtimeReferencesChanged = true;
+            }
+
+            if (runtimeReferencesChanged)
+            {
+                _policyPipelineFacade = null;
+                _rlLoopCoordinator = null;
             }
 
             if (_experimentLogger == null)
