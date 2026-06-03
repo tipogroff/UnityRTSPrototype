@@ -15,19 +15,19 @@ student_teacher_replay_orchestrator_is_null: true
 - awake_count: 1
 - start_count: 1
 - initialize_count: 3
-- on_episode_begin_count: 4
-- collect_observations_count: 5445
-- write_mask_count: 5442
+- on_episode_begin_count: 3
+- collect_observations_count: 4688
+- write_mask_count: 4684
 - heuristic_count: 0
-- on_action_received_count: 5442
-- end_episode_count: 1
-- first_write_mask_frame: 4350
-- first_write_mask_time: 50,17377
-- first_on_action_received_frame: 4350
-- first_on_action_received_time: 50,17785
+- on_action_received_count: 4684
+- end_episode_count: 2
+- first_write_mask_frame: 262
+- first_write_mask_time: 12,18475
+- first_on_action_received_frame: 262
+- first_on_action_received_time: 12,20414
 
 ## StartNewEpisode Boundary
-- bootstrap_start_new_episode_count: 5
+- bootstrap_start_new_episode_count: 3
 - bootstrap_start_new_episode_skipped_reentrant_count: 0
 - bootstrap_start_new_episode_reason: agent_on_episode_begin
 - bootstrap_start_new_episode_caller: StudentMlAgent.OnEpisodeBegin
@@ -50,4 +50,4 @@ student_teacher_replay_orchestrator_is_null: true
 - match_state_after_reset: Running
 - duplicate_spawn_detected: false
 
-generated_utc: 2026-06-03T19:35:01.2395107Z
+generated_utc: 2026-06-03T20:19:29.3741363Z

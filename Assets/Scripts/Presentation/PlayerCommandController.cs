@@ -46,7 +46,7 @@ namespace RTS.Presentation
         [SerializeField, Min(0)] private int _attackAreaAcquireRadius = 4;
 
         [Header("Diagnostics")]
-        [SerializeField] private bool _logCommandDiagnostics = true;
+        [SerializeField] private bool _logCommandDiagnostics = false;
 
         private Owner _humanSide = Owner.Player1;
         private bool _manualInputEnabled;

@@ -29,7 +29,7 @@ namespace RTS.Presentation.UI
         [SerializeField] private Sprite _targetIcon;
 
         [Header("Refresh")]
-        [SerializeField] private float _refreshInterval = 0.2f;
+        [SerializeField] private float _refreshInterval = 1.0f;
 
         [Header("Attack Targeting")]
         [SerializeField, Min(0)] private int _attackClickAcquireRadius = 3;
@@ -475,7 +475,7 @@ private void Update()
             SetText(_interfaceScaleSettingValue, DemoVisualSettings.InterfaceScale.ToString());
         }
 
-        private void Refresh(bool force)
+private void Refresh(bool force)
         {
             using var marker = UpdateHudMarker.Auto();
             UnitRuntime selected = _selectionManager != null
@@ -487,7 +487,15 @@ private void Update()
             int selectionCount = selectedUnits != null ? selectedUnits.Count : (selected != null ? 1 : 0);
             bool hasPlayer2ManualMode = HasPlayer2ManualMode();
             _topResourceBar?.Refresh(_matchManager, _speedController);
-            UpdateHoveredResource();
+            if (hasPlayer2ManualMode)
+            {
+                UpdateHoveredResource();
+            }
+            else
+            {
+                _hoveredResource = null;
+            }
+
             _selectionInfo?.Refresh(selectedUnits, selected, _commandController);
             if (hasPlayer2ManualMode)
             {
@@ -507,7 +515,11 @@ private void Update()
                 _contextMenu?.Hide();
             }
 
-            _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
+            if (_metricsVisibility != null && _metricsVisibility.IsVisible)
+            {
+                _metricsPanel?.Refresh(_modeController, _humanPlayerController, _commandController, _speedController);
+            }
+
             if (_stopButton != null)
             {
                 _stopButton.interactable = hasPlayer2ManualMode

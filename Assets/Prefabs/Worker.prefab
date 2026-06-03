@@ -130,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1dae0954bf0f1e49a70e2a99a956f0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animationsDisabled: 1
   animator: {fileID: 3034443308598844145}
   materialRenderers:
   - {fileID: 7471265698529434894}
@@ -155,8 +156,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitRuntime: {fileID: 0}
   unitVisualAnimator: {fileID: 936248505012340001}
+  visualGridMovementInterpolator: {fileID: 0}
   movementLatchSeconds: 0.15
+  maxMoveVisualSeconds: 1.5
   forceInitialSyncUntilSuccess: 1
+  _disableRuntimeAnimations: 1
+  _maxMissingReferenceRetries: 3
+  _failedReferenceRetrySeconds: 10
+  _missingReferenceRetrySeconds: 0.5
+  enableRuntimeTrace: 0
+  lastSetMovingValue: 0
+  lastSetMovingFrame: -1
+  lastMoveStartFrame: -1
+  lastMoveEndFrame: -1
+  animatorMovingMatchesInterpolator: 1
+  lastAnimationEvent: None
+  setMovingApplyCount: 0
 --- !u!114 &936248505012340003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,10 +186,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visualRoot: {fileID: 3763219682555522755}
   moveDuration: 0.3
+  easing:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   useScaledTime: 1
   enableInterpolation: 0
+  debugDisableSmoothMovement: 0
+  fallbackToTeleportOnError: 1
+  maxOffsetMagnitude: 2.5
+  hardSnapDistanceThreshold: 2.5
   teleportDistanceThreshold: 0.05
-  traceEnabled: 1
+  traceEnabled: 0
 --- !u!1 &2576049260843265669
 GameObject:
   m_ObjectHideFlags: 0

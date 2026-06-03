@@ -17,7 +17,9 @@ namespace RTS.Presentation
         [SerializeField] private float maxMoveVisualSeconds = 1.5f;
         [SerializeField] private bool forceInitialSyncUntilSuccess = true;
                 [SerializeField] private bool _disableRuntimeAnimations = true;
-        [SerializeField] private float _missingReferenceRetrySeconds = 0.5f;
+                [SerializeField, Min(0)] private int _maxMissingReferenceRetries = 3;
+        [SerializeField] private float _failedReferenceRetrySeconds = 10f;
+[SerializeField] private float _missingReferenceRetrySeconds = 0.5f;
 [SerializeField] private bool enableRuntimeTrace;
 
         private Vector3 _lastObservedRootWorldPosition;
@@ -38,7 +40,8 @@ namespace RTS.Presentation
         private bool _idleLogged;
         private bool _movingPulseActive;
         private float _movingPulseRemaining;
-                private float _nextMissingReferenceRetryTime;
+                        private int _missingReferenceRetryCount;
+private float _nextMissingReferenceRetryTime;
 private float _movingTrueElapsed;
 
         [SerializeField] private bool lastSetMovingValue;
@@ -109,6 +112,11 @@ private void Start()
 
 private void Update()
         {
+            if (_disableRuntimeAnimations && _ownerVisualSynced)
+            {
+                return;
+            }
+
             ResolveReferencesIfMissing();
             if (unitRuntime == null || unitVisualAnimator == null)
             {
@@ -477,6 +485,7 @@ private void ResolveReferencesIfMissing()
         {
             if (!HasMissingReferences())
             {
+                _missingReferenceRetryCount = 0;
                 return;
             }
 
@@ -485,7 +494,11 @@ private void ResolveReferencesIfMissing()
                 return;
             }
 
-            _nextMissingReferenceRetryTime = Time.unscaledTime + Mathf.Max(0.05f, _missingReferenceRetrySeconds);
+            _missingReferenceRetryCount++;
+            float retrySeconds = _maxMissingReferenceRetries > 0 && _missingReferenceRetryCount > _maxMissingReferenceRetries
+                ? _failedReferenceRetrySeconds
+                : _missingReferenceRetrySeconds;
+            _nextMissingReferenceRetryTime = Time.unscaledTime + Mathf.Max(0.05f, retrySeconds);
             ResolveReferences();
         }
 

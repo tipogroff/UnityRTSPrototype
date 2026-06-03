@@ -8,7 +8,8 @@ namespace RTS.Presentation
     [DisallowMultipleComponent]
     public sealed class ResourceVisualStateController : MonoBehaviour
     {
-        [SerializeField, Min(0.05f)] private float _refreshInterval = 0.25f;
+                [SerializeField] private bool _enableRuntimeRefresh = false;
+[SerializeField, Min(0.05f)] private float _refreshInterval = 0.25f;
         [SerializeField] private Color _activeColor = Color.white;
         [SerializeField] private Color _exhaustedColor = new Color(0.45f, 0.45f, 0.45f, 1f);
         [SerializeField] private string _exhaustedLabelText = "Exhausted";
@@ -30,8 +31,13 @@ namespace RTS.Presentation
             RefreshVisualStates();
         }
 
-        private void Update()
+private void Update()
         {
+            if (!_enableRuntimeRefresh)
+            {
+                return;
+            }
+
             if (Time.unscaledTime < _nextRefreshTime)
             {
                 return;
