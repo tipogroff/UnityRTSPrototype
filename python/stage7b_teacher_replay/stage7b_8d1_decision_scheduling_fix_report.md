@@ -2,8 +2,8 @@
 
 final_decision: NO_GO
 ready_for_stage7b_8d_or_9: false
-blocker_code: E
-blocker_reason: Model output or candidate mapping did not complete action-cycle contract
+blocker_code: C
+blocker_reason: CollectObservations did not provide full real observation without padding
 
 ## Model
 - onnx_source_path: results/Stage7B_ImitationSmoke_010_PostKickConfirm/Stage7B_RTS_Student.onnx
@@ -26,31 +26,31 @@ blocker_reason: Model output or candidate mapping did not complete action-cycle 
 - actual_collect_all_expected_values: true
 - zero_fallback_used: false
 - defensive_pre_ready_observation_count: 0
-- defensive_pre_ready_observation_used_after_runtime_ready: false
+- defensive_pre_ready_observation_used_after_runtime_ready: true
 - warning_padding_first_frame: -1
 - warning_padding_first_academy_step: -1
 
 ## Lifecycle
-- initialize_count: 2
-- on_episode_begin_count: 0
-- collect_observations_count: 2
-- write_discrete_action_mask_count: 0
-- on_action_received_count: 0
+- initialize_count: 3
+- on_episode_begin_count: 2
+- collect_observations_count: 1808
+- write_discrete_action_mask_count: 1805
+- on_action_received_count: 1805
 - heuristic_call_count: 0
-- inference_kick_decision_request_count: 0
-- inference_runtime_ready_observed: false
-- inference_first_ready_frame: -1
-- inference_first_ready_fixed_tick: -1
-- decision_requester_enabled_runtime: false
+- inference_kick_decision_request_count: 2
+- inference_runtime_ready_observed: true
+- inference_first_ready_frame: 1669
+- inference_first_ready_fixed_tick: 2
+- decision_requester_enabled_runtime: true
 
 ## Action Cycle
-- candidate_action_index_last: -1
-- candidate_action_index_in_range: false
+- candidate_action_index_last: 22
+- candidate_action_index_in_range: true
 - candidate_branch_size: 128
-- candidate_builder_success_count: 0
-- action_adapter_success_count: 0
-- runtime_apply_attempted: 0
-- runtime_apply_accepted: 0
+- candidate_builder_success_count: 3610
+- action_adapter_success_count: 1805
+- runtime_apply_attempted: 1805
+- runtime_apply_accepted: 1805
 - runtime_apply_rejected: 0
 
 ## Fallback Guards
@@ -62,7 +62,7 @@ blocker_reason: Model output or candidate mapping did not complete action-cycle 
 
 ## Console
 - unity_console_errors: 0
-- unity_console_warnings: 0
+- unity_console_warnings: 2
 - warning_fewer_observations_0_detected: false
 - warning_heuristic_not_implemented_detected: false
 - timeout_error_log_count: 0
@@ -75,4 +75,4 @@ blocker_reason: Model output or candidate mapping did not complete action-cycle 
 - actual_collect_trace_jsonl: python/stage7b_teacher_replay/stage7b_8d1_actual_collect_observations_trace.jsonl
 - agent_inventory_json: python/stage7b_teacher_replay/stage7b_8d1_agent_inventory.json
 
-generated_at_utc: 2026-06-02T18:25:04.5527014Z
+generated_at_utc: 2026-06-03T02:17:54.2858170Z

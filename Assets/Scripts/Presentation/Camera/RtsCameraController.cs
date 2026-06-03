@@ -19,7 +19,7 @@ namespace RTS.Presentation.CameraControls
     {
         [Header("Movement")]
         [SerializeField] private float _moveSpeed = 14f;
-        [SerializeField] private float _zoomSpeed = 8f;
+        [SerializeField] private float _zoomSpeed = 16f;
         [SerializeField] private float _minZoom = 6f;
         [SerializeField] private float _maxZoom = 18f;
         [SerializeField] private float _boundsPadding = 4f;
