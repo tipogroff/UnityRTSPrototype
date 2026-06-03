@@ -1,7 +1,3 @@
-{"ts_utc":"2026-05-11T15:15:41.9477721Z","event":"v2_run_summary","source":"python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json","decisions_completed":1000,"episode_terminal_reached":false,"episode_terminal_reason":"none","on_episode_begin_count":2}
-{"ts_utc":"2026-05-11T15:15:41.9477721Z","event":"runtime_contract","behavior_type_runtime":"InferenceOnly","heuristic_call_count":0,"observation_values_written_by_agent":15552,"observation_expected":15552,"runtime_apply_attempted":1000,"runtime_apply_accepted":1000,"runtime_apply_rejected":0}
-{"ts_utc":"2026-05-11T15:15:41.9477721Z","event":"student_action_mix","move":892,"noop":41,"harvest":22,"return":2,"produce":41,"attack":2,"total":1000,"move_ratio":0.892}
-{"ts_utc":"2026-05-11T15:05:00Z","event":"scripted_pacing_reference","source":"python/stage7b_teacher_replay/stage7b_scripted_opponent_pacing_tuning_report.json","actions_per_100_before":33.51,"actions_per_100_after":14.45,"drop_percent":56.88,"first_attack_step":-1,"opening_grace_worked":true}
-{"ts_utc":"2026-05-11T16:05:00Z","event":"movement_diagnostic_limits","spatial_telemetry_available":false,"classification":"PARTIAL","reason":"No per-step position or base-distance fields in current v2 trace schema; only action/counter telemetry available."}
-{"ts_utc":"2026-05-11T16:05:00Z","event":"console_warning_classification","errors":0,"warnings":1,"classification":"benign_spawn_saturation","blocking":false}
-{"ts_utc":"2026-05-11T16:05:00Z","event":"parameter_changes","stage7b_decision_limit_old":512,"stage7b_decision_limit_new":1500,"target_old":300,"target_new":1000,"timeout_old":900,"timeout_new":1200,"global_max_steps_changed":false,"global_max_steps":2000}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ef15b84c11a59564bf33344a566cb528054349537c4963bb9223e6596213608b
+size 1715

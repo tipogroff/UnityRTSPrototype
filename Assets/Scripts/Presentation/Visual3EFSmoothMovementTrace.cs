@@ -21,10 +21,23 @@ namespace RTS.Presentation
         private static int _updatedCount;
         private static int _completedCount;
         private static int _snappedCount;
-        private static int _interruptedCount;
+                public static bool Enabled { get; set; } = false;
+private static int _interruptedCount;
 
-        public static void Reset(string reason)
+public static void Reset(string reason)
         {
+            if (!Enabled)
+            {
+                _eventCount = 0;
+                _startedCount = 0;
+                _updatedCount = 0;
+                _completedCount = 0;
+                _snappedCount = 0;
+                _interruptedCount = 0;
+                _initialized = false;
+                return;
+            }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
             {
@@ -72,7 +85,7 @@ namespace RTS.Presentation
             Record("VisualMoveInterpolationInterrupted", unit, previousWorldPosition, currentWorldPosition, initialOffset, duration, source, diagnostic, ref _interruptedCount);
         }
 
-        private static void Record(
+private static void Record(
             string visualEvent,
             UnitRuntime unit,
             Vector3 previousWorldPosition,
@@ -85,6 +98,11 @@ namespace RTS.Presentation
             bool wasInterpolatingBeforeSnap = false,
             Vector3 visualOffsetBeforeSnap = default)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             lock (Sync)
             {

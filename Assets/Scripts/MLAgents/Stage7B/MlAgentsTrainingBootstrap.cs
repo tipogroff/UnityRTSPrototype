@@ -37,7 +37,8 @@ namespace RTS.MLAgents.Stage7B
         [SerializeField] private BootstrapScenarioPreset _scenarioPreset = BootstrapScenarioPreset.Week6StudentMicroRtsMirror24x24;
         [SerializeField] private int _startResources = 60;
         [SerializeField] private Stage7BRuntimeMode _stage7BRuntimeMode = Stage7BRuntimeMode.HeuristicDryRun;
-        [SerializeField] private bool _forceTrainerControlledMode;
+                [SerializeField] private bool _enableResetTimeoutTrace;
+[SerializeField] private bool _forceTrainerControlledMode;
         [SerializeField] private ScriptedOpponentTacticProfile _scriptedOpponentTacticProfile = ScriptedOpponentTacticProfile.Legacy;
 
         [Header("Demo/Interactive Mode")]
@@ -80,8 +81,9 @@ namespace RTS.MLAgents.Stage7B
         private bool _inferenceRuntimeReady;
         private GameConfig _runtimeConfigOverride;
 
-        private void Awake()
+private void Awake()
         {
+            Stage7BResetTimeoutTrace.Enabled = _enableResetTimeoutTrace;
             Stage7BResetTimeoutTrace.ResetSession();
             Stage7BResetTimeoutTrace.Record("MlAgentsTrainingBootstrap.Awake.enter", StudentAgent, this);
             ResolveRuntimeObjects();

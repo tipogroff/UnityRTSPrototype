@@ -13,11 +13,16 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
     public static class Stage7BResetTimeoutTrace
     {
         private const string TraceRelativePath = "python/stage7b_teacher_replay/stage7b_8b6_lifecycle_trace.jsonl";
-        private static bool _clearedForSession;
+                public static bool Enabled { get; set; } = false;
+private static bool _clearedForSession;
 
-        public static void ResetSession()
+public static void ResetSession()
         {
             _clearedForSession = false;
+            if (!Enabled)
+            {
+                return;
+            }
         }
 
         public static void Record(
@@ -31,6 +36,11 @@ namespace RTS.MLAgents.Stage7B.Diagnostics
             int candidateCount = -1,
             int maskedSlots = -1)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             try
             {
                 string path = ResolveProjectPath(TraceRelativePath);

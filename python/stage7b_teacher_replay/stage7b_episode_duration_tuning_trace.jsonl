@@ -1,5 +1,3 @@
-{"phase":"baseline","source":"python/stage7b_teacher_replay/stage7b_8d_extended_onnx_inference_report.json","episode_terminal_reason":"stage7b_decision_limit","on_action_received_count":1678,"runtime_apply_attempted":1678,"runtime_apply_accepted":1678,"duplicate_spawn_detected":false}
-{"phase":"tuning_config","source":"Assets/Scenes/Week7_MLAgents_StudentVsScriptedBot.unity","stage7b_episode_decision_limit_old":256,"stage7b_episode_decision_limit_new":512,"scope":"Stage7B-only"}
-{"phase":"tuning_config","source":"Assets/Scripts/MLAgents/Stage7B/Editor/Stage7BInferenceMode8CMenu.cs","extended_smoke_decisions_target_old":50,"extended_smoke_decisions_target_new":300,"timeout8d_seconds_old":900,"timeout8d_seconds_new":900,"scope":"Stage7B-only"}
-{"phase":"post_tuning_run","source":"python/stage7b_teacher_replay/stage7b_8d1_decision_scheduling_fix_report.json","episode_terminal_reason":"none","on_action_received_count":300,"runtime_apply_attempted":300,"runtime_apply_accepted":300,"heuristic_call_count":0,"behavior_type_runtime":"InferenceOnly","duplicate_spawn_detected":false,"unity_console_errors":0,"unity_console_warnings":0}
-{"phase":"scripted_pacing_health","source":"python/stage7b_teacher_replay/stage7b_week7_scripted_bot_throttle_report.json","student_actions_attempted":256,"bot_decision_executed_count":37,"bot_actions_attempted_after":37,"actions_per_100_student_steps":14.45,"accepted_bot_attack_actions":0,"opening_grace_worked":true}
+version https://git-lfs.github.com/spec/v1
+oid sha256:54e73793e40632164a3e6829a6e0b4112cf8addd51ba463be6ce39491ce186d0
+size 1462

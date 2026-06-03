@@ -231,6 +231,11 @@ private void Update()
 
 private void LateUpdate()
         {
+            if (_disableRuntimeAnimations && _ownerVisualSynced)
+            {
+                return;
+            }
+
             ResolveReferencesIfMissing();
             if (!forceInitialSyncUntilSuccess)
             {
@@ -484,9 +489,14 @@ private void ResolveReferencesIfMissing()
             ResolveReferences();
         }
 
-        private bool HasMissingReferences()
+private bool HasMissingReferences()
         {
-            return unitRuntime == null || unitVisualAnimator == null || visualGridMovementInterpolator == null;
+            if (unitRuntime == null || unitVisualAnimator == null)
+            {
+                return true;
+            }
+
+            return !_disableRuntimeAnimations && visualGridMovementInterpolator == null;
         }
 
 
