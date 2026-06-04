@@ -7,6 +7,7 @@ namespace RTS.Presentation.Orders
 {
     public sealed class BuildBarracksOrder : HumanUnitOrder
     {
+        private const string LogPrefix = "[HumanBuildBarracks]";
         private const int MaxReplans = 3;
 
         private enum QueuedAction
@@ -27,6 +28,8 @@ namespace RTS.Presentation.Orders
         private GridPosition? _queuedMoveTarget;
         private int _pathIndex;
         private int _replans;
+        private Direction _lastSubmittedBuildDirection;
+        private string _lastSubmitBuildReason = string.Empty;
 
         public BuildBarracksOrder(
             UnitRuntime worker,
@@ -58,6 +61,7 @@ namespace RTS.Presentation.Orders
 
         private bool TryAdvance()
         {
+            LogBuildPath("TryAdvance.enter");
             if (IsTerminal)
             {
                 return Status == HumanOrderStatus.Completed;
@@ -79,7 +83,9 @@ namespace RTS.Presentation.Orders
                 return false;
             }
 
-            if (TryGetBuildDirection(Unit.GridPos, _buildCell, out Direction buildDirection))
+            bool hasBuildDirection = TryGetBuildDirection(Unit.GridPos, _buildCell, out Direction buildDirection);
+            LogBuildPath($"TryGetBuildDirection result={hasBuildDirection} direction={buildDirection}");
+            if (hasBuildDirection)
             {
                 return SubmitBuild(buildDirection);
             }
@@ -95,6 +101,7 @@ namespace RTS.Presentation.Orders
 
         private bool ConfirmQueuedAction()
         {
+            LogBuildPath("ConfirmQueuedAction.enter");
             if (_queuedAction == QueuedAction.None)
             {
                 return true;
@@ -109,11 +116,13 @@ namespace RTS.Presentation.Orders
                     {
                         _pathIndex++;
                         _queuedMoveTarget = null;
+                        LogBuildPath("ConfirmQueuedAction.move_completed");
                         return true;
                     }
 
                     _queuedMoveTarget = null;
                     ResetPath();
+                    LogBuildPath("ConfirmQueuedAction.move_not_at_target_replan");
                     return true;
 
                 case QueuedAction.Build:
@@ -124,7 +133,7 @@ namespace RTS.Presentation.Orders
                         return false;
                     }
 
-                    Fail("Barracks construction was not confirmed after runtime step.");
+                    Fail(ResolveBuildFailureReasonAfterStep());
                     return false;
 
                 default:
@@ -155,6 +164,7 @@ namespace RTS.Presentation.Orders
             }
 
             _path.AddRange(path);
+            LogBuildPath("EnsureApproachPath.planned");
             if (_path.Count == 0)
             {
                 reason = "Cannot build Barracks: worker is not adjacent to build cell.";
@@ -167,6 +177,7 @@ namespace RTS.Presentation.Orders
 
         private bool SubmitNextMove()
         {
+            LogBuildPath("SubmitNextMove.enter");
             if (_pathIndex >= _path.Count)
             {
                 ResetPath();
@@ -190,12 +201,18 @@ namespace RTS.Presentation.Orders
             _queuedAction = QueuedAction.Move;
             _queuedMoveTarget = next;
             SetStatus(HumanOrderStatus.WaitingForStep, "Order: moving to build site.");
+            LogBuildPath($"SubmitNextMove.accepted next={next} direction={direction}");
             return true;
         }
 
         private bool SubmitBuild(Direction direction)
         {
-            if (!_commands.SubmitBuildBarracksForWorker(Unit, direction, out string reason))
+            LogBuildPath($"SubmitBuild.called direction={direction}");
+            bool accepted = _commands.SubmitBuildBarracksForWorker(Unit, direction, out string reason);
+            _lastSubmittedBuildDirection = direction;
+            _lastSubmitBuildReason = reason ?? string.Empty;
+            LogBuildPath($"SubmitBuild.result accepted={accepted} reason={_lastSubmitBuildReason}");
+            if (!accepted)
             {
                 Fail(reason);
                 return false;
@@ -204,6 +221,75 @@ namespace RTS.Presentation.Orders
             _queuedAction = QueuedAction.Build;
             SetStatus(HumanOrderStatus.BuildingBarracks, "Order: building Barracks.");
             return true;
+        }
+
+        private string ResolveBuildFailureReasonAfterStep()
+        {
+            UnitRuntime barracks = FindOwnedBarracksAtBuildCell();
+            if (barracks != null && barracks.IsAlive && barracks.Owner == Owner.Player2 && barracks.Type == UnitType.Barracks)
+            {
+                return string.Empty;
+            }
+
+            if (Unit == null || !Unit.IsAlive)
+            {
+                return "Barracks construction failed: worker is no longer alive.";
+            }
+
+            if (Unit.Owner != Owner.Player2 || Unit.Type != UnitType.Worker)
+            {
+                return $"Barracks construction failed: unit is {Unit.Owner} {Unit.Type}, expected Player2 Worker.";
+            }
+
+            if (!TryGetBuildDirection(Unit.GridPos, _buildCell, out Direction currentDirection))
+            {
+                return $"Barracks construction failed: worker is not cardinal-adjacent to build cell {_buildCell} from {Unit.GridPos}.";
+            }
+
+            if (currentDirection != _lastSubmittedBuildDirection)
+            {
+                return $"Barracks construction failed: build direction changed from {_lastSubmittedBuildDirection} to {currentDirection}.";
+            }
+
+            GridManager grid = GridManager.Instance;
+            if (grid == null)
+            {
+                return "Barracks construction failed: GridManager is unavailable.";
+            }
+
+            if (!grid.IsInside(_buildCell))
+            {
+                return $"Barracks construction failed: build cell {_buildCell} is outside the grid.";
+            }
+
+            if (grid.TryGetOccupant(_buildCell, out UnitRuntime occupant) && occupant != null)
+            {
+                return $"Barracks construction failed: build cell {_buildCell} is occupied by {occupant.Owner} {occupant.Type}.";
+            }
+
+            GameConfig config = MatchBootstrap.Instance != null ? MatchBootstrap.Instance.GetConfig() : null;
+            UnitDefinition barracksDefinition = config != null ? config.GetDefinition(UnitType.Barracks) : null;
+            if (barracksDefinition == null)
+            {
+                return "Barracks construction failed: UnitDef_Barracks is missing from GameConfig.";
+            }
+
+            if (_match != null)
+            {
+                int resources = _match.GetResources(Owner.Player2);
+                int cost = barracksDefinition.productionCost;
+                if (resources < cost)
+                {
+                    return $"Barracks construction failed: Player2 has {resources} resources, needs {cost}.";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(_lastSubmitBuildReason))
+            {
+                return "Barracks construction failed: " + _lastSubmitBuildReason;
+            }
+
+            return $"Barracks construction was not confirmed after runtime step. buildCell={_buildCell}, worker={Unit.GridPos}, direction={_lastSubmittedBuildDirection}.";
         }
 
         private bool ValidateWorkerAndMatch(out string reason)
@@ -223,13 +309,6 @@ namespace RTS.Presentation.Orders
             if (_match == null || _match.Phase != MatchPhase.Running)
             {
                 reason = "Match is not running.";
-                return false;
-            }
-
-            GameConfig config = MatchBootstrap.Instance != null ? MatchBootstrap.Instance.GetConfig() : null;
-            if (config == null || config.GetDefinition(UnitType.Barracks) == null)
-            {
-                reason = "Barracks UnitDefinition is not configured in GameConfig.";
                 return false;
             }
 
@@ -279,6 +358,12 @@ namespace RTS.Presentation.Orders
             }
 
             return null;
+        }
+
+        private void LogBuildPath(string message)
+        {
+            string workerCell = Unit != null ? Unit.GridPos.ToString() : "<null>";
+            Debug.Log($"{LogPrefix} {message} buildCell={_buildCell} worker={workerCell} path.Count={_path.Count} pathIndex={_pathIndex} queuedAction={_queuedAction}");
         }
 
         private static bool TryGetBuildDirection(GridPosition workerCell, GridPosition buildCell, out Direction direction)

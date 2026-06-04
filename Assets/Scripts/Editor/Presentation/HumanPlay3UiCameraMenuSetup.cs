@@ -14,7 +14,8 @@ using UnityEngine.UI;
 
 namespace RTS.Editor.Presentation
 {
-    public static class HumanPlay3UiCameraMenuSetup
+        [System.Obsolete("Deprecated: final HumanPlay scene configuration is now serialized in Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity; do not use this editor setup for release scenes.")]
+public static class HumanPlay3UiCameraMenuSetup
     {
         private const string MenuScenePath = "Assets/Scenes/MainMenu.unity";
         private const string DemoScenePath = "Assets/Scenes/HumanPlay_Demo_PlayerVsAI.unity";
@@ -22,8 +23,7 @@ namespace RTS.Editor.Presentation
         private const string RpgPath = "Assets/Art/UI/Kenney/UI_Pack_RPG_Expansion";
         private const string IconsPath = "Assets/Art/UI/Kenney/Game_Icons";
 
-        [MenuItem("RTS/HumanPlay/3A-3E Setup UI Camera Menu")]
-        public static void Run()
+                public static void Run()
         {
             AssetDatabase.StartAssetEditing();
             try
@@ -47,14 +47,12 @@ namespace RTS.Editor.Presentation
             Debug.Log("[HumanPlay3UiCameraMenuSetup] Complete.");
         }
 
-        [MenuItem("Tools/HumanPlay/Open Main Menu")]
-        public static void OpenMainMenu()
+                public static void OpenMainMenu()
         {
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         }
 
-        [MenuItem("Tools/HumanPlay/Open Demo Scene")]
-        public static void OpenDemoScene()
+                public static void OpenDemoScene()
         {
             EditorSceneManager.OpenScene(DemoScenePath, OpenSceneMode.Single);
         }

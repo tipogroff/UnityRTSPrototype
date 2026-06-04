@@ -5294,6 +5294,7 @@ namespace RTS.ML
             }
         }
 
+        #if UNITY_EDITOR
         private void DrawGridLabels()
         {
             float y = 0.02f;
@@ -5313,6 +5314,11 @@ namespace RTS.ML
 
             Handles.color = previousColor;
         }
+#else
+        private void DrawGridLabels()
+        {
+        }
+#endif
 
         private string BuildActorRowLine(ActorCellDiagnosticRow row)
         {
