@@ -1159,6 +1159,7 @@ private void ResolveReferencesIfNeeded()
             image.sprite = _panelSprite;
             image.type = _panelSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             image.color = _panelColor;
+            image.raycastTarget = false;
             return rect;
         }
 
