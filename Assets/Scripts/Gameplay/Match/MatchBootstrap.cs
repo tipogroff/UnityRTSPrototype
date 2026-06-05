@@ -12,6 +12,7 @@
 // конкретные координаты — при смене GameConfig.mapWidth/Height
 // расстановка масштабируется автоматически.
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
@@ -85,6 +86,7 @@ namespace RTS.Gameplay
         [SerializeField] private ResourceManager _resourceManager;
 
         private UnitFactory _unitFactory;
+        private bool _loggedGetConfigDiagnostics;
 
         // ── Public API ────────────────────────────────────────────────────────
 
@@ -96,7 +98,9 @@ namespace RTS.Gameplay
         public void Setup()
         {
             ResolveReferences();
+            LogConfigDiagnostics("Setup.beforeValidate");
             if (!ValidateConfig()) return;
+            LogConfigDiagnostics("Setup.afterValidate");
 
             if (_gridManager == null || _matchManager == null) return;
 
@@ -123,7 +127,16 @@ namespace RTS.Gameplay
         /// <summary>
         /// Получить текущий GameConfig (для других компонентов).
         /// </summary>
-        public GameConfig GetConfig() => _config;
+        public GameConfig GetConfig()
+        {
+            if (!_loggedGetConfigDiagnostics)
+            {
+                _loggedGetConfigDiagnostics = true;
+                LogConfigDiagnostics("GetConfig");
+            }
+
+            return _config;
+        }
 
         // ── Unity lifecycle ───────────────────────────────────────────────────
 
@@ -158,6 +171,8 @@ namespace RTS.Gameplay
                 }
             }
 
+            LogConfigDiagnostics("ValidateConfig");
+
             if (_config == null)
             {
                 Debug.LogError("[MatchBootstrap] GameConfig не назначен! " +
@@ -171,6 +186,34 @@ namespace RTS.Gameplay
                 return false;
             }
             return true;
+        }
+
+        private void LogConfigDiagnostics(string source)
+        {
+            if (Application.isEditor)
+            {
+                return;
+            }
+
+            string configName = _config != null ? _config.name : "<null>";
+            int configId = _config != null ? _config.GetInstanceID() : 0;
+            int length = _config != null && _config.unitDefinitions != null ? _config.unitDefinitions.Length : -1;
+            Debug.Log(
+                $"[GameConfigBuildDiag] MatchBootstrap.{source} object={name} bootstrapId={GetInstanceID()} " +
+                $"instanceId={(Instance != null ? Instance.GetInstanceID() : 0)} config={configName} configId={configId} unitDefinitions.Length={length}");
+
+            if (_config == null || _config.unitDefinitions == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _config.unitDefinitions.Length; i++)
+            {
+                UnitDefinition definition = _config.unitDefinitions[i];
+                string expected = Enum.IsDefined(typeof(UnitType), i) ? ((UnitType)i).ToString() : "<undefined>";
+                string assetName = definition != null ? definition.name : "<null>";
+                Debug.Log($"[GameConfigBuildDiag] MatchBootstrap.{source} index={i} expected={expected} asset={assetName}");
+            }
         }
 
         // ── Шаг 2: поиск зависимостей ────────────────────────────────────────
@@ -196,7 +239,7 @@ namespace RTS.Gameplay
 
         private static T EnsureSceneComponent<T>(string gameObjectName) where T : Component
         {
-            T existing = Object.FindFirstObjectByType<T>();
+            T existing = UnityEngine.Object.FindFirstObjectByType<T>();
             if (existing != null)
             {
                 return existing;

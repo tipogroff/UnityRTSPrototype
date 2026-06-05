@@ -34,6 +34,7 @@ namespace RTS.Presentation.Selection
         private bool _manualInputEnabled;
         private bool _dragActive;
         private bool _dragStartedOverUi;
+        private string _dragStartUiBlocker = string.Empty;
         private bool _legacyInputUnavailable;
         private Vector2 _dragStartScreen;
         private Vector2 _dragCurrentScreen;
@@ -144,11 +145,22 @@ namespace RTS.Presentation.Selection
 
         private void HandlePointerInput()
         {
-            if (WasLeftMousePressed())
+            bool pressed = WasLeftMousePressed();
+            bool released = WasLeftMouseReleased();
+            if (pressed || released)
             {
-                _dragStartedOverUi = IsPointerOverUi();
+                LogSelectionDiagnostic(
+                    $"input pressed={pressed} released={released} pointer={GetPointerPosition()} " +
+                    $"dragActive={_dragActive} pointerOverUi={IsPointerOverUi(out string uiBlocker)} " +
+                    $"uiBlocker={uiBlocker} currentSelected={DescribeCurrentSelectedUi()} selected={DescribeSelection()}");
+            }
+
+            if (pressed)
+            {
+                _dragStartedOverUi = IsPointerOverUi(out _dragStartUiBlocker);
                 if (_dragStartedOverUi || IsTextInputFocused())
                 {
+                    LogSelectionDiagnostic($"press blocked by ui={_dragStartUiBlocker} textInputFocused={IsTextInputFocused()}");
                     return;
                 }
 
@@ -171,10 +183,11 @@ namespace RTS.Presentation.Selection
                 ShowSelectionBox(_dragStartScreen, _dragCurrentScreen);
             }
 
-            if (WasLeftMouseReleased())
+            if (released)
             {
                 if (_dragStartedOverUi)
                 {
+                    LogSelectionDiagnostic($"release cancelled because drag started over ui={_dragStartUiBlocker}");
                     EndDrag(cancel: true);
                     return;
                 }
@@ -194,22 +207,39 @@ namespace RTS.Presentation.Selection
 
         private void ApplyClickSelection(bool additive)
         {
+            string before = DescribeSelection();
             if (!TryGetPointerRay(out Ray ray))
             {
+                LogSelectionDiagnostic("click skipped: no selection camera ray");
                 return;
             }
 
             UnitRuntime hitUnit = null;
-            if (TryResolveUnitFromRay(ray, out UnitRuntime rayUnit, out Vector3 worldPoint))
+            string hitColliderName = "<none>";
+            GridPosition? fallbackCell = null;
+            UnitRuntime fallbackOccupant = null;
+            if (TryResolveUnitFromRay(ray, out UnitRuntime rayUnit, out Vector3 worldPoint, out hitColliderName))
             {
                 hitUnit = rayUnit;
+                if (hitUnit == null && _gridManager != null)
+                {
+                    GridPosition cell = _gridManager.WorldToCell(worldPoint);
+                    fallbackCell = cell;
+                    if (_gridManager.IsInside(cell))
+                    {
+                        fallbackOccupant = _gridManager.GetOccupant(cell);
+                        hitUnit = fallbackOccupant;
+                    }
+                }
             }
             else if (TryResolveWorldPointOnGround(ray, out worldPoint) && _gridManager != null)
             {
                 GridPosition cell = _gridManager.WorldToCell(worldPoint);
+                fallbackCell = cell;
                 if (_gridManager.IsInside(cell))
                 {
-                    hitUnit = _gridManager.GetOccupant(cell);
+                    fallbackOccupant = _gridManager.GetOccupant(cell);
+                    hitUnit = fallbackOccupant;
                 }
             }
 
@@ -237,6 +267,10 @@ namespace RTS.Presentation.Selection
                     SelectSingle(hitUnit);
                 }
 
+                LogSelectionDiagnostic(
+                    $"click applied additive={additive} hitCollider={hitColliderName} hitUnit={DescribeUnit(hitUnit)} " +
+                    $"fallbackCell={DescribeCell(fallbackCell)} fallbackOccupant={DescribeUnit(fallbackOccupant)} " +
+                    $"before={before} after={DescribeSelection()}");
                 return;
             }
 
@@ -244,6 +278,11 @@ namespace RTS.Presentation.Selection
             {
                 ClearSelection();
             }
+
+            LogSelectionDiagnostic(
+                $"click clearedOrIgnored additive={additive} hitCollider={hitColliderName} hitUnit={DescribeUnit(hitUnit)} " +
+                $"fallbackCell={DescribeCell(fallbackCell)} fallbackOccupant={DescribeUnit(fallbackOccupant)} " +
+                $"before={before} after={DescribeSelection()}");
         }
 
         private void ApplyDragSelection(bool additive)
@@ -496,13 +535,15 @@ namespace RTS.Presentation.Selection
             return true;
         }
 
-        private bool TryResolveUnitFromRay(Ray ray, out UnitRuntime unit, out Vector3 worldPoint)
+        private bool TryResolveUnitFromRay(Ray ray, out UnitRuntime unit, out Vector3 worldPoint, out string hitColliderName)
         {
             worldPoint = default;
             unit = null;
+            hitColliderName = "<none>";
             if (Physics.Raycast(ray, out RaycastHit hit, _raycastDistance, _raycastMask, QueryTriggerInteraction.Ignore))
             {
                 worldPoint = hit.point;
+                hitColliderName = hit.collider != null ? hit.collider.name : "<null>";
                 unit = hit.collider != null ? hit.collider.GetComponentInParent<UnitRuntime>() : null;
                 return true;
             }
@@ -532,6 +573,7 @@ namespace RTS.Presentation.Selection
         {
             _dragActive = false;
             _dragStartedOverUi = false;
+            _dragStartUiBlocker = string.Empty;
             HideSelectionBox();
         }
 
@@ -564,9 +606,74 @@ namespace RTS.Presentation.Selection
             return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         }
 
-        private static bool IsPointerOverUi()
+        private static bool IsPointerOverUi(out string blockerName)
         {
-            return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            blockerName = "<none>";
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                return false;
+            }
+
+            var pointerData = new PointerEventData(eventSystem)
+            {
+                position = GetPointerPosition()
+            };
+            var results = new List<RaycastResult>();
+            eventSystem.RaycastAll(pointerData, results);
+            for (int i = 0; i < results.Count; i++)
+            {
+                GameObject hit = results[i].gameObject;
+                if (hit == null || !hit.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                blockerName = hit.name;
+                return true;
+            }
+
+            bool legacyPointerOver = eventSystem.IsPointerOverGameObject();
+            blockerName = legacyPointerOver ? "<IsPointerOverGameObject:true RaycastAll:empty>" : "<none>";
+            return false;
+        }
+
+        private static string DescribeCurrentSelectedUi()
+        {
+            EventSystem eventSystem = EventSystem.current;
+            return eventSystem != null && eventSystem.currentSelectedGameObject != null
+                ? eventSystem.currentSelectedGameObject.name
+                : "<none>";
+        }
+
+        private string DescribeSelection()
+        {
+            if (_selectedUnits.Count == 0)
+            {
+                return "<empty>";
+            }
+
+            return string.Join(",", _selectedUnits.ConvertAll(DescribeUnit));
+        }
+
+        private static string DescribeUnit(UnitRuntime unit)
+        {
+            return unit != null
+                ? $"{unit.name}#{unit.GetInstanceID()}({unit.Owner},{unit.Type},{unit.GridPos})"
+                : "<null>";
+        }
+
+        private static string DescribeCell(GridPosition? cell)
+        {
+            return cell.HasValue ? cell.Value.ToString() : "<none>";
+        }
+
+        private void LogSelectionDiagnostic(string message)
+        {
+            if (!Application.isEditor)
+            {
+                Debug.Log($"[SelectionBuildDiag] {message}");
+            }
         }
 
         private static bool IsTextInputFocused()

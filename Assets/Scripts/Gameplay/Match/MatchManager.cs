@@ -1,5 +1,6 @@
 // MatchManager.cs — central step-based coordinator of a single match.
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
@@ -1189,13 +1190,14 @@ public int TotalInvalidCommands { get; private set; }
 
         private bool TryWorkerBuildBarracks(UnitRuntime worker, Direction direction, GameConfig config)
         {
+            GridPosition targetCell = worker.GridPos.Neighbour(direction);
+            LogBarracksBuildConfigDiagnostic("TryWorkerBuildBarracks.enter", config, targetCell, worker);
+
             if (CountAliveBarracks(worker.Owner) > 0)
             {
                 LogProductionWarning($"[MatchManager] Worker build Barracks: {worker.Owner} already has a living Barracks");
                 return false;
             }
-
-            GridPosition targetCell = worker.GridPos.Neighbour(direction);
 
             if (!_gridManager.IsInside(targetCell))
             {
@@ -1212,6 +1214,7 @@ public int TotalInvalidCommands { get; private set; }
             var barracksDefinition = config.GetDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
             {
+                LogBarracksBuildConfigDiagnostic("TryWorkerBuildBarracks.barracks_definition_null", config, targetCell, worker);
                 LogProductionWarning("[MatchManager] Worker build Barracks: UnitDef_Barracks not configured in GameConfig");
                 return false;
             }
@@ -1635,6 +1638,11 @@ public int TotalInvalidCommands { get; private set; }
 
         private GameConfig GetActiveConfig()
         {
+            if (_matchBootstrap == null || _matchBootstrap != MatchBootstrap.Instance)
+            {
+                _matchBootstrap = MatchBootstrap.Instance;
+            }
+
             if (_matchBootstrap != null)
             {
                 return _matchBootstrap.GetConfig();
@@ -1647,6 +1655,35 @@ public int TotalInvalidCommands { get; private set; }
             }
 
             return null;
+        }
+
+        private void LogBarracksBuildConfigDiagnostic(string source, GameConfig config, GridPosition targetCell, UnitRuntime worker)
+        {
+            if (Application.isEditor)
+            {
+                return;
+            }
+
+            UnitDefinition barracksDefinition = config != null ? config.GetDefinition(UnitType.Barracks) : null;
+            bool occupied = _gridManager != null && _gridManager.IsInside(targetCell) && _gridManager.IsCellOccupied(targetCell);
+            int resources = worker != null ? GetResources(worker.Owner) : -1;
+            int length = config != null && config.unitDefinitions != null ? config.unitDefinitions.Length : -1;
+            Debug.Log(
+                $"[GameConfigBuildDiag] MatchManager.{source} config={(config != null ? config.name : "<null>")} " +
+                $"configId={(config != null ? config.GetInstanceID() : 0)} barracksDefinition={(barracksDefinition != null ? barracksDefinition.name : "<null>")} " +
+                $"targetCell={targetCell} resources={resources} occupied={occupied} unitDefinitions.Length={length}");
+
+            if (config == null || config.unitDefinitions == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < config.unitDefinitions.Length; i++)
+            {
+                UnitDefinition definition = config.unitDefinitions[i];
+                string expected = Enum.IsDefined(typeof(UnitType), i) ? ((UnitType)i).ToString() : "<undefined>";
+                Debug.Log($"[GameConfigBuildDiag] MatchManager.{source} index={i} expected={expected} asset={(definition != null ? definition.name : "<null>")}");
+            }
         }
 
         private void SeedPlayerCountersFromRegistry()

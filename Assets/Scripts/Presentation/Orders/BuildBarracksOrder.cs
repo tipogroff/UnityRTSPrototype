@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RTS.Core;
 using RTS.Gameplay;
@@ -294,6 +295,7 @@ namespace RTS.Presentation.Orders
 
         private bool ValidateWorkerAndMatch(out string reason)
         {
+            LogConfigDiagnostics("ValidateWorkerAndMatch.enter");
             if (Unit == null || !Unit.IsAlive)
             {
                 reason = "Worker is no longer alive.";
@@ -308,12 +310,14 @@ namespace RTS.Presentation.Orders
 
             if (_match == null || _match.Phase != MatchPhase.Running)
             {
+                LogConfigDiagnostics("ValidateWorkerAndMatch.match_not_running");
                 reason = "Match is not running.";
                 return false;
             }
 
             if (_registry == null)
             {
+                LogConfigDiagnostics("ValidateWorkerAndMatch.registry_null");
                 reason = "UnitRegistry is unavailable.";
                 return false;
             }
@@ -324,11 +328,13 @@ namespace RTS.Presentation.Orders
                 UnitRuntime owned = ownedUnits[i];
                 if (owned != null && owned.IsAlive && owned.Type == UnitType.Barracks)
                 {
+                    LogConfigDiagnostics("ValidateWorkerAndMatch.existing_barracks");
                     reason = "Cannot build Barracks: owner already has one alive Barracks.";
                     return false;
                 }
             }
 
+            LogConfigDiagnostics("ValidateWorkerAndMatch.ok");
             reason = string.Empty;
             return true;
         }
@@ -364,6 +370,36 @@ namespace RTS.Presentation.Orders
         {
             string workerCell = Unit != null ? Unit.GridPos.ToString() : "<null>";
             Debug.Log($"{LogPrefix} {message} buildCell={_buildCell} worker={workerCell} path.Count={_path.Count} pathIndex={_pathIndex} queuedAction={_queuedAction}");
+        }
+
+        private void LogConfigDiagnostics(string source)
+        {
+            if (Application.isEditor)
+            {
+                return;
+            }
+
+            MatchBootstrap bootstrap = MatchBootstrap.Instance;
+            GameConfig config = bootstrap != null ? bootstrap.GetConfig() : null;
+            UnitDefinition barracksDefinition = config != null ? config.GetDefinition(UnitType.Barracks) : null;
+            int length = config != null && config.unitDefinitions != null ? config.unitDefinitions.Length : -1;
+            Debug.Log(
+                $"{LogPrefix} [GameConfigBuildDiag] {source} bootstrap={(bootstrap != null ? "not-null" : "null")} " +
+                $"bootstrapId={(bootstrap != null ? bootstrap.GetInstanceID() : 0)} config={(config != null ? config.name : "<null>")} " +
+                $"configId={(config != null ? config.GetInstanceID() : 0)} barracksIndex={(int)UnitType.Barracks} " +
+                $"barracksDefinition={(barracksDefinition != null ? barracksDefinition.name : "<null>")} unitDefinitions.Length={length}");
+
+            if (config == null || config.unitDefinitions == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < config.unitDefinitions.Length; i++)
+            {
+                UnitDefinition definition = config.unitDefinitions[i];
+                string expected = Enum.IsDefined(typeof(UnitType), i) ? ((UnitType)i).ToString() : "<undefined>";
+                Debug.Log($"{LogPrefix} [GameConfigBuildDiag] {source} index={i} expected={expected} asset={(definition != null ? definition.name : "<null>")}");
+            }
         }
 
         private static bool TryGetBuildDirection(GridPosition workerCell, GridPosition buildCell, out Direction direction)

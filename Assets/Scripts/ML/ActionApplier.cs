@@ -21,6 +21,7 @@
 // - Dead unit: rejected
 // - MatchManager rejection: counted and logged
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Core;
@@ -613,10 +614,12 @@ namespace RTS.ML
                 return false;
             }
 
-            var config = _matchBootstrap?.GetConfig();
+            MatchBootstrap bootstrap = _matchBootstrap != null ? _matchBootstrap : MatchBootstrap.Instance;
+            var config = bootstrap != null ? bootstrap.GetConfig() : null;
             var barracksDefinition = config?.GetDefinition(UnitType.Barracks);
             if (barracksDefinition == null)
             {
+                LogWorkerBuildBarracksConfigDiagnostic("ValidateWorkerBuildBarracks.barracks_definition_null", bootstrap, config, unit, action);
                 reason = "Barracks UnitDefinition is not configured in GameConfig";
                 return false;
             }
@@ -644,6 +647,42 @@ namespace RTS.ML
             }
 
             return true;
+        }
+
+        private void LogWorkerBuildBarracksConfigDiagnostic(
+            string source,
+            MatchBootstrap bootstrap,
+            GameConfig config,
+            UnitRuntime unit,
+            AgentAction action)
+        {
+            if (Application.isEditor)
+            {
+                return;
+            }
+
+            UnitDefinition barracksDefinition = config != null ? config.GetDefinition(UnitType.Barracks) : null;
+            GridPosition targetPos = unit != null ? GetPositionInDirection(unit.GridPos, action.Direction) : GridPosition.Zero;
+            int length = config != null && config.unitDefinitions != null ? config.unitDefinitions.Length : -1;
+            Debug.Log(
+                $"[GameConfigBuildDiag] ActionApplier.{source} bootstrap={(bootstrap != null ? "not-null" : "null")} " +
+                $"bootstrapId={(bootstrap != null ? bootstrap.GetInstanceID() : 0)} config={(config != null ? config.name : "<null>")} " +
+                $"configId={(config != null ? config.GetInstanceID() : 0)} barracksIndex={(int)UnitType.Barracks} " +
+                $"barracksDefinition={(barracksDefinition != null ? barracksDefinition.name : "<null>")} " +
+                $"worker={(unit != null ? unit.name : "<null>")} workerCell={(unit != null ? unit.GridPos.ToString() : "<null>")} " +
+                $"targetCell={targetPos} unitDefinitions.Length={length}");
+
+            if (config == null || config.unitDefinitions == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < config.unitDefinitions.Length; i++)
+            {
+                UnitDefinition definition = config.unitDefinitions[i];
+                string expected = Enum.IsDefined(typeof(UnitType), i) ? ((UnitType)i).ToString() : "<undefined>";
+                Debug.Log($"[GameConfigBuildDiag] ActionApplier.{source} index={i} expected={expected} asset={(definition != null ? definition.name : "<null>")}");
+            }
         }
 
         private bool HasAliveBarracks(Owner owner)
